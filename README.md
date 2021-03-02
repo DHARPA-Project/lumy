@@ -29,7 +29,7 @@ Convenient because it manages iPython kernels and either terminal or a notebook 
 
 #### 1. Virtualenv
 
-Prepare a dedicated [virtualenv](https://virtualenv.pypa.io/en/latest/user_guide.html#introduction) with Python 3.6+.\
+Prepare a dedicated [virtualenv](https://virtualenv.pypa.io/en/latest/user_guide.html#introduction) with Python 3.7+.
 
 ```
 virtualenv .venv
