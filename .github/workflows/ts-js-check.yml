@@ -14,7 +14,7 @@ jobs:
     - uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - name: Insall dependencies using Node.js ${{ matrix.node-version }}
+    - name: Install dependencies using Node.js ${{ matrix.node-version }}
       run: yarn install
     - name: Check using Node.js ${{ matrix.node-version }}
       run: yarn compile-and-lint
