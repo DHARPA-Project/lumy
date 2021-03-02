@@ -3,7 +3,6 @@ import { SessionContext, ICommandPalette, WidgetTracker } from '@jupyterlab/appu
 import { ILauncher } from '@jupyterlab/launcher'
 import { IMainMenu } from '@jupyterlab/mainmenu'
 import { ITranslator } from '@jupyterlab/translation'
-import { INotebookTracker } from '@jupyterlab/notebook'
 import { LabIcon } from '@jupyterlab/ui-components'
 import { Menu } from '@lumino/widgets'
 import { WrapperPanel } from './panel'
@@ -29,7 +28,7 @@ const extension: JupyterFrontEndPlugin<WidgetTracker<WrapperPanel>> = {
   id: AppId,
   autoStart: true,
   optional: [ILauncher, ILayoutRestorer],
-  requires: [ICommandPalette, IMainMenu, ITranslator, INotebookTracker],
+  requires: [ICommandPalette, IMainMenu, ITranslator],
   activate: activate
 }
 
@@ -41,7 +40,6 @@ function activate(
   palette: ICommandPalette,
   mainMenu: IMainMenu,
   translator: ITranslator,
-  notebooks: INotebookTracker,
   launcher: ILauncher | null,
   restorer: ILayoutRestorer | null
 ): WidgetTracker<WrapperPanel> {
@@ -67,25 +65,25 @@ function activate(
     void restorer.restore(mainPanelTracker, {
       command: CommandIDs.create,
       name: panel => panel.session.path,
-      when: notebooks.restored.then(() => app.serviceManager.ready),
+      when: app.serviceManager.ready,
       args: panel => ({
         path: panel.session.path
       })
     })
   }
 
-  // create new panel with a path to the notebook it tracks (if any)
+  // create new panel
   async function createPanel({ path }: { path?: string }): Promise<WrapperPanel> {
-    const notebookWidget = notebooks.find(n => n.sessionContext.path === path) ?? notebooks?.currentWidget
-
-    const existingContext = notebookWidget?.context?.sessionContext
-    const sessionContext = existingContext
-      ? existingContext
-      : new SessionContext({
-          sessionManager: manager.sessions,
-          specsManager: manager.kernelspecs,
-          name: AppLabel
-        })
+    const sessionContext = new SessionContext({
+      sessionManager: manager.sessions,
+      specsManager: manager.kernelspecs,
+      name: AppLabel,
+      path,
+      kernelPreference: {
+        language: 'Python',
+        autoStartDefault: true
+      }
+    })
 
     const panel = new WrapperPanel(`${AppId}-panel`, AppLabel, sessionContext, translator)
     shell.add(panel, 'main')

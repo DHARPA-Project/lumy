@@ -12,22 +12,34 @@ export enum ReadinessStatus {
 
 const BackEndReadyCheckCode = 'Context.getInstance().is_ready'
 
+const BackEndStartCode = `
+  from dharpa.vre.jupyter.context import Context
+  Context.start()
+`
+
 const isKernelReady = (status: Kernel.Status): boolean => ['idle', 'busy'].includes(status)
 
 export class ReadinessProbe {
   private _sessionContext: ISessionContext
 
   private _checkCode: string
+  private _startCode: string
+
   private _isBackEndCheckRunning = false
 
   private _status = ReadinessStatus.NotReady
   private _statusChanged = new Signal<ReadinessProbe, ReadinessStatus>(this)
   private _readinessChanged = new Signal<ReadinessProbe, boolean>(this)
 
-  constructor(sessionContext: ISessionContext, checkCode = BackEndReadyCheckCode) {
+  constructor(
+    sessionContext: ISessionContext,
+    checkCode = BackEndReadyCheckCode,
+    startCode = BackEndStartCode
+  ) {
     this._sessionContext = sessionContext
 
     this._checkCode = checkCode
+    this._startCode = startCode
 
     // always changing current status via signal
     this._statusChanged.connect((_, status) => {
@@ -37,19 +49,21 @@ export class ReadinessProbe {
     // listen to kernel status changes
     this._sessionContext.statusChanged.connect(this._handleSessionStatusChanged, this)
 
+    // start backend readiness checks only when status changes to "kernel ready"
+    // either from 'not ready' or from 'backend ready'
+    this._statusChanged.connect((_, status) => {
+      if (status == ReadinessStatus.KernelReady) {
+        this._startRequest().then(() => this._maybeSendBackendCheckRequest())
+      }
+      this._readinessChanged.emit(status >= ReadinessStatus.BackEndReady)
+    })
+
     // initial status
     this._statusChanged.emit(
       isKernelReady(this._sessionContext.kernelDisplayStatus as Kernel.Status)
         ? ReadinessStatus.KernelReady
         : ReadinessStatus.NotReady
     )
-
-    // start backend readiness checks only when status changes to "kernel ready"
-    // either from 'not ready' or from 'backend ready'
-    this._statusChanged.connect((_, status) => {
-      if (status == ReadinessStatus.KernelReady) this._maybeSendBackendCheckRequest()
-      this._readinessChanged.emit(status >= ReadinessStatus.BackEndReady)
-    })
 
     this._sessionContext.iopubMessage.connect((_, message) => {
       const messageType = message.header.msg_type
@@ -92,12 +106,25 @@ export class ReadinessProbe {
         if (isReady) this._statusChanged.emit(ReadinessStatus.BackEndReady)
       })
       .catch(e => {
-        // TODO: any way to handle it?
+        // TODO: handle errors like this
         console.error(`Error occured while trying to get backend readiness status: ${e}`)
         throw e
       })
       .finally(() => {
         this._isBackEndCheckRunning = false
+      })
+  }
+
+  private async _startRequest(): Promise<void> {
+    await this._sessionContext.session.kernel
+      .requestExecute({
+        code: this._startCode,
+        silent: true,
+        store_history: false
+      })
+      .done.then(response => {
+        // TODO: handle errors like this
+        console.log('Start backend response: ', response.content)
       })
   }
 

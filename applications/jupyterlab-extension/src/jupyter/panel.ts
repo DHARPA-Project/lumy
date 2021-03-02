@@ -44,9 +44,10 @@ export class WrapperPanel extends StackedPanel {
   }
 
   dispose(): void {
-    // uncomment to destroy kernel on exit
-    // this._sessionContext.dispose()
-    super.dispose()
+    this._sessionContext.shutdown().then(() => {
+      this._sessionContext.dispose()
+      super.dispose()
+    })
   }
 
   protected onCloseRequest(msg: Message): void {

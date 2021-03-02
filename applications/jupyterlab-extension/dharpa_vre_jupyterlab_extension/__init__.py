@@ -8,6 +8,7 @@ with open(os.path.join(CURRENT_DIR, 'labextension', 'package.json')) as fid:
 
 __version__ = data['version']
 
+
 def _jupyter_labextension_paths():
     return [{
         'src': 'labextension',

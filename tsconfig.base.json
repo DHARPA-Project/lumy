@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "composite": true,
+    "declaration": true,
+    "esModuleInterop": true,
+    "incremental": true,
+    "jsx": "react",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "noEmitOnError": true,
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "preserveWatchOutput": true,
+    "resolveJsonModule": true,
+    "strict": true,
+    "strictNullChecks": false,
+    "sourceMap": true,
+    "inlineSources": true,
+    "target": "es2017",
+    "lib": ["esnext", "dom"],
+    "types": ["node"]
+  },
+  "exclude": ["node_modules", "dist"]
+}

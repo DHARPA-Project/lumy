@@ -1,22 +1,24 @@
 import React from 'react'
 import { ReactWidget } from '@jupyterlab/apputils'
 import { KernelModuleContext } from './kernelContext'
+import { ModuleContextProvider, useBackendIsReady } from '@dharpa-vre/client-core'
 
-// TODO: Import once ready
-// import { ModuleContextProvider, useBackendIsReady } from '@dharpa-vre/client-core'
-const useBackendIsReady = (): boolean => true
-const ModuleContextProvider = React.createContext(null).Provider
+const centeredStyle = {
+  'text-align': 'center',
+  marginTop: '30%',
+  fontWeight: 100,
+  fontSize: '2rem'
+}
 
+/**
+ * VRE entry point
+ */
 const App = () => {
   const backendIsReady = useBackendIsReady()
 
-  if (!backendIsReady) return <b>Backend not ready yet...</b>
+  if (!backendIsReady) return <p style={centeredStyle}>↻ Backend is starting...</p>
 
-  return (
-    <>
-      <p>VRE will be here</p>
-    </>
-  )
+  return <p style={centeredStyle}>✔ VRE will be rendered here</p>
 }
 
 export class KernelView extends ReactWidget {

@@ -1,0 +1,4 @@
+packages/*/node_modules/*
+packages/*/dist/*
+applications/*/node_modules/*
+applications/*/dist/*

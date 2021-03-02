@@ -1,0 +1,16 @@
+{
+  "name": "@dharpa-vre/vre",
+  "version": "0.1.0",
+  "description": "DHARPA VRE monorepo",
+  "keywords": [
+    "dharpa",
+    "vre"
+  ],
+  "homepage": "https://dharpa.org",
+  "license": "TBD",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "applications/*"
+  ]
+}

@@ -32,10 +32,12 @@ package_data_spec = {
 
 data_files_spec = [
     ("share/jupyter/labextensions/%s" % labext_name, lab_path, "**"),
-    ("share/jupyter/labextensions/%s" % labext_name, CURRENT_DIR, "install.json"),
+    ("share/jupyter/labextensions/%s" % labext_name, CURRENT_DIR,
+        "install.json"),
 ]
 
-cmdclass = create_cmdclass("jsdeps",
+cmdclass = create_cmdclass(
+    "jsdeps",
     package_data_spec=package_data_spec,
     data_files_spec=data_files_spec
 )
@@ -60,12 +62,13 @@ setup_args = dict(
     url=data.get('homepage'),
     author=data.get('author'),
     description=data['description'],
-    long_description= long_description,
+    long_description=long_description,
     long_description_content_type="text/markdown",
-    cmdclass= cmdclass,
+    cmdclass=cmdclass,
     packages=setuptools.find_packages(),
     install_requires=[
         "jupyterlab>=3.0.0rc15,==3.*",
+        "dharpa-vre-jupyter-middleware"
     ],
     zip_safe=False,
     include_package_data=True,

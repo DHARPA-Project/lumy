@@ -22,6 +22,7 @@
     "start": "webpack serve -c webpack.config.standalone.js"
   },
   "dependencies": {
+    "@dharpa-vre/client-core": "*",
     "@jupyterlab/application": "3",
     "@jupyterlab/launcher": "3",
     "@jupyterlab/mainmenu": "3",

@@ -2,19 +2,11 @@ import { ISessionContext } from '@jupyterlab/apputils'
 import { Kernel, KernelMessage } from '@jupyterlab/services'
 import { JSONValue } from '@lumino/coreutils'
 import { Signal } from '@lumino/signaling'
+import { IDisposable } from '@lumino/disposable'
 import { ReadinessProbe } from './readinessProbe'
+import { IModuleContext, IMessageWithAction, Target } from '@dharpa-vre/client-core'
 
-// TODO: import when ready
-// import { IModuleContext, IMessageWithAction, Target } from '../common/modelContext'
-interface IModuleContext {
-  moduleId: string
-}
-type IMessageWithAction = unknown
-enum Target {
-  Placeholder = 'placeholder'
-}
-
-export class KernelModuleContext implements IModuleContext {
+export class KernelModuleContext implements IModuleContext, IDisposable {
   private _sessionContext: ISessionContext
   private _probe: ReadinessProbe
 
