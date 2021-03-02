@@ -9,7 +9,7 @@
   ],
   "homepage": "https://dharpa.org",
   "main": "src/index.ts",
-  "license": "TBD",
+  "license": "AGPL-3.0-only",
   "author": "roman@kalyakin.com",
   "scripts": {
     "watch": "tsc -w",
@@ -18,7 +18,8 @@
     "build:lib": "tsc"
   },
   "peerDependencies": {
-    "react": "17"
+    "react": "17",
+    "@lumino/signaling": "1"
   },
   "devDependencies": {
     "@types/node": "14",

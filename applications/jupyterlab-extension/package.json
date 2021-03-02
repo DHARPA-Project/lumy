@@ -9,7 +9,7 @@
   ],
   "homepage": "https://dharpa.org",
   "main": "src/index.ts",
-  "license": "TBD",
+  "license": "AGPL-3.0-only",
   "author": "roman@kalyakin.com",
   "scripts": {
     "develop": "jupyter labextension develop . --overwrite --debug",

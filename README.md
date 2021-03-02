@@ -77,8 +77,16 @@ Jupyter Lab tab needs to be reloaded to get the changes applied.
 
 ### Running front end as a standalone web app with mocked back end
 
-TBD
+The following steps are executed in `applications/standalone` directory.
 
 ```
+yarn install
+```
+
+Then start [Webpack dev server](https://webpack.js.org/configuration/dev-server/) that will watch and recompile TypeScript files and then reload the browser tab.
 
 ```
+yarn start
+```
+
+The web app is available on [http://localhost:8080/](http://localhost:8080/).

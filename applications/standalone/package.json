@@ -1,0 +1,58 @@
+{
+  "name": "@dharpa-vre/standalone-app",
+  "version": "0.1.0",
+  "description": "DHARPA VRE standalone app",
+  "keywords": [
+    "dharpa",
+    "vre",
+    "app"
+  ],
+  "homepage": "https://dharpa.org",
+  "main": "src/index.tsx",
+  "license": "AGPL-3.0-only",
+  "author": "roman@kalyakin.com",
+  "scripts": {
+    "start": "webpack serve -c webpack.config.js",
+    "eslint": "eslint src --ext .ts,.tsx,.js,.jsx --fix",
+    "eslint:check": "eslint src --ext .ts,.tsx,.js,.jsx"
+  },
+  "dependencies": {
+    "react": "17",
+    "react-dom": "17",
+    "@lumino/signaling": "1"
+  },
+  "devDependencies": {
+    "@babel/core": "7",
+    "@babel/plugin-proposal-class-properties": "7",
+    "@babel/plugin-transform-runtime": "7",
+    "@babel/preset-env": "7",
+    "@babel/preset-react": "7",
+    "@babel/preset-typescript": "7",
+    "@types/node": "14",
+    "@types/react": "17",
+    "@types/react-dom": "17",
+    "@typescript-eslint/eslint-plugin": "4",
+    "@typescript-eslint/parser": "4",
+    "babel-loader": "8",
+    "eslint": "7",
+    "eslint-config-prettier": "7",
+    "eslint-plugin-prettier": "3",
+    "eslint-plugin-react": "7",
+    "html-loader": "1",
+    "html-webpack-plugin": "5",
+    "prettier": "2",
+    "sass": "1",
+    "sass-loader": "11",
+    "source-map-loader": "2",
+    "svg-url-loader": "7",
+    "typescript": "4",
+    "url-loader": "4",
+    "webpack": "5",
+    "webpack-dev-server": "3"
+  },
+  "sideEffects": [
+    "*.css",
+    "*.scss",
+    "*.svg"
+  ]
+}

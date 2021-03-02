@@ -7,7 +7,7 @@
     "vre"
   ],
   "homepage": "https://dharpa.org",
-  "license": "TBD",
+  "license": "AGPL-3.0-only",
   "private": true,
   "workspaces": [
     "packages/*",
