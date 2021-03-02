@@ -17,6 +17,6 @@ jobs:
     - name: Insall dependencies using Node.js ${{ matrix.node-version }}
       run: yarn install
     - name: Check using Node.js ${{ matrix.node-version }}
-      run: yarn check
+      run: yarn compile-and-lint
       env:
         CI: true
