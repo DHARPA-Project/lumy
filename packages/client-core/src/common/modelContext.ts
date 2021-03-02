@@ -6,6 +6,10 @@ import { createContext, useContext, useState, useEffect } from 'react'
  */
 export enum Target {
   /**
+   * Everything about current workflow.
+   */
+  Workflow = 'workflow',
+  /**
    * Used to updated module parameters with the backend
    * and get the most recent parameters from the backend.
    */
