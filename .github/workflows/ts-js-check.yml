@@ -1,0 +1,22 @@
+name: Compile and lint TypeScript and JavaScript
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Insall using Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+      run: yarn install
+    - name: Check using Node.js ${{ matrix.node-version }}
+      run: yarn check
+      env:
+        CI: true

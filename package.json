@@ -12,5 +12,10 @@
   "workspaces": [
     "packages/*",
     "applications/*"
-  ]
+  ],
+  "scripts": {
+    "eslint:check": "eslint packages/*/src applications/*/src --ext .ts,.tsx,.js,.jsx",
+    "tsc:check": "tsc --noEmit",
+    "check": "yarn tsc:check && yarn eslint:check"
+  }
 }
