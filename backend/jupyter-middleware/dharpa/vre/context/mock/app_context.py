@@ -1,5 +1,5 @@
 import importlib.resources as pkg_resources
-from typing import Optional, Callable
+from typing import Dict, Optional, Callable
 from tinypubsub.simple import SimplePublisher
 import yaml
 try:
@@ -17,6 +17,7 @@ WorkflowStructureUpdated = Callable[[WorkflowStructure], None]
 
 class MockAppContext(AppContext):
     _current_workflow: Optional[Workflow] = None
+    _steps_parameters: Dict[str, Optional[Dict]] = {}
 
     _event_workflow_structure_updated = SimplePublisher[WorkflowStructure]()
 
@@ -40,3 +41,28 @@ class MockAppContext(AppContext):
     @property
     def workflow_structure_updated(self):
         return self._event_workflow_structure_updated
+
+    def get_current_workflow_step_parameters(
+        self,
+        step_id: str
+    ) -> Optional[Dict]:
+        parameters = self._steps_parameters[step_id] \
+            if step_id in self._steps_parameters else None
+        if parameters is None and self._current_workflow is not None:
+            step = next((
+                x
+                for x in self._current_workflow.structure.steps
+                if x.id == step_id
+            ), None)
+            parameters = step.parameters
+            self._steps_parameters[step_id] = parameters
+        return parameters
+
+    def update_current_workflow_step_parameters(
+        self,
+        step_id: str,
+        parameters: Optional[Dict]
+    ) -> Optional[Dict]:
+        self._steps_parameters[step_id] = parameters
+        # TODO: processing here ?
+        return parameters

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import Dict, Optional
 from tinypubsub.simple import SimplePublisher
 
 from dharpa.vre.context.types import Workflow, WorkflowStructure
@@ -18,4 +18,18 @@ class AppContext(ABC):
     @property
     @abstractmethod
     def current_workflow(self) -> Optional[Workflow]:
+        ...
+
+    @abstractmethod
+    def get_current_workflow_step_parameters(
+        self,
+        step_id: str
+    ) -> Optional[Dict]:
+        ...
+
+    def update_current_workflow_step_parameters(
+        self,
+        step_id: str,
+        parameters: Optional[Dict]
+    ) -> Optional[Dict]:
         ...

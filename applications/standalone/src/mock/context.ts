@@ -64,19 +64,20 @@ export class MockContext<P, I, O> implements IBackEndContext {
 
   private async _handleGetModuleParameters(moduleId: string) {
     const value = this._store.getItem(`${moduleId}:${Target.ModuleParameters}`)
-    const parameters = value != null ? (JSON.parse(value) as P) : null
-    if (parameters != null) {
-      const response: ModuleParametersMessages.Updated<P> = {
-        action: 'updated',
-        content: {
-          moduleId,
-          parameters
-        }
-      }
+    const workflowParameters = this._currentWorkflow?.structure?.steps?.find(step => step.id === moduleId)
+      ?.parameters as P
 
-      this._moduleParametersSignal.emit(response)
-      return response
+    const parameters = value != null ? (JSON.parse(value) as P) : workflowParameters
+    const response: ModuleParametersMessages.Updated<P> = {
+      action: 'updated',
+      content: {
+        moduleId,
+        parameters
+      }
     }
+
+    this._moduleParametersSignal.emit(response)
+    return response
   }
 
   private async _handleUpdateModuleParameters(updateMessage: ModuleParametersMessages.Update<P>) {

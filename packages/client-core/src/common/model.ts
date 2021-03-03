@@ -34,6 +34,7 @@ export type OutputData = Record<string, DataModel>
 export interface WorkflowStructureStep {
   id: string
   module_id: string // TODO: convert to/from camel case in the backend
+  parameters?: unknown // TODO: a generic?
 }
 
 export interface WorkflowStructure {

@@ -112,7 +112,7 @@ export const useModuleParameters = <T>(moduleId: string): [T, (p: T) => Promise<
       })
 
     return () => context.unsubscribe(Target.ModuleParameters, handler)
-  }, [])
+  }, [moduleId])
 
   const update = <M extends T>(parameters: M): Promise<M> => {
     const message: ModuleParametersMessages.Update<M> = {
@@ -125,9 +125,9 @@ export const useModuleParameters = <T>(moduleId: string): [T, (p: T) => Promise<
     return context
       .sendMessage<typeof message.content, ModuleParametersContent<M>>(Target.ModuleParameters, message)
       .then(response => {
-        if (response?.content?.moduleId === moduleId && response?.content?.parameters != null) {
-          setLastValue(response.content.parameters)
-          return response.content.parameters
+        if (response?.content?.moduleId === moduleId) {
+          setLastValue(response?.content?.parameters)
+          return response?.content?.parameters
         }
       })
   }

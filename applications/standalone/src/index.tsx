@@ -19,9 +19,10 @@ import currentWorkflowData from './mock/resources/sampleWorkflow.yml'
 const currentWorkflow: Workflow = YAML.load(currentWorkflowData)
 
 const mockDataProcessor = async (
-  moduleId: string, // eslint-disable-line @typescript-eslint/no-unused-vars
-  moduleParameters: unknown // eslint-disable-line @typescript-eslint/no-unused-vars
+  moduleId: string,
+  moduleParameters: unknown
 ): Promise<DataContainer<InputData, OutputData>> => {
+  console.log(`Mock processing for workflow step "${moduleId}" with parameters`, moduleParameters)
   return {
     moduleId,
     inputs: {},

@@ -1,4 +1,4 @@
-from typing import List
+from typing import Dict, List, Optional
 from dataclasses import dataclass
 
 
@@ -6,6 +6,7 @@ from dataclasses import dataclass
 class WorkflowStructureStep:
     id: str  # guid
     module_id: str
+    parameters: Optional[Dict]
 
 
 @dataclass
