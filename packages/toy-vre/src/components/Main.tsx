@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useCurrentWorkflow, WorkflowStructureStep } from '@dharpa-vre/client-core'
 import { WorkflowPreview } from './WorkflowPreview'
-import { WorkflowModulePanel } from './workflowModulePanel'
+import { WorkflowModulePanel } from './WorkflowModulePanel'
 
 export const Main = (): JSX.Element => {
   const [workflow] = useCurrentWorkflow()
