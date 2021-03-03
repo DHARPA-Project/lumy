@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@dharpa-vre/client-core": "*",
+    "@dharpa-vre/toy-vre": "*",
     "@jupyterlab/application": "3",
     "@jupyterlab/launcher": "3",
     "@jupyterlab/mainmenu": "3",

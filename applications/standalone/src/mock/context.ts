@@ -1,24 +1,26 @@
 import { Signal } from '@lumino/signaling'
 
 import {
-  IModuleContext,
+  IBackEndContext,
   Target,
-  IMessageWithAction,
   DataContainer,
   ModuleDataMessages,
-  ModuleParametersMessages
+  ModuleParametersMessages,
+  WorkflowMessages,
+  MessageEnvelope,
+  Workflow
 } from '@dharpa-vre/client-core'
 
-export type DataProcessor<P, I, O> = (moduleParameters: P) => Promise<DataContainer<I, O>>
+export type DataProcessor<P, I, O> = (moduleId: string, moduleParameters: P) => Promise<DataContainer<I, O>>
 
 export interface MockContextParameters<P, I, O> {
   processData: DataProcessor<P, I, O>
+  currentWorkflow?: Workflow
   startupDelayMs?: number
 }
 
-export class MockContext<P, I, O> implements IModuleContext {
+export class MockContext<P, I, O> implements IBackEndContext {
   private _isDisposed = false
-  private _moduleId: string
   private _store: Storage
   private _processData: DataProcessor<P, I, O>
 
@@ -29,13 +31,15 @@ export class MockContext<P, I, O> implements IModuleContext {
     this
   )
   private _moduleDataPreviewSignal = new Signal<MockContext<P, I, O>, ModuleDataMessages.Updated<I, O>>(this)
+  private _workflowSignal = new Signal<MockContext<P, I, O>, WorkflowMessages.Updated>(this)
 
   private _mostRecentParameters: ModuleParametersMessages.Updated<P>
+  private _currentWorkflow: Workflow
 
-  constructor(moduleId: string, parameters?: MockContextParameters<P, I, O>) {
-    this._moduleId = moduleId
+  constructor(parameters?: MockContextParameters<P, I, O>) {
     this._store = window.localStorage
     this._processData = parameters?.processData
+    this._currentWorkflow = parameters?.currentWorkflow
 
     this._moduleParametersSignal.connect(this._handleParametersUpdated, this)
 
@@ -58,43 +62,43 @@ export class MockContext<P, I, O> implements IModuleContext {
     this._isDisposed = true
   }
 
-  private async _handleGetModuleParameters() {
-    const value = this._store.getItem(`${this.moduleId}:${Target.ModuleParameters}`)
-    const parameters = value != null ? (JSON.parse(value) as P) : null
-    if (parameters != null) {
-      const response: ModuleParametersMessages.Updated<P> = {
-        action: 'updated',
-        moduleId: this.moduleId,
+  private async _handleGetModuleParameters(moduleId: string) {
+    const value = this._store.getItem(`${moduleId}:${Target.ModuleParameters}`)
+    const workflowParameters = this._currentWorkflow?.structure?.steps?.find(step => step.id === moduleId)
+      ?.parameters as P
+
+    const parameters = value != null ? (JSON.parse(value) as P) : workflowParameters
+    const response: ModuleParametersMessages.Updated<P> = {
+      action: 'updated',
+      content: {
+        moduleId,
         parameters
       }
-
-      this._moduleParametersSignal.emit(response)
-      return response
     }
+
+    this._moduleParametersSignal.emit(response)
+    return response
   }
 
   private async _handleUpdateModuleParameters(updateMessage: ModuleParametersMessages.Update<P>) {
-    const { moduleParameters, moduleId } = updateMessage
-    if (moduleId !== this.moduleId)
-      throw new Error(
-        `Updating parameters for module "${moduleId}" using context of module "${this.moduleId}"`
-      )
-    this._store.setItem(`${this.moduleId}:${Target.ModuleParameters}`, JSON.stringify(moduleParameters))
+    const { parameters, moduleId } = updateMessage.content
+    this._store.setItem(`${moduleId}:${Target.ModuleParameters}`, JSON.stringify(parameters))
 
     const response: ModuleParametersMessages.Updated<P> = {
       action: 'updated',
-      moduleId: this.moduleId,
-      parameters: moduleParameters
+      content: {
+        moduleId,
+        parameters
+      }
     }
 
     // fake data processing
     if (this._processData != null) {
-      return this._processData(moduleParameters)
+      return this._processData(moduleId, parameters)
         .then(dataContainer => {
           const response: ModuleDataMessages.Updated<I, O> = {
-            ...dataContainer,
-            moduleId: this.moduleId,
-            action: 'updated'
+            action: 'updated',
+            content: dataContainer
           }
           return this._moduleDataPreviewSignal.emit(response)
         })
@@ -102,30 +106,31 @@ export class MockContext<P, I, O> implements IModuleContext {
     } else return Promise.resolve(response)
   }
 
-  private async _handleGetModuleIOPreview() {
+  private async _handleGetModuleIOPreview(moduleId: string) {
     // fake data processing
     if (this._processData != null) {
-      return this._processData(this._mostRecentParameters?.parameters).then(dataContainer => {
-        const response: ModuleDataMessages.Updated<I, O> = {
-          ...dataContainer,
-          moduleId: this.moduleId,
-          action: 'updated'
+      return this._processData(moduleId, this._mostRecentParameters?.content?.parameters).then(
+        dataContainer => {
+          const response: ModuleDataMessages.Updated<I, O> = {
+            action: 'updated',
+            content: dataContainer
+          }
+          return this._moduleDataPreviewSignal.emit(response)
         }
-        return this._moduleDataPreviewSignal.emit(response)
-      })
+      )
     }
   }
 
-  sendMessage<T extends IMessageWithAction, U extends IMessageWithAction>(
-    target: Target,
-    msg: T
-  ): Promise<U> {
+  sendMessage<T, U>(target: Target, msg: MessageEnvelope<T>): Promise<U> {
     const { action } = msg
     const coerce = <T>(v: T) => (v as unknown) as U
 
     if (target === Target.ModuleParameters) {
       if (action === 'get') {
-        return this._handleGetModuleParameters().then(coerce)
+        const {
+          content: { moduleId }
+        } = (msg as unknown) as ModuleParametersMessages.Get
+        return this._handleGetModuleParameters(moduleId).then(coerce)
       } else if (action === 'update') {
         return this._handleUpdateModuleParameters(
           (msg as unknown) as ModuleParametersMessages.Update<P>
@@ -135,7 +140,23 @@ export class MockContext<P, I, O> implements IModuleContext {
       throw new Error(`Action "${action}" not supported for target "${target}"`)
     } else if (target === Target.ModuleIOPreview) {
       if (action === 'get') {
-        return this._handleGetModuleIOPreview().then(coerce)
+        const {
+          content: { moduleId }
+        } = (msg as unknown) as ModuleDataMessages.GetPreview
+        return this._handleGetModuleIOPreview(moduleId).then(coerce)
+      }
+
+      throw new Error(`Action "${action}" not supported for target "${target}"`)
+    } else if (target === Target.Workflow) {
+      if (action === 'get') {
+        const msg: WorkflowMessages.Updated = {
+          action: 'updated',
+          content: {
+            workflow: this._currentWorkflow
+          }
+        }
+        this._workflowSignal.emit(msg)
+        return
       }
 
       throw new Error(`Action "${action}" not supported for target "${target}"`)
@@ -144,36 +165,29 @@ export class MockContext<P, I, O> implements IModuleContext {
     throw new Error(`Target not supported: ${target}`)
   }
 
-  private _getSignal<T extends IMessageWithAction>(target: Target): Signal<MockContext<P, I, O>, T> {
+  private _getSignal<T>(target: Target): Signal<MockContext<P, I, O>, T> {
     if (target === Target.ModuleParameters) {
       return (this._moduleParametersSignal as unknown) as Signal<MockContext<P, I, O>, T>
     } else if (target === Target.ModuleIOPreview) {
       return (this._moduleDataPreviewSignal as unknown) as Signal<MockContext<P, I, O>, T>
+    } else if (target === Target.Workflow) {
+      return (this._workflowSignal as unknown) as Signal<MockContext<P, I, O>, T>
     }
+    throw new Error(`Target "${target}" has not been implemented in mock yet.`)
   }
 
-  subscribe<T extends IMessageWithAction>(
-    target: Target,
-    callback: (ctx: IModuleContext, msg: T) => void
-  ): void {
-    const signal = this._getSignal<T>(target)
+  subscribe<T>(target: Target, callback: (ctx: IBackEndContext, msg: MessageEnvelope<T>) => void): void {
+    const signal = this._getSignal<MessageEnvelope<T>>(target)
     if (signal == null) throw new Error(`Target not supported: ${target}`)
 
     signal.connect(callback)
   }
 
-  unsubscribe<T extends IMessageWithAction>(
-    target: Target,
-    callback: (ctx: IModuleContext, msg: T) => void
-  ): void {
-    const signal = this._getSignal<T>(target)
+  unsubscribe<T>(target: Target, callback: (ctx: IBackEndContext, msg: MessageEnvelope<T>) => void): void {
+    const signal = this._getSignal<MessageEnvelope<T>>(target)
     if (signal == null) throw new Error(`Target not supported: ${target}`)
 
     signal.disconnect(callback)
-  }
-
-  get moduleId(): string {
-    return this._moduleId
   }
 
   get isAvailable(): boolean {

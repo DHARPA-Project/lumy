@@ -26,7 +26,10 @@ setup_args = dict(
     packages=setuptools.find_packages(),
     install_requires=[
         'ipython',
-        'ipykernel'
+        'ipykernel',
+        'tinypubsub>=0.1.0',
+        'dacite',
+        'pyyaml'
     ],
     zip_safe=False,
     include_package_data=True,

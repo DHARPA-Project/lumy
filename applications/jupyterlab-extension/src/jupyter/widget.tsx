@@ -1,7 +1,8 @@
 import React from 'react'
 import { ReactWidget } from '@jupyterlab/apputils'
 import { KernelModuleContext } from './kernelContext'
-import { ModuleContextProvider, useBackendIsReady } from '@dharpa-vre/client-core'
+import { BackEndContextProvider, useBackendIsReady } from '@dharpa-vre/client-core'
+import { Main } from '@dharpa-vre/toy-vre'
 
 const centeredStyle = {
   'text-align': 'center',
@@ -18,7 +19,7 @@ const App = () => {
 
   if (!backendIsReady) return <p style={centeredStyle}>↻ Backend is starting...</p>
 
-  return <p style={centeredStyle}>✔ VRE will be rendered here</p>
+  return <Main />
 }
 
 export class KernelView extends ReactWidget {
@@ -32,9 +33,9 @@ export class KernelView extends ReactWidget {
 
   protected render(): React.ReactElement<unknown> {
     return (
-      <ModuleContextProvider value={this._context}>
+      <BackEndContextProvider value={this._context}>
         <App />
-      </ModuleContextProvider>
+      </BackEndContextProvider>
     )
   }
 }

@@ -1,0 +1,16 @@
+id: c3f3e085-afa9-4449-8826-e8bc2e0c9566
+label: Sample workflow 1
+structure:
+  steps:
+    - id: 26948cab-7b90-4a3b-903f-f94305c57d26
+      module_id: module_this
+      parameters:
+        parameterA: 42
+        parameterB: 'foo'
+    - id: 2731830e-4aca-4259-ada1-f99a5a066896
+      module_id: module_that
+      parameters:
+        parameterC: [1, 2, 3]
+        parameterD: 'bar'
+    - id: 035a3b27-1a5a-49e7-9055-c2a9a5553fa8
+      module_id: another_module
