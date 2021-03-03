@@ -12,7 +12,7 @@ from dharpa.vre.jupyter.base import MessageEnvelope, Target, TargetPublisher
 from dharpa.vre.context.context import AppContext
 from dharpa.vre.context.mock.app_context import MockAppContext
 
-logger = logging.getLogger()
+logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 logger.addHandler(logging.StreamHandler(sys.stdout))
 
@@ -30,11 +30,11 @@ class Context(TargetPublisher):
 
     @staticmethod
     def start():
-        if Context.getInstance() is None:
+        if Context.get_instance() is None:
             Context()
 
     @staticmethod
-    def getInstance():
+    def get_instance():
         return Context.__instance
 
     def __init__(self):

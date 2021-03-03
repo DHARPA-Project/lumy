@@ -3,15 +3,15 @@ import logging
 from typing import Optional
 
 from dharpa.vre.context.context import AppContext
-from dharpa.vre.context.types import WorkflowStructure
+from dharpa.vre.context.types import Workflow
 from dharpa.vre.jupyter.base import MessageEnvelope, Target, TargetPublisher
 
 logger = logging.getLogger(__name__)
 
 
 @dataclass
-class MessageCurrentWorkflowStructure:
-    workflow_structure: Optional[WorkflowStructure] = None
+class MessageWorkflowUpdated:
+    workflow: Optional[Workflow] = None
 
 
 class WorkflowMessageHandler:
@@ -23,13 +23,20 @@ class WorkflowMessageHandler:
         self._publisher = publisher
 
     def handle_message(self, msg: MessageEnvelope):
-        if msg.type == 'get':
-            current_structure = self._context.current_workflow.structure \
-                if self._context.current_workflow is not None else None
-            self._publisher.publish(Target.Workflow, MessageEnvelope(
-                type='updated',
-                content=asdict(
-                    MessageCurrentWorkflowStructure(current_structure))
-            ))
+        handler = getattr(self, f'_handle_{msg.action}', None)
+        if handler:
+            return handler(msg)
         else:
-            logger.warn(f'Unknown message type received: {msg.type}')
+            logger.warn(f'Unknown message type received: {msg.action}')
+
+    def _handle_get(self, msg: MessageEnvelope):
+        '''
+        Return current workflow.
+        '''
+        self._publisher.publish(
+            Target.Workflow,
+            MessageEnvelope(
+                action='updated',
+                content=asdict(
+                    MessageWorkflowUpdated(self._context.current_workflow))
+            ))

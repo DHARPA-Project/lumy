@@ -60,6 +60,10 @@ module.exports = {
           loader: 'svg-url-loader',
           options: { encoding: 'none', limit: 10000 }
         }
+      },
+      {
+        test: /\.(yml|yaml)$/,
+        loader: 'raw-loader'
       }
     ]
   },

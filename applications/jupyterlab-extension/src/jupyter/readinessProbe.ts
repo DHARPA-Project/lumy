@@ -10,7 +10,7 @@ export enum ReadinessStatus {
   BackEndReady = 2
 }
 
-const BackEndReadyCheckCode = 'Context.getInstance().is_ready'
+const BackEndReadyCheckCode = 'Context.get_instance().is_ready'
 
 const BackEndStartCode = `
   from dharpa.vre.jupyter.context import Context

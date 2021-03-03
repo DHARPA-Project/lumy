@@ -1,13 +1,13 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Dict
+from typing import Dict, Optional
 from enum import Enum
 
 
 @dataclass
 class MessageEnvelope:
-    type: str
-    content: Dict
+    action: str
+    content: Optional[Dict] = None
 
 
 class Target(Enum):

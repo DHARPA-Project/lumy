@@ -27,7 +27,9 @@ setup_args = dict(
     install_requires=[
         'ipython',
         'ipykernel',
-        'tinypubsub>=0.1.0'
+        'tinypubsub>=0.1.0',
+        'dacite',
+        'pyyaml'
     ],
     zip_safe=False,
     include_package_data=True,

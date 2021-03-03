@@ -16,4 +16,5 @@ class WorkflowStructure:
 @dataclass
 class Workflow:
     id: str  # guid
+    label: str
     structure: WorkflowStructure

@@ -14,7 +14,7 @@
     "applications/*"
   ],
   "scripts": {
-    "eslint:check": "eslint packages/*/src applications/*/src --ext .ts,.tsx,.js,.jsx",
+    "eslint:check": "eslint packages/*/src/ applications/*/src/ --ext .ts,.tsx,.js,.jsx ",
     "tsc:check": "tsc --noEmit",
     "compile-and-lint": "yarn tsc:check && yarn eslint:check"
   }
