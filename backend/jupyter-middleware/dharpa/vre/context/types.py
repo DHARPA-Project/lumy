@@ -4,9 +4,12 @@ from dataclasses import dataclass
 
 @dataclass
 class WorkflowStructureStep:
+    """
+    Step in the workflow
+    """
     id: str  # guid
     module_id: str
-    parameters: Optional[Dict]
+    parameters: Optional[Dict] = None
 
 
 @dataclass

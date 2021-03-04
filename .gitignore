@@ -265,3 +265,5 @@ dist
 # Custom
 labextension
 .venv
+
+/schema
