@@ -1,4 +1,4 @@
-name: Compile and lint TypeScript and JavaScript, lint and do static type checking in Python
+name: Type check and lint TypeScript and Python code
 
 on: [push]
 
