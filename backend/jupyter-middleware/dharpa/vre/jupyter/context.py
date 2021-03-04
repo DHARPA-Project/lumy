@@ -2,7 +2,7 @@ from typing import Dict
 import logging
 import sys
 import json
-from dataclasses import asdict
+from dharpa.vre.utils.dataclasses import to_dict
 
 from ipykernel.comm import Comm
 from IPython import get_ipython
@@ -92,7 +92,7 @@ class Context(TargetPublisher):
 
     def publish(self, target: Target, msg: MessageEnvelope) -> None:
         comm = self._comms[target]
-        comm.send(asdict(msg))
+        comm.send(to_dict(msg))
 
     def _handle_message(self, target: Target, message: Dict) -> None:
         message_data: Dict = message.get('content', {}).get('data', {})

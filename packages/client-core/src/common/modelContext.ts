@@ -200,7 +200,7 @@ export const useModuleIO = <I, O>(moduleId: string, parameters?: UseModuleIOPara
     )
 
     return () => context.unsubscribe(Target.ModuleIOPreview, handler)
-  }, [])
+  }, [moduleId])
 
   return [lastValue?.inputs, lastValue?.output, lastValue?.fraction]
 }

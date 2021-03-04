@@ -6,7 +6,7 @@ const HTMLWebPackPlugin = require('html-webpack-plugin')
 module.exports = {
   entry: { index: './src/index.tsx' },
   devtool: 'source-map',
-  stats: 'detailed',
+  // stats: 'detailed',
   mode: 'development',
   devServer: {
     historyApiFallback: true,
