@@ -1,0 +1,21 @@
+{
+  "name": "@dharpa-vre/tools",
+  "version": "0.1.0",
+  "description": "DHARPA VRE tools",
+  "keywords": [
+    "dharpa",
+    "vre",
+    "tools"
+  ],
+  "homepage": "https://dharpa.org",
+  "license": "AGPL-3.0-only",
+  "private": true,
+  "scripts": {
+    "from-python": "python generate_json_schema.py",
+    "to-typescript": "node ./generate_typescript.js",
+    "all": "yarn from-python && yarn to-typescript"
+  },
+  "devDependencies": {
+    "json-schema-to-typescript": "^10.1.3"
+  }
+}
