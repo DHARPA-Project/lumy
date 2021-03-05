@@ -12,10 +12,16 @@
   "private": true,
   "scripts": {
     "from-python": "python generate_json_schema.py",
-    "to-typescript": "node ./generate_typescript.js",
-    "all": "yarn from-python && yarn to-typescript"
+    "to-typescript": "yarn compile && node dist/generateTypescript.js",
+    "all": "yarn from-python && yarn to-typescript",
+    "compile": "tsc",
+    "gen": "yarn compile && node dist/schemaToLang"
   },
   "devDependencies": {
-    "json-schema-to-typescript": "^10.1.3"
+    "json-schema-to-typescript": "^10.1.3",
+    "prettier": "^2.2.1",
+    "quicktype": "^15.0.260",
+    "quicktype-core": "^6.0.70",
+    "typescript": "^4.2.3"
   }
 }

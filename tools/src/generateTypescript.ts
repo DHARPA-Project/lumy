@@ -1,5 +1,5 @@
-const { compileFromFile } = require('json-schema-to-typescript')
-const fs = require('fs')
+import { compileFromFile } from 'json-schema-to-typescript'
+import fs from 'fs'
 
 const options = {
   style: {
