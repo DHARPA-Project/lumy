@@ -1,4 +1,22 @@
 /**
+ * Indicates that an error occured and contains error details.
+ */
+export interface MsgError {
+  /**
+   * A less user friendly error message. Optional.
+   */
+  extendedMessage?: string
+  /**
+   * Unique ID of the error, for traceability.
+   */
+  id: string
+  /**
+   * User friendly error message.
+   */
+  message: string
+}
+
+/**
  * Get parameters of a step from the current workflow.
  */
 export interface MsgParametersGet {
@@ -18,20 +36,6 @@ export interface MsgParametersUpdate {
   id: string
   /**
    * Optional parameters of the step that we are setting.
-   */
-  parameters?: { [key: string]: unknown }
-}
-
-/**
- * Updated parameters of a step in the current workflow.
- */
-export interface MsgParametersUpdated {
-  /**
-   * Unique ID of the step within the workflow.
-   */
-  id: string
-  /**
-   * Optional parameters of the step.
    */
   parameters?: { [key: string]: unknown }
 }
@@ -92,6 +96,20 @@ export interface WorkflowStep {
   moduleId: string
   /**
    * Optional parameters of the module that are applied in this step.
+   */
+  parameters?: { [key: string]: unknown }
+}
+
+/**
+ * Updated parameters of a step in the current workflow.
+ */
+export interface MsgParametersUpdated {
+  /**
+   * Unique ID of the step within the workflow.
+   */
+  id: string
+  /**
+   * Optional parameters of the step.
    */
   parameters?: { [key: string]: unknown }
 }

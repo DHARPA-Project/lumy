@@ -130,6 +130,7 @@ export class KernelModuleContext implements IBackEndContext, IDisposable {
   }
 
   private async _reinitialiseComms(): Promise<void> {
+    this._sessionContext.session?.anyMessage.connect((_, msg) => this._kernelStreamPrinter(msg))
     Object.keys(this._signals).forEach(async target => {
       if (!(target in this._comms)) {
         await this._getComm(target as Target)
@@ -142,6 +143,13 @@ export class KernelModuleContext implements IBackEndContext, IDisposable {
         }
       }
     })
+  }
+
+  private _kernelStreamPrinter(msg: Kernel.IAnyMessageArgs) {
+    if (msg.direction === 'recv' && msg.msg.header.msg_type === 'stream') {
+      const { name, text } = msg.msg.content as Record<string, string>
+      console.debug(`[Backend ${name}]: ${text}`)
+    }
   }
 
   get kernelConnection(): Kernel.IKernelConnection {

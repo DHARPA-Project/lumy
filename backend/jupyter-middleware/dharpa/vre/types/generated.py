@@ -68,3 +68,14 @@ class MsgWorkflowUpdated:
     """Contains current workflow."""
     """Current workflow."""
     workflow: Optional[Workflow] = None
+
+
+@dataclass
+class MsgError:
+    """Indicates that an error occured and contains error details."""
+    """Unique ID of the error, for traceability."""
+    id: str
+    """User friendly error message."""
+    message: str
+    """A less user friendly error message. Optional."""
+    extended_message: Optional[str] = None

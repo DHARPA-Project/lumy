@@ -16,6 +16,7 @@ class MessageEnvelope:
 
 
 class Target(Enum):
+    Activity = 'activity'
     Workflow = 'workflow'
     ModuleParameters = 'module_parameters'
     ModuleIOPreview = 'module_io_preview'
