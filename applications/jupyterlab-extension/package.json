@@ -54,6 +54,7 @@
     "eslint-plugin-prettier": "3",
     "eslint-plugin-react": "7",
     "prettier": "2",
+    "pyright": "1",
     "rimraf": "3",
     "sass": "1",
     "sass-loader": "11",

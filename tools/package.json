@@ -1,0 +1,23 @@
+{
+  "name": "@dharpa-vre/tools",
+  "version": "0.1.0",
+  "description": "DHARPA VRE tools",
+  "keywords": [
+    "dharpa",
+    "vre",
+    "tools"
+  ],
+  "homepage": "https://dharpa.org",
+  "license": "AGPL-3.0-only",
+  "private": true,
+  "scripts": {
+    "compile": "tsc",
+    "gen": "yarn compile && node dist/generateCodeFromSchema"
+  },
+  "devDependencies": {
+    "prettier": "^2.2.1",
+    "quicktype": "^15.0.260",
+    "quicktype-core": "^6.0.70",
+    "typescript": "^4.2.3"
+  }
+}

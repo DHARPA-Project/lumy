@@ -265,3 +265,7 @@ dist
 # Custom
 labextension
 .venv
+
+/tools/schema
+/tools/*.d.ts
+/tools/yarn.lock

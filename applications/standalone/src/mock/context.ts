@@ -64,14 +64,14 @@ export class MockContext<P, I, O> implements IBackEndContext {
 
   private async _handleGetModuleParameters(moduleId: string) {
     const value = this._store.getItem(`${moduleId}:${Target.ModuleParameters}`)
-    const workflowParameters = this._currentWorkflow?.structure?.steps?.find(step => step.id === moduleId)
-      ?.parameters as P
+    const workflowParameters = (this._currentWorkflow?.structure?.steps?.find(step => step.id === moduleId)
+      ?.parameters as unknown) as P
 
     const parameters = value != null ? (JSON.parse(value) as P) : workflowParameters
     const response: ModuleParametersMessages.Updated<P> = {
       action: 'updated',
       content: {
-        moduleId,
+        id: moduleId,
         parameters
       }
     }
@@ -81,13 +81,13 @@ export class MockContext<P, I, O> implements IBackEndContext {
   }
 
   private async _handleUpdateModuleParameters(updateMessage: ModuleParametersMessages.Update<P>) {
-    const { parameters, moduleId } = updateMessage.content
+    const { parameters, id: moduleId } = updateMessage.content
     this._store.setItem(`${moduleId}:${Target.ModuleParameters}`, JSON.stringify(parameters))
 
     const response: ModuleParametersMessages.Updated<P> = {
       action: 'updated',
       content: {
-        moduleId,
+        id: moduleId,
         parameters
       }
     }
@@ -128,7 +128,7 @@ export class MockContext<P, I, O> implements IBackEndContext {
     if (target === Target.ModuleParameters) {
       if (action === 'get') {
         const {
-          content: { moduleId }
+          content: { id: moduleId }
         } = (msg as unknown) as ModuleParametersMessages.Get
         return this._handleGetModuleParameters(moduleId).then(coerce)
       } else if (action === 'update') {

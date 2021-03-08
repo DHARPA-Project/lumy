@@ -1,27 +1,12 @@
-from dataclasses import asdict, dataclass
 import logging
-from typing import Dict, Optional
 
 from dharpa.vre.jupyter.base import MessageEnvelope, MessageHandler, Target
+from dharpa.vre.types import (
+    MsgParametersGet, MsgParametersUpdated, MsgParametersUpdate
+)
+from dharpa.vre.utils.dataclasses import to_dict, from_dict
 
 logger = logging.getLogger(__name__)
-
-
-@dataclass
-class MessageGetParameters:
-    moduleId: str  # TODO: sort out case
-
-
-@dataclass
-class MessageUpdateParameters:
-    moduleId: str  # TODO: sort out case
-    parameters: Optional[Dict] = None
-
-
-@dataclass
-class MessageParametersUpdated:
-    moduleId: str  # TODO: sort out case
-    parameters: Optional[Dict] = None
 
 
 class ModuleParametersHandler(MessageHandler):
@@ -30,25 +15,25 @@ class ModuleParametersHandler(MessageHandler):
         '''
         Return workflow step parameters.
         '''
-        message = MessageGetParameters(**msg.content or {})
+        message = from_dict(MsgParametersGet, msg.content)
         parameters = self.context.get_current_workflow_step_parameters(
-            message.moduleId)
+            message.id)
 
         self.publisher.publish(
             Target.ModuleParameters,
             MessageEnvelope(
                 action='updated',
-                content=asdict(MessageParametersUpdated(
-                    message.moduleId,
+                content=to_dict(MsgParametersUpdated(
+                    message.id,
                     parameters
                 ))
             )
         )
 
     def _handle_update(self, msg: MessageEnvelope):
-        message = MessageParametersUpdated(**msg.content or {})
+        message = from_dict(MsgParametersUpdate, msg.content)
         parameters = self.context.update_current_workflow_step_parameters(
-            message.moduleId,
+            message.id,
             message.parameters
         )
 
@@ -56,8 +41,8 @@ class ModuleParametersHandler(MessageHandler):
             Target.ModuleParameters,
             MessageEnvelope(
                 action='updated',
-                content=asdict(MessageParametersUpdated(
-                    message.moduleId,
+                content=to_dict(MsgParametersUpdated(
+                    message.id,
                     parameters
                 ))
             )

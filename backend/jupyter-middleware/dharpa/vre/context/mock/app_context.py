@@ -1,15 +1,10 @@
 import importlib.resources as pkg_resources
 from typing import Dict, Optional, Callable
+from dharpa.vre.utils.dataclasses import from_yaml
 from tinypubsub.simple import SimplePublisher
-import yaml
-try:
-    from yaml import CLoader as Loader
-except ImportError:
-    from yaml import Loader
-from dacite import from_dict
 
 from dharpa.vre.context.context import AppContext
-from dharpa.vre.context.types import Workflow, WorkflowStructure
+from dharpa.vre.types import Workflow, WorkflowStructure
 from dharpa.vre.context.mock import resources
 
 WorkflowStructureUpdated = Callable[[WorkflowStructure], None]
@@ -24,8 +19,7 @@ class MockAppContext(AppContext):
     def __init__(self):
         workflow_file_content = pkg_resources.open_text(
             resources, 'sample_workflow_1.yml')
-        workflow = from_dict(data_class=Workflow, data=yaml.load(
-            workflow_file_content, Loader=Loader))
+        workflow = from_yaml(Workflow, workflow_file_content)
         self.load_workflow(workflow)
 
     def load_workflow(self, workflow: Workflow) -> None:
