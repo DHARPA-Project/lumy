@@ -32,6 +32,7 @@ export class MockContext<P, I, O> implements IBackEndContext {
   )
   private _moduleDataPreviewSignal = new Signal<MockContext<P, I, O>, ModuleDataMessages.Updated<I, O>>(this)
   private _workflowSignal = new Signal<MockContext<P, I, O>, WorkflowMessages.Updated>(this)
+  private _activitySignal = new Signal<MockContext<P, I, O>, void>(this)
 
   private _mostRecentParameters: ModuleParametersMessages.Updated<P>
   private _currentWorkflow: Workflow
@@ -172,6 +173,8 @@ export class MockContext<P, I, O> implements IBackEndContext {
       return (this._moduleDataPreviewSignal as unknown) as Signal<MockContext<P, I, O>, T>
     } else if (target === Target.Workflow) {
       return (this._workflowSignal as unknown) as Signal<MockContext<P, I, O>, T>
+    } else if (target === Target.Activity) {
+      return (this._activitySignal as unknown) as Signal<MockContext<P, I, O>, T>
     }
     throw new Error(`Target "${target}" has not been implemented in mock yet.`)
   }
