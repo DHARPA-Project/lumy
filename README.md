@@ -115,3 +115,7 @@ yarn start
 ```
 
 The web app is available on [http://localhost:8080/](http://localhost:8080/).
+
+## Modules panels
+
+Modules panels components are in `packages/modules`. Generally one file per module, mapped to module by `id` in the `index.ts`.

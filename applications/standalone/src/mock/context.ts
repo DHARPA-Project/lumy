@@ -8,8 +8,10 @@ import {
   ModuleParametersMessages,
   WorkflowMessages,
   MessageEnvelope,
-  Workflow
+  Workflow,
+  ModuleViewProvider
 } from '@dharpa-vre/client-core'
+import { viewProvider } from '@dharpa-vre/modules'
 
 export type DataProcessor<P, I, O> = (moduleId: string, moduleParameters: P) => Promise<DataContainer<I, O>>
 
@@ -195,6 +197,10 @@ export class MockContext<P, I, O> implements IBackEndContext {
 
   get isAvailable(): boolean {
     return this._isReady
+  }
+
+  get moduleViewProvider(): ModuleViewProvider {
+    return viewProvider
   }
 
   onAvailabilityChanged(callback: (isAvailable: boolean) => void): void {
