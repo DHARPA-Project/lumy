@@ -1,4 +1,10 @@
-import { MsgParametersGet, MsgParametersUpdate, MsgParametersUpdated, MsgWorkflowUpdated } from './generated'
+import {
+  MsgError,
+  MsgParametersGet,
+  MsgParametersUpdate,
+  MsgParametersUpdated,
+  MsgWorkflowUpdated
+} from './generated'
 
 export namespace Parameters {
   export type Get = MsgParametersGet
@@ -12,4 +18,8 @@ export namespace Parameters {
 
 export namespace Workflow {
   export type Updated = MsgWorkflowUpdated
+}
+
+export namespace Activity {
+  export type Error = MsgError
 }

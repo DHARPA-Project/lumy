@@ -1,11 +1,17 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import { Workflow, Messages } from './types'
+import { Activity } from './types/messages'
 
 /**
  * Communication targets (channels) used to exchange messages
  * between the backend and the frontend.
  */
 export enum Target {
+  /**
+   * All messages related to core functionality of the VRE:
+   * errors, status, etc..
+   */
+  Activity = 'activity',
   /**
    * Everything about current workflow.
    */
@@ -252,4 +258,19 @@ export const useCurrentWorkflow = (): [Workflow] => {
   }, [])
 
   return [workflow]
+}
+
+export const useLastError = (): [Activity.Error] => {
+  const context = useContext(BackEndContext)
+  const [lastError, setLastError] = useState<Activity.Error>()
+
+  useEffect(() => {
+    const handler = (ctx: IBackEndContext, msg: MessageEnvelope<Activity.Error>) => {
+      if (msg.action === 'error') setLastError(msg.content)
+    }
+    context.subscribe(Target.Activity, handler)
+    return () => context.unsubscribe(Target.Activity, handler)
+  }, [])
+
+  return [lastError]
 }
