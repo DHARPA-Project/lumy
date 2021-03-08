@@ -119,3 +119,8 @@ The web app is available on [http://localhost:8080/](http://localhost:8080/).
 ## Modules panels
 
 Modules panels components are in `packages/modules`. Generally one file per module, mapped to module by `id` in the `index.ts`.
+
+
+## Repository structure overview
+
+<img width="1002" alt="repo-overview" src="https://user-images.githubusercontent.com/89853/110335755-7b417f00-8024-11eb-827c-b1b5de5af1b1.png">
