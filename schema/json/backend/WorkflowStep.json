@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "$id": "https://dharpa.org/schemas/backend/WorkflowStep.json",
+  "type": "object",
+  "description": "A single Workflow step.",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique ID of the step within the workflow."
+    },
+    "moduleId": {
+      "type": "string",
+      "description": "ID of the module that is used in this step."
+    },
+    "parameters": {
+      "type": "object",
+      "description": "Optional parameters of the module that are applied in this step."
+    }
+  },
+  "required": [
+    "id",
+    "moduleId"
+  ]
+}

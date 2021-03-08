@@ -30,19 +30,3 @@ export interface TextListDataModel extends DataModel {
  */
 export type InputData = Record<string, DataModel>
 export type OutputData = Record<string, DataModel>
-
-export interface WorkflowStructureStep {
-  id: string
-  moduleId: string
-  parameters?: unknown // TODO: a generic?
-}
-
-export interface WorkflowStructure {
-  steps: WorkflowStructureStep[]
-}
-
-export interface Workflow {
-  id: string
-  label: string
-  structure: WorkflowStructure
-}

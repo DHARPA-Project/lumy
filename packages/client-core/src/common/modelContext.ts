@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react'
-import { Workflow } from './model'
+import { Workflow, Messages } from './types'
 
 /**
  * Communication targets (channels) used to exchange messages
@@ -52,11 +52,6 @@ export interface NoneMessage extends MessageEnvelope<void> {
   action: 'none'
 }
 
-interface ModuleParametersContent<T> {
-  moduleId: string
-  parameters: T
-}
-
 /**
  * Messages sent via the parameters target channel @see {Target#ModuleParameters}
  */
@@ -65,17 +60,17 @@ export namespace ModuleParametersMessages {
    * Sent by backend when parameters for the module are updated
    * or a "get" request is sent.
    */
-  export type Updated<T> = MessageEnvelope<ModuleParametersContent<T>, 'updated'>
+  export type Updated<T> = MessageEnvelope<Messages.Parameters.Updated<T>, 'updated'>
 
   /**
    * Sent by frontend when parameters need to be updated.
    */
-  export type Update<T> = MessageEnvelope<ModuleParametersContent<T>, 'update'>
+  export type Update<T> = MessageEnvelope<Messages.Parameters.Update<T>, 'update'>
 
   /**
    * Sent by frontend when parameters state needs to be retrieved from the backend.
    */
-  export type Get = MessageEnvelope<{ moduleId: string }, 'get'>
+  export type Get = MessageEnvelope<Messages.Parameters.Get, 'get'>
 }
 
 /**
@@ -92,22 +87,22 @@ export const useModuleParameters = <T>(moduleId: string): [T, (p: T) => Promise<
     const handler = <M>(ctx: IBackEndContext, msg: MessageEnvelope<M>) => {
       if (msg.action == 'updated') {
         const { content } = (msg as unknown) as ModuleParametersMessages.Updated<T>
-        if (content?.moduleId === moduleId) setLastValue(content?.parameters)
+        if (content?.id === moduleId) setLastValue(content?.parameters)
       }
     }
     context.subscribe<T>(Target.ModuleParameters, handler)
 
     const getParametersMessage: ModuleParametersMessages.Get = {
       action: 'get',
-      content: { moduleId }
+      content: { id: moduleId }
     }
     context
-      .sendMessage<typeof getParametersMessage.content, ModuleParametersContent<T>>(
+      .sendMessage<typeof getParametersMessage.content, Messages.Parameters.Updated<T>>(
         Target.ModuleParameters,
         getParametersMessage
       )
       .then(response => {
-        if (response?.content?.parameters != null && response?.content?.moduleId === moduleId)
+        if (response?.content?.parameters != null && response?.content?.id === moduleId)
           setLastValue(response?.content?.parameters)
       })
 
@@ -118,14 +113,14 @@ export const useModuleParameters = <T>(moduleId: string): [T, (p: T) => Promise<
     const message: ModuleParametersMessages.Update<M> = {
       action: 'update',
       content: {
-        moduleId,
+        id: moduleId,
         parameters
       }
     }
     return context
-      .sendMessage<typeof message.content, ModuleParametersContent<M>>(Target.ModuleParameters, message)
+      .sendMessage<typeof message.content, Messages.Parameters.Updated<M>>(Target.ModuleParameters, message)
       .then(response => {
-        if (response?.content?.moduleId === moduleId) {
+        if (response?.content?.id === moduleId) {
           setLastValue(response?.content?.parameters)
           return response?.content?.parameters
         }
@@ -224,7 +219,7 @@ export namespace WorkflowMessages {
    * Sent by backend when data has been reprocessed or
    * when a "get" request is sent.
    */
-  export type Updated = MessageEnvelope<{ workflow: Workflow }, 'updated'>
+  export type Updated = MessageEnvelope<Messages.Workflow.Updated, 'updated'>
 
   /**
    * Sent by frontend when it needs the latest state of calculated data.

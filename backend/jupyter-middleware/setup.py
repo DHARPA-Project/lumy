@@ -29,7 +29,7 @@ setup_args = dict(
         'ipykernel',
         'tinypubsub>=0.1.0',
         'dacite',
-        'pyhumps',
+        'stringcase>1.2.0',
         'pyyaml'
     ],
     zip_safe=False,

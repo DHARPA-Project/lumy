@@ -6,6 +6,8 @@ All front end Typescript packages are in `packages` directory, except the `jupyt
 
 All back end Python packages are in `backend`.
 
+JSON schema files are in `schema/json`.
+
 ### Front end packages
 
 Configuration files for [eslint](https://eslint.org/), [prettier](https://prettier.io/) and base configuration file (`tsconfig.base.json`) for Typescript are here, in the top level directory.
@@ -20,6 +22,14 @@ TBD
 
 A `.vscode` directory contains basic settings for linter, formatter and Python.
 If working with python, the settings expect `virtualenv` directory to be in this top directory as `.venv`.
+
+### Code generation
+
+Data types are defined as JSON schemas. Corresponding Python and TypeScript code is generated from the schemas. Code can be regenerated from `tools` directory (run `yarn install` there first):
+
+```
+yarn gen
+```
 
 ## Running in development mode
 

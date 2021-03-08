@@ -1,6 +1,20 @@
 import { quicktype, InputData, JSONSchemaInput, FetchingJSONSchemaStore } from 'quicktype-core'
-import { readFileSync, writeFileSync, readdirSync } from 'fs'
+import { readFile, writeFile, readdir, stat } from 'fs/promises'
+import path from 'path'
 import prettier from 'prettier'
+
+async function getFilesRecursively(dir: string): Promise<string[]> {
+  const files = await Promise.all(
+    (await readdir(dir)).flatMap(async file => {
+      const filePath = path.join(dir, file)
+      const stats = await stat(filePath)
+      if (stats.isDirectory()) return getFilesRecursively(filePath)
+      else if (stats.isFile()) return [filePath]
+    })
+  )
+
+  return files.reduce((all, folderContents) => all.concat(folderContents), [])
+}
 
 class MappedPrefixFetchingJSONSchemaStore extends FetchingJSONSchemaStore {
   private mappings: Record<string, string> = {}
@@ -36,14 +50,18 @@ async function quicktypeJSONSchema(
 ) {
   const schemaInput = new JSONSchemaInput(new MappedPrefixFetchingJSONSchemaStore(prefixMapper))
 
-  const schemaFiles = readdirSync(schemasLocation)
+  const schemaFiles = await getFilesRecursively(schemasLocation)
 
   await Promise.all(
-    schemaFiles.map(filename => {
-      const typeName = filename.replace('.json', '')
+    schemaFiles.map(async filename => {
+      const typeName = path.basename(filename).replace('.json', '')
+      const content = (await readFile(filename)).toString()
+      const uri = JSON.parse(content)['$id']
+
       return schemaInput.addSource({
         name: typeName,
-        schema: readFileSync(`${schemasLocation}/${filename}`).toString()
+        schema: content,
+        uris: [uri]
       })
     })
   )
@@ -68,33 +86,35 @@ async function quicktypeJSONSchema(
     targetLanguage === 'typescript'
       ? (x: string) => prettier.format(x, { ...prettierConfig, parser: 'typescript' })
       : (x: string) => x
+  const addHeader = targetLanguage === 'python' ? (x: string) => `# flake8: noqa\n${x}` : (x: string) => x
 
-  const content = formatCode(result.lines.map(fixer).join('\n'))
+  const content = [result.lines.map(fixer).join('\n')].map(formatCode).map(addHeader)[0]
 
-  return writeFileSync(outputFile, content)
+  return writeFile(outputFile, content)
 }
 
 async function main() {
+  const schemasLocation = '../schema/json'
+
   const prefixMapper = {
-    'https://dharpa.org/schema/': './schema/'
+    'https://dharpa.org/schema': schemasLocation
   }
-  const schemasLocation = './schema/'
   const jupyterMiddlewarePath = '../backend/jupyter-middleware'
   const clientCorePath = '../packages/client-core/src/common'
 
   await quicktypeJSONSchema(
     'python',
     prefixMapper,
-    `${schemasLocation}/messages`,
-    `${jupyterMiddlewarePath}/dharpa/vre/jupyter/messages.py`
+    schemasLocation,
+    `${jupyterMiddlewarePath}/dharpa/vre/types/generated.py`
   )
 
   await quicktypeJSONSchema(
     'typescript',
     prefixMapper,
-    `${schemasLocation}/messages`,
-    `${clientCorePath}/messages.ts`
+    schemasLocation,
+    `${clientCorePath}/types/generated.ts`
   )
 }
 
-main()
+main().catch(console.error)

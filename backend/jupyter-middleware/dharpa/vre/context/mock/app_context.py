@@ -4,7 +4,7 @@ from dharpa.vre.utils.dataclasses import from_yaml
 from tinypubsub.simple import SimplePublisher
 
 from dharpa.vre.context.context import AppContext
-from dharpa.vre.context.types import Workflow, WorkflowStructure
+from dharpa.vre.types import Workflow, WorkflowStructure
 from dharpa.vre.context.mock import resources
 
 WorkflowStructureUpdated = Callable[[WorkflowStructure], None]

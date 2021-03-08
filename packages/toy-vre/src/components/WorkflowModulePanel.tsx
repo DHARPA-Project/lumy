@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { useModuleParameters, WorkflowStructureStep } from '@dharpa-vre/client-core'
+import { useModuleParameters, WorkflowStep } from '@dharpa-vre/client-core'
 
 export interface WorkflowModulePanelProps {
-  step: WorkflowStructureStep
+  step: WorkflowStep
 }
 
 type DummyParameters = Record<string, unknown>

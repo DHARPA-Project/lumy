@@ -1,12 +1,12 @@
 import React from 'react'
-import { Workflow, WorkflowStructureStep } from '@dharpa-vre/client-core'
+import { Workflow, WorkflowStep } from '@dharpa-vre/client-core'
 
 export interface WorkflowPreviewProps {
   workflow: Workflow
-  onStepSelected?: (step: WorkflowStructureStep) => void
+  onStepSelected?: (step: WorkflowStep) => void
 }
 
-const withoutParameters = (step: WorkflowStructureStep) => {
+const withoutParameters = (step: WorkflowStep) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { parameters, ...rest } = step
   return rest
