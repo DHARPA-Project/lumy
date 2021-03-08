@@ -4,7 +4,8 @@ import { JSONValue, UUID } from '@lumino/coreutils'
 import { Signal } from '@lumino/signaling'
 import { IDisposable } from '@lumino/disposable'
 import { ReadinessProbe } from './readinessProbe'
-import { IBackEndContext, MessageEnvelope, Target } from '@dharpa-vre/client-core'
+import { IBackEndContext, MessageEnvelope, ModuleViewProvider, Target } from '@dharpa-vre/client-core'
+import { viewProvider } from '@dharpa-vre/modules'
 
 export class KernelModuleContext implements IBackEndContext, IDisposable {
   private _contextId: string
@@ -154,5 +155,9 @@ export class KernelModuleContext implements IBackEndContext, IDisposable {
 
   get kernelConnection(): Kernel.IKernelConnection {
     return this._sessionContext.session?.kernel
+  }
+
+  get moduleViewProvider(): ModuleViewProvider {
+    return viewProvider
   }
 }

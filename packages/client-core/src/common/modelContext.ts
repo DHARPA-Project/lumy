@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react'
+import { ModuleViewProvider } from './modules'
 import { Workflow, Messages } from './types'
 import { Activity } from './types/messages'
 
@@ -43,13 +44,15 @@ export interface MessageEnvelope<T, A extends string = string> {
  */
 export interface IBackEndContext {
   isAvailable: boolean
+  moduleViewProvider: ModuleViewProvider
+
   sendMessage<T, U>(target: string, msg: MessageEnvelope<T>): Promise<MessageEnvelope<U>>
   subscribe<T>(target: Target, callback: (ctx: IBackEndContext, msg: MessageEnvelope<T>) => void): void
   unsubscribe<T>(target: Target, callback: (ctx: IBackEndContext, msg: MessageEnvelope<T>) => void): void
   onAvailabilityChanged(callback: (isAvailable: boolean) => void): void
 }
 
-const BackEndContext = createContext<IBackEndContext>(null)
+export const BackEndContext = createContext<IBackEndContext>(null)
 BackEndContext.displayName = 'VREBackEndContext'
 
 export const BackEndContextProvider = BackEndContext.Provider
