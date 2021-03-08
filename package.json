@@ -17,6 +17,8 @@
     "eslint:check": "eslint packages/*/src/ applications/*/src/ --ext .ts,.tsx,.js,.jsx ",
     "tsc:check": "tsc --noEmit",
     "compile-and-lint": "yarn tsc:check && yarn eslint:check",
-    "verify": "yarn compile-and-lint"
+    "typescript:check": "yarn compile-and-lint",
+    "python:check": "flake8 backend && pyright backend",
+    "verify": "yarn typescript:check && yarn python:check"
   }
 }

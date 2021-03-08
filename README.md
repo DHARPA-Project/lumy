@@ -31,6 +31,21 @@ Data types are defined as JSON schemas. Corresponding Python and TypeScript code
 yarn gen
 ```
 
+### Code health check
+
+To lint and type check all code (especially useful before pushing to GitHub which runs this as a post push action):
+
+```
+yarn verify
+```
+
+Or do it separately for each language:
+
+```
+yarn typescript:check
+yarn python:check
+```
+
 ## Running in development mode
 
 ### Running within JupyterLab
