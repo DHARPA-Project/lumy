@@ -14,7 +14,7 @@ from dharpa.vre.jupyter.base import (
     TargetPublisher,
 )
 from dharpa.vre.jupyter.message_handlers import (
-    ModuleIOPreviewHandler,
+    ModuleIOHandler,
     ModuleParametersHandler,
     WorkflowMessageHandler,
 )
@@ -56,7 +56,7 @@ class Context(TargetPublisher):
             Target.Workflow: WorkflowMessageHandler(self._context, self),
             Target.ModuleParameters: ModuleParametersHandler(
                 self._context, self),
-            Target.ModuleIOPreview: ModuleIOPreviewHandler(
+            Target.ModuleIO: ModuleIOHandler(
                 self._context, self)
         }
 
@@ -88,8 +88,8 @@ class Context(TargetPublisher):
         )
 
         get_ipython().kernel.comm_manager.register_target(
-            Target.ModuleIOPreview.value,
-            _open_handle_factory(Target.ModuleIOPreview)
+            Target.ModuleIO.value,
+            _open_handle_factory(Target.ModuleIO)
         )
 
         self._is_ready = True

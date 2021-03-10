@@ -17,6 +17,63 @@ export interface MsgError {
 }
 
 /**
+ * Announces current state of the backend. Useful for letting the user know if they need to
+ * wait.
+ */
+export interface MsgExecutionState {
+  /**
+   * Current state.
+   */
+  state: State
+}
+
+/**
+ * Current state.
+ */
+export enum State {
+  Busy = 'busy',
+  Idle = 'idle'
+}
+
+/**
+ * Get preview of I/O data of a step from the current workflow.
+ */
+export interface MsgModuleIOPreviewGet {
+  /**
+   * Unique ID of the step within the workflow that we are getting preview for.
+   */
+  id: string
+}
+
+/**
+ * Update preview parameters (or preview filters) for the current workflow.
+ */
+export interface MsgModuleIOPreviewParametersUpdate {
+  /**
+   * Size of the preview
+   */
+  size?: number
+}
+
+/**
+ * Contains preview of I/O data of a step from the current workflow.
+ */
+export interface MsgModuleIOPreviewUpdated {
+  /**
+   * Unique ID of the step within the workflow that the preview is for.
+   */
+  id: string
+  /**
+   * Inputs data for the module
+   */
+  inputs: unknown[]
+  /**
+   * Inputs data for the module
+   */
+  outputs: unknown[]
+}
+
+/**
  * Get parameters of a step from the current workflow.
  */
 export interface MsgParametersGet {
@@ -36,6 +93,20 @@ export interface MsgParametersUpdate {
   id: string
   /**
    * Optional parameters of the step that we are setting.
+   */
+  parameters?: { [key: string]: unknown }
+}
+
+/**
+ * Updated parameters of a step in the current workflow.
+ */
+export interface MsgParametersUpdated {
+  /**
+   * Unique ID of the step within the workflow.
+   */
+  id: string
+  /**
+   * Optional parameters of the step.
    */
   parameters?: { [key: string]: unknown }
 }
@@ -96,20 +167,6 @@ export interface WorkflowStep {
   moduleId: string
   /**
    * Optional parameters of the module that are applied in this step.
-   */
-  parameters?: { [key: string]: unknown }
-}
-
-/**
- * Updated parameters of a step in the current workflow.
- */
-export interface MsgParametersUpdated {
-  /**
-   * Unique ID of the step within the workflow.
-   */
-  id: string
-  /**
-   * Optional parameters of the step.
    */
   parameters?: { [key: string]: unknown }
 }

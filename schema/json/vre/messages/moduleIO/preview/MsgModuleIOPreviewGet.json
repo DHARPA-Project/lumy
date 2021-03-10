@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "$id": "https://dharpa.org/schemas/vre/messages/moduleIO/preview/MsgModuleIOPreviewGet.json",
+  "type": "object",
+  "description": "Get preview of I/O data of a step from the current workflow.",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique ID of the step within the workflow that we are getting preview for."
+    }
+  },
+  "required": [
+    "id"
+  ]
+}

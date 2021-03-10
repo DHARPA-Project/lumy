@@ -24,7 +24,7 @@ export enum Target {
   /**
    * Used to get preview processed data for the module.
    */
-  ModuleIOPreview = 'module_io_preview'
+  ModuleIO = 'module_io'
 }
 
 /**
@@ -82,32 +82,17 @@ export namespace ModuleParametersMessages {
 }
 
 /**
- * Module data container.
+ * Messages sent via the IO target channel @see {Target#ModuleIO}
  */
-export interface DataContainer<I, O> {
-  moduleId: string
-  /** Module inputs. */
-  inputs: I
-  /** Module outputs. */
-  output: O
-  /** Fraction of all data represented in this object. (0-1) */
-  fraction?: number
-}
-
-/**
- * Messages sent via the data target channel @see {Target#ModuleIOPreview}
- */
-export namespace ModuleDataMessages {
-  /**
-   * Sent by backend when data has been reprocessed or
-   * when a "get" request is sent.
-   */
-  export type Updated<I, O> = MessageEnvelope<DataContainer<I, O>, 'updated'>
-
-  /**
-   * Sent by frontend when it needs the latest state of calculated data.
-   */
-  export type GetPreview = MessageEnvelope<{ moduleId: string }, 'get'>
+export namespace ModuleIOMessages {
+  export namespace Preview {
+    export type Get = MessageEnvelope<Messages.ModuleIO.Preview.Get, 'previewGet'>
+    export type Updated = MessageEnvelope<Messages.ModuleIO.Preview.Updated, 'previewUpdated'>
+    export type ParametersUpdate = MessageEnvelope<
+      Messages.ModuleIO.Preview.ParametersUpdate,
+      'previewParametersUpdate'
+    >
+  }
 }
 
 /**
@@ -124,4 +109,9 @@ export namespace WorkflowMessages {
    * Sent by frontend when it needs the latest state of calculated data.
    */
   export type GetCurrent = MessageEnvelope<void, 'get'>
+}
+
+export namespace ActivityMessages {
+  export type Error = MessageEnvelope<Messages.Activity.Error, 'error'>
+  export type ExecutionState = MessageEnvelope<Messages.Activity.ExecutionState, 'state'>
 }

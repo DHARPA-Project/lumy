@@ -1,9 +1,13 @@
 import {
   MsgError,
+  MsgExecutionState,
   MsgParametersGet,
   MsgParametersUpdate,
   MsgParametersUpdated,
-  MsgWorkflowUpdated
+  MsgWorkflowUpdated,
+  MsgModuleIOPreviewGet,
+  MsgModuleIOPreviewUpdated,
+  MsgModuleIOPreviewParametersUpdate
 } from './generated'
 
 export namespace Parameters {
@@ -22,4 +26,13 @@ export namespace Workflow {
 
 export namespace Activity {
   export type Error = MsgError
+  export type ExecutionState = MsgExecutionState
+}
+
+export namespace ModuleIO {
+  export namespace Preview {
+    export type Get = MsgModuleIOPreviewGet
+    export type Updated = MsgModuleIOPreviewUpdated
+    export type ParametersUpdate = MsgModuleIOPreviewParametersUpdate
+  }
 }

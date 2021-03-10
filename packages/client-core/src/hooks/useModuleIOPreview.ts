@@ -1,45 +1,44 @@
 import { useContext, useEffect, useState } from 'react'
 import {
   BackEndContext,
-  DataContainer,
   IBackEndContext,
   MessageEnvelope,
-  ModuleDataMessages,
   NoneMessage,
-  Target
+  Target,
+  ModuleIOMessages
 } from '../common/context'
+import { Messages } from '../common/types'
+
+type Updated = Messages.ModuleIO.Preview.Updated
 
 /**
  * Returns the most recent input and output data of the module.
  * Data is updated every time it is reprocessed on the backend.
  */
-export const useModuleIOPreview = <I, O>(moduleId: string): [I, O, number] => {
+export const useModuleIOPreview = (stepId: string): [Updated] => {
   const context = useContext(BackEndContext)
-  const [lastValue, setLastValue] = useState<DataContainer<I, O>>()
+  const [lastValue, setLastValue] = useState<Updated>()
 
   useEffect(() => {
     const handler = <T>(ctx: IBackEndContext, msg: MessageEnvelope<T>) => {
-      if (msg.action == 'updated') {
-        const { content } = (msg as unknown) as ModuleDataMessages.Updated<I, O>
-        if (content?.moduleId === moduleId) {
-          setLastValue(content)
+      if (msg.action === 'previewUpdated') {
+        const message = (msg as unknown) as Updated
+        if (message.id === stepId) {
+          setLastValue(message)
         }
       }
     }
-    context.subscribe(Target.ModuleIOPreview, handler)
+    context.subscribe(Target.ModuleIO, handler)
 
-    const getIOPreviewMessage: ModuleDataMessages.GetPreview = {
-      action: 'get',
-      content: { moduleId }
+    const getIOPreviewMessage: ModuleIOMessages.Preview.Get = {
+      action: 'previewGet',
+      content: { id: stepId }
     }
     // get the most recent data on first use
-    context.sendMessage<typeof getIOPreviewMessage.content, NoneMessage>(
-      Target.ModuleIOPreview,
-      getIOPreviewMessage
-    )
+    context.sendMessage<typeof getIOPreviewMessage.content, NoneMessage>(Target.ModuleIO, getIOPreviewMessage)
 
-    return () => context.unsubscribe(Target.ModuleIOPreview, handler)
-  }, [moduleId])
+    return () => context.unsubscribe(Target.ModuleIO, handler)
+  }, [stepId])
 
-  return [lastValue?.inputs, lastValue?.output, lastValue?.fraction]
+  return [lastValue]
 }
