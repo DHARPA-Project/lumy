@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react'
-import { BackEndContext } from '../common/modelContext'
+import { BackEndContext } from '../common/context'
 
 export const useBackendIsReady = (): boolean => {
   const context = useContext(BackEndContext)

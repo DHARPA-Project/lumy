@@ -1,11 +1,5 @@
 import { useContext, useEffect, useState } from 'react'
-import {
-  BackEndContext,
-  IBackEndContext,
-  MessageEnvelope,
-  Target,
-  WorkflowMessages
-} from '../common/modelContext'
+import { BackEndContext, IBackEndContext, MessageEnvelope, Target, WorkflowMessages } from '../common/context'
 import { Workflow } from '../common/types'
 
 export const useCurrentWorkflow = (): [Workflow] => {

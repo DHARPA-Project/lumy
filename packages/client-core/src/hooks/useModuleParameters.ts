@@ -5,7 +5,7 @@ import {
   MessageEnvelope,
   ModuleParametersMessages,
   Target
-} from '../common/modelContext'
+} from '../common/context'
 import { Messages } from '../common/types'
 
 /**

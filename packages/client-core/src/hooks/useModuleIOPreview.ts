@@ -7,7 +7,7 @@ import {
   ModuleDataMessages,
   NoneMessage,
   Target
-} from '../common/modelContext'
+} from '../common/context'
 
 /**
  * Returns the most recent input and output data of the module.

@@ -1,20 +1,14 @@
 import React from 'react'
 import { render } from 'react-dom'
 import YAML from 'js-yaml'
-import {
-  DataContainer,
-  InputData,
-  BackEndContextProvider,
-  OutputData,
-  useBackendIsReady,
-  Workflow
-} from '@dharpa-vre/client-core'
+import { DataContainer, BackEndContextProvider, useBackendIsReady, Workflow } from '@dharpa-vre/client-core'
 import { Main } from '@dharpa-vre/toy-vre'
 import { MockContext } from './mock/context'
 
 import './index.scss'
 
 import currentWorkflowData from './mock/resources/sampleWorkflow.yml'
+import { InputData, OutputData } from './model'
 
 const currentWorkflow: Workflow = YAML.load(currentWorkflowData)
 

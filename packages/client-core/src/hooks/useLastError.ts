@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react'
 import { Activity } from '../common/types/messages'
-import { BackEndContext, IBackEndContext, MessageEnvelope, Target } from '../common/modelContext'
+import { BackEndContext, IBackEndContext, MessageEnvelope, Target } from '../common/context'
 
 export const useLastError = (): [Activity.Error] => {
   const context = useContext(BackEndContext)
