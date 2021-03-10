@@ -79,6 +79,11 @@ export namespace ModuleParametersMessages {
    * Sent by frontend when parameters state needs to be retrieved from the backend.
    */
   export type Get = MessageEnvelope<Messages.Parameters.Get, 'get'>
+
+  export namespace Snapshot {
+    export type Create<T> = MessageEnvelope<Messages.Parameters.Snapshot.Create<T>, 'create'>
+    export type List = MessageEnvelope<Messages.Parameters.Snapshot.List, 'list'>
+  }
 }
 
 /**

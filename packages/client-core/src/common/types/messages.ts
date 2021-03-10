@@ -7,7 +7,9 @@ import {
   MsgWorkflowUpdated,
   MsgModuleIOPreviewGet,
   MsgModuleIOPreviewUpdated,
-  MsgModuleIOPreviewParametersUpdate
+  MsgModuleIOPreviewParametersUpdate,
+  MsgParametersSnapshotCreate,
+  MsgParametersSnapshotList
 } from './generated'
 
 export namespace Parameters {
@@ -17,6 +19,13 @@ export namespace Parameters {
   }
   export interface Updated<T> extends Omit<MsgParametersUpdated, 'parameters'> {
     parameters: T
+  }
+
+  export namespace Snapshot {
+    export interface Create<T> extends Omit<MsgParametersSnapshotCreate, 'parameters'> {
+      parameters: T
+    }
+    export type List = MsgParametersSnapshotList
   }
 }
 

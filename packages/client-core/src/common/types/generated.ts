@@ -112,6 +112,34 @@ export interface MsgParametersUpdated {
 }
 
 /**
+ * Create snapshot of parameters of a step from the current workflow.
+ */
+export interface MsgParametersSnapshotCreate {
+  /**
+   * Optional parameters of the step.
+   */
+  parameters: { [key: string]: unknown }
+  /**
+   * Unique ID of the step within the workflow.
+   */
+  stepId: string
+}
+
+/**
+ * List of snapshots for a step from the current workflow.
+ */
+export interface MsgParametersSnapshotList {
+  /**
+   * List of snapshots.
+   */
+  snapshots: unknown[]
+  /**
+   * Unique ID of the step within the workflow.
+   */
+  stepId: string
+}
+
+/**
  * Contains current workflow.
  */
 export interface MsgWorkflowUpdated {

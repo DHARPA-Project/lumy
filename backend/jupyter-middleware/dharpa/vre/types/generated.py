@@ -1,18 +1,7 @@
 # flake8: noqa
-from dataclasses import dataclass
-from typing import Optional, List, Any, Dict
 from enum import Enum
-
-
-@dataclass
-class MsgError:
-    """Indicates that an error occured and contains error details."""
-    """Unique ID of the error, for traceability."""
-    id: str
-    """User friendly error message."""
-    message: str
-    """A less user friendly error message. Optional."""
-    extended_message: Optional[str] = None
+from dataclasses import dataclass
+from typing import Optional, Dict, Any, List
 
 
 class State(Enum):
@@ -31,13 +20,6 @@ class MsgExecutionState:
 
 
 @dataclass
-class MsgModuleIOPreviewGet:
-    """Get preview of I/O data of a step from the current workflow."""
-    """Unique ID of the step within the workflow that we are getting preview for."""
-    id: str
-
-
-@dataclass
 class MsgModuleIOPreviewParametersUpdate:
     """Update preview parameters (or preview filters) for the current workflow."""
     """Size of the preview"""
@@ -45,14 +27,14 @@ class MsgModuleIOPreviewParametersUpdate:
 
 
 @dataclass
-class MsgModuleIOPreviewUpdated:
-    """Contains preview of I/O data of a step from the current workflow."""
-    """Unique ID of the step within the workflow that the preview is for."""
+class MsgError:
+    """Indicates that an error occured and contains error details."""
+    """Unique ID of the error, for traceability."""
     id: str
-    """Inputs data for the module"""
-    inputs: List[Any]
-    """Inputs data for the module"""
-    outputs: List[Any]
+    """User friendly error message."""
+    message: str
+    """A less user friendly error message. Optional."""
+    extended_message: Optional[str] = None
 
 
 @dataclass
@@ -78,6 +60,22 @@ class MsgParametersUpdated:
     id: str
     """Optional parameters of the step."""
     parameters: Optional[Dict[str, Any]] = None
+
+
+@dataclass
+class MsgParametersSnapshotList:
+    """List of snapshots for a step from the current workflow."""
+    """List of snapshots."""
+    snapshots: List[Any]
+    """Unique ID of the step within the workflow."""
+    step_id: str
+
+
+@dataclass
+class MsgModuleIOPreviewGet:
+    """Get preview of I/O data of a step from the current workflow."""
+    """Unique ID of the step within the workflow that we are getting preview for."""
+    id: str
 
 
 @dataclass
@@ -120,3 +118,23 @@ class MsgWorkflowUpdated:
     """Contains current workflow."""
     """Current workflow."""
     workflow: Optional[Workflow] = None
+
+
+@dataclass
+class MsgModuleIOPreviewUpdated:
+    """Contains preview of I/O data of a step from the current workflow."""
+    """Unique ID of the step within the workflow that the preview is for."""
+    id: str
+    """Inputs data for the module"""
+    inputs: List[Any]
+    """Inputs data for the module"""
+    outputs: List[Any]
+
+
+@dataclass
+class MsgParametersSnapshotCreate:
+    """Create snapshot of parameters of a step from the current workflow."""
+    """Optional parameters of the step."""
+    parameters: Dict[str, Any]
+    """Unique ID of the step within the workflow."""
+    step_id: str
