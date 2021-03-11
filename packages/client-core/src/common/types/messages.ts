@@ -4,18 +4,18 @@ import {
   MsgParametersGet,
   MsgParametersUpdate,
   MsgParametersUpdated,
-  MsgWorkflowUpdated,
-  MsgModuleIOPreviewGet,
+  MsgWorkflowWorkflowUpdated,
+  MsgModuleIOGetPreview,
   MsgModuleIOPreviewUpdated,
-  MsgModuleIOPreviewParametersUpdate,
-  MsgParametersSnapshotCreate,
-  MsgParametersSnapshotList,
+  MsgModuleIOUpdatePreviewParameters,
+  MsgParametersCreateSnapshot,
+  MsgParametersSnapshots,
   MsgProgress,
   MsgModuleIOExecute,
   MsgModuleIOOutputUpdated,
-  MsgNotesGetList,
+  MsgNotesGetNotes,
   MsgNotesAdd,
-  MsgNotesList
+  MsgNotesNotes
 } from './generated'
 
 export namespace Parameters {
@@ -26,17 +26,14 @@ export namespace Parameters {
   export interface Updated<T> extends Omit<MsgParametersUpdated, 'parameters'> {
     parameters: T
   }
-
-  export namespace Snapshot {
-    export interface Create<T> extends Omit<MsgParametersSnapshotCreate, 'parameters'> {
-      parameters: T
-    }
-    export type List = MsgParametersSnapshotList
+  export interface CreateSnapshot<T> extends Omit<MsgParametersCreateSnapshot, 'parameters'> {
+    parameters: T
   }
+  export type Snapshots = MsgParametersSnapshots
 }
 
 export namespace Workflow {
-  export type Updated = MsgWorkflowUpdated
+  export type Updated = MsgWorkflowWorkflowUpdated
 }
 
 export namespace Activity {
@@ -46,17 +43,15 @@ export namespace Activity {
 }
 
 export namespace ModuleIO {
-  export namespace Preview {
-    export type Get = MsgModuleIOPreviewGet
-    export type Updated = MsgModuleIOPreviewUpdated
-    export type ParametersUpdate = MsgModuleIOPreviewParametersUpdate
-  }
+  export type GetPreview = MsgModuleIOGetPreview
+  export type PreviewUpdated = MsgModuleIOPreviewUpdated
+  export type UpdatePreviewParameters = MsgModuleIOUpdatePreviewParameters
   export type Execute = MsgModuleIOExecute
   export type OutputUpdated = MsgModuleIOOutputUpdated
 }
 
 export namespace Notes {
-  export type GetList = MsgNotesGetList
-  export type List = MsgNotesList
+  export type GetNotes = MsgNotesGetNotes
+  export type Notes = MsgNotesNotes
   export type Add = MsgNotesAdd
 }

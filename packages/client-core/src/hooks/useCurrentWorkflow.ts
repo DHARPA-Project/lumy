@@ -8,7 +8,7 @@ export const useCurrentWorkflow = (): [Workflow] => {
 
   useEffect(() => {
     const handler = <T>(ctx: IBackEndContext, msg: MessageEnvelope<T>) => {
-      if (msg.action === 'updated') {
+      if (msg.action === 'Updated') {
         const { content } = (msg as unknown) as WorkflowMessages.Updated
         setWorkflow(content?.workflow)
       }
@@ -16,7 +16,7 @@ export const useCurrentWorkflow = (): [Workflow] => {
     context.subscribe(Target.Workflow, handler)
 
     const getCurrentWorkflowMessage: WorkflowMessages.GetCurrent = {
-      action: 'get'
+      action: 'GetCurrent'
     }
     // get the most recent data on first use
     context.sendMessage(Target.Workflow, getCurrentWorkflowMessage)

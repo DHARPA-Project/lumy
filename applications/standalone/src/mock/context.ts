@@ -13,7 +13,7 @@ import {
 } from '@dharpa-vre/client-core'
 import { viewProvider } from '@dharpa-vre/modules'
 
-export type DataProcessorResult = Omit<Messages.ModuleIO.Preview.Updated, 'id'>
+export type DataProcessorResult = Omit<Messages.ModuleIO.PreviewUpdated, 'id'>
 
 export type DataProcessor<P> = (moduleId: string, moduleParameters: P) => Promise<DataProcessorResult>
 
@@ -32,7 +32,7 @@ export class MockContext<P> implements IBackEndContext {
   private _statusChangedSignal = new Signal<MockContext<P>, boolean>(this)
 
   private _moduleParametersSignal = new Signal<MockContext<P>, ModuleParametersMessages.Updated<P>>(this)
-  private _moduleDataPreviewSignal = new Signal<MockContext<P>, ModuleIOMessages.Preview.Updated>(this)
+  private _moduleDataPreviewSignal = new Signal<MockContext<P>, ModuleIOMessages.PreviewUpdated>(this)
   private _workflowSignal = new Signal<MockContext<P>, WorkflowMessages.Updated>(this)
   private _activitySignal = new Signal<MockContext<P>, void>(this)
 
@@ -77,7 +77,7 @@ export class MockContext<P> implements IBackEndContext {
 
     const parameters = value != null ? (JSON.parse(value) as P) : workflowParameters
     const response: ModuleParametersMessages.Updated<P> = {
-      action: 'updated',
+      action: 'Updated',
       content: {
         id: moduleId,
         parameters
@@ -93,7 +93,7 @@ export class MockContext<P> implements IBackEndContext {
     this._store.setItem(`${stepId}:${Target.ModuleParameters}`, JSON.stringify(parameters))
 
     const response: ModuleParametersMessages.Updated<P> = {
-      action: 'updated',
+      action: 'Updated',
       content: {
         id: stepId,
         parameters
@@ -106,8 +106,8 @@ export class MockContext<P> implements IBackEndContext {
     if (this._processData != null) {
       return this._processData(moduleId, parameters)
         .then(dataContainer => {
-          const response: ModuleIOMessages.Preview.Updated = {
-            action: 'previewUpdated',
+          const response: ModuleIOMessages.PreviewUpdated = {
+            action: 'PreviewUpdated',
             content: { id: stepId, ...dataContainer }
           }
           return this._moduleDataPreviewSignal.emit(response)
@@ -123,8 +123,8 @@ export class MockContext<P> implements IBackEndContext {
     if (this._processData != null) {
       return this._processData(moduleId, this._mostRecentParameters?.content?.parameters).then(
         dataContainer => {
-          const response: ModuleIOMessages.Preview.Updated = {
-            action: 'previewUpdated',
+          const response: ModuleIOMessages.PreviewUpdated = {
+            action: 'PreviewUpdated',
             content: { id: stepId, ...dataContainer }
           }
           return this._moduleDataPreviewSignal.emit(response)
@@ -138,12 +138,12 @@ export class MockContext<P> implements IBackEndContext {
     const coerce = <T>(v: T) => (v as unknown) as U
 
     if (target === Target.ModuleParameters) {
-      if (action === 'get') {
+      if (action === 'Get') {
         const {
           content: { id: moduleId }
         } = (msg as unknown) as ModuleParametersMessages.Get
         return this._handleGetModuleParameters(moduleId).then(coerce)
-      } else if (action === 'update') {
+      } else if (action === 'Update') {
         return this._handleUpdateModuleParameters(
           (msg as unknown) as ModuleParametersMessages.Update<P>
         ).then(coerce)
@@ -151,18 +151,18 @@ export class MockContext<P> implements IBackEndContext {
 
       throw new Error(`Action "${action}" not supported for target "${target}"`)
     } else if (target === Target.ModuleIO) {
-      if (action === 'getPreview') {
+      if (action === 'GetPreview') {
         const {
           content: { id }
-        } = (msg as unknown) as ModuleIOMessages.Preview.Get
+        } = (msg as unknown) as ModuleIOMessages.GetPreview
         return this._handleGetModuleIOPreview(id).then(coerce)
       }
 
       throw new Error(`Action "${action}" not supported for target "${target}"`)
     } else if (target === Target.Workflow) {
-      if (action === 'get') {
+      if (action === 'GetCurrent') {
         const msg: WorkflowMessages.Updated = {
-          action: 'updated',
+          action: 'Updated',
           content: {
             workflow: this._currentWorkflow
           }

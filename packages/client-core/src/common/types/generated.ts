@@ -1,4 +1,28 @@
 /**
+ * Target: "activity"
+ * Message type: "Error"
+ *
+ * Indicates that an error occured and contains error details.
+ */
+export interface MsgError {
+  /**
+   * A less user friendly error message. Optional.
+   */
+  extendedMessage?: string
+  /**
+   * Unique ID of the error, for traceability.
+   */
+  id: string
+  /**
+   * User friendly error message.
+   */
+  message: string
+}
+
+/**
+ * Target: "activity"
+ * Message type: "ExecutionState"
+ *
  * Announces current state of the backend. Useful for letting the user know if they need to
  * wait.
  */
@@ -18,24 +42,9 @@ export enum State {
 }
 
 /**
- * Indicates that an error occured and contains error details.
- */
-export interface MsgError {
-  /**
-   * A less user friendly error message. Optional.
-   */
-  extendedMessage?: string
-  /**
-   * Unique ID of the error, for traceability.
-   */
-  id: string
-  /**
-   * User friendly error message.
-   */
-  message: string
-}
-
-/**
+ * Target: "activity"
+ * Message type: "Progress"
+ *
  * Announces progress of current operation to the frontend.
  */
 export interface MsgProgress {
@@ -46,6 +55,141 @@ export interface MsgProgress {
 }
 
 /**
+ * Target: "dataRepository"
+ * Message type: "CreateSubset"
+ *
+ * Request to create a subset of items
+ */
+export interface MsgDataRepositoryCreateSubset {
+  /**
+   * List of items IDs to add to the subset
+   */
+  itemsIds: string[]
+  /**
+   * Label of the subset
+   */
+  label: string
+}
+
+/**
+ * Target: "dataRepository"
+ * Message type: "FindItems"
+ *
+ * Request to find items in data repository
+ */
+export interface MsgDataRepositoryFindItems {
+  filter?: DataRepositoryItemsFilter
+}
+
+/**
+ * Filter to apply to items
+ */
+export interface DataRepositoryItemsFilter {
+  /**
+   * Start from item
+   */
+  pageOffset?: number
+  /**
+   * Number of items to return
+   */
+  pageSize?: number
+}
+
+/**
+ * Target: "dataRepository"
+ * Message type: "GetItemPreview"
+ *
+ * Item preview
+ */
+export interface MsgDataRepositoryGetItemPreview {
+  /**
+   * Item ID
+   */
+  id: string
+}
+
+/**
+ * Target: "dataRepository"
+ * Message type: "ItemPreview"
+ *
+ * Item preview
+ */
+export interface MsgDataRepositoryItemPreview {
+  item: DataRepositoryItem
+}
+
+/**
+ * Item from data repository
+ */
+export interface DataRepositoryItem {
+  /**
+   * Unique ID of the item
+   */
+  id: string
+}
+
+/**
+ * Target: "dataRepository"
+ * Message type: "Items"
+ *
+ * Items from data repository
+ */
+export interface MsgDataRepositoryItems {
+  filter?: DataRepositoryItemsFilter
+  items: DataRepositoryItem[]
+}
+
+/**
+ * Target: "dataRepository"
+ * Message type: "Subset"
+ *
+ * A subset of items
+ */
+export interface MsgDataRepositorySubset {
+  /**
+   * Unique ID of the subset
+   */
+  id: string
+  /**
+   * List of items IDs to add to the subset
+   */
+  itemsIds: string[]
+  /**
+   * Label of the subset
+   */
+  label: string
+}
+
+/**
+ * Target: "moduleIO"
+ * Message type: "Execute"
+ *
+ * Run this step with the latest used parameters on all data (not preview only).
+ */
+export interface MsgModuleIOExecute {
+  /**
+   * Unique ID of the step within the workflow.
+   */
+  id: string
+}
+
+/**
+ * Target: "moduleIO"
+ * Message type: "GetPreview"
+ *
+ * Get preview of I/O data of a step from the current workflow.
+ */
+export interface MsgModuleIOGetPreview {
+  /**
+   * Unique ID of the step within the workflow that we are getting preview for.
+   */
+  id: string
+}
+
+/**
+ * Target: "moduleIO"
+ * Message type: "OutputUpdated"
+ *
  * Contains output data of a step from the current workflow after it was recalculated.
  */
 export interface MsgModuleIOOutputUpdated {
@@ -60,19 +204,33 @@ export interface MsgModuleIOOutputUpdated {
 }
 
 /**
- * Run this step with the latest used parameters on all data (not preview only).
+ * Target: "moduleIO"
+ * Message type: "PreviewUpdated"
+ *
+ * Contains preview of I/O data of a step from the current workflow.
  */
-export interface MsgModuleIOExecute {
+export interface MsgModuleIOPreviewUpdated {
   /**
-   * Unique ID of the step within the workflow.
+   * Unique ID of the step within the workflow that the preview is for.
    */
   id: string
+  /**
+   * Input data for the module
+   */
+  inputs: unknown[]
+  /**
+   * Output data for the module
+   */
+  outputs: unknown[]
 }
 
 /**
+ * Target: "moduleIO"
+ * Message type: "UpdatePreviewParameters"
+ *
  * Update preview parameters (or preview filters) for the current workflow.
  */
-export interface MsgModuleIOPreviewParametersUpdate {
+export interface MsgModuleIOUpdatePreviewParameters {
   /**
    * Size of the preview
    */
@@ -80,16 +238,9 @@ export interface MsgModuleIOPreviewParametersUpdate {
 }
 
 /**
- * Get preview of I/O data of a step from the current workflow.
- */
-export interface MsgModuleIOPreviewGet {
-  /**
-   * Unique ID of the step within the workflow that we are getting preview for.
-   */
-  id: string
-}
-
-/**
+ * Target: "notes"
+ * Message type: "Add"
+ *
  * Add a note for a workflow step.
  */
 export interface MsgNotesAdd {
@@ -115,27 +266,12 @@ export interface Note {
 }
 
 /**
- * Contains preview of I/O data of a step from the current workflow.
- */
-export interface MsgModuleIOPreviewUpdated {
-  /**
-   * Unique ID of the step within the workflow that the preview is for.
-   */
-  id: string
-  /**
-   * Input data for the module
-   */
-  inputs: unknown[]
-  /**
-   * Output data for the module
-   */
-  outputs: unknown[]
-}
-
-/**
+ * Target: "notes"
+ * Message type: "GetNotes"
+ *
  * Get list of notes for a workflow step.
  */
-export interface MsgNotesGetList {
+export interface MsgNotesGetNotes {
   /**
    * Workflow step Id.
    */
@@ -143,9 +279,12 @@ export interface MsgNotesGetList {
 }
 
 /**
+ * Target: "notes"
+ * Message type: "Notes"
+ *
  * Contains list of notes for a workflow step.
  */
-export interface MsgNotesList {
+export interface MsgNotesNotes {
   notes: Note[]
   /**
    * Workflow step Id.
@@ -154,6 +293,26 @@ export interface MsgNotesList {
 }
 
 /**
+ * Target: "parameters"
+ * Message type: "CreateSnapshot"
+ *
+ * Create snapshot of parameters of a step from the current workflow.
+ */
+export interface MsgParametersCreateSnapshot {
+  /**
+   * Optional parameters of the step.
+   */
+  parameters: { [key: string]: unknown }
+  /**
+   * Unique ID of the step within the workflow.
+   */
+  stepId: string
+}
+
+/**
+ * Target: "parameters"
+ * Message type: "Get"
+ *
  * Get parameters of a step from the current workflow.
  */
 export interface MsgParametersGet {
@@ -164,6 +323,26 @@ export interface MsgParametersGet {
 }
 
 /**
+ * Target: "parameters"
+ * Message type: "Snapshots"
+ *
+ * List of snapshots for a step from the current workflow.
+ */
+export interface MsgParametersSnapshots {
+  /**
+   * List of snapshots.
+   */
+  snapshots: unknown[]
+  /**
+   * Unique ID of the step within the workflow.
+   */
+  stepId: string
+}
+
+/**
+ * Target: "parameters"
+ * Message type: "Update"
+ *
  * Update parameters of a step in the current workflow.
  */
 export interface MsgParametersUpdate {
@@ -178,6 +357,9 @@ export interface MsgParametersUpdate {
 }
 
 /**
+ * Target: "parameters"
+ * Message type: "Updated"
+ *
  * Updated parameters of a step in the current workflow.
  */
 export interface MsgParametersUpdated {
@@ -192,37 +374,12 @@ export interface MsgParametersUpdated {
 }
 
 /**
- * Create snapshot of parameters of a step from the current workflow.
- */
-export interface MsgParametersSnapshotCreate {
-  /**
-   * Optional parameters of the step.
-   */
-  parameters: { [key: string]: unknown }
-  /**
-   * Unique ID of the step within the workflow.
-   */
-  stepId: string
-}
-
-/**
- * List of snapshots for a step from the current workflow.
- */
-export interface MsgParametersSnapshotList {
-  /**
-   * List of snapshots.
-   */
-  snapshots: unknown[]
-  /**
-   * Unique ID of the step within the workflow.
-   */
-  stepId: string
-}
-
-/**
+ * Target: "workflow"
+ * Message type: "MsgWorkflowUpdated"
+ *
  * Contains current workflow.
  */
-export interface MsgWorkflowUpdated {
+export interface MsgWorkflowWorkflowUpdated {
   /**
    * Current workflow.
    */
@@ -230,9 +387,9 @@ export interface MsgWorkflowUpdated {
 }
 
 /**
- * Represents a workflow.
- *
  * Current workflow.
+ *
+ * Represents a workflow.
  */
 export interface Workflow {
   /**

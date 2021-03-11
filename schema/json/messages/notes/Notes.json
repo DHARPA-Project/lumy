@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "MsgNotesNotes",
+  "description": "Contains list of notes for a workflow step.",
+  "properties": {
+    "stepId": {
+      "type": "string",
+      "description": "Workflow step Id."
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "$ref": "https://dharpa.org/schema/types/notes/Note.json"
+      }
+    }
+  },
+  "required": [
+    "stepId",
+    "notes"
+  ]
+}

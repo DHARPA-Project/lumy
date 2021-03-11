@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "type": "object",
+  "title": "MsgWorkflowWorkflowUpdated",
+  "description": "Contains current workflow.",
+  "additionalProperties": false,
+  "properties": {
+    "workflow": {
+      "$ref": "https://dharpa.org/schema/types/workflow/Workflow.json",
+      "description": "Current workflow."
+    }
+  },
+  "required": []
+}

@@ -20,7 +20,7 @@ export const useModuleParameters = <T>(moduleId: string): [T, (p: T) => Promise<
 
   useEffect(() => {
     const handler = <M>(ctx: IBackEndContext, msg: MessageEnvelope<M>) => {
-      if (msg.action == 'updated') {
+      if (msg.action == 'Updated') {
         const { content } = (msg as unknown) as ModuleParametersMessages.Updated<T>
         if (content?.id === moduleId) setLastValue(content?.parameters)
       }
@@ -28,7 +28,7 @@ export const useModuleParameters = <T>(moduleId: string): [T, (p: T) => Promise<
     context.subscribe<T>(Target.ModuleParameters, handler)
 
     const getParametersMessage: ModuleParametersMessages.Get = {
-      action: 'get',
+      action: 'Get',
       content: { id: moduleId }
     }
     context
@@ -46,7 +46,7 @@ export const useModuleParameters = <T>(moduleId: string): [T, (p: T) => Promise<
 
   const update = <M extends T>(parameters: M): Promise<M> => {
     const message: ModuleParametersMessages.Update<M> = {
-      action: 'update',
+      action: 'Update',
       content: {
         id: moduleId,
         parameters

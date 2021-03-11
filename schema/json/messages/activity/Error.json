@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "MsgError",
+  "description": "Indicates that an error occured and contains error details.",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique ID of the error, for traceability."
+    },
+    "message": {
+      "type": "string",
+      "description": "User friendly error message."
+    },
+    "extendedMessage": {
+      "type": "string",
+      "description": "A less user friendly error message. Optional."
+    }
+  },
+  "required": [
+    "id",
+    "message"
+  ]
+}

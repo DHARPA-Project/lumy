@@ -1,0 +1,13 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "MsgDataRepositoryFindItems",
+  "description": "Request to find items in data repository",
+  "properties": {
+    "filter": {
+      "$ref": "https://dharpa.org/schema/types/dataRepository/ItemsFilter.json"
+    }
+  },
+  "required": []
+}

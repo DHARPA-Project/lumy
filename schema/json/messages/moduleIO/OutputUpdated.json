@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "MsgModuleIOOutputUpdated",
+  "description": "Contains output data of a step from the current workflow after it was recalculated.",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique ID of the step within the workflow."
+    },
+    "outputs": {
+      "type": "array",
+      "description": "Output data for the module"
+    }
+  },
+  "required": [
+    "id",
+    "outputs"
+  ]
+}

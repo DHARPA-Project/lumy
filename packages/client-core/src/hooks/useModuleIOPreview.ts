@@ -9,7 +9,7 @@ import {
 } from '../common/context'
 import { Messages } from '../common/types'
 
-type Updated = Messages.ModuleIO.Preview.Updated
+type Updated = Messages.ModuleIO.PreviewUpdated
 
 /**
  * Returns the most recent input and output data of the module.
@@ -21,17 +21,13 @@ export const useModuleIOPreview = (stepId: string): [Updated] => {
 
   useEffect(() => {
     const handler = <T>(ctx: IBackEndContext, msg: MessageEnvelope<T>) => {
-      if (msg.action === 'previewUpdated') {
-        const message = (msg as unknown) as Updated
-        if (message.id === stepId) {
-          setLastValue(message)
-        }
-      }
+      const message = (msg as unknown) as Updated
+      if (msg.action === 'PreviewUpdated' && message?.id === stepId) setLastValue(message)
     }
     context.subscribe(Target.ModuleIO, handler)
 
-    const getIOPreviewMessage: ModuleIOMessages.Preview.Get = {
-      action: 'previewGet',
+    const getIOPreviewMessage: ModuleIOMessages.GetPreview = {
+      action: 'GetPreview',
       content: { id: stepId }
     }
     // get the most recent data on first use

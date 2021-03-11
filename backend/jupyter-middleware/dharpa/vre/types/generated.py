@@ -6,27 +6,17 @@ from enum import Enum
 
 @dataclass
 class MsgError:
-    """Indicates that an error occured and contains error details."""
+    """Target: "activity"
+    Message type: "Error"
+    
+    Indicates that an error occured and contains error details.
+    """
     """Unique ID of the error, for traceability."""
     id: str
     """User friendly error message."""
     message: str
     """A less user friendly error message. Optional."""
     extended_message: Optional[str] = None
-
-
-@dataclass
-class MsgModuleIOExecute:
-    """Run this step with the latest used parameters on all data (not preview only)."""
-    """Unique ID of the step within the workflow."""
-    id: str
-
-
-@dataclass
-class MsgProgress:
-    """Announces progress of current operation to the frontend."""
-    """Progress in percents."""
-    progress: float
 
 
 class State(Enum):
@@ -37,7 +27,10 @@ class State(Enum):
 
 @dataclass
 class MsgExecutionState:
-    """Announces current state of the backend. Useful for letting the user know if they need to
+    """Target: "activity"
+    Message type: "ExecutionState"
+    
+    Announces current state of the backend. Useful for letting the user know if they need to
     wait.
     """
     """Current state."""
@@ -45,15 +38,144 @@ class MsgExecutionState:
 
 
 @dataclass
-class MsgModuleIOPreviewParametersUpdate:
-    """Update preview parameters (or preview filters) for the current workflow."""
-    """Size of the preview"""
-    size: Optional[int] = None
+class MsgProgress:
+    """Target: "activity"
+    Message type: "Progress"
+    
+    Announces progress of current operation to the frontend.
+    """
+    """Progress in percents."""
+    progress: float
+
+
+@dataclass
+class MsgDataRepositoryCreateSubset:
+    """Target: "dataRepository"
+    Message type: "CreateSubset"
+    
+    Request to create a subset of items
+    """
+    """List of items IDs to add to the subset"""
+    items_ids: List[str]
+    """Label of the subset"""
+    label: str
+
+
+@dataclass
+class DataRepositoryItemsFilter:
+    """Filter to apply to items"""
+    """Start from item"""
+    page_offset: Optional[int] = None
+    """Number of items to return"""
+    page_size: Optional[int] = None
+
+
+@dataclass
+class MsgDataRepositoryFindItems:
+    """Target: "dataRepository"
+    Message type: "FindItems"
+    
+    Request to find items in data repository
+    """
+    filter: Optional[DataRepositoryItemsFilter] = None
+
+
+@dataclass
+class MsgDataRepositoryGetItemPreview:
+    """Target: "dataRepository"
+    Message type: "GetItemPreview"
+    
+    Item preview
+    """
+    """Item ID"""
+    id: str
+
+
+@dataclass
+class DataRepositoryItem:
+    """Item from data repository"""
+    """Unique ID of the item"""
+    id: str
+
+
+@dataclass
+class MsgDataRepositoryItemPreview:
+    """Target: "dataRepository"
+    Message type: "ItemPreview"
+    
+    Item preview
+    """
+    item: DataRepositoryItem
+
+
+@dataclass
+class MsgDataRepositoryItems:
+    """Target: "dataRepository"
+    Message type: "Items"
+    
+    Items from data repository
+    """
+    items: List[DataRepositoryItem]
+    filter: Optional[DataRepositoryItemsFilter] = None
+
+
+@dataclass
+class MsgDataRepositorySubset:
+    """Target: "dataRepository"
+    Message type: "Subset"
+    
+    A subset of items
+    """
+    """Unique ID of the subset"""
+    id: str
+    """List of items IDs to add to the subset"""
+    items_ids: List[str]
+    """Label of the subset"""
+    label: str
+
+
+@dataclass
+class MsgModuleIOExecute:
+    """Target: "moduleIO"
+    Message type: "Execute"
+    
+    Run this step with the latest used parameters on all data (not preview only).
+    """
+    """Unique ID of the step within the workflow."""
+    id: str
+
+
+@dataclass
+class MsgModuleIOGetPreview:
+    """Target: "moduleIO"
+    Message type: "GetPreview"
+    
+    Get preview of I/O data of a step from the current workflow.
+    """
+    """Unique ID of the step within the workflow that we are getting preview for."""
+    id: str
+
+
+@dataclass
+class MsgModuleIOOutputUpdated:
+    """Target: "moduleIO"
+    Message type: "OutputUpdated"
+    
+    Contains output data of a step from the current workflow after it was recalculated.
+    """
+    """Unique ID of the step within the workflow."""
+    id: str
+    """Output data for the module"""
+    outputs: List[Any]
 
 
 @dataclass
 class MsgModuleIOPreviewUpdated:
-    """Contains preview of I/O data of a step from the current workflow."""
+    """Target: "moduleIO"
+    Message type: "PreviewUpdated"
+    
+    Contains preview of I/O data of a step from the current workflow.
+    """
     """Unique ID of the step within the workflow that the preview is for."""
     id: str
     """Input data for the module"""
@@ -63,26 +185,14 @@ class MsgModuleIOPreviewUpdated:
 
 
 @dataclass
-class MsgModuleIOOutputUpdated:
-    """Contains output data of a step from the current workflow after it was recalculated."""
-    """Unique ID of the step within the workflow."""
-    id: str
-    """Output data for the module"""
-    outputs: List[Any]
-
-
-@dataclass
-class MsgModuleIOPreviewGet:
-    """Get preview of I/O data of a step from the current workflow."""
-    """Unique ID of the step within the workflow that we are getting preview for."""
-    id: str
-
-
-@dataclass
-class MsgParametersGet:
-    """Get parameters of a step from the current workflow."""
-    """Unique ID of the step within the workflow that we are getting parameters for."""
-    id: str
+class MsgModuleIOUpdatePreviewParameters:
+    """Target: "moduleIO"
+    Message type: "UpdatePreviewParameters"
+    
+    Update preview parameters (or preview filters) for the current workflow.
+    """
+    """Size of the preview"""
+    size: Optional[int] = None
 
 
 @dataclass
@@ -96,15 +206,83 @@ class Note:
 
 @dataclass
 class MsgNotesAdd:
-    """Add a note for a workflow step."""
+    """Target: "notes"
+    Message type: "Add"
+    
+    Add a note for a workflow step.
+    """
     note: Note
     """Workflow step Id."""
     step_id: str
 
 
 @dataclass
+class MsgNotesGetNotes:
+    """Target: "notes"
+    Message type: "GetNotes"
+    
+    Get list of notes for a workflow step.
+    """
+    """Workflow step Id."""
+    step_id: str
+
+
+@dataclass
+class MsgNotesNotes:
+    """Target: "notes"
+    Message type: "Notes"
+    
+    Contains list of notes for a workflow step.
+    """
+    notes: List[Note]
+    """Workflow step Id."""
+    step_id: str
+
+
+@dataclass
+class MsgParametersCreateSnapshot:
+    """Target: "parameters"
+    Message type: "CreateSnapshot"
+    
+    Create snapshot of parameters of a step from the current workflow.
+    """
+    """Optional parameters of the step."""
+    parameters: Dict[str, Any]
+    """Unique ID of the step within the workflow."""
+    step_id: str
+
+
+@dataclass
+class MsgParametersGet:
+    """Target: "parameters"
+    Message type: "Get"
+    
+    Get parameters of a step from the current workflow.
+    """
+    """Unique ID of the step within the workflow that we are getting parameters for."""
+    id: str
+
+
+@dataclass
+class MsgParametersSnapshots:
+    """Target: "parameters"
+    Message type: "Snapshots"
+    
+    List of snapshots for a step from the current workflow.
+    """
+    """List of snapshots."""
+    snapshots: List[Any]
+    """Unique ID of the step within the workflow."""
+    step_id: str
+
+
+@dataclass
 class MsgParametersUpdate:
-    """Update parameters of a step in the current workflow."""
+    """Target: "parameters"
+    Message type: "Update"
+    
+    Update parameters of a step in the current workflow.
+    """
     """Unique ID of the step within the workflow."""
     id: str
     """Optional parameters of the step that we are setting."""
@@ -112,23 +290,12 @@ class MsgParametersUpdate:
 
 
 @dataclass
-class MsgNotesGetList:
-    """Get list of notes for a workflow step."""
-    """Workflow step Id."""
-    step_id: str
-
-
-@dataclass
-class MsgNotesList:
-    """Contains list of notes for a workflow step."""
-    notes: List[Note]
-    """Workflow step Id."""
-    step_id: str
-
-
-@dataclass
 class MsgParametersUpdated:
-    """Updated parameters of a step in the current workflow."""
+    """Target: "parameters"
+    Message type: "Updated"
+    
+    Updated parameters of a step in the current workflow.
+    """
     """Unique ID of the step within the workflow."""
     id: str
     """Optional parameters of the step."""
@@ -158,9 +325,9 @@ class WorkflowStructure:
 
 @dataclass
 class Workflow:
-    """Represents a workflow.
+    """Current workflow.
     
-    Current workflow.
+    Represents a workflow.
     """
     """Unique ID of the workflow."""
     id: str
@@ -171,25 +338,11 @@ class Workflow:
 
 
 @dataclass
-class MsgWorkflowUpdated:
-    """Contains current workflow."""
+class MsgWorkflowWorkflowUpdated:
+    """Target: "workflow"
+    Message type: "MsgWorkflowUpdated"
+    
+    Contains current workflow.
+    """
     """Current workflow."""
     workflow: Optional[Workflow] = None
-
-
-@dataclass
-class MsgParametersSnapshotList:
-    """List of snapshots for a step from the current workflow."""
-    """List of snapshots."""
-    snapshots: List[Any]
-    """Unique ID of the step within the workflow."""
-    step_id: str
-
-
-@dataclass
-class MsgParametersSnapshotCreate:
-    """Create snapshot of parameters of a step from the current workflow."""
-    """Optional parameters of the step."""
-    parameters: Dict[str, Any]
-    """Unique ID of the step within the workflow."""
-    step_id: str

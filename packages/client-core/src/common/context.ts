@@ -68,21 +68,21 @@ export namespace ModuleParametersMessages {
    * Sent by backend when parameters for the module are updated
    * or a "get" request is sent.
    */
-  export type Updated<T> = MessageEnvelope<Messages.Parameters.Updated<T>, 'updated'>
+  export type Updated<T> = MessageEnvelope<Messages.Parameters.Updated<T>, 'Updated'>
 
   /**
    * Sent by frontend when parameters need to be updated.
    */
-  export type Update<T> = MessageEnvelope<Messages.Parameters.Update<T>, 'update'>
+  export type Update<T> = MessageEnvelope<Messages.Parameters.Update<T>, 'Update'>
 
   /**
    * Sent by frontend when parameters state needs to be retrieved from the backend.
    */
-  export type Get = MessageEnvelope<Messages.Parameters.Get, 'get'>
+  export type Get = MessageEnvelope<Messages.Parameters.Get, 'Get'>
 
   export namespace Snapshot {
-    export type Create<T> = MessageEnvelope<Messages.Parameters.Snapshot.Create<T>, 'create'>
-    export type List = MessageEnvelope<Messages.Parameters.Snapshot.List, 'list'>
+    export type Create<T> = MessageEnvelope<Messages.Parameters.CreateSnapshot<T>, 'CreateSnapshot'>
+    export type List = MessageEnvelope<Messages.Parameters.Snapshots, 'Snapshots'>
   }
 }
 
@@ -90,17 +90,15 @@ export namespace ModuleParametersMessages {
  * Messages sent via the IO target channel @see {Target#ModuleIO}
  */
 export namespace ModuleIOMessages {
-  export namespace Preview {
-    export type Get = MessageEnvelope<Messages.ModuleIO.Preview.Get, 'previewGet'>
-    export type Updated = MessageEnvelope<Messages.ModuleIO.Preview.Updated, 'previewUpdated'>
-    export type ParametersUpdate = MessageEnvelope<
-      Messages.ModuleIO.Preview.ParametersUpdate,
-      'previewParametersUpdate'
-    >
-  }
+  export type GetPreview = MessageEnvelope<Messages.ModuleIO.GetPreview, 'GetPreview'>
+  export type PreviewUpdated = MessageEnvelope<Messages.ModuleIO.PreviewUpdated, 'PreviewUpdated'>
+  export type UpdatePreviewParameters = MessageEnvelope<
+    Messages.ModuleIO.UpdatePreviewParameters,
+    'UpdatePreviewParameters'
+  >
 
-  export type Execute = MessageEnvelope<Messages.ModuleIO.Execute, 'execute'>
-  export type OutputUpdated = MessageEnvelope<Messages.ModuleIO.OutputUpdated, 'outputUpdated'>
+  export type Execute = MessageEnvelope<Messages.ModuleIO.Execute, 'Execute'>
+  export type OutputUpdated = MessageEnvelope<Messages.ModuleIO.OutputUpdated, 'OutputUpdated'>
 }
 
 /**
@@ -111,21 +109,21 @@ export namespace WorkflowMessages {
    * Sent by backend when data has been reprocessed or
    * when a "get" request is sent.
    */
-  export type Updated = MessageEnvelope<Messages.Workflow.Updated, 'updated'>
+  export type Updated = MessageEnvelope<Messages.Workflow.Updated, 'Updated'>
 
   /**
    * Sent by frontend when it needs the latest state of calculated data.
    */
-  export type GetCurrent = MessageEnvelope<void, 'get'>
+  export type GetCurrent = MessageEnvelope<void, 'GetCurrent'>
 }
 
 export namespace ActivityMessages {
-  export type Error = MessageEnvelope<Messages.Activity.Error, 'error'>
-  export type ExecutionState = MessageEnvelope<Messages.Activity.ExecutionState, 'state'>
+  export type Error = MessageEnvelope<Messages.Activity.Error, 'Error'>
+  export type ExecutionState = MessageEnvelope<Messages.Activity.ExecutionState, 'State'>
 }
 
 export namespace NotesMessages {
-  export type GetList = MessageEnvelope<Messages.Notes.GetList, 'getList'>
-  export type List = MessageEnvelope<Messages.Notes.List, 'list'>
-  export type Add = MessageEnvelope<Messages.Notes.Add, 'add'>
+  export type GetList = MessageEnvelope<Messages.Notes.GetNotes, 'GetNotes'>
+  export type List = MessageEnvelope<Messages.Notes.Notes, 'Notes'>
+  export type Add = MessageEnvelope<Messages.Notes.Add, 'Add'>
 }

@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "DataRepositoryItemsFilter",
+  "description": "Filter to apply to items",
+  "properties": {
+    "pageSize": {
+      "type": "integer",
+      "description": "Number of items to return"
+    },
+    "pageOffset": {
+      "type": "integer",
+      "description": "Start from item"
+    }
+  },
+  "required": []
+}
