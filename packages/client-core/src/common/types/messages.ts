@@ -9,7 +9,10 @@ import {
   MsgModuleIOPreviewUpdated,
   MsgModuleIOPreviewParametersUpdate,
   MsgParametersSnapshotCreate,
-  MsgParametersSnapshotList
+  MsgParametersSnapshotList,
+  MsgProgress,
+  MsgModuleIOExecute,
+  MsgModuleIOOutputUpdated
 } from './generated'
 
 export namespace Parameters {
@@ -36,6 +39,7 @@ export namespace Workflow {
 export namespace Activity {
   export type Error = MsgError
   export type ExecutionState = MsgExecutionState
+  export type Progress = MsgProgress
 }
 
 export namespace ModuleIO {
@@ -44,4 +48,6 @@ export namespace ModuleIO {
     export type Updated = MsgModuleIOPreviewUpdated
     export type ParametersUpdate = MsgModuleIOPreviewParametersUpdate
   }
+  export type Execute = MsgModuleIOExecute
+  export type OutputUpdated = MsgModuleIOOutputUpdated
 }

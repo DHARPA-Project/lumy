@@ -11,11 +11,11 @@
     },
     "inputs": {
       "type": "array",
-      "description": "Inputs data for the module"
+      "description": "Input data for the module"
     },
     "outputs": {
       "type": "array",
-      "description": "Inputs data for the module"
+      "description": "Output data for the module"
     }
   },
   "required": [

@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "$id": "https://dharpa.org/schemas/vre/messages/moduleIO/MsgModuleIOOutputUpdated.json",
+  "type": "object",
+  "description": "Contains output data of a step from the current workflow after it was recalculated.",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique ID of the step within the workflow."
+    },
+    "outputs": {
+      "type": "array",
+      "description": "Output data for the module"
+    }
+  },
+  "required": [
+    "id",
+    "outputs"
+  ]
+}

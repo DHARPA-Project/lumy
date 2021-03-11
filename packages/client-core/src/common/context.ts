@@ -98,6 +98,9 @@ export namespace ModuleIOMessages {
       'previewParametersUpdate'
     >
   }
+
+  export type Execute = MessageEnvelope<Messages.ModuleIO.Execute, 'execute'>
+  export type OutputUpdated = MessageEnvelope<Messages.ModuleIO.OutputUpdated, 'outputUpdated'>
 }
 
 /**

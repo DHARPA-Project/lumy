@@ -1,7 +1,7 @@
 # flake8: noqa
 from enum import Enum
 from dataclasses import dataclass
-from typing import Optional, Dict, Any, List
+from typing import Optional, List, Any, Dict
 
 
 class State(Enum):
@@ -20,10 +20,17 @@ class MsgExecutionState:
 
 
 @dataclass
-class MsgModuleIOPreviewParametersUpdate:
-    """Update preview parameters (or preview filters) for the current workflow."""
-    """Size of the preview"""
-    size: Optional[int] = None
+class MsgModuleIOExecute:
+    """Run this step with the latest used parameters on all data (not preview only)."""
+    """Unique ID of the step within the workflow."""
+    id: str
+
+
+@dataclass
+class MsgProgress:
+    """Announces progress of current operation to the frontend."""
+    """Progress in percents."""
+    progress: float
 
 
 @dataclass
@@ -38,6 +45,15 @@ class MsgError:
 
 
 @dataclass
+class MsgModuleIOOutputUpdated:
+    """Contains output data of a step from the current workflow after it was recalculated."""
+    """Unique ID of the step within the workflow."""
+    id: str
+    """Output data for the module"""
+    outputs: List[Any]
+
+
+@dataclass
 class MsgParametersGet:
     """Get parameters of a step from the current workflow."""
     """Unique ID of the step within the workflow that we are getting parameters for."""
@@ -45,12 +61,28 @@ class MsgParametersGet:
 
 
 @dataclass
-class MsgParametersUpdate:
-    """Update parameters of a step in the current workflow."""
-    """Unique ID of the step within the workflow."""
+class MsgModuleIOPreviewGet:
+    """Get preview of I/O data of a step from the current workflow."""
+    """Unique ID of the step within the workflow that we are getting preview for."""
     id: str
-    """Optional parameters of the step that we are setting."""
-    parameters: Optional[Dict[str, Any]] = None
+
+
+@dataclass
+class MsgModuleIOPreviewUpdated:
+    """Contains preview of I/O data of a step from the current workflow."""
+    """Unique ID of the step within the workflow that the preview is for."""
+    id: str
+    """Input data for the module"""
+    inputs: List[Any]
+    """Output data for the module"""
+    outputs: List[Any]
+
+
+@dataclass
+class MsgModuleIOPreviewParametersUpdate:
+    """Update preview parameters (or preview filters) for the current workflow."""
+    """Size of the preview"""
+    size: Optional[int] = None
 
 
 @dataclass
@@ -63,19 +95,12 @@ class MsgParametersUpdated:
 
 
 @dataclass
-class MsgParametersSnapshotList:
-    """List of snapshots for a step from the current workflow."""
-    """List of snapshots."""
-    snapshots: List[Any]
+class MsgParametersUpdate:
+    """Update parameters of a step in the current workflow."""
     """Unique ID of the step within the workflow."""
-    step_id: str
-
-
-@dataclass
-class MsgModuleIOPreviewGet:
-    """Get preview of I/O data of a step from the current workflow."""
-    """Unique ID of the step within the workflow that we are getting preview for."""
     id: str
+    """Optional parameters of the step that we are setting."""
+    parameters: Optional[Dict[str, Any]] = None
 
 
 @dataclass
@@ -121,14 +146,12 @@ class MsgWorkflowUpdated:
 
 
 @dataclass
-class MsgModuleIOPreviewUpdated:
-    """Contains preview of I/O data of a step from the current workflow."""
-    """Unique ID of the step within the workflow that the preview is for."""
-    id: str
-    """Inputs data for the module"""
-    inputs: List[Any]
-    """Inputs data for the module"""
-    outputs: List[Any]
+class MsgParametersSnapshotList:
+    """List of snapshots for a step from the current workflow."""
+    """List of snapshots."""
+    snapshots: List[Any]
+    """Unique ID of the step within the workflow."""
+    step_id: str
 
 
 @dataclass

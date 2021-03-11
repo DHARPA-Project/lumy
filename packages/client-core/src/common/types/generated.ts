@@ -36,6 +36,26 @@ export enum State {
 }
 
 /**
+ * Run this step with the latest used parameters on all data (not preview only).
+ */
+export interface MsgModuleIOExecute {
+  /**
+   * Unique ID of the step within the workflow.
+   */
+  id: string
+}
+
+/**
+ * Announces progress of current operation to the frontend.
+ */
+export interface MsgProgress {
+  /**
+   * Progress in percents.
+   */
+  progress: number
+}
+
+/**
  * Get preview of I/O data of a step from the current workflow.
  */
 export interface MsgModuleIOPreviewGet {
@@ -43,6 +63,20 @@ export interface MsgModuleIOPreviewGet {
    * Unique ID of the step within the workflow that we are getting preview for.
    */
   id: string
+}
+
+/**
+ * Contains output data of a step from the current workflow after it was recalculated.
+ */
+export interface MsgModuleIOOutputUpdated {
+  /**
+   * Unique ID of the step within the workflow.
+   */
+  id: string
+  /**
+   * Output data for the module
+   */
+  outputs: unknown[]
 }
 
 /**
@@ -64,11 +98,11 @@ export interface MsgModuleIOPreviewUpdated {
    */
   id: string
   /**
-   * Inputs data for the module
+   * Input data for the module
    */
   inputs: unknown[]
   /**
-   * Inputs data for the module
+   * Output data for the module
    */
   outputs: unknown[]
 }
