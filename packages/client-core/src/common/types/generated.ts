@@ -1,22 +1,4 @@
 /**
- * Indicates that an error occured and contains error details.
- */
-export interface MsgError {
-  /**
-   * A less user friendly error message. Optional.
-   */
-  extendedMessage?: string
-  /**
-   * Unique ID of the error, for traceability.
-   */
-  id: string
-  /**
-   * User friendly error message.
-   */
-  message: string
-}
-
-/**
  * Announces current state of the backend. Useful for letting the user know if they need to
  * wait.
  */
@@ -36,13 +18,21 @@ export enum State {
 }
 
 /**
- * Run this step with the latest used parameters on all data (not preview only).
+ * Indicates that an error occured and contains error details.
  */
-export interface MsgModuleIOExecute {
+export interface MsgError {
   /**
-   * Unique ID of the step within the workflow.
+   * A less user friendly error message. Optional.
+   */
+  extendedMessage?: string
+  /**
+   * Unique ID of the error, for traceability.
    */
   id: string
+  /**
+   * User friendly error message.
+   */
+  message: string
 }
 
 /**
@@ -53,16 +43,6 @@ export interface MsgProgress {
    * Progress in percents.
    */
   progress: number
-}
-
-/**
- * Get preview of I/O data of a step from the current workflow.
- */
-export interface MsgModuleIOPreviewGet {
-  /**
-   * Unique ID of the step within the workflow that we are getting preview for.
-   */
-  id: string
 }
 
 /**
@@ -80,6 +60,16 @@ export interface MsgModuleIOOutputUpdated {
 }
 
 /**
+ * Run this step with the latest used parameters on all data (not preview only).
+ */
+export interface MsgModuleIOExecute {
+  /**
+   * Unique ID of the step within the workflow.
+   */
+  id: string
+}
+
+/**
  * Update preview parameters (or preview filters) for the current workflow.
  */
 export interface MsgModuleIOPreviewParametersUpdate {
@@ -87,6 +77,41 @@ export interface MsgModuleIOPreviewParametersUpdate {
    * Size of the preview
    */
   size?: number
+}
+
+/**
+ * Get preview of I/O data of a step from the current workflow.
+ */
+export interface MsgModuleIOPreviewGet {
+  /**
+   * Unique ID of the step within the workflow that we are getting preview for.
+   */
+  id: string
+}
+
+/**
+ * Add a note for a workflow step.
+ */
+export interface MsgNotesAdd {
+  note: Note
+  /**
+   * Workflow step Id.
+   */
+  stepId: string
+}
+
+/**
+ * Represents a step note.
+ */
+export interface Note {
+  /**
+   * Textual content of the note.
+   */
+  content: string
+  /**
+   * Unique ID of the note.
+   */
+  id: string
 }
 
 /**
@@ -105,6 +130,27 @@ export interface MsgModuleIOPreviewUpdated {
    * Output data for the module
    */
   outputs: unknown[]
+}
+
+/**
+ * Get list of notes for a workflow step.
+ */
+export interface MsgNotesGetList {
+  /**
+   * Workflow step Id.
+   */
+  stepId: string
+}
+
+/**
+ * Contains list of notes for a workflow step.
+ */
+export interface MsgNotesList {
+  notes: Note[]
+  /**
+   * Workflow step Id.
+   */
+  stepId: string
 }
 
 /**

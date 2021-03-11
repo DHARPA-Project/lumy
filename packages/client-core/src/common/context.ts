@@ -123,3 +123,9 @@ export namespace ActivityMessages {
   export type Error = MessageEnvelope<Messages.Activity.Error, 'error'>
   export type ExecutionState = MessageEnvelope<Messages.Activity.ExecutionState, 'state'>
 }
+
+export namespace NotesMessages {
+  export type GetList = MessageEnvelope<Messages.Notes.GetList, 'getList'>
+  export type List = MessageEnvelope<Messages.Notes.List, 'list'>
+  export type Add = MessageEnvelope<Messages.Notes.Add, 'add'>
+}

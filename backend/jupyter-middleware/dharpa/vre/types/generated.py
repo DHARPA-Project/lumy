@@ -1,7 +1,32 @@
 # flake8: noqa
-from enum import Enum
 from dataclasses import dataclass
 from typing import Optional, List, Any, Dict
+from enum import Enum
+
+
+@dataclass
+class MsgError:
+    """Indicates that an error occured and contains error details."""
+    """Unique ID of the error, for traceability."""
+    id: str
+    """User friendly error message."""
+    message: str
+    """A less user friendly error message. Optional."""
+    extended_message: Optional[str] = None
+
+
+@dataclass
+class MsgModuleIOExecute:
+    """Run this step with the latest used parameters on all data (not preview only)."""
+    """Unique ID of the step within the workflow."""
+    id: str
+
+
+@dataclass
+class MsgProgress:
+    """Announces progress of current operation to the frontend."""
+    """Progress in percents."""
+    progress: float
 
 
 class State(Enum):
@@ -20,51 +45,10 @@ class MsgExecutionState:
 
 
 @dataclass
-class MsgModuleIOExecute:
-    """Run this step with the latest used parameters on all data (not preview only)."""
-    """Unique ID of the step within the workflow."""
-    id: str
-
-
-@dataclass
-class MsgProgress:
-    """Announces progress of current operation to the frontend."""
-    """Progress in percents."""
-    progress: float
-
-
-@dataclass
-class MsgError:
-    """Indicates that an error occured and contains error details."""
-    """Unique ID of the error, for traceability."""
-    id: str
-    """User friendly error message."""
-    message: str
-    """A less user friendly error message. Optional."""
-    extended_message: Optional[str] = None
-
-
-@dataclass
-class MsgModuleIOOutputUpdated:
-    """Contains output data of a step from the current workflow after it was recalculated."""
-    """Unique ID of the step within the workflow."""
-    id: str
-    """Output data for the module"""
-    outputs: List[Any]
-
-
-@dataclass
-class MsgParametersGet:
-    """Get parameters of a step from the current workflow."""
-    """Unique ID of the step within the workflow that we are getting parameters for."""
-    id: str
-
-
-@dataclass
-class MsgModuleIOPreviewGet:
-    """Get preview of I/O data of a step from the current workflow."""
-    """Unique ID of the step within the workflow that we are getting preview for."""
-    id: str
+class MsgModuleIOPreviewParametersUpdate:
+    """Update preview parameters (or preview filters) for the current workflow."""
+    """Size of the preview"""
+    size: Optional[int] = None
 
 
 @dataclass
@@ -79,19 +63,43 @@ class MsgModuleIOPreviewUpdated:
 
 
 @dataclass
-class MsgModuleIOPreviewParametersUpdate:
-    """Update preview parameters (or preview filters) for the current workflow."""
-    """Size of the preview"""
-    size: Optional[int] = None
+class MsgModuleIOOutputUpdated:
+    """Contains output data of a step from the current workflow after it was recalculated."""
+    """Unique ID of the step within the workflow."""
+    id: str
+    """Output data for the module"""
+    outputs: List[Any]
 
 
 @dataclass
-class MsgParametersUpdated:
-    """Updated parameters of a step in the current workflow."""
-    """Unique ID of the step within the workflow."""
+class MsgModuleIOPreviewGet:
+    """Get preview of I/O data of a step from the current workflow."""
+    """Unique ID of the step within the workflow that we are getting preview for."""
     id: str
-    """Optional parameters of the step."""
-    parameters: Optional[Dict[str, Any]] = None
+
+
+@dataclass
+class MsgParametersGet:
+    """Get parameters of a step from the current workflow."""
+    """Unique ID of the step within the workflow that we are getting parameters for."""
+    id: str
+
+
+@dataclass
+class Note:
+    """Represents a step note."""
+    """Textual content of the note."""
+    content: str
+    """Unique ID of the note."""
+    id: str
+
+
+@dataclass
+class MsgNotesAdd:
+    """Add a note for a workflow step."""
+    note: Note
+    """Workflow step Id."""
+    step_id: str
 
 
 @dataclass
@@ -100,6 +108,30 @@ class MsgParametersUpdate:
     """Unique ID of the step within the workflow."""
     id: str
     """Optional parameters of the step that we are setting."""
+    parameters: Optional[Dict[str, Any]] = None
+
+
+@dataclass
+class MsgNotesGetList:
+    """Get list of notes for a workflow step."""
+    """Workflow step Id."""
+    step_id: str
+
+
+@dataclass
+class MsgNotesList:
+    """Contains list of notes for a workflow step."""
+    notes: List[Note]
+    """Workflow step Id."""
+    step_id: str
+
+
+@dataclass
+class MsgParametersUpdated:
+    """Updated parameters of a step in the current workflow."""
+    """Unique ID of the step within the workflow."""
+    id: str
+    """Optional parameters of the step."""
     parameters: Optional[Dict[str, Any]] = None
 
 

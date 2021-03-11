@@ -12,7 +12,10 @@ import {
   MsgParametersSnapshotList,
   MsgProgress,
   MsgModuleIOExecute,
-  MsgModuleIOOutputUpdated
+  MsgModuleIOOutputUpdated,
+  MsgNotesGetList,
+  MsgNotesAdd,
+  MsgNotesList
 } from './generated'
 
 export namespace Parameters {
@@ -50,4 +53,10 @@ export namespace ModuleIO {
   }
   export type Execute = MsgModuleIOExecute
   export type OutputUpdated = MsgModuleIOOutputUpdated
+}
+
+export namespace Notes {
+  export type GetList = MsgNotesGetList
+  export type List = MsgNotesList
+  export type Add = MsgNotesAdd
 }
