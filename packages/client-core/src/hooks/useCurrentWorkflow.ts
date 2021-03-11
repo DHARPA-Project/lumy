@@ -1,29 +1,19 @@
 import { useContext, useEffect, useState } from 'react'
-import { BackEndContext, IBackEndContext, MessageEnvelope, Target, WorkflowMessages } from '../common/context'
-import { Workflow } from '../common/types'
+import { BackEndContext, handlerAdapter, Target } from '../common/context'
+import { Messages, Workflow } from '../common/types'
 
 export const useCurrentWorkflow = (): [Workflow] => {
   const context = useContext(BackEndContext)
   const [workflow, setWorkflow] = useState<Workflow>()
 
   useEffect(() => {
-    const handler = <T>(ctx: IBackEndContext, msg: MessageEnvelope<T>) => {
-      if (msg.action === 'Updated') {
-        const { content } = (msg as unknown) as WorkflowMessages.Updated
-        setWorkflow(content?.workflow)
-      }
-    }
+    const handler = handlerAdapter(Messages.Workflow.codec.Updated.decode, msg => setWorkflow(msg?.workflow))
     context.subscribe(Target.Workflow, handler)
 
-    const getCurrentWorkflowMessage: WorkflowMessages.GetCurrent = {
-      action: 'GetCurrent'
-    }
     // get the most recent data on first use
-    context.sendMessage(Target.Workflow, getCurrentWorkflowMessage)
+    context.sendMessage(Target.Workflow, Messages.Workflow.codec.GetCurrent.encode(null))
 
-    return () => {
-      context.unsubscribe(Target.Workflow, handler)
-    }
+    return () => context.unsubscribe(Target.Workflow, handler)
   }, [])
 
   return [workflow]

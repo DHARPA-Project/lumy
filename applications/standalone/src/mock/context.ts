@@ -3,43 +3,41 @@ import { Signal } from '@lumino/signaling'
 import {
   IBackEndContext,
   Target,
-  ModuleParametersMessages,
-  WorkflowMessages,
   MessageEnvelope,
   Workflow,
   ModuleViewProvider,
   Messages,
-  ModuleIOMessages
+  ME
 } from '@dharpa-vre/client-core'
 import { viewProvider } from '@dharpa-vre/modules'
 
 export type DataProcessorResult = Omit<Messages.ModuleIO.PreviewUpdated, 'id'>
 
-export type DataProcessor<P> = (moduleId: string, moduleParameters: P) => Promise<DataProcessorResult>
+export type DataProcessor<P = void> = (moduleId: string, moduleParameters: P) => Promise<DataProcessorResult>
 
-export interface MockContextParameters<P> {
-  processData: DataProcessor<P>
+export interface MockContextParameters {
+  processData: DataProcessor
   currentWorkflow?: Workflow
   startupDelayMs?: number
 }
 
-export class MockContext<P> implements IBackEndContext {
+export class MockContext implements IBackEndContext {
   private _isDisposed = false
   private _store: Storage
-  private _processData: DataProcessor<P>
+  private _processData: DataProcessor
 
   private _isReady = false
-  private _statusChangedSignal = new Signal<MockContext<P>, boolean>(this)
+  private _statusChangedSignal = new Signal<MockContext, boolean>(this)
 
-  private _moduleParametersSignal = new Signal<MockContext<P>, ModuleParametersMessages.Updated<P>>(this)
-  private _moduleDataPreviewSignal = new Signal<MockContext<P>, ModuleIOMessages.PreviewUpdated>(this)
-  private _workflowSignal = new Signal<MockContext<P>, WorkflowMessages.Updated>(this)
-  private _activitySignal = new Signal<MockContext<P>, void>(this)
+  private _moduleParametersSignal = new Signal<MockContext, ME<Messages.Parameters.Updated<void>>>(this)
+  private _moduleDataPreviewSignal = new Signal<MockContext, ME<Messages.ModuleIO.PreviewUpdated>>(this)
+  private _workflowSignal = new Signal<MockContext, ME<Messages.Workflow.Updated>>(this)
+  private _activitySignal = new Signal<MockContext, void>(this)
 
-  private _mostRecentParameters: ModuleParametersMessages.Updated<P>
+  private _mostRecentParameters: ME<Messages.Parameters.Updated<void>>
   private _currentWorkflow: Workflow
 
-  constructor(parameters?: MockContextParameters<P>) {
+  constructor(parameters?: MockContextParameters) {
     this._store = window.localStorage
     this._processData = parameters?.processData
     this._currentWorkflow = parameters?.currentWorkflow
@@ -52,7 +50,7 @@ export class MockContext<P> implements IBackEndContext {
     }, parameters?.startupDelayMs ?? 0)
   }
 
-  private _handleParametersUpdated(_: MockContext<P>, parameters: ModuleParametersMessages.Updated<P>) {
+  private _handleParametersUpdated(_: MockContext, parameters: ME<Messages.Parameters.Updated<void>>) {
     this._mostRecentParameters = parameters
   }
 
@@ -72,33 +70,27 @@ export class MockContext<P> implements IBackEndContext {
 
   private async _handleGetModuleParameters(moduleId: string) {
     const value = this._store.getItem(`${moduleId}:${Target.ModuleParameters}`)
-    const workflowParameters = (this._currentWorkflow?.structure?.steps?.find(step => step.id === moduleId)
-      ?.parameters as unknown) as P
+    const workflowParameters = this._currentWorkflow?.structure?.steps?.find(step => step.id === moduleId)
+      ?.parameters
 
-    const parameters = value != null ? (JSON.parse(value) as P) : workflowParameters
-    const response: ModuleParametersMessages.Updated<P> = {
-      action: 'Updated',
-      content: {
-        id: moduleId,
-        parameters
-      }
-    }
+    const parameters = value != null ? JSON.parse(value) : workflowParameters
+    const response = Messages.Parameters.codec.Updated.encode({
+      id: moduleId,
+      parameters: (parameters as unknown) as void
+    })
 
     this._moduleParametersSignal.emit(response)
     return response
   }
 
-  private async _handleUpdateModuleParameters(updateMessage: ModuleParametersMessages.Update<P>) {
+  private async _handleUpdateModuleParameters(updateMessage: ME<Messages.Parameters.Update<void>>) {
     const { parameters, id: stepId } = updateMessage.content
     this._store.setItem(`${stepId}:${Target.ModuleParameters}`, JSON.stringify(parameters))
 
-    const response: ModuleParametersMessages.Updated<P> = {
-      action: 'Updated',
-      content: {
-        id: stepId,
-        parameters
-      }
-    }
+    const response = Messages.Parameters.codec.Updated.encode({
+      id: stepId,
+      parameters
+    })
 
     const moduleId = this._getModuleIdForStep(stepId)
 
@@ -106,10 +98,7 @@ export class MockContext<P> implements IBackEndContext {
     if (this._processData != null) {
       return this._processData(moduleId, parameters)
         .then(dataContainer => {
-          const response: ModuleIOMessages.PreviewUpdated = {
-            action: 'PreviewUpdated',
-            content: { id: stepId, ...dataContainer }
-          }
+          const response = Messages.ModuleIO.codec.PreviewUpdated.encode({ id: stepId, ...dataContainer })
           return this._moduleDataPreviewSignal.emit(response)
         })
         .then(() => response)
@@ -123,50 +112,42 @@ export class MockContext<P> implements IBackEndContext {
     if (this._processData != null) {
       return this._processData(moduleId, this._mostRecentParameters?.content?.parameters).then(
         dataContainer => {
-          const response: ModuleIOMessages.PreviewUpdated = {
-            action: 'PreviewUpdated',
-            content: { id: stepId, ...dataContainer }
-          }
+          const response = Messages.ModuleIO.codec.PreviewUpdated.encode({
+            id: stepId,
+            ...dataContainer
+          })
           return this._moduleDataPreviewSignal.emit(response)
         }
       )
     }
   }
 
-  sendMessage<T, U>(target: Target, msg: MessageEnvelope<T>): Promise<U> {
+  sendMessage<T, U = void>(target: Target, msg: MessageEnvelope<T>): Promise<U> {
     const { action } = msg
     const coerce = <T>(v: T) => (v as unknown) as U
+    const cast = <M>(msg: ME<T>): ME<M> => (msg as unknown) as ME<M>
 
     if (target === Target.ModuleParameters) {
       if (action === 'Get') {
-        const {
-          content: { id: moduleId }
-        } = (msg as unknown) as ModuleParametersMessages.Get
-        return this._handleGetModuleParameters(moduleId).then(coerce)
+        const { id: stepId } = Messages.Parameters.codec.Get.decode(cast<Messages.Parameters.Get>(msg))
+        return this._handleGetModuleParameters(stepId).then(coerce)
       } else if (action === 'Update') {
-        return this._handleUpdateModuleParameters(
-          (msg as unknown) as ModuleParametersMessages.Update<P>
-        ).then(coerce)
+        return this._handleUpdateModuleParameters(cast<Messages.Parameters.Update<void>>(msg)).then(coerce)
       }
 
       throw new Error(`Action "${action}" not supported for target "${target}"`)
     } else if (target === Target.ModuleIO) {
       if (action === 'GetPreview') {
-        const {
-          content: { id }
-        } = (msg as unknown) as ModuleIOMessages.GetPreview
+        const { id } = (msg.content as unknown) as Messages.ModuleIO.GetPreview
         return this._handleGetModuleIOPreview(id).then(coerce)
       }
 
       throw new Error(`Action "${action}" not supported for target "${target}"`)
     } else if (target === Target.Workflow) {
       if (action === 'GetCurrent') {
-        const msg: WorkflowMessages.Updated = {
-          action: 'Updated',
-          content: {
-            workflow: this._currentWorkflow
-          }
-        }
+        const msg = Messages.Workflow.codec.Updated.encode({
+          workflow: this._currentWorkflow
+        })
         this._workflowSignal.emit(msg)
         return
       }
@@ -177,15 +158,15 @@ export class MockContext<P> implements IBackEndContext {
     throw new Error(`Target not supported: ${target}`)
   }
 
-  private _getSignal<T>(target: Target): Signal<MockContext<P>, T> {
+  private _getSignal<T>(target: Target): Signal<MockContext, T> {
     if (target === Target.ModuleParameters) {
-      return (this._moduleParametersSignal as unknown) as Signal<MockContext<P>, T>
+      return (this._moduleParametersSignal as unknown) as Signal<MockContext, T>
     } else if (target === Target.ModuleIO) {
-      return (this._moduleDataPreviewSignal as unknown) as Signal<MockContext<P>, T>
+      return (this._moduleDataPreviewSignal as unknown) as Signal<MockContext, T>
     } else if (target === Target.Workflow) {
-      return (this._workflowSignal as unknown) as Signal<MockContext<P>, T>
+      return (this._workflowSignal as unknown) as Signal<MockContext, T>
     } else if (target === Target.Activity) {
-      return (this._activitySignal as unknown) as Signal<MockContext<P>, T>
+      return (this._activitySignal as unknown) as Signal<MockContext, T>
     }
     throw new Error(`Target "${target}" has not been implemented in mock yet.`)
   }
@@ -213,6 +194,6 @@ export class MockContext<P> implements IBackEndContext {
   }
 
   onAvailabilityChanged(callback: (isAvailable: boolean) => void): void {
-    this._statusChangedSignal.connect((ctx: MockContext<P>, isAvailable: boolean) => callback(isAvailable))
+    this._statusChangedSignal.connect((ctx: MockContext, isAvailable: boolean) => callback(isAvailable))
   }
 }

@@ -1,65 +1,32 @@
 import { useContext, useState, useEffect } from 'react'
-import {
-  BackEndContext,
-  IBackEndContext,
-  MessageEnvelope,
-  ModuleParametersMessages,
-  Target
-} from '../common/context'
+import { BackEndContext, handlerAdapter, Target } from '../common/context'
 import { Messages } from '../common/types'
 
 /**
  * Hook for working with model parameters: get parameters from the backend
  * or update them on the backend.
- *
- * Works the same way as @see {React#useState}.
  */
-export const useModuleParameters = <T>(moduleId: string): [T, (p: T) => Promise<T>] => {
+export const useModuleParameters = <T>(stepId: string): [T, (p: T) => Promise<void>] => {
   const context = useContext(BackEndContext)
   const [lastValue, setLastValue] = useState<T>()
 
   useEffect(() => {
-    const handler = <M>(ctx: IBackEndContext, msg: MessageEnvelope<M>) => {
-      if (msg.action == 'Updated') {
-        const { content } = (msg as unknown) as ModuleParametersMessages.Updated<T>
-        if (content?.id === moduleId) setLastValue(content?.parameters)
-      }
-    }
-    context.subscribe<T>(Target.ModuleParameters, handler)
+    const handler = handlerAdapter(Messages.Parameters.codec.Updated.decode, content => {
+      if (content?.id === stepId) setLastValue((content.parameters as unknown) as T)
+    })
+    context.subscribe(Target.ModuleParameters, handler)
 
-    const getParametersMessage: ModuleParametersMessages.Get = {
-      action: 'Get',
-      content: { id: moduleId }
-    }
-    context
-      .sendMessage<typeof getParametersMessage.content, Messages.Parameters.Updated<T>>(
-        Target.ModuleParameters,
-        getParametersMessage
-      )
-      .then(response => {
-        if (response?.content?.parameters != null && response?.content?.id === moduleId)
-          setLastValue(response?.content?.parameters)
-      })
+    context.sendMessage(Target.ModuleParameters, Messages.Parameters.codec.Get.encode({ id: stepId }))
 
     return () => context.unsubscribe(Target.ModuleParameters, handler)
-  }, [moduleId])
+  }, [stepId])
 
-  const update = <M extends T>(parameters: M): Promise<M> => {
-    const message: ModuleParametersMessages.Update<M> = {
-      action: 'Update',
-      content: {
-        id: moduleId,
-        parameters
-      }
-    }
-    return context
-      .sendMessage<typeof message.content, Messages.Parameters.Updated<M>>(Target.ModuleParameters, message)
-      .then(response => {
-        if (response?.content?.id === moduleId) {
-          setLastValue(response?.content?.parameters)
-          return response?.content?.parameters
-        }
-      })
+  const update = (parameters: T): Promise<void> => {
+    const message = Messages.Parameters.codec.Update.encode({
+      id: stepId,
+      parameters: (parameters as unknown) as void
+    })
+    return context.sendMessage(Target.ModuleParameters, message).then(() => null)
   }
 
   return [lastValue, update]
