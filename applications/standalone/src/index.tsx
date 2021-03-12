@@ -12,11 +12,12 @@ import currentWorkflowData from './mock/resources/sampleWorkflow.yml'
 const currentWorkflow: Workflow = YAML.load(currentWorkflowData)
 
 const mockDataProcessor = async (
+  stepId: string,
   moduleId: string,
   moduleParameters: unknown
 ): Promise<DataProcessorResult> => {
   console.log(
-    `Mock processing for workflow step using module "${moduleId}" with parameters`,
+    `Mock processing for workflow step "${stepId}" using module "${moduleId}" with parameters`,
     moduleParameters
   )
   return {
