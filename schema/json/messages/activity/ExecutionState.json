@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "MsgExecutionState",
+  "description": "Announces current state of the backend. Useful for letting the user know if they need to wait.",
+  "properties": {
+    "state": {
+      "type": "string",
+      "description": "Current state.",
+      "enum": [
+        "busy",
+        "idle"
+      ]
+    }
+  },
+  "required": [
+    "state"
+  ]
+}

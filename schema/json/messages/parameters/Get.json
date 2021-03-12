@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/schema",
-  "$id": "https://dharpa.org/schemas/vre/messages/parameters/MsgParametersGet.json",
   "type": "object",
+  "title": "MsgParametersGet",
   "description": "Get parameters of a step from the current workflow.",
   "additionalProperties": false,
   "properties": {

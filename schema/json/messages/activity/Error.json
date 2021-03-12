@@ -1,9 +1,9 @@
 {
   "$schema": "http://json-schema.org/schema",
-  "$id": "https://dharpa.org/schemas/vre/messages/activity/MsgError.json",
   "type": "object",
-  "description": "Indicates that an error occured and contains error details.",
   "additionalProperties": false,
+  "title": "MsgError",
+  "description": "Indicates that an error occured and contains error details.",
   "properties": {
     "id": {
       "type": "string",

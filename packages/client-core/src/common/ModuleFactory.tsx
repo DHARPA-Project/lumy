@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import { ModuleProps, ParametersBase } from './modules'
-import { BackEndContext } from './modelContext'
+import { BackEndContext } from './context'
 
 export const ModuleViewFactory = (props: ModuleProps<ParametersBase>): JSX.Element => {
   const context = useContext(BackEndContext)

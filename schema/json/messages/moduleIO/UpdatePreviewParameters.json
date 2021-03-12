@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "MsgModuleIOUpdatePreviewParameters",
+  "description": "Update preview parameters (or preview filters) for the current workflow.",
+  "properties": {
+    "size": {
+      "type": "integer",
+      "description": "Size of the preview"
+    }
+  },
+  "required": []
+}

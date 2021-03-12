@@ -1,15 +1,15 @@
 {
   "$schema": "http://json-schema.org/schema",
-  "$id": "https://dharpa.org/schemas/backend/WorkflowStructure.json",
   "type": "object",
-  "description": "Workflow structure. Contains all modules that are a part of the workflow.",
   "additionalProperties": false,
+  "title": "WorkflowStructure",
+  "description": "Workflow structure. Contains all modules that are a part of the workflow.",
   "properties": {
     "steps": {
       "type": "array",
       "description": "Steps of the workflow.",
       "items": {
-        "$ref": "https://dharpa.org/schemas/backend/WorkflowStep.json"
+        "$ref": "https://dharpa.org/schema/types/workflow/WorkflowStep.json"
       }
     }
   },

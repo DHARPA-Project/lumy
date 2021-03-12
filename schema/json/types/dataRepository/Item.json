@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "DataRepositoryItem",
+  "description": "Item from data repository",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique ID of the item"
+    }
+  },
+  "required": [
+    "id"
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "type": "object",
+  "title": "MsgParametersSnapshots",
+  "description": "List of snapshots for a step from the current workflow.",
+  "additionalProperties": false,
+  "properties": {
+    "stepId": {
+      "type": "string",
+      "description": "Unique ID of the step within the workflow."
+    },
+    "snapshots": {
+      "type": "array",
+      "description": "List of snapshots."
+    }
+  },
+  "required": [
+    "stepId",
+    "snapshots"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "$id": "https://dharpa.org/schemas/vre/messages/activity/MsgProgress.json",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "MsgProgress",
+  "description": "Announces progress of current operation to the frontend.",
+  "properties": {
+    "progress": {
+      "type": "number",
+      "description": "Progress in percents.",
+      "minimum": 0,
+      "maximum": 100
+    }
+  },
+  "required": [
+    "progress"
+  ]
+}

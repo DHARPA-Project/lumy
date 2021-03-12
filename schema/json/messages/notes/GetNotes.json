@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "MsgNotesGetNotes",
+  "description": "Get list of notes for a workflow step.",
+  "properties": {
+    "stepId": {
+      "type": "string",
+      "description": "Workflow step Id."
+    }
+  },
+  "required": [
+    "stepId"
+  ]
+}

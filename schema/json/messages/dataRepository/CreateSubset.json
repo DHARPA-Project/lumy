@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "MsgDataRepositoryCreateSubset",
+  "description": "Request to create a subset of items",
+  "properties": {
+    "itemsIds": {
+      "type": "array",
+      "description": "List of items IDs to add to the subset",
+      "items": {
+        "type": "string"
+      }
+    },
+    "label": {
+      "type": "string",
+      "description": "Label of the subset"
+    }
+  },
+  "required": [
+    "itemsIds",
+    "label"
+  ]
+}

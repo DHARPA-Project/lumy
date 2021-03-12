@@ -1,9 +1,9 @@
 {
   "$schema": "http://json-schema.org/schema",
-  "$id": "https://dharpa.org/schemas/backend/Workflow.json",
   "type": "object",
-  "description": "Represents a workflow.",
   "additionalProperties": false,
+  "title": "Workflow",
+  "description": "Represents a workflow.",
   "properties": {
     "id": {
       "type": "string",
@@ -14,7 +14,7 @@
       "description": "Human readable name of the workflow."
     },
     "structure": {
-      "$ref": "https://dharpa.org/schemas/backend/WorkflowStructure.json",
+      "$ref": "https://dharpa.org/schema/types/workflow/WorkflowStructure.json",
       "description": "Modular structure of the workflow."
     }
   },

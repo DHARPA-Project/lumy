@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 class ModuleParametersHandler(MessageHandler):
 
-    def _handle_get(self, msg: MessageEnvelope):
+    def _handle_Get(self, msg: MessageEnvelope):
         '''
         Return workflow step parameters.
         '''
@@ -22,7 +22,7 @@ class ModuleParametersHandler(MessageHandler):
         self.publisher.publish(
             Target.ModuleParameters,
             MessageEnvelope(
-                action='updated',
+                action='Updated',
                 content=to_dict(MsgParametersUpdated(
                     message.id,
                     parameters
@@ -30,7 +30,7 @@ class ModuleParametersHandler(MessageHandler):
             )
         )
 
-    def _handle_update(self, msg: MessageEnvelope):
+    def _handle_Update(self, msg: MessageEnvelope):
         message = from_dict(MsgParametersUpdate, msg.content)
         parameters = self.context.update_current_workflow_step_parameters(
             message.id,
@@ -40,7 +40,7 @@ class ModuleParametersHandler(MessageHandler):
         self.publisher.publish(
             Target.ModuleParameters,
             MessageEnvelope(
-                action='updated',
+                action='Updated',
                 content=to_dict(MsgParametersUpdated(
                     message.id,
                     parameters

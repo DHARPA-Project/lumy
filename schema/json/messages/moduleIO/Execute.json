@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "MsgModuleIOExecute",
+  "description": "Run this step with the latest used parameters on all data (not preview only).",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique ID of the step within the workflow."
+    }
+  },
+  "required": [
+    "id"
+  ]
+}

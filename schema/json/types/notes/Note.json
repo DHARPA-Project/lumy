@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "type": "object",
+  "title": "Note",
+  "description": "Represents a step note.",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique ID of the note."
+    },
+    "content": {
+      "type": "string",
+      "description": "Textual content of the note."
+    }
+  },
+  "required": [
+    "id",
+    "content"
+  ]
+}

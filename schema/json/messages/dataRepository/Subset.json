@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "MsgDataRepositorySubset",
+  "description": "A subset of items",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique ID of the subset"
+    },
+    "itemsIds": {
+      "type": "array",
+      "description": "List of items IDs to add to the subset",
+      "items": {
+        "type": "string"
+      }
+    },
+    "label": {
+      "type": "string",
+      "description": "Label of the subset"
+    }
+  },
+  "required": [
+    "id",
+    "itemsIds",
+    "label"
+  ]
+}

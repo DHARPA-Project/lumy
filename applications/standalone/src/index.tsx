@@ -1,16 +1,9 @@
 import React from 'react'
 import { render } from 'react-dom'
 import YAML from 'js-yaml'
-import {
-  DataContainer,
-  InputData,
-  BackEndContextProvider,
-  OutputData,
-  useBackendIsReady,
-  Workflow
-} from '@dharpa-vre/client-core'
+import { BackEndContextProvider, useBackendIsReady, Workflow } from '@dharpa-vre/client-core'
 import { Main } from '@dharpa-vre/toy-vre'
-import { MockContext } from './mock/context'
+import { DataProcessorResult, MockContext } from './mock/context'
 
 import './index.scss'
 
@@ -19,14 +12,17 @@ import currentWorkflowData from './mock/resources/sampleWorkflow.yml'
 const currentWorkflow: Workflow = YAML.load(currentWorkflowData)
 
 const mockDataProcessor = async (
+  stepId: string,
   moduleId: string,
   moduleParameters: unknown
-): Promise<DataContainer<InputData, OutputData>> => {
-  console.log(`Mock processing for workflow step "${moduleId}" with parameters`, moduleParameters)
+): Promise<DataProcessorResult> => {
+  console.log(
+    `Mock processing for workflow step "${stepId}" using module "${moduleId}" with parameters`,
+    moduleParameters
+  )
   return {
-    moduleId,
-    inputs: {},
-    output: {}
+    inputs: [],
+    outputs: []
   }
 }
 

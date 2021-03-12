@@ -1,9 +1,9 @@
 {
   "$schema": "http://json-schema.org/schema",
-  "$id": "https://dharpa.org/schemas/backend/WorkflowStep.json",
   "type": "object",
-  "description": "A single Workflow step.",
   "additionalProperties": false,
+  "title": "WorkflowStep",
+  "description": "A single Workflow step.",
   "properties": {
     "id": {
       "type": "string",

@@ -1,20 +1,21 @@
 {
   "$schema": "http://json-schema.org/schema",
-  "$id": "https://dharpa.org/schemas/vre/messages/parameters/MsgParametersUpdate.json",
   "type": "object",
-  "description": "Update parameters of a step in the current workflow.",
+  "title": "MsgParametersCreateSnapshot",
+  "description": "Create snapshot of parameters of a step from the current workflow.",
   "additionalProperties": false,
   "properties": {
-    "id": {
+    "stepId": {
       "type": "string",
       "description": "Unique ID of the step within the workflow."
     },
     "parameters": {
       "type": "object",
-      "description": "Optional parameters of the step that we are setting."
+      "description": "Optional parameters of the step."
     }
   },
   "required": [
-    "id"
+    "stepId",
+    "parameters"
   ]
 }

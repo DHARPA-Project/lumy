@@ -19,7 +19,7 @@ class Target(Enum):
     Activity = 'activity'
     Workflow = 'workflow'
     ModuleParameters = 'module_parameters'
-    ModuleIOPreview = 'module_io_preview'
+    ModuleIO = 'module_io'
 
 
 class TargetPublisher(ABC):
