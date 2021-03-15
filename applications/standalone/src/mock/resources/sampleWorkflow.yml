@@ -4,13 +4,17 @@ structure:
   steps:
     - id: 26948cab-7b90-4a3b-903f-f94305c57d26
       moduleId: module_this
-      parameters:
-        parameterA: 42
-        parameterB: 'foo'
+      inputs:
+        parameterA: 
+          defaultValue: 42
+        parameterB:
+          defaultValue: 'foo'
     - id: 2731830e-4aca-4259-ada1-f99a5a066896
       moduleId: module_that
-      parameters:
-        parameterC: [1, 2, 3]
-        parameterD: 'bar'
+      inputs:
+        parameterC: 
+          defaultValue: [1, 2, 3]
+        parameterD:
+          defaultValue: 'bar'
     - id: 035a3b27-1a5a-49e7-9055-c2a9a5553fa8
       moduleId: another_module

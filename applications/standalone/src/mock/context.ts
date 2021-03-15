@@ -17,6 +17,8 @@ const adapter = <T>(decoder: IDecode<T>, handler: (msg: T) => void) => {
   return (msg: ME<unknown>) => handlerAdapter(decoder, handler)(undefined, msg as ME<T>)
 }
 
+const getInputValuesStoreKey = (stepId: string): string => `${stepId}:${Target.ModuleIO}:inputValues`
+
 export type DataProcessorResult = Omit<Messages.ModuleIO.PreviewUpdated, 'id'>
 
 export type DataProcessor<P = unknown> = (
@@ -114,10 +116,10 @@ export class MockContext implements IBackEndContext {
   }
 
   private _getStepInputValues(stepId: string): { [inputId: string]: unknown } {
-    const value = this._store.getItem(`${stepId}:${Target.ModuleIO}`)
+    const value = this._store.getItem(getInputValuesStoreKey(stepId))
     const step = this._currentWorkflow?.structure?.steps?.find(step => step.id === stepId)
     const defaultValues = Object.entries(step?.inputs ?? {}).reduce(
-      (acc, [inputId, value]) => ({ ...acc, [inputId]: value }),
+      (acc, [inputId, value]) => ({ ...acc, [inputId]: value.defaultValue }),
       {}
     )
 
@@ -125,7 +127,7 @@ export class MockContext implements IBackEndContext {
   }
 
   private _setStepInputValues(stepId: string, values: unknown) {
-    this._store.setItem(`${stepId}:${Target.ModuleIO}:inputValues`, JSON.stringify(values))
+    this._store.setItem(getInputValuesStoreKey(stepId), JSON.stringify(values))
   }
 
   private async _processPreviewData(stepId: string): Promise<void> {
