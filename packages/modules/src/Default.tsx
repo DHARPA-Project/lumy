@@ -1,7 +1,7 @@
 import React from 'react'
 import { ModuleProps } from '@dharpa-vre/client-core'
 
-type Props = ModuleProps<unknown>
+type Props = ModuleProps<unknown, unknown>
 
 const Default = ({ step }: Props): JSX.Element => {
   return (

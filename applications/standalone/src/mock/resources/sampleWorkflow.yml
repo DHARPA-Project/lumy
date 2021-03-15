@@ -5,16 +5,59 @@ structure:
     - id: 26948cab-7b90-4a3b-903f-f94305c57d26
       moduleId: module_this
       inputs:
-        parameterA: 
+        parameterA:
           defaultValue: 42
         parameterB:
           defaultValue: 'foo'
+      outputs:
     - id: 2731830e-4aca-4259-ada1-f99a5a066896
       moduleId: module_that
       inputs:
         parameterC: 
           defaultValue: [1, 2, 3]
         parameterD:
-          defaultValue: 'bar'
+          connection:
+            stepId: 035a3b27-1a5a-49e7-9055-c2a9a5553fa8
+            ioId: theOutput
+      outputs:
     - id: 035a3b27-1a5a-49e7-9055-c2a9a5553fa8
       moduleId: another_module
+      inputs:
+      outputs:
+        theOutput:
+          defaultValue: 'bar'
+    - id: m1
+      moduleId: twoArgsMathFunction
+      inputs:
+        a:
+          defaultValue: 10
+        b:
+          defaultValue: 3
+        operator:
+          defaultValue: pow
+      outputs:
+        c:
+          connection:
+            stepId: m2
+            ioId: a
+    - id: m2
+      moduleId: twoArgsMathFunction
+      inputs:
+        a:
+          connection:
+            stepId: m1
+            ioId: c
+        b:
+          defaultValue: 5
+      outputs:
+        c:
+    - id: m3
+      moduleId: simplePlot
+      inputs:
+        x:
+          defaultValue: 10
+        y:
+          connection:
+            stepId: m2
+            ioId: c
+      outputs:

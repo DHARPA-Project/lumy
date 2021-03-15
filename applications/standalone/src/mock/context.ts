@@ -17,11 +17,12 @@ const adapter = <T>(decoder: IDecode<T>, handler: (msg: T) => void) => {
   return (msg: ME<unknown>) => handlerAdapter(decoder, handler)(undefined, msg as ME<T>)
 }
 
-const getInputValuesStoreKey = (stepId: string): string => `${stepId}:${Target.ModuleIO}:inputValues`
+const getInputValuesStoreKey = (stepId: string): string =>
+  `__dharpa_vre_mock:${stepId}:${Target.ModuleIO}:inputValues`
 
 export type DataProcessorResult = Omit<Messages.ModuleIO.PreviewUpdated, 'id'>
 
-export type DataProcessor<P = unknown> = (
+export type DataProcessor<P = { [inputId: string]: unknown }> = (
   stepId: string,
   moduleId: string,
   inputValues: P
@@ -37,6 +38,7 @@ export class MockContext implements IBackEndContext {
   private _isDisposed = false
   private _store: Storage
   private _processData: DataProcessor
+  private _computedOutputValues: { [stepOutputId: string]: unknown } = {}
 
   private _isReady = false
   private _statusChangedSignal = new Signal<MockContext, boolean>(this)
@@ -123,18 +125,35 @@ export class MockContext implements IBackEndContext {
       {}
     )
 
-    return value != null ? JSON.parse(value) : defaultValues
+    const inputValues = value != null ? JSON.parse(value) : defaultValues
+
+    Object.entries(step.inputs).forEach(([inputId, state]) => {
+      if (state.connection == null) return
+      const stepOutputId = `${state.connection.stepId}:${state.connection.ioId}`
+      const value = this._computedOutputValues[stepOutputId]
+      if (value != null) inputValues[inputId] = value
+    })
+
+    return inputValues
   }
 
-  private _setStepInputValues(stepId: string, values: unknown) {
+  private _setStepInputValues(stepId: string, values: { [key: string]: unknown }) {
     this._store.setItem(getInputValuesStoreKey(stepId), JSON.stringify(values))
   }
 
   private async _processPreviewData(stepId: string): Promise<void> {
-    const moduleId = this._getModuleIdForStep(stepId)
     if (this._processData == null) return
 
+    const moduleId = this._getModuleIdForStep(stepId)
     const data = await this._processData(stepId, moduleId, this._getStepInputValues(stepId))
+
+    data?.outputs?.forEach(item => {
+      // TODO: the output format has not been defined yet.
+      const { id, value } = item as { id: string; value: unknown }
+      const stepOutputId = `${stepId}:${id}`
+      this._computedOutputValues[stepOutputId] = value
+    })
+
     const response = Messages.ModuleIO.codec.PreviewUpdated.encode({ id: stepId, ...data })
     return this._signals[Target.ModuleIO].emit(response)
   }
