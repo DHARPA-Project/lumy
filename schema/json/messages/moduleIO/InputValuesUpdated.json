@@ -1,17 +1,17 @@
 {
   "$schema": "http://json-schema.org/schema",
   "type": "object",
-  "title": "MsgParametersUpdated",
-  "description": "Updated parameters of a step in the current workflow.",
+  "title": "MsgModuleIOInputValuesUpdated",
+  "description": "Updated input values of a step in the current workflow.\nTODO: At the moment only those values that are not outputs of other modules (hence the ones used in the UI).",
   "additionalProperties": false,
   "properties": {
     "id": {
       "type": "string",
       "description": "Unique ID of the step within the workflow."
     },
-    "parameters": {
+    "inputValues": {
       "type": "object",
-      "description": "Optional parameters of the step."
+      "description": "Input values."
     }
   },
   "required": [

@@ -1,13 +1,17 @@
 {
   "$schema": "http://json-schema.org/schema",
   "type": "object",
-  "title": "MsgParametersGet",
-  "description": "Get parameters of a step from the current workflow.",
+  "title": "MsgModuleIOGetInputValues",
+  "description": "Get values of inputs of a step from the current workflow.",
   "additionalProperties": false,
   "properties": {
     "id": {
       "type": "string",
       "description": "Unique ID of the step within the workflow that we are getting parameters for."
+    },
+    "inputIds": {
+      "type": "array",
+      "description": "Limit returned values only to inputs with these IDs."
     }
   },
   "required": [

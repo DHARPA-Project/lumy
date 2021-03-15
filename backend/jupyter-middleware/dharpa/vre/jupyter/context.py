@@ -15,7 +15,6 @@ from dharpa.vre.jupyter.base import (
 )
 from dharpa.vre.jupyter.message_handlers import (
     ModuleIOHandler,
-    ModuleParametersHandler,
     WorkflowMessageHandler,
 )
 from dharpa.vre.types.generated import MsgError
@@ -54,8 +53,6 @@ class Context(TargetPublisher):
 
         self._handlers = {
             Target.Workflow: WorkflowMessageHandler(self._context, self),
-            Target.ModuleParameters: ModuleParametersHandler(
-                self._context, self),
             Target.ModuleIO: ModuleIOHandler(
                 self._context, self)
         }
@@ -80,11 +77,6 @@ class Context(TargetPublisher):
         get_ipython().kernel.comm_manager.register_target(
             Target.Workflow.value,
             _open_handle_factory(Target.Workflow)
-        )
-
-        get_ipython().kernel.comm_manager.register_target(
-            Target.ModuleParameters.value,
-            _open_handle_factory(Target.ModuleParameters)
         )
 
         get_ipython().kernel.comm_manager.register_target(

@@ -1,8 +1,12 @@
 import React, { useContext } from 'react'
-import { ModuleProps, ParametersBase } from './modules'
 import { BackEndContext } from './context'
+import { WorkflowStep } from './types'
 
-export const ModuleViewFactory = (props: ModuleProps<ParametersBase>): JSX.Element => {
+export interface Props {
+  step: WorkflowStep
+}
+
+export const ModuleViewFactory = (props: Props): JSX.Element => {
   const context = useContext(BackEndContext)
   const provider = context.moduleViewProvider
 

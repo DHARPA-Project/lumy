@@ -175,6 +175,23 @@ export interface MsgModuleIOExecute {
 
 /**
  * Target: "moduleIO"
+ * Message type: "GetInputValues"
+ *
+ * Get values of inputs of a step from the current workflow.
+ */
+export interface MsgModuleIOGetInputValues {
+  /**
+   * Unique ID of the step within the workflow that we are getting parameters for.
+   */
+  id: string
+  /**
+   * Limit returned values only to inputs with these IDs.
+   */
+  inputIds?: unknown[]
+}
+
+/**
+ * Target: "moduleIO"
  * Message type: "GetPreview"
  *
  * Get preview of I/O data of a step from the current workflow.
@@ -184,6 +201,25 @@ export interface MsgModuleIOGetPreview {
    * Unique ID of the step within the workflow that we are getting preview for.
    */
   id: string
+}
+
+/**
+ * Target: "moduleIO"
+ * Message type: "InputValuesUpdated"
+ *
+ * Updated input values of a step in the current workflow.
+ * TODO: At the moment only those values that are not outputs of other modules (hence the
+ * ones used in the UI).
+ */
+export interface MsgModuleIOInputValuesUpdated {
+  /**
+   * Unique ID of the step within the workflow.
+   */
+  id: string
+  /**
+   * Input values.
+   */
+  inputValues?: { [key: string]: unknown }
 }
 
 /**
@@ -222,6 +258,25 @@ export interface MsgModuleIOPreviewUpdated {
    * Output data for the module
    */
   outputs: unknown[]
+}
+
+/**
+ * Target: "moduleIO"
+ * Message type: "UpdateInputValues"
+ *
+ * Update input values of a step in the current workflow.
+ * TODO: At the moment only those values that are not outputs of other modules (hence the
+ * ones used in the UI).
+ */
+export interface MsgModuleIOUpdateInputValues {
+  /**
+   * Unique ID of the step within the workflow.
+   */
+  id: string
+  /**
+   * Input values.
+   */
+  inputValues?: { [key: string]: unknown }
 }
 
 /**
@@ -311,19 +366,6 @@ export interface MsgParametersCreateSnapshot {
 
 /**
  * Target: "parameters"
- * Message type: "Get"
- *
- * Get parameters of a step from the current workflow.
- */
-export interface MsgParametersGet {
-  /**
-   * Unique ID of the step within the workflow that we are getting parameters for.
-   */
-  id: string
-}
-
-/**
- * Target: "parameters"
  * Message type: "Snapshots"
  *
  * List of snapshots for a step from the current workflow.
@@ -337,40 +379,6 @@ export interface MsgParametersSnapshots {
    * Unique ID of the step within the workflow.
    */
   stepId: string
-}
-
-/**
- * Target: "parameters"
- * Message type: "Update"
- *
- * Update parameters of a step in the current workflow.
- */
-export interface MsgParametersUpdate {
-  /**
-   * Unique ID of the step within the workflow.
-   */
-  id: string
-  /**
-   * Optional parameters of the step that we are setting.
-   */
-  parameters?: { [key: string]: unknown }
-}
-
-/**
- * Target: "parameters"
- * Message type: "Updated"
- *
- * Updated parameters of a step in the current workflow.
- */
-export interface MsgParametersUpdated {
-  /**
-   * Unique ID of the step within the workflow.
-   */
-  id: string
-  /**
-   * Optional parameters of the step.
-   */
-  parameters?: { [key: string]: unknown }
 }
 
 /**
@@ -427,11 +435,40 @@ export interface WorkflowStep {
    */
   id: string
   /**
+   * State of module inputs of the step. Key is stepId.
+   */
+  inputs: { [key: string]: WorkflowIOState }
+  /**
    * ID of the module that is used in this step.
    */
   moduleId: string
   /**
-   * Optional parameters of the module that are applied in this step.
+   * State of module outputs of the step. Key is stepId.
    */
-  parameters?: { [key: string]: unknown }
+  outputs: { [key: string]: WorkflowIOState }
+}
+
+/**
+ * State of a single input or output.
+ */
+export interface WorkflowIOState {
+  connection?: IOStateConnection
+  /**
+   * Optional default value
+   */
+  defaultValue?: unknown
+}
+
+/**
+ * Incoming or outgoing connection of a module
+ */
+export interface IOStateConnection {
+  /**
+   * ID of the input or output
+   */
+  ioId: string
+  /**
+   * ID of the step
+   */
+  stepId: string
 }

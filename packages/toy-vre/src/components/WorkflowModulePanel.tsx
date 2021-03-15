@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react'
-import { useModuleParameters, WorkflowStep } from '@dharpa-vre/client-core'
+import { useStepInputValues, WorkflowStep } from '@dharpa-vre/client-core'
 
 export interface WorkflowModulePanelProps {
   step: WorkflowStep
 }
 
-type DummyParameters = Record<string, unknown>
+type DummyInputs = { [parameterId: string]: unknown }
 
-const toText = (v: DummyParameters) => {
+const toText = (v: DummyInputs) => {
   try {
     return JSON.stringify(v, null, 2)
   } catch {
@@ -17,14 +17,14 @@ const toText = (v: DummyParameters) => {
 
 const fromText = (v: string) => {
   try {
-    return JSON.parse(v) as DummyParameters
+    return JSON.parse(v) as DummyInputs
   } catch {
     return undefined
   }
 }
 
 export const WorkflowModulePanel = ({ step }: WorkflowModulePanelProps): JSX.Element => {
-  const [parameters, updateParameters] = useModuleParameters<DummyParameters>(step.id)
+  const [parameters, updateParameters] = useStepInputValues<DummyInputs>(step.id)
   const [changedParametersText, setChangedParametersText] = useState<string>(toText(parameters))
   const [editingError, setEditingError] = useState<string>()
 

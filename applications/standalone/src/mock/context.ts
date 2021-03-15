@@ -22,7 +22,7 @@ export type DataProcessorResult = Omit<Messages.ModuleIO.PreviewUpdated, 'id'>
 export type DataProcessor<P = unknown> = (
   stepId: string,
   moduleId: string,
-  moduleParameters: P
+  inputValues: P
 ) => Promise<DataProcessorResult>
 
 export interface MockContextParameters {
@@ -52,13 +52,11 @@ export class MockContext implements IBackEndContext {
     this._signals = {
       [Target.Activity]: new Signal<MockContext, ME<unknown>>(this),
       [Target.Workflow]: new Signal<MockContext, ME<unknown>>(this),
-      [Target.ModuleParameters]: new Signal<MockContext, ME<unknown>>(this),
       [Target.ModuleIO]: new Signal<MockContext, ME<unknown>>(this)
     }
 
     this._signals[Target.Workflow].connect(this._handleWorkflow, this)
     this._signals[Target.ModuleIO].connect(this._handleModuleIO, this)
-    this._signals[Target.ModuleParameters].connect(this._handleModuleParameters, this)
 
     setTimeout(() => {
       this._isReady = true
@@ -93,47 +91,48 @@ export class MockContext implements IBackEndContext {
       this._processPreviewData(id)
       // return this._handleGetModuleIOPreview(id)
     })(msg)
-  }
 
-  private _handleModuleParameters(_: MockContext, msg: ME<unknown>) {
-    adapter(Messages.Parameters.codec.Get.decode, ({ id }) => {
-      const parameters = this._getStepParameters(id)
-      const response = Messages.Parameters.codec.Updated.encode({
+    adapter(Messages.ModuleIO.codec.GetInputValues.decode, ({ id }) => {
+      const inputValues = this._getStepInputValues(id)
+      const response = Messages.ModuleIO.codec.InputValuesUpdated.encode({
         id,
-        parameters
+        inputValues
       })
 
-      this._signals[Target.ModuleParameters].emit(response)
+      this._signals[Target.ModuleIO].emit(response)
     })(msg)
 
-    adapter(Messages.Parameters.codec.Update.decode, async ({ id, parameters }) => {
-      this._setStepParameters(id, parameters)
+    adapter(Messages.ModuleIO.codec.UpdateInputValues.decode, async ({ id, inputValues }) => {
+      this._setStepInputValues(id, inputValues)
       await this._processPreviewData(id)
-      const udpatedMessage = Messages.Parameters.codec.Updated.encode({
+      const udpatedMessage = Messages.ModuleIO.codec.InputValuesUpdated.encode({
         id,
-        parameters
+        inputValues
       })
-      this._signals[Target.ModuleParameters].emit(udpatedMessage)
+      this._signals[Target.ModuleIO].emit(udpatedMessage)
     })(msg)
   }
 
-  private _getStepParameters(stepId: string) {
-    const value = this._store.getItem(`${stepId}:${Target.ModuleParameters}`)
-    const workflowParameters = this._currentWorkflow?.structure?.steps?.find(step => step.id === stepId)
-      ?.parameters
+  private _getStepInputValues(stepId: string): { [inputId: string]: unknown } {
+    const value = this._store.getItem(`${stepId}:${Target.ModuleIO}`)
+    const step = this._currentWorkflow?.structure?.steps?.find(step => step.id === stepId)
+    const defaultValues = Object.entries(step?.inputs ?? {}).reduce(
+      (acc, [inputId, value]) => ({ ...acc, [inputId]: value }),
+      {}
+    )
 
-    return value != null ? JSON.parse(value) : workflowParameters
+    return value != null ? JSON.parse(value) : defaultValues
   }
 
-  private _setStepParameters(stepId: string, parameters: unknown) {
-    this._store.setItem(`${stepId}:${Target.ModuleParameters}`, JSON.stringify(parameters))
+  private _setStepInputValues(stepId: string, values: unknown) {
+    this._store.setItem(`${stepId}:${Target.ModuleIO}:inputValues`, JSON.stringify(values))
   }
 
   private async _processPreviewData(stepId: string): Promise<void> {
     const moduleId = this._getModuleIdForStep(stepId)
     if (this._processData == null) return
 
-    const data = await this._processData(stepId, moduleId, this._getStepParameters(stepId))
+    const data = await this._processData(stepId, moduleId, this._getStepInputValues(stepId))
     const response = Messages.ModuleIO.codec.PreviewUpdated.encode({ id: stepId, ...data })
     return this._signals[Target.ModuleIO].emit(response)
   }

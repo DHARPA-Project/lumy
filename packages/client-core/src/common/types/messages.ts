@@ -2,9 +2,6 @@ import { Codec } from './base'
 import {
   MsgError,
   MsgExecutionState,
-  MsgParametersGet,
-  MsgParametersUpdate,
-  MsgParametersUpdated,
   MsgWorkflowWorkflowUpdated,
   MsgModuleIOGetPreview,
   MsgModuleIOPreviewUpdated,
@@ -16,26 +13,22 @@ import {
   MsgModuleIOOutputUpdated,
   MsgNotesGetNotes,
   MsgNotesAdd,
-  MsgNotesNotes
+  MsgNotesNotes,
+  MsgModuleIOGetInputValues,
+  MsgModuleIOInputValuesUpdated,
+  MsgModuleIOUpdateInputValues
 } from './generated'
 
+/**
+ * TODO: This should move somewhere else. Target "Parameters" has been removed.
+ */
 export namespace Parameters {
-  export type Get = MsgParametersGet
-  export interface Update<T> extends Omit<MsgParametersUpdate, 'parameters'> {
-    parameters: T
-  }
-  export interface Updated<T> extends Omit<MsgParametersUpdated, 'parameters'> {
-    parameters: T
-  }
   export interface CreateSnapshot<T> extends Omit<MsgParametersCreateSnapshot, 'parameters'> {
     parameters: T
   }
   export type Snapshots = MsgParametersSnapshots
 
   export namespace codec {
-    export const Get = Codec<Get>('Get')
-    export const Update = Codec<Update<void>>('Update')
-    export const Updated = Codec<Updated<void>>('Updated')
     export const CreateSnapshot = Codec<CreateSnapshot<void>>('CreateSnapshot')
     export const Snapshots = Codec<Snapshots>('Snapshots')
   }
@@ -69,6 +62,9 @@ export namespace ModuleIO {
   export type UpdatePreviewParameters = MsgModuleIOUpdatePreviewParameters
   export type Execute = MsgModuleIOExecute
   export type OutputUpdated = MsgModuleIOOutputUpdated
+  export type GetInputValues = MsgModuleIOGetInputValues
+  export type InputValuesUpdated = MsgModuleIOInputValuesUpdated
+  export type UpdateInputValues = MsgModuleIOUpdateInputValues
 
   export namespace codec {
     export const GetPreview = Codec<GetPreview>('GetPreview')
@@ -76,6 +72,9 @@ export namespace ModuleIO {
     export const UpdatePreviewParameters = Codec<UpdatePreviewParameters>('UpdatePreviewParameters')
     export const Execute = Codec<Execute>('Execute')
     export const OutputUpdated = Codec<OutputUpdated>('OutputUpdated')
+    export const GetInputValues = Codec<GetInputValues>('GetInputValues')
+    export const InputValuesUpdated = Codec<InputValuesUpdated>('InputValuesUpdated')
+    export const UpdateInputValues = Codec<UpdateInputValues>('UpdateInputValues')
   }
 }
 

@@ -17,11 +17,6 @@ export enum Target {
    */
   Workflow = 'workflow',
   /**
-   * Used to updated module parameters with the backend
-   * and get the most recent parameters from the backend.
-   */
-  ModuleParameters = 'module_parameters',
-  /**
    * Used to get preview processed data for the module.
    */
   ModuleIO = 'module_io'
