@@ -18,7 +18,7 @@ class ModuleIOHandler(MessageHandler):
         Return workflow step input values.
         '''
         message = from_dict(MsgModuleIOGetInputValues, msg.content)
-        values = self.context.get_current_workflow_step_parameters(
+        values = self.context.get_current_workflow_step_input_values(
             message.id)
 
         self.publisher.publish(
@@ -34,7 +34,7 @@ class ModuleIOHandler(MessageHandler):
 
     def _handle_UpdateInputValues(self, msg: MessageEnvelope):
         message = from_dict(MsgModuleIOUpdateInputValues, msg.content)
-        values = self.context.update_current_workflow_step_parameters(
+        values = self.context.update_current_workflow_step_input_values(
             message.id,
             message.input_values
         )
