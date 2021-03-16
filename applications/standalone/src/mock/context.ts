@@ -155,7 +155,20 @@ export class MockContext implements IBackEndContext {
     })
 
     const response = Messages.ModuleIO.codec.PreviewUpdated.encode({ id: stepId, ...data })
-    return this._signals[Target.ModuleIO].emit(response)
+    this._signals[Target.ModuleIO].emit(response)
+
+    this._updatedInputValuesForAllSteps()
+  }
+
+  _updatedInputValuesForAllSteps(): void {
+    this._currentWorkflow?.structure?.steps?.forEach(step => {
+      const response = Messages.ModuleIO.codec.InputValuesUpdated.encode({
+        id: step.id,
+        inputValues: this._getStepInputValues(step.id)
+      })
+
+      this._signals[Target.ModuleIO].emit(response)
+    })
   }
 
   sendMessage<T, U = void>(target: Target, msg: MessageEnvelope<T>): Promise<U> {

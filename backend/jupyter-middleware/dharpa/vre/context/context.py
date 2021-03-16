@@ -21,15 +21,15 @@ class AppContext(ABC):
         ...
 
     @abstractmethod
-    def get_current_workflow_step_parameters(
+    def get_current_workflow_step_input_values(
         self,
         step_id: str
     ) -> Optional[Dict]:
         ...
 
-    def update_current_workflow_step_parameters(
+    def update_current_workflow_step_input_values(
         self,
         step_id: str,
-        parameters: Optional[Dict]
+        input_values: Optional[Dict]
     ) -> Optional[Dict]:
         ...

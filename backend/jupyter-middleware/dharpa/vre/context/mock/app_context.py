@@ -13,6 +13,7 @@ WorkflowStructureUpdated = Callable[[WorkflowStructure], None]
 class MockAppContext(AppContext):
     _current_workflow: Optional[Workflow] = None
     _steps_input_values: Dict[str, Optional[Dict]] = {}
+    _steps_output_values: Dict[str, Optional[Dict]] = {}
 
     _event_workflow_structure_updated = SimplePublisher[WorkflowStructure]()
 
@@ -36,31 +37,31 @@ class MockAppContext(AppContext):
     def workflow_structure_updated(self):
         return self._event_workflow_structure_updated
 
-    def get_current_workflow_step_parameters(
+    def get_current_workflow_step_input_values(
         self,
         step_id: str
     ) -> Optional[Dict]:
-        parameters = self._steps_input_values[step_id] \
+        values = self._steps_input_values[step_id] \
             if step_id in self._steps_input_values else None
-        if parameters is None and self._current_workflow is not None:
+        if values is None and self._current_workflow is not None:
             step = next((
                 x
                 for x in self._current_workflow.structure.steps
                 if x.id == step_id
             ), None)
-            parameters = {
+            values = {
                 input_id: state.default_value for input_id,
                 state in step.inputs.items()
                 if state.default_value is not None
             }
-            self._steps_input_values[step_id] = parameters
-        return parameters
+            self._steps_input_values[step_id] = values
+        return values
 
-    def update_current_workflow_step_parameters(
+    def update_current_workflow_step_input_values(
         self,
         step_id: str,
-        parameters: Optional[Dict]
+        input_values: Optional[Dict]
     ) -> Optional[Dict]:
-        self._steps_input_values[step_id] = parameters
+        self._steps_input_values[step_id] = input_values
         # TODO: processing here ?
-        return parameters
+        return input_values
