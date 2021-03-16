@@ -17,12 +17,15 @@ const adapter = <T>(decoder: IDecode<T>, handler: (msg: T) => void) => {
   return (msg: ME<unknown>) => handlerAdapter(decoder, handler)(undefined, msg as ME<T>)
 }
 
+const getInputValuesStoreKey = (stepId: string): string =>
+  `__dharpa_vre_mock:${stepId}:${Target.ModuleIO}:inputValues`
+
 export type DataProcessorResult = Omit<Messages.ModuleIO.PreviewUpdated, 'id'>
 
-export type DataProcessor<P = unknown> = (
+export type DataProcessor<P = { [inputId: string]: unknown }> = (
   stepId: string,
   moduleId: string,
-  moduleParameters: P
+  inputValues: P
 ) => Promise<DataProcessorResult>
 
 export interface MockContextParameters {
@@ -35,6 +38,7 @@ export class MockContext implements IBackEndContext {
   private _isDisposed = false
   private _store: Storage
   private _processData: DataProcessor
+  private _computedOutputValues: { [stepOutputId: string]: unknown } = {}
 
   private _isReady = false
   private _statusChangedSignal = new Signal<MockContext, boolean>(this)
@@ -52,13 +56,11 @@ export class MockContext implements IBackEndContext {
     this._signals = {
       [Target.Activity]: new Signal<MockContext, ME<unknown>>(this),
       [Target.Workflow]: new Signal<MockContext, ME<unknown>>(this),
-      [Target.ModuleParameters]: new Signal<MockContext, ME<unknown>>(this),
       [Target.ModuleIO]: new Signal<MockContext, ME<unknown>>(this)
     }
 
     this._signals[Target.Workflow].connect(this._handleWorkflow, this)
     this._signals[Target.ModuleIO].connect(this._handleModuleIO, this)
-    this._signals[Target.ModuleParameters].connect(this._handleModuleParameters, this)
 
     setTimeout(() => {
       this._isReady = true
@@ -93,49 +95,80 @@ export class MockContext implements IBackEndContext {
       this._processPreviewData(id)
       // return this._handleGetModuleIOPreview(id)
     })(msg)
-  }
 
-  private _handleModuleParameters(_: MockContext, msg: ME<unknown>) {
-    adapter(Messages.Parameters.codec.Get.decode, ({ id }) => {
-      const parameters = this._getStepParameters(id)
-      const response = Messages.Parameters.codec.Updated.encode({
+    adapter(Messages.ModuleIO.codec.GetInputValues.decode, ({ id }) => {
+      const inputValues = this._getStepInputValues(id)
+      const response = Messages.ModuleIO.codec.InputValuesUpdated.encode({
         id,
-        parameters
+        inputValues
       })
 
-      this._signals[Target.ModuleParameters].emit(response)
+      this._signals[Target.ModuleIO].emit(response)
     })(msg)
 
-    adapter(Messages.Parameters.codec.Update.decode, async ({ id, parameters }) => {
-      this._setStepParameters(id, parameters)
+    adapter(Messages.ModuleIO.codec.UpdateInputValues.decode, async ({ id, inputValues }) => {
+      this._setStepInputValues(id, inputValues)
       await this._processPreviewData(id)
-      const udpatedMessage = Messages.Parameters.codec.Updated.encode({
+      const udpatedMessage = Messages.ModuleIO.codec.InputValuesUpdated.encode({
         id,
-        parameters
+        inputValues
       })
-      this._signals[Target.ModuleParameters].emit(udpatedMessage)
+      this._signals[Target.ModuleIO].emit(udpatedMessage)
     })(msg)
   }
 
-  private _getStepParameters(stepId: string) {
-    const value = this._store.getItem(`${stepId}:${Target.ModuleParameters}`)
-    const workflowParameters = this._currentWorkflow?.structure?.steps?.find(step => step.id === stepId)
-      ?.parameters
+  private _getStepInputValues(stepId: string): { [inputId: string]: unknown } {
+    const value = this._store.getItem(getInputValuesStoreKey(stepId))
+    const step = this._currentWorkflow?.structure?.steps?.find(step => step.id === stepId)
+    const defaultValues = Object.entries(step?.inputs ?? {}).reduce(
+      (acc, [inputId, value]) => ({ ...acc, [inputId]: value.defaultValue }),
+      {}
+    )
 
-    return value != null ? JSON.parse(value) : workflowParameters
+    const inputValues = value != null ? JSON.parse(value) : defaultValues
+
+    Object.entries(step.inputs).forEach(([inputId, state]) => {
+      if (state.connection == null) return
+      const stepOutputId = `${state.connection.stepId}:${state.connection.ioId}`
+      const value = this._computedOutputValues[stepOutputId]
+      if (value != null) inputValues[inputId] = value
+    })
+
+    return inputValues
   }
 
-  private _setStepParameters(stepId: string, parameters: unknown) {
-    this._store.setItem(`${stepId}:${Target.ModuleParameters}`, JSON.stringify(parameters))
+  private _setStepInputValues(stepId: string, values: { [key: string]: unknown }) {
+    this._store.setItem(getInputValuesStoreKey(stepId), JSON.stringify(values))
   }
 
   private async _processPreviewData(stepId: string): Promise<void> {
-    const moduleId = this._getModuleIdForStep(stepId)
     if (this._processData == null) return
 
-    const data = await this._processData(stepId, moduleId, this._getStepParameters(stepId))
+    const moduleId = this._getModuleIdForStep(stepId)
+    const data = await this._processData(stepId, moduleId, this._getStepInputValues(stepId))
+
+    data?.outputs?.forEach(item => {
+      // TODO: the output format has not been defined yet.
+      const { id, value } = item as { id: string; value: unknown }
+      const stepOutputId = `${stepId}:${id}`
+      this._computedOutputValues[stepOutputId] = value
+    })
+
     const response = Messages.ModuleIO.codec.PreviewUpdated.encode({ id: stepId, ...data })
-    return this._signals[Target.ModuleIO].emit(response)
+    this._signals[Target.ModuleIO].emit(response)
+
+    this._updatedInputValuesForAllSteps()
+  }
+
+  _updatedInputValuesForAllSteps(): void {
+    this._currentWorkflow?.structure?.steps?.forEach(step => {
+      const response = Messages.ModuleIO.codec.InputValuesUpdated.encode({
+        id: step.id,
+        inputValues: this._getStepInputValues(step.id)
+      })
+
+      this._signals[Target.ModuleIO].emit(response)
+    })
   }
 
   sendMessage<T, U = void>(target: Target, msg: MessageEnvelope<T>): Promise<U> {

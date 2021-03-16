@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "WorkflowIOState",
+  "description": "State of a single input or output.",
+  "properties": {
+    "connection": {
+      "$ref": "#/definitions/IOStateConnection"
+    },
+    "defaultValue": {
+      "type": [
+        "array",
+        "object",
+        "integer",
+        "number",
+        "string",
+        "boolean"
+      ],
+      "description": "Optional default value"
+    }
+  },
+  "required": [],
+  "definitions": {
+    "IOStateConnection": {
+      "type": "object",
+      "description": "Incoming or outgoing connection of a module",
+      "additionalProperties": false,
+      "properties": {
+        "stepId": {
+          "type": "string",
+          "description": "ID of the step"
+        },
+        "ioId": {
+          "type": "string",
+          "description": "ID of the input or output"
+        }
+      },
+      "required": [
+        "stepId",
+        "ioId"
+      ]
+    }
+  }
+}

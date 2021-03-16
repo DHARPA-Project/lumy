@@ -2,15 +2,42 @@ id: c3f3e085-afa9-4449-8826-e8bc2e0c9566
 label: Sample workflow 1
 structure:
   steps:
-    - id: 26948cab-7b90-4a3b-903f-f94305c57d26
-      moduleId: module_this
-      parameters:
-        parameterA: 42
-        parameterB: 'foo'
-    - id: 2731830e-4aca-4259-ada1-f99a5a066896
-      moduleId: module_that
-      parameters:
-        parameterC: [1, 2, 3]
-        parameterD: 'bar'
+    - id: m1
+      moduleId: twoArgsMathFunction
+      inputs:
+        a:
+          defaultValue: 10
+        b:
+          defaultValue: 3
+        operator:
+          defaultValue: pow
+      outputs:
+        c:
+          connection:
+            stepId: m2
+            ioId: a
+    - id: m2
+      moduleId: twoArgsMathFunction
+      inputs:
+        a:
+          connection:
+            stepId: m1
+            ioId: c
+        b:
+          defaultValue: 5
+      outputs:
+        c: {}
+    - id: m3
+      moduleId: simplePlot
+      inputs:
+        x:
+          defaultValue: 10
+        y:
+          connection:
+            stepId: m2
+            ioId: c
+      outputs: {}
     - id: 035a3b27-1a5a-49e7-9055-c2a9a5553fa8
-      moduleId: another_module
+      moduleId: module_without_dedicated_view
+      inputs: {}
+      outputs: {}

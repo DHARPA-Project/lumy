@@ -15,7 +15,6 @@ from dharpa.vre.jupyter.base import (
 )
 from dharpa.vre.jupyter.message_handlers import (
     ModuleIOHandler,
-    ModuleParametersHandler,
     WorkflowMessageHandler,
 )
 from dharpa.vre.types.generated import MsgError
@@ -54,8 +53,6 @@ class Context(TargetPublisher):
 
         self._handlers = {
             Target.Workflow: WorkflowMessageHandler(self._context, self),
-            Target.ModuleParameters: ModuleParametersHandler(
-                self._context, self),
             Target.ModuleIO: ModuleIOHandler(
                 self._context, self)
         }
@@ -83,11 +80,6 @@ class Context(TargetPublisher):
         )
 
         get_ipython().kernel.comm_manager.register_target(
-            Target.ModuleParameters.value,
-            _open_handle_factory(Target.ModuleParameters)
-        )
-
-        get_ipython().kernel.comm_manager.register_target(
             Target.ModuleIO.value,
             _open_handle_factory(Target.ModuleIO)
         )
@@ -101,6 +93,8 @@ class Context(TargetPublisher):
 
     def publish(self, target: Target, msg: MessageEnvelope) -> None:
         comm = self._comms[target]
+        logger.debug(
+            f'Message published on "{target}": {json.dumps(to_dict(msg))}')
         comm.send(to_dict(msg))
 
     def _handle_message(self, target: Target, message: Dict) -> None:

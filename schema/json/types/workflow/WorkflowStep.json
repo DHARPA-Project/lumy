@@ -13,13 +13,25 @@
       "type": "string",
       "description": "ID of the module that is used in this step."
     },
-    "parameters": {
+    "inputs": {
       "type": "object",
-      "description": "Optional parameters of the module that are applied in this step."
+      "description": "State of module inputs of the step. Key is stepId.",
+      "additionalProperties": {
+        "$ref": "https://dharpa.org/schema/types/workflow/IOState.json"
+      }
+    },
+    "outputs": {
+      "type": "object",
+      "description": "State of module outputs of the step. Key is stepId.",
+      "additionalProperties": {
+        "$ref": "https://dharpa.org/schema/types/workflow/IOState.json"
+      }
     }
   },
   "required": [
     "id",
-    "moduleId"
+    "moduleId",
+    "inputs",
+    "outputs"
   ]
 }

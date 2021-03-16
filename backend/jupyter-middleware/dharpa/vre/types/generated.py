@@ -1,6 +1,6 @@
 # flake8: noqa
 from dataclasses import dataclass
-from typing import Optional, List, Any, Dict
+from typing import Optional, List, Any, Dict, Union
 from enum import Enum
 
 
@@ -146,6 +146,19 @@ class MsgModuleIOExecute:
 
 
 @dataclass
+class MsgModuleIOGetInputValues:
+    """Target: "moduleIO"
+    Message type: "GetInputValues"
+    
+    Get values of inputs of a step from the current workflow.
+    """
+    """Unique ID of the step within the workflow that we are getting parameters for."""
+    id: str
+    """Limit returned values only to inputs with these IDs."""
+    input_ids: Optional[List[Any]] = None
+
+
+@dataclass
 class MsgModuleIOGetPreview:
     """Target: "moduleIO"
     Message type: "GetPreview"
@@ -154,6 +167,21 @@ class MsgModuleIOGetPreview:
     """
     """Unique ID of the step within the workflow that we are getting preview for."""
     id: str
+
+
+@dataclass
+class MsgModuleIOInputValuesUpdated:
+    """Target: "moduleIO"
+    Message type: "InputValuesUpdated"
+    
+    Updated input values of a step in the current workflow.
+    TODO: At the moment only those values that are not outputs of other modules (hence the
+    ones used in the UI).
+    """
+    """Unique ID of the step within the workflow."""
+    id: str
+    """Input values."""
+    input_values: Optional[Dict[str, Any]] = None
 
 
 @dataclass
@@ -182,6 +210,21 @@ class MsgModuleIOPreviewUpdated:
     inputs: List[Any]
     """Output data for the module"""
     outputs: List[Any]
+
+
+@dataclass
+class MsgModuleIOUpdateInputValues:
+    """Target: "moduleIO"
+    Message type: "UpdateInputValues"
+    
+    Update input values of a step in the current workflow.
+    TODO: At the moment only those values that are not outputs of other modules (hence the
+    ones used in the UI).
+    """
+    """Unique ID of the step within the workflow."""
+    id: str
+    """Input values."""
+    input_values: Optional[Dict[str, Any]] = None
 
 
 @dataclass
@@ -253,17 +296,6 @@ class MsgParametersCreateSnapshot:
 
 
 @dataclass
-class MsgParametersGet:
-    """Target: "parameters"
-    Message type: "Get"
-    
-    Get parameters of a step from the current workflow.
-    """
-    """Unique ID of the step within the workflow that we are getting parameters for."""
-    id: str
-
-
-@dataclass
 class MsgParametersSnapshots:
     """Target: "parameters"
     Message type: "Snapshots"
@@ -277,29 +309,20 @@ class MsgParametersSnapshots:
 
 
 @dataclass
-class MsgParametersUpdate:
-    """Target: "parameters"
-    Message type: "Update"
-    
-    Update parameters of a step in the current workflow.
-    """
-    """Unique ID of the step within the workflow."""
-    id: str
-    """Optional parameters of the step that we are setting."""
-    parameters: Optional[Dict[str, Any]] = None
+class IOStateConnection:
+    """Incoming or outgoing connection of a module"""
+    """ID of the input or output"""
+    io_id: str
+    """ID of the step"""
+    step_id: str
 
 
 @dataclass
-class MsgParametersUpdated:
-    """Target: "parameters"
-    Message type: "Updated"
-    
-    Updated parameters of a step in the current workflow.
-    """
-    """Unique ID of the step within the workflow."""
-    id: str
-    """Optional parameters of the step."""
-    parameters: Optional[Dict[str, Any]] = None
+class WorkflowIOState:
+    """State of a single input or output."""
+    """Optional default value"""
+    default_value: Union[List[Any], bool, float, int, Dict[str, Any], None, str]
+    connection: Optional[IOStateConnection] = None
 
 
 @dataclass
@@ -307,10 +330,12 @@ class WorkflowStep:
     """A single Workflow step."""
     """Unique ID of the step within the workflow."""
     id: str
+    """State of module inputs of the step. Key is stepId."""
+    inputs: Dict[str, WorkflowIOState]
     """ID of the module that is used in this step."""
     module_id: str
-    """Optional parameters of the module that are applied in this step."""
-    parameters: Optional[Dict[str, Any]] = None
+    """State of module outputs of the step. Key is stepId."""
+    outputs: Dict[str, WorkflowIOState]
 
 
 @dataclass
@@ -338,9 +363,9 @@ class Workflow:
 
 
 @dataclass
-class MsgWorkflowWorkflowUpdated:
+class MsgWorkflowUpdated:
     """Target: "workflow"
-    Message type: "MsgWorkflowUpdated"
+    Message type: "Updated"
     
     Contains current workflow.
     """

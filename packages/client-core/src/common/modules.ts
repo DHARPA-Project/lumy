@@ -1,29 +1,31 @@
 import { FC } from 'react'
-import { WorkflowStep } from './types'
+import { WorkflowIOState, WorkflowStep } from './types'
 
-export type ParametersBase = Record<string, unknown>
+interface TypedWorkflowStep<Input, Output> extends WorkflowStep {
+  inputs: { [key in keyof Input]: WorkflowIOState }
+  outputs: { [key in keyof Output]: WorkflowIOState }
+}
 
-export interface ModuleProps<P extends ParametersBase> {
-  step: WorkflowStep
-  parameters?: P
+export interface ModuleProps<Input, Output> {
+  step: TypedWorkflowStep<Input, Output>
 }
 
 export interface ModuleViewProvider {
-  getModulePanel<P extends ParametersBase, T extends ModuleProps<P>>(moduleId: string): FC<T>
+  getModulePanel<I, O, T extends ModuleProps<I, O>>(moduleId: string): FC<T>
 }
 
 export class SimpleModuleViewProvider implements ModuleViewProvider {
-  private _modules: Record<string, FC<ModuleProps<ParametersBase>>>
-  private _defaultView: FC<ModuleProps<ParametersBase>>
+  private _modules: Record<string, FC<ModuleProps<unknown, unknown>>>
+  private _defaultView: FC<ModuleProps<unknown, unknown>>
 
   constructor(
-    modules: Record<string, FC<ModuleProps<ParametersBase>>>,
-    defaultView: FC<ModuleProps<ParametersBase>>
+    modules: Record<string, FC<ModuleProps<unknown, unknown>>>,
+    defaultView: FC<ModuleProps<unknown, unknown>>
   ) {
     this._modules = modules
     this._defaultView = defaultView
   }
-  getModulePanel<P extends ParametersBase, T extends ModuleProps<P>>(moduleId: string): FC<T> {
+  getModulePanel<T extends ModuleProps<unknown, unknown>>(moduleId: string): FC<T> {
     const module = this._modules[moduleId] ?? this._defaultView
     return (module as unknown) as FC<T>
   }
