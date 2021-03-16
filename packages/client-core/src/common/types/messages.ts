@@ -2,7 +2,7 @@ import { Codec } from './base'
 import {
   MsgError,
   MsgExecutionState,
-  MsgWorkflowWorkflowUpdated,
+  MsgWorkflowUpdated,
   MsgModuleIOGetPreview,
   MsgModuleIOPreviewUpdated,
   MsgModuleIOUpdatePreviewParameters,
@@ -35,7 +35,7 @@ export namespace Parameters {
 }
 
 export namespace Workflow {
-  export type Updated = MsgWorkflowWorkflowUpdated
+  export type Updated = MsgWorkflowUpdated
   export type GetCurrent = void
 
   export namespace codec {

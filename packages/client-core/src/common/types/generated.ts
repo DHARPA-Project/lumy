@@ -383,11 +383,11 @@ export interface MsgParametersSnapshots {
 
 /**
  * Target: "workflow"
- * Message type: "MsgWorkflowUpdated"
+ * Message type: "Updated"
  *
  * Contains current workflow.
  */
-export interface MsgWorkflowWorkflowUpdated {
+export interface MsgWorkflowUpdated {
   /**
    * Current workflow.
    */
@@ -456,7 +456,7 @@ export interface WorkflowIOState {
   /**
    * Optional default value
    */
-  defaultValue?: unknown
+  defaultValue?: unknown[] | boolean | number | number | { [key: string]: unknown } | string
 }
 
 /**

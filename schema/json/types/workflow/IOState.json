@@ -9,6 +9,14 @@
       "$ref": "#/definitions/IOStateConnection"
     },
     "defaultValue": {
+      "type": [
+        "array",
+        "object",
+        "integer",
+        "number",
+        "string",
+        "boolean"
+      ],
       "description": "Optional default value"
     }
   },

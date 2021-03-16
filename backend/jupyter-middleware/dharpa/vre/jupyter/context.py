@@ -93,6 +93,8 @@ class Context(TargetPublisher):
 
     def publish(self, target: Target, msg: MessageEnvelope) -> None:
         comm = self._comms[target]
+        logger.debug(
+            f'Message published on "{target}": {json.dumps(to_dict(msg))}')
         comm.send(to_dict(msg))
 
     def _handle_message(self, target: Target, message: Dict) -> None:

@@ -24,7 +24,6 @@ const SupportedFunctions = {
 const TwoArgsMathFunction = ({ step }: Props): JSX.Element => {
   const { inputs } = step
   const [inputValues, setInputValues] = useStepInputValues<InputValues>(step.id)
-
   const [a, setA] = React.useState<string>('')
   const [b, setB] = React.useState<string>('')
   const [operator, setOperator] = React.useState<string>('add')

@@ -104,7 +104,7 @@ export class KernelModuleContext implements IBackEndContext, IDisposable {
         console.log(`Comm "${commId}" has been closed by backend`, msg)
       }
       comm.onMsg = (msg: KernelMessage.ICommMsgMsg) => {
-        console.log(`Received message on ${target}`, msg)
+        console.log(`Received message on ${target}`, msg?.content?.data)
         const data = msg.content.data
         signal.emit((data as unknown) as MessageEnvelope<unknown>)
       }

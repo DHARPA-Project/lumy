@@ -1,6 +1,6 @@
 # flake8: noqa
 from dataclasses import dataclass
-from typing import Optional, List, Any, Dict
+from typing import Optional, List, Any, Dict, Union
 from enum import Enum
 
 
@@ -321,7 +321,7 @@ class IOStateConnection:
 class WorkflowIOState:
     """State of a single input or output."""
     """Optional default value"""
-    default_value: Any
+    default_value: Union[List[Any], bool, float, int, Dict[str, Any], None, str]
     connection: Optional[IOStateConnection] = None
 
 
@@ -363,9 +363,9 @@ class Workflow:
 
 
 @dataclass
-class MsgWorkflowWorkflowUpdated:
+class MsgWorkflowUpdated:
     """Target: "workflow"
-    Message type: "MsgWorkflowUpdated"
+    Message type: "Updated"
     
     Contains current workflow.
     """

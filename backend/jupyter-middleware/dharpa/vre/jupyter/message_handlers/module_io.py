@@ -24,7 +24,7 @@ class ModuleIOHandler(MessageHandler):
         self.publisher.publish(
             Target.ModuleIO,
             MessageEnvelope(
-                action='Updated',
+                action='InputValuesUpdated',
                 content=to_dict(MsgModuleIOInputValuesUpdated(
                     message.id,
                     values
@@ -42,7 +42,7 @@ class ModuleIOHandler(MessageHandler):
         self.publisher.publish(
             Target.ModuleIO,
             MessageEnvelope(
-                action='Updated',
+                action='InputValuesUpdated',
                 content=to_dict(MsgModuleIOInputValuesUpdated(
                     message.id,
                     values
