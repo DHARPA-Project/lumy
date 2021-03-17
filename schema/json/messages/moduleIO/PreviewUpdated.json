@@ -10,12 +10,12 @@
       "description": "Unique ID of the step within the workflow that the preview is for."
     },
     "inputs": {
-      "type": "array",
-      "description": "Input data for the module"
+      "type": "object",
+      "description": "Input data of the module. Key is input Id."
     },
     "outputs": {
-      "type": "array",
-      "description": "Output data for the module"
+      "type": "object",
+      "description": "Output data of the module. Key is input Id."
     }
   },
   "required": [

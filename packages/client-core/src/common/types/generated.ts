@@ -251,13 +251,13 @@ export interface MsgModuleIOPreviewUpdated {
    */
   id: string
   /**
-   * Input data for the module
+   * Input data of the module. Key is input Id.
    */
-  inputs: unknown[]
+  inputs: { [key: string]: unknown }
   /**
-   * Output data for the module
+   * Output data of the module. Key is input Id.
    */
-  outputs: unknown[]
+  outputs: { [key: string]: unknown }
 }
 
 /**

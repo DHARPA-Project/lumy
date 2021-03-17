@@ -147,9 +147,7 @@ export class MockContext implements IBackEndContext {
     const moduleId = this._getModuleIdForStep(stepId)
     const data = await this._processData(stepId, moduleId, this._getStepInputValues(stepId))
 
-    data?.outputs?.forEach(item => {
-      // TODO: the output format has not been defined yet.
-      const { id, value } = item as { id: string; value: unknown }
+    Object.entries(data?.outputs ?? {}).forEach(([id, value]) => {
       const stepOutputId = `${stepId}:${id}`
       this._computedOutputValues[stepOutputId] = value
     })

@@ -206,10 +206,10 @@ class MsgModuleIOPreviewUpdated:
     """
     """Unique ID of the step within the workflow that the preview is for."""
     id: str
-    """Input data for the module"""
-    inputs: List[Any]
-    """Output data for the module"""
-    outputs: List[Any]
+    """Input data of the module. Key is input Id."""
+    inputs: Dict[str, Any]
+    """Output data of the module. Key is input Id."""
+    outputs: Dict[str, Any]
 
 
 @dataclass

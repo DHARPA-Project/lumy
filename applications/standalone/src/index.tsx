@@ -21,7 +21,7 @@ const mockDataProcessor = async (
     inputValues
   )
 
-  const outputs = []
+  const outputs: { [key: string]: unknown } = {}
 
   if (moduleId === 'twoArgsMathFunction') {
     const { a, b, operator } = inputValues as { a: number; b: number; operator: string }
@@ -45,11 +45,11 @@ const mockDataProcessor = async (
           break
       }
     } finally {
-      outputs.push({ id: 'c', value: c })
+      outputs.c = c
     }
   }
   return {
-    inputs: [],
+    inputs: {},
     outputs
   }
 }
