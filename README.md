@@ -123,4 +123,4 @@ Modules panels components are in `packages/modules`. Generally one file per modu
 
 ## Repository structure overview
 
-<img width="1002" alt="repo-overview" src="https://user-images.githubusercontent.com/89853/110335755-7b417f00-8024-11eb-827c-b1b5de5af1b1.png">
+<img width="1007" alt="Screen Shot 2021-03-18 at 18 15 40" src="https://user-images.githubusercontent.com/89853/111668423-05a09480-8816-11eb-92c4-6629dffe6ef9.png">
