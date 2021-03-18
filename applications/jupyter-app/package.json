@@ -1,37 +1,29 @@
 {
-  "name": "@dharpa-vre/jupyterlab-extension",
+  "name": "@dharpa-vre/jupyter-app",
   "version": "0.1.0",
-  "description": "DHARPA VRE JupyterLab extension.",
+  "description": "DHARPA VRE as a Jupyter app.",
   "keywords": [
-    "jupyter",
-    "jupyterlab",
-    "jupyterlab-extension"
+    "jupyter"
   ],
   "homepage": "https://dharpa.org",
   "main": "src/index.ts",
   "license": "AGPL-3.0-only",
   "author": "roman@kalyakin.com",
   "scripts": {
-    "develop": "jupyter labextension develop . --overwrite --debug",
-    "watch": "jupyter labextension watch --development True .",
-    "eslint": "eslint src --ext .ts,.tsx,.js,.jsx --fix",
-    "eslint:check": "eslint src --ext .ts,.tsx,.js,.jsx",
-    "build:prod": "jlpm run build:lib && jlpm run build:labextension",
-    "build:labextension": "jupyter labextension build .",
-    "build:lib": "tsc",
-    "start": "webpack serve -c webpack.config.standalone.js"
+    "watch": "webpack -c webpack.config.js --watch --progress",
+    "serve": "webpack serve -c webpack.config.js",
+    "build": "webpack -c webpack.config.js",
+    "clean": "rimraf build",
+    "prepublishOnly": "npm run build",
+    "start": "python main.py"
   },
   "dependencies": {
     "@dharpa-vre/jupyter-support": "*",
-    "@jupyterlab/application": "3",
-    "@jupyterlab/launcher": "3",
-    "@jupyterlab/mainmenu": "3",
-    "@jupyterlab/translation": "3",
-    "@jupyterlab/ui-components": "3",
-    "@lumino/coreutils": "1",
+    "@jupyterlab/services": "6",
     "@lumino/widgets": "1",
+    "@lumino/signaling": "1",
     "react": "17",
-    "react-dom": "17"
+    "process": "0"
   },
   "devDependencies": {
     "@babel/core": "7",
@@ -40,7 +32,6 @@
     "@babel/preset-env": "7",
     "@babel/preset-react": "7",
     "@babel/preset-typescript": "7",
-    "@jupyterlab/builder": "3",
     "@types/node": "14",
     "@types/react-dom": "17",
     "@typescript-eslint/eslint-plugin": "4",
@@ -63,10 +54,5 @@
   "sideEffects": [
     "*.css",
     "*.scss"
-  ],
-  "jupyterlab": {
-    "extension": true,
-    "outputDir": "dharpa_vre_jupyterlab_extension/labextension",
-    "webpackConfig": "./webpack.config.labext.js"
-  }
+  ]
 }
