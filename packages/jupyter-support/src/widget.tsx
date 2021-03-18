@@ -28,7 +28,6 @@ export class KernelView extends ReactWidget {
   constructor(context: KernelModuleContext) {
     super()
     this._context = context
-    this.addClass('dharpa-scrollable-panel')
   }
 
   protected render(): React.ReactElement<unknown> {

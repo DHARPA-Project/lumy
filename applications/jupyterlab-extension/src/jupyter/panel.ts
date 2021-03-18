@@ -3,8 +3,7 @@ import { ITranslator, nullTranslator, TranslationBundle } from '@jupyterlab/tran
 import { LabIcon } from '@jupyterlab/ui-components'
 import { Message } from '@lumino/messaging'
 import { StackedPanel } from '@lumino/widgets'
-import { KernelView } from './widget'
-import { KernelModuleContext } from './kernelContext'
+import { KernelView, KernelModuleContext } from '@dharpa-vre/jupyter-support'
 
 import AppIconSvg from './icon.svg'
 
