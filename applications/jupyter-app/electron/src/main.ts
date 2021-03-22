@@ -1,7 +1,7 @@
 import path from 'path'
 import crypto from 'crypto'
 import { app, BrowserWindow } from 'electron'
-import { spawn } from 'child_process'
+import { spawn, ChildProcess } from 'child_process'
 import { waitForPort, getFreePort } from './networkUtils'
 
 function generateToken(length: number): string {
@@ -24,7 +24,11 @@ function createWindow(port: number, token: string) {
   return win.loadFile('../src/index.html')
 }
 
-function startJupyterServerProcess(port: number, token: string, closeHandler: (code: number) => void) {
+function startJupyterServerProcess(
+  port: number,
+  token: string,
+  closeHandler: (code: number) => void
+): Promise<ChildProcess> {
   const mainFile = path.resolve(__dirname, '../../main.py')
   const cwd = path.resolve(__dirname, '../..')
 
@@ -62,23 +66,39 @@ async function main() {
   const port = await getFreePort()
   const token = generateToken(32)
 
-  const serverDiedHandler = (code: number) => {
-    console.warn(
-      `Jupyter process exited with code ${code}. We need to inform the user and shutdown or restart`
-    )
+  let isReadyToExit = false
+
+  const serverExitedHandler = (code: number) => {
+    if (!isReadyToExit) {
+      console.warn(
+        `Jupyter process exited with code ${code}. ` +
+          `We need to inform the user and shutdown the app or restart the server`
+      )
+    } else {
+      app.quit()
+    }
   }
 
-  await startJupyterServerProcess(port, token, serverDiedHandler)
+  const serverProcess = await startJupyterServerProcess(port, token, serverExitedHandler)
   await createWindow(port, token)
 
   app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-      app.quit()
-    }
+    app.quit()
   })
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow(port, token)
+    }
+  })
+  app.on('before-quit', event => {
+    if (serverProcess.exitCode == null) {
+      // the server process is still running - we need to exit first.
+      event.preventDefault()
+      console.log('Stopping server process...')
+      isReadyToExit = true
+      serverProcess.kill('SIGTERM')
+    } else {
+      console.log('Exiting...')
     }
   })
 }
