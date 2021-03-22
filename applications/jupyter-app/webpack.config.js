@@ -11,7 +11,7 @@ module.exports = {
   devtool: 'source-map',
   // stats: 'detailed',
   mode: 'development',
-  watch: true,
+  // watch: true,
   devServer: {
     historyApiFallback: true,
     hot: true,
@@ -38,7 +38,26 @@ module.exports = {
     rules: [
       {
         test: /\.(ts|js)x?$/,
-        use: ['source-map-loader'],
+        use: [
+          {
+            loader: 'source-map-loader',
+            options: {
+              filterSourceMappingUrl: (_, resourcePath) => {
+                // Several @jupyterlab packages mention ts declarations, but the files
+                // are missing. This make webpack print warnings. Disable them here
+                // altogether.
+                if (
+                  /.*\/node_modules\/@jupyterlab\/(ui-components|services|coreutils|apputils|translation|statedb)\/.*/.test(
+                    resourcePath
+                  )
+                ) {
+                  return false
+                }
+                return true
+              }
+            }
+          }
+        ],
         enforce: 'pre'
       },
       {
