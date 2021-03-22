@@ -1,11 +1,17 @@
 import path from 'path'
+import crypto from 'crypto'
 import { app, BrowserWindow } from 'electron'
 import { spawn } from 'child_process'
+import { waitForPort, getFreePort } from './networkUtils'
 
-const port = 12345
-const token = '12345abcde'
+function generateToken(length: number): string {
+  return crypto
+    .randomBytes(Math.ceil(length / 2))
+    .toString('hex')
+    .slice(0, length)
+}
 
-function createWindow() {
+function createWindow(port: number, token: string) {
   const win = new BrowserWindow({
     width: 800,
     height: 600,
@@ -18,7 +24,7 @@ function createWindow() {
   return win.loadFile('../src/index.html')
 }
 
-function startJupyterServerProcess(closeHandler: (code: number) => void) {
+function startJupyterServerProcess(port: number, token: string, closeHandler: (code: number) => void) {
   const mainFile = path.resolve(__dirname, '../../main.py')
   const cwd = path.resolve(__dirname, '../..')
 
@@ -32,40 +38,54 @@ function startJupyterServerProcess(closeHandler: (code: number) => void) {
         JUPYTER_ORIGIN_PAT_OVERRIDE: 'file://.*'
       }
     })
-    // p.on('spawn', () => res(p))
     p.on('error', rej)
 
     p.stdout.on('data', data => console.log(`Jupyter: ${data}`))
     p.stderr.on('data', data => console.error(`Jupyter: ${data}`))
     p.on('close', closeHandler)
 
-    // TODO: poll the API address (see `port`) until it is up,
-    // then resolve the promise.
-    setTimeout(() => res(p), 2000)
-    res(p)
+    waitForPort({
+      host: 'localhost',
+      port,
+      timeoutMs: 500,
+      intervalMs: 100,
+      maxWaitMs: 10 * 1000
+    })
+      .then(() => res(p))
+      .catch(e => rej(e))
   })
 }
 
-app
-  .whenReady()
-  .then(() =>
-    startJupyterServerProcess(code => {
-      console.warn(
-        `Jupyter process exited with code ${code}. We need to inform the user and shutdown or restart`
-      )
-    })
-  )
-  .then(() => {
-    createWindow()
-    app.on('activate', () => {
-      if (BrowserWindow.getAllWindows().length === 0) {
-        createWindow()
-      }
-    })
-  })
+async function main() {
+  await app.whenReady()
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
+  const port = await getFreePort()
+  const token = generateToken(32)
+
+  const serverDiedHandler = (code: number) => {
+    console.warn(
+      `Jupyter process exited with code ${code}. We need to inform the user and shutdown or restart`
+    )
   }
-})
+
+  await startJupyterServerProcess(port, token, serverDiedHandler)
+  await createWindow(port, token)
+
+  app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
+      app.quit()
+    }
+  })
+  app.on('activate', () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow(port, token)
+    }
+  })
+}
+
+main()
+  .then(() => console.log('App started'))
+  .catch(e => {
+    console.error('Error occured while starting the app', e)
+    process.exit(1)
+  })
