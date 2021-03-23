@@ -9,7 +9,9 @@ import {
   Messages,
   ME,
   handlerAdapter,
-  IDecode
+  IDecode,
+  DataProcessor,
+  mockDataProcessorFactory
 } from '@dharpa-vre/client-core'
 import { viewProvider } from '@dharpa-vre/modules'
 
@@ -20,16 +22,8 @@ const adapter = <T>(decoder: IDecode<T>, handler: (msg: T) => void) => {
 const getInputValuesStoreKey = (stepId: string): string =>
   `__dharpa_vre_mock:${stepId}:${Target.ModuleIO}:inputValues`
 
-export type DataProcessorResult = Omit<Messages.ModuleIO.PreviewUpdated, 'id'>
-
-export type DataProcessor<P = { [inputId: string]: unknown }> = (
-  stepId: string,
-  moduleId: string,
-  inputValues: P
-) => Promise<DataProcessorResult>
-
 export interface MockContextParameters {
-  processData: DataProcessor
+  processData?: DataProcessor
   currentWorkflow?: Workflow
   startupDelayMs?: number
 }
@@ -50,7 +44,7 @@ export class MockContext implements IBackEndContext {
 
   constructor(parameters?: MockContextParameters) {
     this._store = window.localStorage
-    this._processData = parameters?.processData
+    this._processData = parameters?.processData ?? mockDataProcessorFactory(viewProvider)
     this._currentWorkflow = parameters?.currentWorkflow
 
     this._signals = {
