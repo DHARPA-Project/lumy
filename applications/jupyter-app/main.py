@@ -17,6 +17,16 @@ with open(os.path.abspath(os.path.join(HERE, 'package.json'))) as fid:
     version = pkg['version']
     name = pkg['name'].replace('@', '').replace('/', '_')
 
+serverapp_config = {}
+
+port_override = os.getenv('JUPYTER_PORT_OVERRIDE', None)
+if port_override is not None:
+    serverapp_config['port'] = int(port_override)
+
+origin_pat_override = os.getenv('JUPYTER_ORIGIN_PAT_OVERRIDE', None)
+if origin_pat_override is not None:
+    serverapp_config['allow_origin_pat'] = origin_pat_override
+
 
 def _jupyter_server_extension_points():
     return [
@@ -70,6 +80,9 @@ class VREApp(LabServerApp):
     themes_dir = os.path.join(HERE, 'dist', 'themes')
     user_settings_dir = os.path.join(HERE, 'dist', 'user_settings')
     workspaces_dir = os.path.join(HERE, 'dist', 'workspaces')
+    open_browser = False
+
+    serverapp_config = serverapp_config
 
     def initialize_handlers(self):
         super().initialize_handlers()

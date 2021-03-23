@@ -46,3 +46,25 @@ yarn serve
 
 Access the Webpack dev server via http://localhost:8080
 The first time the Jupyter app is started, the webapp accessed via webpack dev server will not be able to authenticate with Jupyter. To authenticate, copy the token displayed in the output of the `yarn start` terminal session and append it to the webpack dev server URL: `http://localhost:8080?token=<token-from-the-other-session>`.
+
+## Running as an Electron app
+
+**NOTE**: This will work in "development" mode. Packaging has not been sorted out yet.
+
+Build webapp part:
+
+```
+yarn build
+```
+
+Build electron part:
+
+```
+yarn compile-electron
+```
+
+Start electron:
+
+```
+yarn run-electron
+```
