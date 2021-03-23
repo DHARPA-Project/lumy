@@ -1,14 +1,14 @@
 import React from 'react'
-import { ModuleProps, useStepInputValues } from '@dharpa-vre/client-core'
+import { ModuleProps, useStepInputValues, withMockProcessor } from '@dharpa-vre/client-core'
 
 interface InputValues {
   operator?: string
-  a?: number | number[]
-  b?: number | number[]
+  a?: number
+  b?: number
 }
 
 interface OutputValues {
-  c?: number | number[]
+  c?: number
 }
 
 type Props = ModuleProps<InputValues, OutputValues>
@@ -83,4 +83,30 @@ const TwoArgsMathFunction = ({ step }: Props): JSX.Element => {
   )
 }
 
-export default TwoArgsMathFunction
+const mockProcessor = (inputValues: InputValues): OutputValues => {
+  const { a = 0, b = 0, operator = 'add' } = inputValues
+  let c = 0
+  try {
+    switch (operator) {
+      case 'add':
+        c = a + b
+        break
+      case 'sub':
+        c = a - b
+        break
+      case 'mul':
+        c = a * b
+        break
+      case 'div':
+        c = a / b
+        break
+      case 'pow':
+        c = a ** b
+        break
+    }
+  } finally {
+    return { c }
+  }
+}
+
+export default withMockProcessor(TwoArgsMathFunction, mockProcessor)
