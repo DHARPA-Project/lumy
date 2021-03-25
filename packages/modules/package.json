@@ -19,7 +19,8 @@
   },
   "peerDependencies": {
     "react": "17",
-    "@dharpa-vre/client-core": "*"
+    "@dharpa-vre/client-core": "*",
+    "apache-arrow": "3"
   },
   "devDependencies": {
     "@types/node": "14",
