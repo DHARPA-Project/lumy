@@ -47,7 +47,7 @@ module.exports = {
                 // are missing. This make webpack print warnings. Disable them here
                 // altogether.
                 if (
-                  /.*\/node_modules\/@jupyterlab\/(ui-components|services|coreutils|apputils|translation|statedb)\/.*/.test(
+                  /.*\/node_modules\/@jupyterlab\/(ui-components|services|coreutils|apputils|translation|statedb|statusbar|rendermime|rendermime-interfaces|observables|nbformat|filebrowser|docmanager|docregistry|codemirror|codeeditor)\/.*/.test(
                     resourcePath
                   )
                 ) {

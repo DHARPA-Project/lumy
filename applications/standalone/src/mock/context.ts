@@ -189,4 +189,8 @@ export class MockContext implements IBackEndContext {
   onAvailabilityChanged(callback: (isAvailable: boolean) => void): void {
     this._statusChangedSignal.connect((ctx: MockContext, isAvailable: boolean) => callback(isAvailable))
   }
+
+  addFilesToRepository(files: File[]): Promise<void> {
+    return Promise.resolve((files as unknown) as void)
+  }
 }

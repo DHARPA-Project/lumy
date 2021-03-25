@@ -265,6 +265,7 @@ dist
 # Custom
 labextension
 .venv
+applications/**/tmp
 
 /tools/schema
 /tools/*.d.ts
