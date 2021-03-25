@@ -1,4 +1,5 @@
 import { ISessionContext, sessionContextDialogs } from '@jupyterlab/apputils'
+import { ServiceManager } from '@jupyterlab/services'
 import { ITranslator, nullTranslator, TranslationBundle } from '@jupyterlab/translation'
 import { LabIcon } from '@jupyterlab/ui-components'
 import { Message } from '@lumino/messaging'
@@ -11,7 +12,13 @@ import AppIconSvg from './icon.svg'
  * Container panel
  */
 export class WrapperPanel extends StackedPanel {
-  constructor(id: string, label: string, sessionContext: ISessionContext, translator?: ITranslator) {
+  constructor(
+    id: string,
+    label: string,
+    sessionContext: ISessionContext,
+    serviceManager: ServiceManager.IManager,
+    translator?: ITranslator
+  ) {
     super()
 
     const actualTranslator = translator || nullTranslator
@@ -29,7 +36,7 @@ export class WrapperPanel extends StackedPanel {
         if (shouldSelectKernel) {
           await sessionContextDialogs.selectKernel(this._sessionContext)
         }
-        this._context = new KernelModuleContext(this._sessionContext)
+        this._context = new KernelModuleContext(this._sessionContext, serviceManager)
         this._widget = new KernelView(this._context)
         this.addWidget(this._widget)
       })

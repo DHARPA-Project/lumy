@@ -36,6 +36,10 @@ export interface IBackEndContext {
   subscribe<T>(target: Target, callback: (ctx: IBackEndContext, msg: MessageEnvelope<T>) => void): void
   unsubscribe<T>(target: Target, callback: (ctx: IBackEndContext, msg: MessageEnvelope<T>) => void): void
   onAvailabilityChanged(callback: (isAvailable: boolean) => void): void
+
+  // TODO: the argument may soon change to a structure that includes
+  // the files and their metadata.
+  addFilesToRepository(files: File[]): Promise<void>
 }
 
 export const BackEndContext = createContext<IBackEndContext>(null)

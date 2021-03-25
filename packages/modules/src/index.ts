@@ -1,13 +1,16 @@
 import React from 'react'
 import { SimpleModuleViewProvider } from '@dharpa-vre/client-core'
 const Default = React.lazy(() => import('./Default'))
-const TwoArgsMathFunction = React.lazy(() => import('./twoArgsMathFunction'))
-const SimplePlot = React.lazy(() => import('./simplePlot'))
+
+const modules = ['twoArgsMathFunction', 'simplePlot', 'dataUpload']
 
 export const viewProvider = new SimpleModuleViewProvider(
-  {
-    twoArgsMathFunction: TwoArgsMathFunction,
-    simplePlot: SimplePlot
-  },
+  modules.reduce(
+    (acc, moduleId) => ({
+      ...acc,
+      [moduleId]: React.lazy(() => import(`./${moduleId}`))
+    }),
+    {} as { [key: string]: ReturnType<typeof React.lazy> }
+  ),
   Default
 )

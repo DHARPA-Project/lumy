@@ -1,5 +1,5 @@
 import { ISessionContext } from '@jupyterlab/apputils'
-import { Kernel, KernelMessage } from '@jupyterlab/services'
+import { Kernel, KernelMessage, Contents, ServiceManager } from '@jupyterlab/services'
 import { JSONValue, UUID } from '@lumino/coreutils'
 import { Signal } from '@lumino/signaling'
 import { IDisposable } from '@lumino/disposable'
@@ -19,7 +19,9 @@ export class KernelModuleContext implements IBackEndContext, IDisposable {
   private _commReadyPromises: Record<string, Promise<Kernel.IComm>> = {}
   private _signals: Record<string, Signal<KernelModuleContext, MessageEnvelope<unknown>>> = {}
 
-  constructor(session: ISessionContext) {
+  private _services: ServiceManager.IManager
+
+  constructor(session: ISessionContext, serviceManager: ServiceManager.IManager) {
     this._contextId = UUID.uuid4()
     this._sessionContext = session
     this._probe = new ReadinessProbe(session)
@@ -27,6 +29,7 @@ export class KernelModuleContext implements IBackEndContext, IDisposable {
     this._probe.readinessChanged.connect((_, isReady) => {
       if (isReady) this._reinitialiseComms()
     })
+    this._services = serviceManager
   }
   onAvailabilityChanged(callback: (isAvailable: boolean) => void): void {
     this._probe.readinessChanged.connect((_, isReady) => callback(isReady))
@@ -159,5 +162,43 @@ export class KernelModuleContext implements IBackEndContext, IDisposable {
 
   get moduleViewProvider(): ModuleViewProvider {
     return viewProvider
+  }
+
+  addFilesToRepository(files: File[]): Promise<void> {
+    // TODO: In electron we have access to full file path - we don't need to upload anything.
+    return Promise.all(files.map(file => this._uploadFileInBrowser(file))).then(() => undefined)
+  }
+
+  /**
+   * Code adopted from here: https://github.com/jupyterlab/jupyterlab/blob/master/packages/filebrowser/src/model.ts#L461
+   *
+   * NOTE: At the moment does not handle large files! Use chunked upload from the code in the link above.
+   */
+  async _uploadFileInBrowser(file: File): Promise<void> {
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
+    await new Promise((resolve, reject) => {
+      reader.onload = resolve
+      reader.onerror = event => reject(`Failed to upload "${file.name}":` + event)
+    })
+
+    // remove header https://stackoverflow.com/a/24289420/907060
+    const content = (reader.result as string).split(',')[1]
+    const type: Contents.ContentType = 'file'
+    const format: Contents.FileFormat = 'base64'
+    const name = file.name
+    const chunk = 0
+
+    // TODO: get temporary directory from settings
+    const path = `./tmp/${file.name}`
+
+    const model: Partial<Contents.IModel> = {
+      type,
+      format,
+      name,
+      chunk,
+      content
+    }
+    return this._services.contents.save(path, model).then(() => undefined)
   }
 }

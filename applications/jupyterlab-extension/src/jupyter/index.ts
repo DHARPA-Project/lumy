@@ -85,7 +85,7 @@ function activate(
       }
     })
 
-    const panel = new WrapperPanel(`${AppId}-panel`, AppLabel, sessionContext, translator)
+    const panel = new WrapperPanel(`${AppId}-panel`, AppLabel, sessionContext, app.serviceManager, translator)
     shell.add(panel, 'main')
     mainPanelTracker.add(panel)
 

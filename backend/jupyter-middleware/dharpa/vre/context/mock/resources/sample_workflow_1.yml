@@ -2,6 +2,13 @@ id: c3f3e085-afa9-4449-8826-e8bc2e0c9566
 label: Sample workflow 1
 structure:
   steps:
+    - id: m0
+      moduleId: dataUpload
+      inputs:
+        filenames: {}
+        metadataSets: {}
+      outputs:
+        repositoryItems: {}
     - id: m1
       moduleId: twoArgsMathFunction
       inputs:

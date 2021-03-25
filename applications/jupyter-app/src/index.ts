@@ -8,7 +8,7 @@
 ///<reference types="webpack-env" />
 import { prepareConfigData } from './pageConfig'
 import { SessionContext } from '@jupyterlab/apputils'
-import { SessionManager, KernelManager, KernelSpecManager } from '@jupyterlab/services'
+import { SessionManager, KernelManager, KernelSpecManager, ServiceManager } from '@jupyterlab/services'
 import { Widget } from '@lumino/widgets'
 import { KernelView, KernelModuleContext } from '@dharpa-vre/jupyter-support'
 
@@ -16,10 +16,11 @@ declare global {
   interface Window {
     __vre_sessionContext?: SessionContext
     __vre_widget?: KernelView
+    __vre_serviceManager?: ServiceManager.IManager
   }
 }
 
-function main(): void {
+async function main(): Promise<void> {
   prepareConfigData()
   const kernelManager = new KernelManager()
   const specsManager = new KernelSpecManager()
@@ -35,11 +36,14 @@ function main(): void {
   // Use the default kernel.
   sessionContext.kernelPreference = { autoStartDefault: true }
 
-  const context = new KernelModuleContext(sessionContext)
+  const serviceManager = new ServiceManager()
+
+  const context = new KernelModuleContext(sessionContext, serviceManager)
   const widget = new KernelView(context)
   Widget.attach(widget, document.body)
   window.__vre_sessionContext = sessionContext
   window.__vre_widget = widget
+  window.__vre_serviceManager = serviceManager
 
   // Start up the kernel.
   void sessionContext.initialize().then(() => {
@@ -55,7 +59,7 @@ if (module.hot) {
     console.log('reattaching app')
     Widget.detach(window.__vre_widget)
 
-    const context = new KernelModuleContext(window.__vre_sessionContext)
+    const context = new KernelModuleContext(window.__vre_sessionContext, window.__vre_serviceManager)
     const widget = new KernelView(context)
     Widget.attach(widget, document.body)
     window.__vre_widget = widget
