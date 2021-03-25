@@ -9,6 +9,12 @@ structure:
         metadataSets: {}
       outputs:
         repositoryItems: {}
+    - id: m0.5
+      moduleId: dataSelection
+      inputs:
+        repositoryItems: {}
+      outputs:
+        selectedItems: {}
     - id: m1
       moduleId: twoArgsMathFunction
       inputs:

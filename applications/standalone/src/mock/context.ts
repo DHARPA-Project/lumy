@@ -109,6 +109,16 @@ export class MockContext implements IBackEndContext {
       })
       this._signals[Target.ModuleIO].emit(udpatedMessage)
     })(msg)
+
+    adapter(Messages.ModuleIO.codec.GetTabularInputValue.decode, ({ id, inputId, filter }) => {
+      const updatedMessage = Messages.ModuleIO.codec.TabularInputValueUpdated.encode({
+        id,
+        inputId,
+        filter,
+        value: { x: new Date() }
+      })
+      this._signals[Target.ModuleIO].emit(updatedMessage)
+    })(msg)
   }
 
   private _getStepInputValues(stepId: string): { [inputId: string]: unknown } {
