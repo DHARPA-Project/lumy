@@ -20,7 +20,7 @@ const DataSelection = ({ step }: Props): JSX.Element => {
     step.id,
     'selectedItemsUris'
   )
-  const [metadataFields = [], setMetadataFields] = useStepInputValue<string[]>(step.id, 'selectedItemsUris')
+  const [metadataFields = [], setMetadataFields] = useStepInputValue<string[]>(step.id, 'metadataFields')
   const [repositoryItemsBatch] = useStepInputValueBatch(step.id, 'repositoryItems', repositoryItemsFilter)
 
   const handleMetadataFieldSelection = (field: string, isSelected: boolean) => {
