@@ -205,6 +205,38 @@ export interface MsgModuleIOGetPreview {
 
 /**
  * Target: "moduleIO"
+ * Message type: "GetTabularInputValue"
+ *
+ * Get a filtered version of a tabular input of a step from the current workflow.
+ */
+export interface MsgModuleIOGetTabularInputValue {
+  filter: DataTabularDataFilter
+  /**
+   * Unique ID of the step within the workflow that we are getting parameters for.
+   */
+  id: string
+  /**
+   * Unique ID of the input
+   */
+  inputId: string
+}
+
+/**
+ * Filter for tabular data
+ */
+export interface DataTabularDataFilter {
+  /**
+   * Offset of the page
+   */
+  offset?: number
+  /**
+   * Size of the page
+   */
+  pageSize: number
+}
+
+/**
+ * Target: "moduleIO"
  * Message type: "InputValuesUpdated"
  *
  * Updated input values of a step in the current workflow.
@@ -258,6 +290,28 @@ export interface MsgModuleIOPreviewUpdated {
    * Output data of the module. Key is input Id.
    */
   outputs: { [key: string]: unknown }
+}
+
+/**
+ * Target: "moduleIO"
+ * Message type: "TabularInputValueUpdated"
+ *
+ * A filtered version of a tabular input of a step from the current workflow.
+ */
+export interface MsgModuleIOTabularInputValueUpdated {
+  filter: DataTabularDataFilter
+  /**
+   * Unique ID of the step within the workflow that we are getting parameters for.
+   */
+  id: string
+  /**
+   * Unique ID of the input
+   */
+  inputId: string
+  /**
+   * The actual value payload. TODO: The type will be set later
+   */
+  value?: { [key: string]: unknown }
 }
 
 /**

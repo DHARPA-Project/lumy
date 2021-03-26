@@ -170,6 +170,29 @@ class MsgModuleIOGetPreview:
 
 
 @dataclass
+class DataTabularDataFilter:
+    """Filter for tabular data"""
+    """Size of the page"""
+    page_size: int
+    """Offset of the page"""
+    offset: Optional[int] = None
+
+
+@dataclass
+class MsgModuleIOGetTabularInputValue:
+    """Target: "moduleIO"
+    Message type: "GetTabularInputValue"
+    
+    Get a filtered version of a tabular input of a step from the current workflow.
+    """
+    filter: DataTabularDataFilter
+    """Unique ID of the step within the workflow that we are getting parameters for."""
+    id: str
+    """Unique ID of the input"""
+    input_id: str
+
+
+@dataclass
 class MsgModuleIOInputValuesUpdated:
     """Target: "moduleIO"
     Message type: "InputValuesUpdated"
@@ -210,6 +233,22 @@ class MsgModuleIOPreviewUpdated:
     inputs: Dict[str, Any]
     """Output data of the module. Key is input Id."""
     outputs: Dict[str, Any]
+
+
+@dataclass
+class MsgModuleIOTabularInputValueUpdated:
+    """Target: "moduleIO"
+    Message type: "TabularInputValueUpdated"
+    
+    A filtered version of a tabular input of a step from the current workflow.
+    """
+    filter: DataTabularDataFilter
+    """Unique ID of the step within the workflow that we are getting parameters for."""
+    id: str
+    """Unique ID of the input"""
+    input_id: str
+    """The actual value payload. TODO: The type will be set later"""
+    value: Optional[Dict[str, Any]] = None
 
 
 @dataclass
