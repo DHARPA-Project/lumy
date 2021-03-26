@@ -1,6 +1,6 @@
 import React from 'react'
 import { ModuleProps, useStepTabularInputValue } from '@dharpa-vre/client-core'
-import { Table } from 'apache-arrow'
+import { Table } from '@apache-arrow/esnext-cjs'
 
 interface InputValues {
   repositoryItems?: unknown

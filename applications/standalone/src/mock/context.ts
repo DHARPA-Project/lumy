@@ -1,5 +1,5 @@
 import { Signal } from '@lumino/signaling'
-import { Table, Utf8Vector, Int32Vector, Float32Vector } from 'apache-arrow'
+import { Table, Utf8Vector, Int32Vector, Float32Vector } from '@apache-arrow/esnext-cjs'
 
 import {
   IBackEndContext,
