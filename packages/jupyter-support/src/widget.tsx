@@ -2,7 +2,7 @@ import React from 'react'
 import { ReactWidget } from '@jupyterlab/apputils'
 import { KernelModuleContext } from './kernelContext'
 import { BackEndContextProvider, useBackendIsReady } from '@dharpa-vre/client-core'
-import { Main } from '@dharpa-vre/toy-vre'
+import { Main } from '@dharpa-vre/client-ui'
 
 const centeredStyle = {
   'text-align': 'center',

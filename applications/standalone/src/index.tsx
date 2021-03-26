@@ -2,7 +2,7 @@ import React from 'react'
 import { render } from 'react-dom'
 import YAML from 'js-yaml'
 import { BackEndContextProvider, useBackendIsReady, Workflow } from '@dharpa-vre/client-core'
-import { Main } from '@dharpa-vre/toy-vre'
+import { Main } from '@dharpa-vre/client-ui'
 import { MockContext } from './mock/context'
 
 import './index.scss'
