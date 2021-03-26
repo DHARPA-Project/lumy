@@ -1,20 +1,19 @@
 import { useContext, useState, useEffect } from 'react'
+import { Table } from 'apache-arrow'
 import { BackEndContext, handlerAdapter, Target } from '../common/context'
 import { Messages } from '../common/types'
+import { DataTabularDataFilter } from '../common/types/generated'
 
-export const useStepTabularInputValue = <T>(
-  stepId: string,
-  inputId: string,
-  pageSize = 10,
-  offset = 0
-): [T] => {
+export type BatchFilter = DataTabularDataFilter
+
+export const useStepInputValueBatch = (stepId: string, inputId: string, filter: BatchFilter): [Table] => {
   const context = useContext(BackEndContext)
-  const [lastValue, setLastValue] = useState<T>()
+  const [lastValue, setLastValue] = useState<Table>()
 
   useEffect(() => {
     const handler = handlerAdapter(Messages.ModuleIO.codec.TabularInputValueUpdated.decode, content => {
       if (content?.id === stepId && content?.inputId === inputId)
-        setLastValue((content.value as unknown) as T)
+        setLastValue((content.value as unknown) as Table)
     })
     context.subscribe(Target.ModuleIO, handler)
 
@@ -27,10 +26,10 @@ export const useStepTabularInputValue = <T>(
       Messages.ModuleIO.codec.GetTabularInputValue.encode({
         id: stepId,
         inputId,
-        filter: { pageSize, offset }
+        filter
       })
     )
-  }, [pageSize, offset, stepId, inputId])
+  }, [filter, stepId, inputId])
 
   return [lastValue]
 }

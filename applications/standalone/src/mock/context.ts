@@ -1,5 +1,5 @@
 import { Signal } from '@lumino/signaling'
-import { Table, Utf8Vector, Int32Vector, Float32Vector } from '@apache-arrow/esnext-cjs'
+import { Table, Utf8Vector, Int32Vector, Float32Vector } from 'apache-arrow'
 
 import {
   IBackEndContext,
@@ -117,11 +117,12 @@ export class MockContext implements IBackEndContext {
 
       const table = Table.new(
         [
+          Utf8Vector.from(numbers.map(n => `uri-${n}`)),
           Utf8Vector.from(numbers.map(n => `Item ${n}`)),
           Int32Vector.from(numbers),
           Float32Vector.from(numbers.map(n => Math.random() * n))
         ],
-        ['columnA', 'columnB', 'columnC']
+        ['uri', 'columnA', 'columnB', 'columnC']
       )
       const updatedMessage = Messages.ModuleIO.codec.TabularInputValueUpdated.encode({
         id,
@@ -141,7 +142,10 @@ export class MockContext implements IBackEndContext {
       {}
     )
 
-    const inputValues = value != null ? JSON.parse(value) : defaultValues
+    const inputValues = {
+      ...defaultValues,
+      ...(value != null ? JSON.parse(value) : {})
+    }
 
     Object.entries(step.inputs).forEach(([inputId, state]) => {
       if (state.connection == null) return
@@ -154,7 +158,9 @@ export class MockContext implements IBackEndContext {
   }
 
   private _setStepInputValues(stepId: string, values: { [key: string]: unknown }) {
-    this._store.setItem(getInputValuesStoreKey(stepId), JSON.stringify(values))
+    const oldValues = this._getStepInputValues(stepId)
+    const updatedValues = { ...oldValues, ...values }
+    this._store.setItem(getInputValuesStoreKey(stepId), JSON.stringify(updatedValues))
   }
 
   private async _processPreviewData(stepId: string): Promise<void> {

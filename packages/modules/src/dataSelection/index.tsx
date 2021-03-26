@@ -1,69 +1,166 @@
 import React from 'react'
-import { ModuleProps, useStepTabularInputValue } from '@dharpa-vre/client-core'
-import { Table } from '@apache-arrow/esnext-cjs'
+import { ModuleProps, useStepInputValue, useStepInputValueBatch, BatchFilter } from '@dharpa-vre/client-core'
+import { Table } from 'apache-arrow'
 
 interface InputValues {
-  repositoryItems?: unknown
+  repositoryItems?: Table
+  selectedItemsUris?: string[]
+  metadataFields?: string[]
 }
 
 interface OutputValues {
-  selectedItems?: unknown
+  corpus?: Table
 }
 
 type Props = ModuleProps<InputValues, OutputValues>
 
 const DataSelection = ({ step }: Props): JSX.Element => {
-  const pageSize = 10
-  const [pageOffset, setPageOffset] = React.useState(0)
-  const [repositoryItemsPage] = useStepTabularInputValue<Table>(
+  const [repositoryItemsFilter, setRepositoryItemsFilter] = React.useState<BatchFilter>({ pageSize: 10 })
+  const [selectedItemsUris = [], setSelectedItemsUris] = useStepInputValue<string[]>(
     step.id,
-    'repositoryItems',
-    pageSize,
-    pageOffset
+    'selectedItemsUris'
   )
+  const [metadataFields = [], setMetadataFields] = useStepInputValue<string[]>(step.id, 'selectedItemsUris')
+  const [repositoryItemsBatch] = useStepInputValueBatch(step.id, 'repositoryItems', repositoryItemsFilter)
+
+  const handleMetadataFieldSelection = (field: string, isSelected: boolean) => {
+    if (isSelected) setMetadataFields(metadataFields.concat(field))
+    else setMetadataFields(metadataFields.filter(f => f !== field))
+  }
+
   return (
     <div key={step.id}>
-      [placeholder for the <em>data selection</em> module]
-      {repositoryItemsPage == null ? '' : <TableView table={repositoryItemsPage} />}
-      <button
-        onClick={() => setPageOffset(pageOffset > pageSize ? pageOffset - pageSize : 0)}
-        disabled={pageOffset === 0}
-      >
-        Previous page
-      </button>
-      <button onClick={() => setPageOffset(pageOffset + pageSize)}>Next page</button>
+      <h3>Choose items for the corpus:</h3>
+      {repositoryItemsBatch == null ? (
+        ''
+      ) : (
+        <TableView
+          table={repositoryItemsBatch}
+          selections={selectedItemsUris}
+          onSelectionsChanged={setSelectedItemsUris}
+          filter={repositoryItemsFilter}
+          onFilterChanged={setRepositoryItemsFilter}
+          usePagination
+          useSelection
+        />
+      )}{' '}
+      <h3>Choose metadata fields for the corpus:</h3>
+      {repositoryItemsBatch == null ? (
+        ''
+      ) : (
+        <ul>
+          {repositoryItemsBatch.schema.fields
+            .filter(f => f.name !== 'uri')
+            .map((f, idx) => {
+              return (
+                <li key={idx}>
+                  <input
+                    type="checkbox"
+                    checked={metadataFields.includes(f.name)}
+                    onChange={e => handleMetadataFieldSelection(f.name, e.target.checked)}
+                  />
+                  {f.name}
+                </li>
+              )
+            })}
+        </ul>
+      )}
     </div>
   )
 }
 
 export default DataSelection
 
+interface TableProps<S> {
+  table: Table
+  filter?: BatchFilter
+  onFilterChanged?: (filter: BatchFilter) => void
+  selections: S[]
+  onSelectionsChanged?: (selections: S[]) => void
+  selectionRowIndex?: number
+  usePagination?: boolean
+  useSelection?: boolean
+}
+
 /**
  * Just an example how to deal with Arrow Table.
  * https://observablehq.com/@theneuralbit/introduction-to-apache-arrow
+ *
+ * TODO: Make this table beautiful and move it to a separate file to be reused.
  */
-const TableView = ({ table }: { table: Table }): JSX.Element => {
+const TableView = <S,>({
+  table,
+  selections,
+  filter,
+  usePagination = false,
+  onFilterChanged,
+  onSelectionsChanged,
+  selectionRowIndex = 0,
+  useSelection = false
+}: TableProps<S>): JSX.Element => {
+  const pageSize = filter?.pageSize ?? 10
+  const pageOffset = filter?.offset ?? 0
+
+  const setPageOffset = (offset: number) =>
+    onFilterChanged?.({
+      pageSize,
+      offset
+    })
+
+  const handleRowSelection = (id: S, isSelected: boolean) => {
+    if (isSelected) onSelectionsChanged(selections.concat([id]))
+    else onSelectionsChanged(selections.filter(item => item !== id))
+  }
+
   const colIndices = [...Array(table.numCols).keys()]
 
   return (
-    <table>
-      <thead>
-        <tr>
-          {table.schema.fields.map((f, idx) => (
-            <th key={idx}>{f.name}</th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {[...table].map((row, idx) => (
-          <tr key={idx}>
-            {colIndices.map(idx => (
-              <td key={idx}>{row[idx]}</td>
+    <div>
+      <table>
+        <thead>
+          <tr>
+            {useSelection ? <th></th> : ''}
+            {table.schema.fields.map((f, idx) => (
+              <th key={idx}>{f.name}</th>
             ))}
           </tr>
-        ))}
-        <tr></tr>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {[...table].map((row, idx) => (
+            <tr key={idx}>
+              {useSelection ? (
+                <td>
+                  <input
+                    type="checkbox"
+                    checked={selections.includes(row[selectionRowIndex])}
+                    onChange={e => handleRowSelection(row[selectionRowIndex], e.target.checked)}
+                  />
+                </td>
+              ) : (
+                ''
+              )}
+              {colIndices.map(idx => (
+                <td key={idx}>{row[idx]}</td>
+              ))}
+            </tr>
+          ))}
+          <tr></tr>
+        </tbody>
+      </table>
+      {/* pagination */}
+      {usePagination ? (
+        <div>
+          <button
+            onClick={() => setPageOffset(pageOffset > pageSize ? pageOffset - pageSize : 0)}
+            disabled={pageOffset === 0}
+          >
+            Previous page
+          </button>
+          <button onClick={() => setPageOffset(pageOffset + pageSize)}>Next page</button>
+        </div>
+      ) : (
+        ''
+      )}
+    </div>
   )
 }
