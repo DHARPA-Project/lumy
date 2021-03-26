@@ -15,7 +15,7 @@ interface OutputValues {
 type Props = ModuleProps<InputValues, OutputValues>
 
 const DataSelection = ({ step }: Props): JSX.Element => {
-  const [repositoryItemsFilter, setRepositoryItemsFilter] = React.useState<BatchFilter>({ pageSize: 10 })
+  const [repositoryItemsFilter, setRepositoryItemsFilter] = React.useState<BatchFilter>({ pageSize: 5 })
   const [selectedItemsUris = [], setSelectedItemsUris] = useStepInputValue<string[]>(
     step.id,
     'selectedItemsUris'
