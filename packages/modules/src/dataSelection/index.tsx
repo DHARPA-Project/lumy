@@ -43,23 +43,23 @@ export default DataSelection
  * https://observablehq.com/@theneuralbit/introduction-to-apache-arrow
  */
 const TableView = ({ table }: { table: Table }): JSX.Element => {
-  const fieldsNames = table.schema.fields.map(f => f.name)
+  const colIndices = [...Array(table.numCols).keys()]
 
   return (
     <table>
       <thead>
         <tr>
-          {fieldsNames.map((f, idx) => (
-            <th key={idx}>{f}</th>
+          {table.schema.fields.map((f, idx) => (
+            <th key={idx}>{f.name}</th>
           ))}
         </tr>
       </thead>
       <tbody>
-        {[...table.toArray()].map((row, idx) => (
+        {[...table].map((row, idx) => (
           <tr key={idx}>
-            {fieldsNames.map((field, idx) => {
-              return <td key={idx}>{row.get(field)}</td>
-            })}
+            {colIndices.map(idx => (
+              <td key={idx}>{row[idx]}</td>
+            ))}
           </tr>
         ))}
         <tr></tr>
