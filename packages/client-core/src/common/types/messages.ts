@@ -16,7 +16,9 @@ import {
   MsgNotesNotes,
   MsgModuleIOGetInputValues,
   MsgModuleIOInputValuesUpdated,
-  MsgModuleIOUpdateInputValues
+  MsgModuleIOUpdateInputValues,
+  MsgModuleIOGetTabularInputValue,
+  MsgModuleIOTabularInputValueUpdated
 } from './generated'
 
 /**
@@ -65,6 +67,8 @@ export namespace ModuleIO {
   export type GetInputValues = MsgModuleIOGetInputValues
   export type InputValuesUpdated = MsgModuleIOInputValuesUpdated
   export type UpdateInputValues = MsgModuleIOUpdateInputValues
+  export type GetTabularInputValue = MsgModuleIOGetTabularInputValue
+  export type TabularInputValueUpdated = MsgModuleIOTabularInputValueUpdated
 
   export namespace codec {
     export const GetPreview = Codec<GetPreview>('GetPreview')
@@ -75,6 +79,8 @@ export namespace ModuleIO {
     export const GetInputValues = Codec<GetInputValues>('GetInputValues')
     export const InputValuesUpdated = Codec<InputValuesUpdated>('InputValuesUpdated')
     export const UpdateInputValues = Codec<UpdateInputValues>('UpdateInputValues')
+    export const GetTabularInputValue = Codec<GetTabularInputValue>('GetTabularInputValue')
+    export const TabularInputValueUpdated = Codec<TabularInputValueUpdated>('TabularInputValueUpdated')
   }
 }
 

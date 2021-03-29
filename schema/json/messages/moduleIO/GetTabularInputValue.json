@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "type": "object",
+  "title": "MsgModuleIOGetTabularInputValue",
+  "description": "Get a filtered version of a tabular input of a step from the current workflow.",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique ID of the step within the workflow that we are getting parameters for."
+    },
+    "inputId": {
+      "type": "string",
+      "description": "Unique ID of the input"
+    },
+    "filter": {
+      "$ref": "https://dharpa.org/schema/types/data/TabularDataFilter.json"
+    }
+  },
+  "required": [
+    "id",
+    "inputId",
+    "filter"
+  ]
+}

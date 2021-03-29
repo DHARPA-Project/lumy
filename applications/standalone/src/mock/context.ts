@@ -1,4 +1,5 @@
 import { Signal } from '@lumino/signaling'
+import { Table, Utf8Vector, Int32Vector, Float32Vector } from 'apache-arrow'
 
 import {
   IBackEndContext,
@@ -109,6 +110,28 @@ export class MockContext implements IBackEndContext {
       })
       this._signals[Target.ModuleIO].emit(udpatedMessage)
     })(msg)
+
+    adapter(Messages.ModuleIO.codec.GetTabularInputValue.decode, ({ id, inputId, filter }) => {
+      const { pageSize, offset = 0 } = filter
+      const numbers = [...Array(pageSize).keys()].map(n => n + offset)
+
+      const table = Table.new(
+        [
+          Utf8Vector.from(numbers.map(n => `uri-${n}`)),
+          Utf8Vector.from(numbers.map(n => `Item ${n}`)),
+          Int32Vector.from(numbers),
+          Float32Vector.from(numbers.map(n => Math.random() * n))
+        ],
+        ['uri', 'columnA', 'columnB', 'columnC']
+      )
+      const updatedMessage = Messages.ModuleIO.codec.TabularInputValueUpdated.encode({
+        id,
+        inputId,
+        filter,
+        value: (table as unknown) as { [key: string]: unknown } // TODO: sort out type
+      })
+      this._signals[Target.ModuleIO].emit(updatedMessage)
+    })(msg)
   }
 
   private _getStepInputValues(stepId: string): { [inputId: string]: unknown } {
@@ -119,7 +142,10 @@ export class MockContext implements IBackEndContext {
       {}
     )
 
-    const inputValues = value != null ? JSON.parse(value) : defaultValues
+    const inputValues = {
+      ...defaultValues,
+      ...(value != null ? JSON.parse(value) : {})
+    }
 
     Object.entries(step.inputs).forEach(([inputId, state]) => {
       if (state.connection == null) return
@@ -132,7 +158,9 @@ export class MockContext implements IBackEndContext {
   }
 
   private _setStepInputValues(stepId: string, values: { [key: string]: unknown }) {
-    this._store.setItem(getInputValuesStoreKey(stepId), JSON.stringify(values))
+    const oldValues = this._getStepInputValues(stepId)
+    const updatedValues = { ...oldValues, ...values }
+    this._store.setItem(getInputValuesStoreKey(stepId), JSON.stringify(updatedValues))
   }
 
   private async _processPreviewData(stepId: string): Promise<void> {

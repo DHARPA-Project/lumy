@@ -23,7 +23,8 @@
     "@lumino/signaling": "1",
     "react": "17",
     "react-dom": "17",
-    "js-yaml": "4"
+    "js-yaml": "4",
+    "apache-arrow": "3"
   },
   "devDependencies": {
     "@babel/core": "7",
