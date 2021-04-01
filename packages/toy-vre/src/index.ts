@@ -1,2 +1,2 @@
-export * from './components/Main'
+export * from './components/App'
 export * from './components/WorkflowPreview'
