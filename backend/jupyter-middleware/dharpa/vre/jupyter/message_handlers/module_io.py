@@ -1,12 +1,12 @@
 import logging
 
-from dharpa.vre.jupyter.base import MessageEnvelope, MessageHandler, Target
+from dharpa.vre.jupyter.base import MessageEnvelope, MessageHandler
 from dharpa.vre.types.generated import (
     MsgModuleIOGetInputValues,
     MsgModuleIOInputValuesUpdated,
     MsgModuleIOUpdateInputValues,
 )
-from dharpa.vre.utils.dataclasses import from_dict, to_dict
+from dharpa.vre.utils.dataclasses import from_dict
 
 logger = logging.getLogger(__name__)
 
@@ -21,16 +21,10 @@ class ModuleIOHandler(MessageHandler):
         values = self.context.get_current_workflow_step_input_values(
             message.id)
 
-        self.publisher.publish(
-            Target.ModuleIO,
-            MessageEnvelope(
-                action='InputValuesUpdated',
-                content=to_dict(MsgModuleIOInputValuesUpdated(
-                    message.id,
-                    values
-                ))
-            )
-        )
+        self.publisher.publish(MsgModuleIOInputValuesUpdated(
+            message.id,
+            values
+        ))
 
     def _handle_UpdateInputValues(self, msg: MessageEnvelope):
         message = from_dict(MsgModuleIOUpdateInputValues, msg.content)
@@ -39,13 +33,7 @@ class ModuleIOHandler(MessageHandler):
             message.input_values
         )
 
-        self.publisher.publish(
-            Target.ModuleIO,
-            MessageEnvelope(
-                action='InputValuesUpdated',
-                content=to_dict(MsgModuleIOInputValuesUpdated(
-                    message.id,
-                    values
-                ))
-            )
-        )
+        self.publisher.publish(MsgModuleIOInputValuesUpdated(
+            message.id,
+            values
+        ))

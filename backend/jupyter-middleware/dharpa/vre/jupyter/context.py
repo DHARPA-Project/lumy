@@ -91,7 +91,7 @@ class Context(TargetPublisher):
     def is_ready(self):
         return self._is_ready
 
-    def publish(self, target: Target, msg: MessageEnvelope) -> None:
+    def publish_on_target(self, target: Target, msg: MessageEnvelope) -> None:
         comm = self._comms[target]
         logger.debug(
             f'Message published on "{target}": {json.dumps(to_dict(msg))}')
@@ -125,14 +125,8 @@ class Context(TargetPublisher):
                 handler for target "{target}" and message
                 {json.dumps(message_data)}'''
             )
-            self.publish(
-                Target.Activity,
-                MessageEnvelope(
-                    action='error',
-                    content=to_dict(MsgError(
-                        id=error_id,
-                        message=f'Error occured while executing a message \
+            self.publish(MsgError(
+                id=error_id,
+                message=f'Error occured while executing a message \
                         handler for target "{target}": {str(e)}'
-                    ))
-                )
-            )
+            ))
