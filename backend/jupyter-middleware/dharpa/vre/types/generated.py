@@ -362,6 +362,8 @@ class WorkflowIOState:
     """Optional default value"""
     default_value: Union[List[Any], bool, float, int, Dict[str, Any], None, str]
     connection: Optional[IOStateConnection] = None
+    """Indicates whether the value is tabular. This field will likely be gone in real backend."""
+    is_tabular: Optional[bool] = None
 
 
 @dataclass

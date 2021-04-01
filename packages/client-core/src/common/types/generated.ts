@@ -511,6 +511,10 @@ export interface WorkflowIOState {
    * Optional default value
    */
   defaultValue?: unknown[] | boolean | number | number | { [key: string]: unknown } | string
+  /**
+   * Indicates whether the value is tabular. This field will likely be gone in real backend.
+   */
+  isTabular?: boolean
 }
 
 /**

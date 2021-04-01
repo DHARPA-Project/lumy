@@ -30,7 +30,8 @@ setup_args = dict(
         'tinypubsub>=0.1.0',
         'dacite',
         'stringcase>=1.2.0',
-        'pyyaml'
+        'pyyaml',
+        'pyarrow==3.0.0'
     ],
     zip_safe=False,
     include_package_data=True,

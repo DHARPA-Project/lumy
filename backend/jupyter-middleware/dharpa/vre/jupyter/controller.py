@@ -27,7 +27,7 @@ logger.setLevel(logging.DEBUG)
 logger.addHandler(logging.StreamHandler(sys.stdout))
 
 
-class Context(TargetPublisher):
+class IpythonKernelController(TargetPublisher):
     __instance = None
 
     _comms: Dict[Target, Comm] = {}
@@ -40,12 +40,12 @@ class Context(TargetPublisher):
 
     @staticmethod
     def start():
-        if Context.get_instance() is None:
-            Context()
+        if IpythonKernelController.get_instance() is None:
+            IpythonKernelController()
 
     @staticmethod
     def get_instance():
-        return Context.__instance
+        return IpythonKernelController.__instance
 
     def __init__(self):
         super().__init__()
@@ -86,7 +86,7 @@ class Context(TargetPublisher):
         )
 
         self._is_ready = True
-        Context.__instance = self
+        IpythonKernelController.__instance = self
 
     @property
     def is_ready(self):
