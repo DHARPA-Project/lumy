@@ -1,12 +1,13 @@
+import logging
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Dict, Optional, Any
-
-from dharpa.vre.utils.dataclasses import to_dict
-from ..target import Target
-import logging
+from inspect import signature
+from typing import Any, Dict, Optional
 
 from dharpa.vre.context.context import AppContext
+from dharpa.vre.target import Target
+from dharpa.vre.types import target_action_mapping
+from dharpa.vre.utils.dataclasses import from_dict, to_dict
 
 logger = logging.getLogger(__name__)
 
@@ -46,13 +47,19 @@ class TargetPublisher(ABC):
 class MessageHandler(ABC):
     _context: AppContext
     _publisher: TargetPublisher
+    _target: Target
 
-    _context: AppContext
-    _publisher: TargetPublisher
+    # for performance reasons to avoid introspecting all the time
+    # we store handler arguments count in this dict.
+    _handler_method_args_count_cache: Dict[Any, int] = {}
 
-    def __init__(self, context: AppContext, publisher: TargetPublisher):
+    def __init__(self,
+                 context: AppContext,
+                 publisher: TargetPublisher,
+                 target: Target):
         self._context = context
         self._publisher = publisher
+        self._target = target
 
     @property
     def publisher(self):
@@ -62,10 +69,31 @@ class MessageHandler(ABC):
     def context(self):
         return self._context
 
+    def __handler_needs_message(self, handler: Any):
+        if handler not in self._handler_method_args_count_cache:
+            sig = signature(handler)
+            self._handler_method_args_count_cache[handler] = len(
+                sig.parameters)
+        return self._handler_method_args_count_cache[handler] > 0
+
     def handle_message(self, msg: MessageEnvelope):
         handler = getattr(self, f'_handle_{msg.action}', None)
         if handler:
-            return handler(msg)
+            message_class = target_action_mapping[self._target].get(
+                msg.action, None)
+            if message_class is None:
+                # If no message class has been found it might be that
+                # the handler does not need a message.
+                if not self.__handler_needs_message(handler):
+                    return handler()
+                else:
+                    logger.warn(
+                        f'{self.__class__}: \
+                            No message type class found for message \
+                                action: {msg.action}')
+            else:
+                message = from_dict(message_class, msg.content)
+                return handler(message)
         else:
             logger.warn(
                 f'{self.__class__}: \

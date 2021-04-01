@@ -52,9 +52,10 @@ class Context(TargetPublisher):
         self._context = MockAppContext()
 
         self._handlers = {
-            Target.Workflow: WorkflowMessageHandler(self._context, self),
+            Target.Workflow: WorkflowMessageHandler(
+                self._context, self, Target.Workflow),
             Target.ModuleIO: ModuleIOHandler(
-                self._context, self)
+                self._context, self, Target.ModuleIO)
         }
 
         def _open_handle_factory(target: Target):
