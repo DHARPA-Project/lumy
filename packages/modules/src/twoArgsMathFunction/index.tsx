@@ -30,9 +30,9 @@ const TwoArgsMathFunction = ({ step }: Props): JSX.Element => {
 
   React.useEffect(() => {
     if (inputValues == null) return
-    setA(inputValues.a != null ? String(inputValues.a) : '')
-    setB(inputValues.b != null ? String(inputValues.b) : '')
-    if (inputValues.operator) setOperator(inputValues.operator)
+    if (inputValues.a != null && String(inputValues.a) !== a) setA(String(inputValues.a))
+    if (inputValues.b != null && String(inputValues.b) !== b) setB(String(inputValues.b))
+    if (inputValues.operator != null && inputValues.operator !== operator) setOperator(inputValues.operator)
   }, [inputValues])
 
   React.useEffect(() => {

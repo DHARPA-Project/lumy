@@ -58,15 +58,17 @@ class AppContext(ABC):
     def get_step_input_values(
         self,
         step_id: str,
-        input_ids: Optional[List[str]] = None
+        input_ids: Optional[List[str]] = None,
+        include_tabular: Optional[bool] = None
     ) -> Optional[Dict]:
         '''
         Return input values for a step. Optionally return values
         only for requested input ids.
 
         NOTE: There are 2 types of inputs: simple (scalar) and tabular.
-        This method handles only simple types. If an input id of a
-        tabluar input is requested in `input_ids`, it is simply ignored.
+        By default this method handles only simple types. If an input id of a
+        tabluar input is requested in `input_ids`, and `include_tabular`
+        is not set to `True`, it is simply ignored.
         '''
         ...
 
@@ -126,5 +128,12 @@ class AppContext(ABC):
     ) -> DataTabularDataFilter:
         '''
         Return current value of the tabular filter for the step input.
+        '''
+        ...
+
+    @abstractmethod
+    def run_processing(self, step_id: Optional[str] = None):
+        '''
+        Run processing of data through the whole workflow.
         '''
         ...

@@ -51,7 +51,10 @@ structure:
           defaultValue: 5
         operator: {}
       outputs:
-        c: {}
+        c:
+          connection:
+            stepId: m3
+            ioId: y
     - id: m3
       moduleId: simplePlot
       inputs:

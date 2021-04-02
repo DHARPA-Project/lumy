@@ -61,6 +61,11 @@ class MessageHandler(ABC):
         self._publisher = publisher
         self._target = target
 
+        self.initialize()
+
+    def initialize(self):
+        pass
+
     @property
     def publisher(self):
         return self._publisher
