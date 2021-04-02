@@ -248,7 +248,7 @@ class MsgModuleIOTabularInputValueUpdated:
     """Unique ID of the input"""
     input_id: str
     """The actual value payload. TODO: The type will be set later"""
-    value: Optional[Dict[str, Any]] = None
+    value: Union[Dict[str, Any], None, str]
 
 
 @dataclass

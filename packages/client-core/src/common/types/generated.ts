@@ -311,7 +311,7 @@ export interface MsgModuleIOTabularInputValueUpdated {
   /**
    * The actual value payload. TODO: The type will be set later
    */
-  value?: { [key: string]: unknown }
+  value?: { [key: string]: unknown } | string
 }
 
 /**

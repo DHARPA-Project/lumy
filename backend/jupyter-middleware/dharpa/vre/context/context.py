@@ -117,3 +117,14 @@ class AppContext(ABC):
         Returns `True` if input type is tabular. `False` otherwise.
         '''
         ...
+
+    @abstractmethod
+    def get_step_tabular_input_filter(
+        self,
+        step_id: str,
+        input_id: str
+    ) -> DataTabularDataFilter:
+        '''
+        Return current value of the tabular filter for the step input.
+        '''
+        ...

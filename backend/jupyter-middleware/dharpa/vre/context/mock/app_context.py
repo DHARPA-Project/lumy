@@ -93,6 +93,8 @@ class MockAppContext(AppContext):
         if filter is None:
             filter = self._steps_inputs_tabular_filters[step_id].get(
                 input_id, DEFAULT_TABULAR_FILTER)
+        else:
+            self._steps_inputs_tabular_filters[step_id][input_id] = filter
 
         return table.slice(filter.offset, filter.page_size)
 
@@ -109,3 +111,13 @@ class MockAppContext(AppContext):
         if input_id in step.inputs:
             return step.inputs[input_id].is_tabular or False
         return True
+
+    def get_step_tabular_input_filter(
+        self,
+        step_id: str,
+        input_id: str
+    ) -> DataTabularDataFilter:
+        return self._steps_inputs_tabular_filters[step_id].get(
+            input_id,
+            DEFAULT_TABULAR_FILTER
+        )
