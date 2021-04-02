@@ -10,11 +10,19 @@ structure:
       outputs:
         repositoryItems:
           isTabular: true
+          connection:
+            stepId: m0.5
+            ioId: repositoryItems
     - id: m0.5
       moduleId: dataSelection
       inputs:
         repositoryItems:
           isTabular: true
+          connection:
+            stepId: m0
+            ioId: repositoryItems
+        selectedItemsUris:
+          default: []
       outputs:
         selectedItems:
           isTabular: true
@@ -41,6 +49,7 @@ structure:
             ioId: c
         b:
           defaultValue: 5
+        operator: {}
       outputs:
         c: {}
     - id: m3
