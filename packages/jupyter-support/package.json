@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@dharpa-vre/client-core": "*",
-    "@dharpa-vre/toy-vre": "*",
+    "@dharpa-vre/client-ui": "*",
     "@dharpa-vre/modules": "*"
   },
   "peerDependencies": {

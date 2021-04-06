@@ -3,8 +3,7 @@ import { render } from 'react-dom'
 import YAML from 'js-yaml'
 
 import { BackEndContextProvider, useBackendIsReady, Workflow } from '@dharpa-vre/client-core'
-import { App } from '@dharpa-vre/toy-vre'
-// import { App } from '@dharpa-vre/client-ui'
+import { App } from '@dharpa-vre/client-ui'
 
 import { MockContext } from './mock/context'
 
