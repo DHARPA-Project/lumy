@@ -18,6 +18,10 @@
         "boolean"
       ],
       "description": "Optional default value"
+    },
+    "isTabular": {
+      "type": "boolean",
+      "description": "Indicates whether the value is tabular. This field will likely be gone in real backend."
     }
   },
   "required": [],
