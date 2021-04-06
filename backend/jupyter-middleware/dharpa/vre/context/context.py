@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Dict, List, Optional
 
-from dharpa.vre.types import Workflow
+from dharpa.vre.types import Workflow, State
 from dharpa.vre.types.generated import DataTabularDataFilter
 from tinypubsub.simple import SimplePublisher
 
@@ -26,6 +26,7 @@ class AppContext(ABC):
 
     _event_workflow_structure_updated = SimplePublisher[Workflow]()
     _event_step_input_values_updated = SimplePublisher[UpdatedIO]()
+    _event_processing_state_changed = SimplePublisher[State]()
 
     @abstractmethod
     def load_workflow(self, workflow_file: Path) -> None:
@@ -137,3 +138,10 @@ class AppContext(ABC):
         Run processing of data through the whole workflow.
         '''
         ...
+
+    @property
+    def processing_state_changed(self) -> SimplePublisher[State]:
+        '''
+        Fired when processing state is changed.
+        '''
+        return self._event_processing_state_changed

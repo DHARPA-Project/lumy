@@ -16,6 +16,7 @@ from dharpa.vre.jupyter.base import (
 from dharpa.vre.jupyter.message_handlers import (
     ModuleIOHandler,
     WorkflowMessageHandler,
+    ActivityHandler
 )
 from dharpa.vre.types.generated import MsgError
 from dharpa.vre.utils.dataclasses import to_dict
@@ -55,7 +56,9 @@ class IpythonKernelController(TargetPublisher):
             Target.Workflow: WorkflowMessageHandler(
                 self._context, self, Target.Workflow),
             Target.ModuleIO: ModuleIOHandler(
-                self._context, self, Target.ModuleIO)
+                self._context, self, Target.ModuleIO),
+            Target.Activity: ActivityHandler(
+                self._context, self, Target.Activity)
         }
 
         def _open_handle_factory(target: Target):
