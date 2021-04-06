@@ -1,51 +1,89 @@
 import logging
 
-from dharpa.vre.jupyter.base import MessageEnvelope, MessageHandler, Target
-from dharpa.vre.types.generated import (
-    MsgModuleIOGetInputValues,
-    MsgModuleIOInputValuesUpdated,
-    MsgModuleIOUpdateInputValues,
-)
-from dharpa.vre.utils.dataclasses import from_dict, to_dict
+from dharpa.vre.context.context import UpdatedIO
+from dharpa.vre.jupyter.base import MessageHandler
+from dharpa.vre.types.generated import (MsgModuleIOGetInputValues,
+                                        MsgModuleIOGetTabularInputValue,
+                                        MsgModuleIOInputValuesUpdated,
+                                        MsgModuleIOTabularInputValueUpdated,
+                                        MsgModuleIOUpdateInputValues)
+from dharpa.vre.utils.codec import serialize_table
+from stringcase import camelcase, snakecase
 
 logger = logging.getLogger(__name__)
 
 
 class ModuleIOHandler(MessageHandler):
 
-    def _handle_GetInputValues(self, msg: MessageEnvelope):
+    def initialize(self):
+        self.context.step_input_values_updated.subscribe(
+            self._on_inputs_updated)
+
+    def _on_inputs_updated(self, msg: UpdatedIO):
+        non_tabular_inputs_ids = []
+        for input_id in msg.io_ids:
+            if self.context.is_tabular_input(msg.step_id, input_id):
+                filter = self.context.get_step_tabular_input_filter(
+                    msg.step_id, input_id)
+                value = self.context.get_step_tabular_input_value(
+                    msg.step_id, input_id, filter)
+                self.publisher.publish(MsgModuleIOTabularInputValueUpdated(
+                    id=msg.step_id,
+                    input_id=camelcase(input_id),
+                    filter=filter,
+                    value=serialize_table(value)
+                ))
+            else:
+                non_tabular_inputs_ids.append(input_id)
+
+        if len(non_tabular_inputs_ids) > 0:
+            values = self.context.get_step_input_values(
+                msg.step_id, input_ids=non_tabular_inputs_ids)
+
+            self.publisher.publish(MsgModuleIOInputValuesUpdated(
+                msg.step_id,
+                values
+            ))
+
+    def _handle_GetInputValues(self, msg: MsgModuleIOGetInputValues):
         '''
         Return workflow step input values.
         '''
-        message = from_dict(MsgModuleIOGetInputValues, msg.content)
-        values = self.context.get_current_workflow_step_input_values(
-            message.id)
+        values = self.context.get_step_input_values(
+            msg.id)
 
-        self.publisher.publish(
-            Target.ModuleIO,
-            MessageEnvelope(
-                action='InputValuesUpdated',
-                content=to_dict(MsgModuleIOInputValuesUpdated(
-                    message.id,
-                    values
-                ))
-            )
+        self.publisher.publish(MsgModuleIOInputValuesUpdated(
+            msg.id,
+            values
+        ))
+
+    def _handle_UpdateInputValues(self, msg: MsgModuleIOUpdateInputValues):
+        values = self.context.update_step_input_values(
+            msg.id,
+            msg.input_values
         )
 
-    def _handle_UpdateInputValues(self, msg: MessageEnvelope):
-        message = from_dict(MsgModuleIOUpdateInputValues, msg.content)
-        values = self.context.update_current_workflow_step_input_values(
-            message.id,
-            message.input_values
-        )
+        self.publisher.publish(MsgModuleIOInputValuesUpdated(
+            msg.id,
+            values
+        ))
 
-        self.publisher.publish(
-            Target.ModuleIO,
-            MessageEnvelope(
-                action='InputValuesUpdated',
-                content=to_dict(MsgModuleIOInputValuesUpdated(
-                    message.id,
-                    values
-                ))
-            )
-        )
+        # TODO: This is here temporary for dev purposes
+        self.context.run_processing(msg.id)
+
+    def _handle_GetTabularInputValue(self,
+                                     msg: MsgModuleIOGetTabularInputValue):
+        input_id = snakecase(msg.input_id)
+        value = self.context.get_step_tabular_input_value(
+            msg.id, input_id, msg.filter)
+
+        current_filter = self.context.get_step_tabular_input_filter(
+            msg.id, input_id)
+
+        if value is not None:
+            self.publisher.publish(MsgModuleIOTabularInputValueUpdated(
+                id=msg.id,
+                input_id=input_id,
+                filter=current_filter,
+                value=serialize_table(value)
+            ))

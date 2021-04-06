@@ -17,7 +17,10 @@
       "$ref": "https://dharpa.org/schema/types/data/TabularDataFilter.json"
     },
     "value": {
-      "type": "object",
+      "type": [
+        "object",
+        "string"
+      ],
       "description": "The actual value payload. TODO: The type will be set later"
     }
   },

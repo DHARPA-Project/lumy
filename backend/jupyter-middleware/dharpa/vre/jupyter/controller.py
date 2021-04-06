@@ -16,6 +16,7 @@ from dharpa.vre.jupyter.base import (
 from dharpa.vre.jupyter.message_handlers import (
     ModuleIOHandler,
     WorkflowMessageHandler,
+    ActivityHandler
 )
 from dharpa.vre.types.generated import MsgError
 from dharpa.vre.utils.dataclasses import to_dict
@@ -27,7 +28,7 @@ logger.setLevel(logging.DEBUG)
 logger.addHandler(logging.StreamHandler(sys.stdout))
 
 
-class Context(TargetPublisher):
+class IpythonKernelController(TargetPublisher):
     __instance = None
 
     _comms: Dict[Target, Comm] = {}
@@ -40,21 +41,24 @@ class Context(TargetPublisher):
 
     @staticmethod
     def start():
-        if Context.get_instance() is None:
-            Context()
+        if IpythonKernelController.get_instance() is None:
+            IpythonKernelController()
 
     @staticmethod
     def get_instance():
-        return Context.__instance
+        return IpythonKernelController.__instance
 
     def __init__(self):
         super().__init__()
         self._context = MockAppContext()
 
         self._handlers = {
-            Target.Workflow: WorkflowMessageHandler(self._context, self),
+            Target.Workflow: WorkflowMessageHandler(
+                self._context, self, Target.Workflow),
             Target.ModuleIO: ModuleIOHandler(
-                self._context, self)
+                self._context, self, Target.ModuleIO),
+            Target.Activity: ActivityHandler(
+                self._context, self, Target.Activity)
         }
 
         def _open_handle_factory(target: Target):
@@ -85,13 +89,13 @@ class Context(TargetPublisher):
         )
 
         self._is_ready = True
-        Context.__instance = self
+        IpythonKernelController.__instance = self
 
     @property
     def is_ready(self):
         return self._is_ready
 
-    def publish(self, target: Target, msg: MessageEnvelope) -> None:
+    def publish_on_target(self, target: Target, msg: MessageEnvelope) -> None:
         comm = self._comms[target]
         logger.debug(
             f'Message published on "{target}": {json.dumps(to_dict(msg))}')
@@ -125,14 +129,8 @@ class Context(TargetPublisher):
                 handler for target "{target}" and message
                 {json.dumps(message_data)}'''
             )
-            self.publish(
-                Target.Activity,
-                MessageEnvelope(
-                    action='error',
-                    content=to_dict(MsgError(
-                        id=error_id,
-                        message=f'Error occured while executing a message \
+            self.publish(MsgError(
+                id=error_id,
+                message=f'Error occured while executing a message \
                         handler for target "{target}": {str(e)}'
-                    ))
-                )
-            )
+            ))
