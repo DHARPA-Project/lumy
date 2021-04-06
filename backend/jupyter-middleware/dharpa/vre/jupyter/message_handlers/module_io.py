@@ -1,6 +1,6 @@
 import logging
-from dharpa.vre.context.context import UpdatedIO
 
+from dharpa.vre.context.context import UpdatedIO
 from dharpa.vre.jupyter.base import MessageHandler
 from dharpa.vre.types.generated import (MsgModuleIOGetInputValues,
                                         MsgModuleIOGetTabularInputValue,
@@ -8,7 +8,7 @@ from dharpa.vre.types.generated import (MsgModuleIOGetInputValues,
                                         MsgModuleIOTabularInputValueUpdated,
                                         MsgModuleIOUpdateInputValues)
 from dharpa.vre.utils.codec import serialize_table
-from stringcase import snakecase, camelcase
+from stringcase import camelcase, snakecase
 
 logger = logging.getLogger(__name__)
 
