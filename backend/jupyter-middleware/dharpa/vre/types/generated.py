@@ -412,3 +412,28 @@ class MsgWorkflowUpdated:
     """
     """Current workflow."""
     workflow: Optional[Workflow] = None
+
+
+class DataType(Enum):
+    """Type of the data value."""
+    TABLE = "table"
+
+
+@dataclass
+class DataValueContainer:
+    """Container for complex data types.
+    Basic data types are: string, int, float, bool and lists of these types.
+    Everything else requires a container that contains some metadata hinting what the type
+    is.
+    For some types like 'table' the value is not provided because it may be too big.
+    A batch view of the data value should be used to access such values.
+    """
+    """Type of the data value."""
+    data_type: DataType
+    """Some statistical numbers describing data.
+    The content of this field is type dependent.
+    E.g. for 'table' this could contain the actual number of rows.
+    """
+    stats: Optional[Dict[str, Any]] = None
+    """Actual value. This may be provided (e.g. Date) or may not be provided (e.g. Table)"""
+    value: Optional[str] = None

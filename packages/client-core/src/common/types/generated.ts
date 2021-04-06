@@ -530,3 +530,35 @@ export interface IOStateConnection {
    */
   stepId: string
 }
+
+/**
+ * Container for complex data types.
+ * Basic data types are: string, int, float, bool and lists of these types.
+ * Everything else requires a container that contains some metadata hinting what the type
+ * is.
+ * For some types like 'table' the value is not provided because it may be too big.
+ * A batch view of the data value should be used to access such values.
+ */
+export interface DataValueContainer {
+  /**
+   * Type of the data value.
+   */
+  dataType: DataType
+  /**
+   * Some statistical numbers describing data.
+   * The content of this field is type dependent.
+   * E.g. for 'table' this could contain the actual number of rows.
+   */
+  stats?: { [key: string]: unknown }
+  /**
+   * Actual value. This may be provided (e.g. Date) or may not be provided (e.g. Table)
+   */
+  value?: string
+}
+
+/**
+ * Type of the data value.
+ */
+export enum DataType {
+  Table = 'table'
+}
