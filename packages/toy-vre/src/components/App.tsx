@@ -4,7 +4,7 @@ import { WorkflowPreview } from './WorkflowPreview'
 import { WorkflowModulePanel } from './WorkflowModulePanel'
 import { StatusView } from './StatusView'
 
-export const Main = (): JSX.Element => {
+export const App = (): JSX.Element => {
   const [workflow] = useCurrentWorkflow()
   const [currentStep, setCurrentStep] = useState<WorkflowStep>()
 

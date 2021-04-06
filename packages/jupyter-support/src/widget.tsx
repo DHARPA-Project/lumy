@@ -2,7 +2,7 @@ import React from 'react'
 import { ReactWidget } from '@jupyterlab/apputils'
 import { KernelModuleContext } from './kernelContext'
 import { BackEndContextProvider, useBackendIsReady } from '@dharpa-vre/client-core'
-import { Main } from '@dharpa-vre/toy-vre'
+import { App } from '@dharpa-vre/toy-vre'
 
 const centeredStyle = {
   'text-align': 'center',
@@ -14,12 +14,12 @@ const centeredStyle = {
 /**
  * VRE entry point
  */
-const App = () => {
+const BackEndAvailabilityScreen = () => {
   const backendIsReady = useBackendIsReady()
 
   if (!backendIsReady) return <p style={centeredStyle}>↻ Backend is starting...</p>
 
-  return <Main />
+  return <App />
 }
 
 export class KernelView extends ReactWidget {
@@ -33,7 +33,7 @@ export class KernelView extends ReactWidget {
   protected render(): React.ReactElement<unknown> {
     return (
       <BackEndContextProvider value={this._context}>
-        <App />
+        <BackEndAvailabilityScreen />
       </BackEndContextProvider>
     )
   }
