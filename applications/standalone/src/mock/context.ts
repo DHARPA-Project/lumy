@@ -12,7 +12,8 @@ import {
   handlerAdapter,
   IDecode,
   DataProcessor,
-  mockDataProcessorFactory
+  mockDataProcessorFactory,
+  State
 } from '@dharpa-vre/client-core'
 import { viewProvider } from '@dharpa-vre/modules'
 
@@ -166,18 +167,28 @@ export class MockContext implements IBackEndContext {
   private async _processPreviewData(stepId: string): Promise<void> {
     if (this._processData == null) return
 
-    const moduleId = this._getModuleIdForStep(stepId)
-    const data = await this._processData(stepId, moduleId, this._getStepInputValues(stepId))
+    try {
+      this._signals[Target.Activity].emit(
+        Messages.Activity.codec.ExecutionState.encode({ state: State.Busy })
+      )
 
-    Object.entries(data?.outputs ?? {}).forEach(([id, value]) => {
-      const stepOutputId = `${stepId}:${id}`
-      this._computedOutputValues[stepOutputId] = value
-    })
+      const moduleId = this._getModuleIdForStep(stepId)
+      const data = await this._processData(stepId, moduleId, this._getStepInputValues(stepId))
 
-    const response = Messages.ModuleIO.codec.PreviewUpdated.encode({ id: stepId, ...data })
-    this._signals[Target.ModuleIO].emit(response)
+      Object.entries(data?.outputs ?? {}).forEach(([id, value]) => {
+        const stepOutputId = `${stepId}:${id}`
+        this._computedOutputValues[stepOutputId] = value
+      })
 
-    this._updatedInputValuesForAllSteps()
+      const response = Messages.ModuleIO.codec.PreviewUpdated.encode({ id: stepId, ...data })
+      this._signals[Target.ModuleIO].emit(response)
+
+      this._updatedInputValuesForAllSteps()
+    } finally {
+      this._signals[Target.Activity].emit(
+        Messages.Activity.codec.ExecutionState.encode({ state: State.Idle })
+      )
+    }
   }
 
   _updatedInputValuesForAllSteps(): void {

@@ -6,10 +6,11 @@ from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional
 
 from dharpa.vre.context.context import AppContext, UpdatedIO
 from dharpa.vre.context.mock import resources
-from dharpa.vre.types import Workflow, WorkflowStructure
-from dharpa.vre.types.generated import DataTabularDataFilter, WorkflowStep
-from dharpa.vre.utils.dataclasses import from_yaml
 from dharpa.vre.modules import get_module_processor
+from dharpa.vre.types import Workflow, WorkflowStructure
+from dharpa.vre.types.generated import (DataTabularDataFilter, State,
+                                        WorkflowStep)
+from dharpa.vre.utils.dataclasses import from_yaml
 from stringcase import snakecase
 
 if TYPE_CHECKING:
@@ -221,7 +222,11 @@ class MockAppContext(AppContext):
         return {k: v for k, v in values.items() if v is not None}
 
     def run_processing(self, step_id: Optional[str] = None):
-        if step_id is not None:
-            self._process_step(step_id)
-        else:
-            self._process_all_steps()
+        try:
+            self.processing_state_changed.publish(State.BUSY)
+            if step_id is not None:
+                self._process_step(step_id)
+            else:
+                self._process_all_steps()
+        finally:
+            self.processing_state_changed.publish(State.IDLE)
