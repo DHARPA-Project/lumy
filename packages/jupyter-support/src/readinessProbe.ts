@@ -10,11 +10,11 @@ export enum ReadinessStatus {
   BackEndReady = 2
 }
 
-const BackEndReadyCheckCode = 'Context.get_instance().is_ready'
+const BackEndReadyCheckCode = 'IpythonKernelController.get_instance().is_ready'
 
 const BackEndStartCode = `
-  from dharpa.vre.jupyter.context import Context
-  Context.start()
+  from dharpa.vre.jupyter.controller import IpythonKernelController
+  IpythonKernelController.start()
 `
 
 const isKernelReady = (status: Kernel.Status): boolean => ['idle', 'busy'].includes(status)

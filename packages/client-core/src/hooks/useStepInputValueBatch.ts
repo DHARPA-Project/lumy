@@ -13,7 +13,12 @@ export const useStepInputValueBatch = (stepId: string, inputId: string, filter: 
   useEffect(() => {
     const handler = handlerAdapter(Messages.ModuleIO.codec.TabularInputValueUpdated.decode, content => {
       if (content?.id === stepId && content?.inputId === inputId)
-        setLastValue((content.value as unknown) as Table)
+        if (typeof content.value === 'string') {
+          const table = Table.from([Uint8Array.from(atob(content.value), c => c.charCodeAt(0))])
+          setLastValue(table)
+        } else {
+          setLastValue((content.value as unknown) as Table)
+        }
     })
     context.subscribe(Target.ModuleIO, handler)
 

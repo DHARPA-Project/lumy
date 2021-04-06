@@ -8,7 +8,24 @@ structure:
         filenames: {}
         metadataSets: {}
       outputs:
-        repositoryItems: {}
+        repositoryItems:
+          isTabular: true
+          connection:
+            stepId: m0.5
+            ioId: repositoryItems
+    - id: m0.5
+      moduleId: dataSelection
+      inputs:
+        repositoryItems:
+          isTabular: true
+          connection:
+            stepId: m0
+            ioId: repositoryItems
+        selectedItemsUris:
+          default: []
+      outputs:
+        selectedItems:
+          isTabular: true
     - id: m1
       moduleId: twoArgsMathFunction
       inputs:
@@ -32,8 +49,12 @@ structure:
             ioId: c
         b:
           defaultValue: 5
+        operator: {}
       outputs:
-        c: {}
+        c:
+          connection:
+            stepId: m3
+            ioId: y
     - id: m3
       moduleId: simplePlot
       inputs:

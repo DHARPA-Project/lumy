@@ -1,5 +1,5 @@
 import React from 'react'
-import { ModuleProps, useAddFilesToRepository } from '@dharpa-vre/client-core'
+import { ModuleProps, useAddFilesToRepository, useStepInputValues } from '@dharpa-vre/client-core'
 import { Dropzone } from './Dropzone'
 
 // TODO: This is a special module in the sense that it uses
@@ -23,12 +23,16 @@ const DataUpload = ({ step }: Props): JSX.Element => {
   const [files, setFiles] = React.useState<File[]>([])
   const [isUploading, setIsUploading] = React.useState<boolean>(false)
   const [addFilesToRepository] = useAddFilesToRepository()
+  const [, setInputs] = useStepInputValues(step.id)
 
   const handleFilesAdded = (newFiles: File[]) => setFiles(files.concat(newFiles))
   const handleUploadFiles = () => {
     setIsUploading(true)
     addFilesToRepository(files)
-      .then(() => setFiles([]))
+      .then(() => {
+        setInputs({ filenames: files.map(f => f.name) })
+        setFiles([])
+      })
       .finally(() => setIsUploading(false))
   }
 
