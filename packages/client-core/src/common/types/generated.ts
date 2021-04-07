@@ -187,7 +187,7 @@ export interface MsgModuleIOGetInputValues {
   /**
    * Limit returned values only to inputs with these IDs.
    */
-  inputIds?: unknown[]
+  inputIds?: string[]
 }
 
 /**

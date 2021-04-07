@@ -1,6 +1,6 @@
 # flake8: noqa
 from dataclasses import dataclass
-from typing import Optional, List, Any, Dict, Union
+from typing import Optional, List, Dict, Any, Union
 from enum import Enum
 
 
@@ -155,7 +155,7 @@ class MsgModuleIOGetInputValues:
     """Unique ID of the step within the workflow that we are getting parameters for."""
     id: str
     """Limit returned values only to inputs with these IDs."""
-    input_ids: Optional[List[Any]] = None
+    input_ids: Optional[List[str]] = None
 
 
 @dataclass

@@ -1,5 +1,11 @@
 import React from 'react'
-import { ModuleProps, useAddFilesToRepository, useStepInputValues } from '@dharpa-vre/client-core'
+import { Table, Utf8Vector, Int32Vector, Float32Vector } from 'apache-arrow'
+import {
+  ModuleProps,
+  useAddFilesToRepository,
+  useStepInputValues,
+  withMockProcessor
+} from '@dharpa-vre/client-core'
 import { Dropzone } from './Dropzone'
 
 // TODO: This is a special module in the sense that it uses
@@ -10,7 +16,7 @@ interface InputValues {
 }
 
 interface OutputValues {
-  repositoryItems?: unknown
+  repositoryItems?: Table
 }
 
 type Props = ModuleProps<InputValues, OutputValues>
@@ -52,4 +58,21 @@ const DataUpload = ({ step }: Props): JSX.Element => {
   )
 }
 
-export default DataUpload
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const mockProcessor = (_inputValues: InputValues): OutputValues => {
+  const testTableNumbers = [...Array(30).keys()]
+
+  const testTable = Table.new(
+    [
+      Utf8Vector.from(testTableNumbers.map(n => `uri-${n}`)),
+      Utf8Vector.from(testTableNumbers.map(n => `Item ${n}`)),
+      Int32Vector.from(testTableNumbers),
+      Float32Vector.from(testTableNumbers.map(n => Math.random() * n))
+    ],
+    ['uri', 'columnA', 'columnB', 'columnC']
+  )
+
+  return { repositoryItems: testTable }
+}
+
+export default withMockProcessor(DataUpload, mockProcessor)
