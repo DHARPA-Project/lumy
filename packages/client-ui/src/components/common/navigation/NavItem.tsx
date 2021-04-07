@@ -19,6 +19,8 @@ type NavItemProps = {
   icon?: JSX.Element
   nested?: boolean
   sublist?: NavBarLinkProps[]
+  currentStep?: number
+  totalSteps?: number
 }
 
 const NavItem = ({
@@ -29,7 +31,8 @@ const NavItem = ({
   isNavBarExpanded,
   nested,
   type,
-  ...otherProps
+  currentStep,
+  totalSteps
 }: NavItemProps): JSX.Element => {
   const classes = useStyles()
 
@@ -59,7 +62,15 @@ const NavItem = ({
         />
       )
     case NavItemType.projectLink:
-      return <NavProjectLink isSideBarExpanded={isNavBarExpanded} label={label} link={link} {...otherProps} />
+      return (
+        <NavProjectLink
+          isSideBarExpanded={isNavBarExpanded}
+          label={label}
+          link={link}
+          currentStep={currentStep}
+          totalSteps={totalSteps}
+        />
+      )
     default:
       return <h1>unknown navigation item</h1>
   }
