@@ -1,5 +1,11 @@
 import React from 'react'
-import { ModuleProps, useStepInputValue, useStepInputValueBatch, BatchFilter } from '@dharpa-vre/client-core'
+import {
+  ModuleProps,
+  useStepInputValue,
+  useStepInputValueBatch,
+  BatchFilter,
+  TableStats
+} from '@dharpa-vre/client-core'
 import { Table } from 'apache-arrow'
 
 interface InputValues {
@@ -21,7 +27,11 @@ const DataSelection = ({ step }: Props): JSX.Element => {
     'selectedItemsUris'
   )
   const [metadataFields = [], setMetadataFields] = useStepInputValue<string[]>(step.id, 'metadataFields')
-  const [repositoryItemsBatch] = useStepInputValueBatch(step.id, 'repositoryItems', repositoryItemsFilter)
+  const [repositoryItemsBatch, tableStats] = useStepInputValueBatch(
+    step.id,
+    'repositoryItems',
+    repositoryItemsFilter
+  )
 
   const handleMetadataFieldSelection = (field: string, isSelected: boolean) => {
     if (isSelected) setMetadataFields(metadataFields.concat(field))
@@ -36,6 +46,7 @@ const DataSelection = ({ step }: Props): JSX.Element => {
       ) : (
         <TableView
           table={repositoryItemsBatch}
+          tableStats={tableStats}
           selections={selectedItemsUris}
           onSelectionsChanged={setSelectedItemsUris}
           filter={repositoryItemsFilter}
@@ -73,6 +84,7 @@ export default DataSelection
 
 interface TableProps<S> {
   table: Table
+  tableStats: TableStats
   filter?: BatchFilter
   onFilterChanged?: (filter: BatchFilter) => void
   selections: S[]
@@ -90,6 +102,7 @@ interface TableProps<S> {
  */
 const TableView = <S,>({
   table,
+  tableStats,
   selections,
   filter,
   usePagination = false,
@@ -156,7 +169,13 @@ const TableView = <S,>({
           >
             Previous page
           </button>
-          <button onClick={() => setPageOffset(pageOffset + pageSize)}>Next page</button>
+          <button
+            onClick={() => setPageOffset(pageOffset + pageSize)}
+            disabled={pageSize + pageOffset >= tableStats.rowsCount}
+          >
+            Next page
+          </button>
+          <em>Total: {tableStats.rowsCount}</em>
         </div>
       ) : (
         ''
