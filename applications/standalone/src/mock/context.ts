@@ -33,7 +33,7 @@ class IOValuesStore {
   private _values: Record<string, unknown>
   private _outputValues: Record<string, unknown>
 
-  private _keySeparator = '__:__'
+  private _keySeparator = '♨️'
 
   constructor(workflowStructure: WorkflowStructure, storeKey = '__dharpa_mock_input_values') {
     this._store = window.localStorage
