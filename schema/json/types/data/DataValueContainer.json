@@ -18,7 +18,7 @@
     },
     "value": {
       "type": "string",
-      "description": "Actual value. This may be provided (e.g. Date) or may not be provided (e.g. Table)"
+      "description": "Actual value. This may be provided (e.g. Date) or may not be provided (e.g. Table without a batch view)"
     }
   },
   "required": [

@@ -13,7 +13,8 @@ import {
   IDecode,
   DataProcessor,
   mockDataProcessorFactory,
-  State
+  State,
+  serializeFilteredTable
 } from '@dharpa-vre/client-core'
 import { viewProvider } from '@dharpa-vre/modules'
 
@@ -129,7 +130,7 @@ export class MockContext implements IBackEndContext {
         id,
         inputId,
         filter,
-        value: (table as unknown) as { [key: string]: unknown } // TODO: sort out type
+        value: (serializeFilteredTable(table) as unknown) as Record<string, unknown>
       })
       this._signals[Target.ModuleIO].emit(updatedMessage)
     })(msg)

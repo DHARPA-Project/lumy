@@ -551,7 +551,8 @@ export interface DataValueContainer {
    */
   stats?: { [key: string]: unknown }
   /**
-   * Actual value. This may be provided (e.g. Date) or may not be provided (e.g. Table)
+   * Actual value. This may be provided (e.g. Date) or may not be provided (e.g. Table without
+   * a batch view)
    */
   value?: string
 }
@@ -561,4 +562,14 @@ export interface DataValueContainer {
  */
 export enum DataType {
   Table = 'table'
+}
+
+/**
+ * Stats object for arrow table
+ */
+export interface TableStats {
+  /**
+   * Number of rows.
+   */
+  rowsCount: number
 }

@@ -435,5 +435,14 @@ class DataValueContainer:
     E.g. for 'table' this could contain the actual number of rows.
     """
     stats: Optional[Dict[str, Any]] = None
-    """Actual value. This may be provided (e.g. Date) or may not be provided (e.g. Table)"""
+    """Actual value. This may be provided (e.g. Date) or may not be provided (e.g. Table without
+    a batch view)
+    """
     value: Optional[str] = None
+
+
+@dataclass
+class TableStats:
+    """Stats object for arrow table"""
+    """Number of rows."""
+    rows_count: int

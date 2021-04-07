@@ -3,8 +3,11 @@ export type {
   WorkflowStep,
   WorkflowStructure,
   WorkflowIOState,
-  IOStateConnection
+  IOStateConnection,
+  DataValueContainer,
+  TableStats,
+  DataTabularDataFilter as TabularDataFilter
 } from './generated'
-export { State } from './generated'
+export { State, DataType } from './generated'
 export * as Messages from './messages'
 export * from './base'
