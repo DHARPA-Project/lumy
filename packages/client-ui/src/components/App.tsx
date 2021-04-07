@@ -8,6 +8,7 @@ import SettingsPage from './pages/SettingsPage'
 import NotificationsPage from './pages/NotificationsPage'
 import TestPage from './pages/TestPage'
 import SamplePage from './pages/SamplePage'
+import IntroPage from './pages/IntroPage'
 
 export const App = (): JSX.Element => {
   return (
@@ -15,7 +16,8 @@ export const App = (): JSX.Element => {
       <Router>
         <TopPageLayout>
           <Switch>
-            <Redirect from="/" exact to="/settings" />
+            <Redirect from="/" exact to="/intro" />
+            <Route path="/intro" exact component={IntroPage} />
             <Route path="/settings" exact component={SettingsPage} />
             <Route path="/notifications" exact component={NotificationsPage} />
             <Route path="/test" exact component={TestPage} />
