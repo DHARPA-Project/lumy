@@ -1,9 +1,11 @@
 from dataclasses import asdict
-from typing import Any, Dict, IO, Optional, Type, TypeVar, Union
+from enum import Enum
+from typing import IO, Any, Dict, Optional, Type, TypeVar, Union
 
+import yaml
 from dacite import from_dict as dacite_from_dict
 from stringcase import camelcase, snakecase
-import yaml
+
 try:
     from yaml import CLoader as Loader
 except ImportError:
@@ -15,6 +17,13 @@ except ImportError:
 
 
 T = TypeVar('T')
+
+
+def enum_aware_dict_factory(data):
+    return {
+        field: value.value if isinstance(value, Enum) else value
+        for field, value in data
+    }
 
 
 def _process_keys(str_or_iter: T, fn) -> T:
@@ -52,7 +61,7 @@ def to_dict(
     data: Any,
     return_camel_case=True
 ) -> Dict:
-    d = asdict(data)
+    d = asdict(data, dict_factory=enum_aware_dict_factory)
     if return_camel_case:
         d = to_camel_case(d)
     return d

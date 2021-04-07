@@ -7,7 +7,8 @@ from dharpa.vre.types.generated import (MsgModuleIOGetInputValues,
                                         MsgModuleIOInputValuesUpdated,
                                         MsgModuleIOTabularInputValueUpdated,
                                         MsgModuleIOUpdateInputValues)
-from dharpa.vre.utils.codec import serialize_table
+from dharpa.vre.utils.codec import serialize_filtered_table
+from dharpa.vre.utils.dataclasses import to_dict
 from stringcase import camelcase, snakecase
 
 logger = logging.getLogger(__name__)
@@ -31,7 +32,7 @@ class ModuleIOHandler(MessageHandler):
                     id=msg.step_id,
                     input_id=camelcase(input_id),
                     filter=filter,
-                    value=serialize_table(value)
+                    value=to_dict(serialize_filtered_table(value))
                 ))
             else:
                 non_tabular_inputs_ids.append(input_id)
@@ -83,7 +84,7 @@ class ModuleIOHandler(MessageHandler):
         if value is not None:
             self.publisher.publish(MsgModuleIOTabularInputValueUpdated(
                 id=msg.id,
-                input_id=input_id,
+                input_id=camelcase(input_id),
                 filter=current_filter,
-                value=serialize_table(value)
+                value=to_dict(serialize_filtered_table(value))
             ))
