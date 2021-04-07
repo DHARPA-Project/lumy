@@ -9,7 +9,6 @@ import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
 
 import AcUnitIcon from '@material-ui/icons/AcUnit'
-import ExpandLess from '@material-ui/icons/ExpandLess'
 import ExpandMore from '@material-ui/icons/ExpandMore'
 
 import useStyles from './NavGroup.styles'
@@ -43,11 +42,11 @@ const NavGroup = ({ icon, isNavBarExpanded, navGroupMembers, label, link }: NavG
         button
         component={link && NavLink}
         onClick={toggleCollapse}
-        className={classes.link}
+        className={classes.topLink}
         to={link}
         disableRipple
       >
-        <ListItemIcon className={classes.linkIcon}>{icon ? icon : <AcUnitIcon />}</ListItemIcon>
+        <ListItemIcon className={classes.topLinkIcon}>{icon ? icon : <AcUnitIcon />}</ListItemIcon>
 
         <Grow
           in={isNavBarExpanded}
@@ -61,15 +60,15 @@ const NavGroup = ({ icon, isNavBarExpanded, navGroupMembers, label, link }: NavG
           />
         </Grow>
 
-        {isNavGroupExpanded ? (
-          <Grow in={isNavBarExpanded} style={{ transformOrigin: '0 0 0' }} timeout={1500}>
-            <ExpandLess />
-          </Grow>
-        ) : (
-          <Grow in={isNavBarExpanded} style={{ transformOrigin: '0 0 0' }} timeout={1500}>
-            <ExpandMore />
-          </Grow>
-        )}
+        <Grow
+          in={isNavBarExpanded}
+          style={{ transformOrigin: '0 0 0' }}
+          {...(isNavBarExpanded ? { timeout: 500 } : {})}
+        >
+          <div>
+            <ExpandMore className={classes.expandIcon + (isNavGroupExpanded ? ' reversed' : '')} />
+          </div>
+        </Grow>
       </ListItem>
 
       {navGroupMembers && (
