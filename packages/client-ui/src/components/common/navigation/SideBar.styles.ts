@@ -2,9 +2,9 @@ import { makeStyles } from '@material-ui/core/styles'
 
 export default makeStyles(theme => ({
   root: {
+    position: 'fixed',
     height: '100vh',
     width: theme.layout.sideBarFullWidth,
-    gridArea: 'sidebar',
     display: 'flex',
     flexDirection: 'column',
     transition: theme.transitions.create('width', {
@@ -26,7 +26,10 @@ export default makeStyles(theme => ({
     marginBottom: theme.spacing(12)
   },
   logo: {
-    textTransform: 'uppercase'
+    display: 'flex',
+    alignItems: 'center',
+    textTransform: 'uppercase',
+    fontWeight: 700
   },
   sideBarToggleButton: {
     position: 'absolute',

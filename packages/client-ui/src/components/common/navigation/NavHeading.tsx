@@ -14,8 +14,14 @@ const NavHeading = ({ label, isNavBarExpanded }: NavHeadingProps): JSX.Element =
   const classes = useStyles()
 
   return (
-    <Grow in={isNavBarExpanded} style={{ transformOrigin: '0 0 0' }} timeout={1000}>
-      <Typography className={classes.root + (isNavBarExpanded ? '' : ' invisible')}>{label}</Typography>
+    <Grow
+      in={isNavBarExpanded}
+      style={{ transformOrigin: '0 0 0' }}
+      {...(isNavBarExpanded ? { timeout: 1000 } : { timeout: 0 })}
+    >
+      <Typography className={classes.root} noWrap>
+        {label}
+      </Typography>
     </Grow>
   )
 }

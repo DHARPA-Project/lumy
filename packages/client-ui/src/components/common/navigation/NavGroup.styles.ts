@@ -1,19 +1,19 @@
 import { makeStyles } from '@material-ui/core/styles'
 
 export default makeStyles(theme => ({
-  link: {
+  topLink: {
     textDecoration: 'none',
-    '&:hover, &:focus, &.active': {
+    '&:hover, &.active': {
       backgroundColor: theme.palette.action.selected
     },
-    '&.active $linkIcon': {
+    '&.active $topLinkIcon': {
       color: theme.palette.text.primary
     },
     '&.active $navLinkText': {
       color: theme.palette.text.primary
     }
   },
-  linkIcon: {
+  topLinkIcon: {
     color: theme.palette.text.secondary,
     transition: theme.transitions.create('color'),
     minWidth: 'auto',
@@ -33,5 +33,16 @@ export default makeStyles(theme => ({
   },
   nestedList: {
     paddingLeft: theme.spacing(4)
+  },
+  expandIcon: {
+    color: theme.palette.text.secondary,
+    transform: 'rotate(0deg)',
+    transition: theme.transitions.create('transform', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.standard
+    }),
+    '&.reversed': {
+      transform: 'rotate(180deg)'
+    }
   }
 }))

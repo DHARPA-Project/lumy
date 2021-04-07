@@ -1,6 +1,8 @@
 import React, { useState, createContext } from 'react'
 
-import { CssBaseline } from '@material-ui/core'
+import CssBaseline from '@material-ui/core/CssBaseline'
+
+import teal from '@material-ui/core/colors/teal'
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 
@@ -50,13 +52,19 @@ const ThemeContextProvider = ({ children }: ThemeContextProviderProps): JSX.Elem
 
   const theme = createMuiTheme({
     palette: {
-      type: darkModeEnabled ? 'dark' : 'light'
+      type: darkModeEnabled ? 'dark' : 'light',
+      primary: {
+        main: teal[500]
+      }
     },
     typography: {
       body1: {
         fontSize: '0.875rem',
-        lineHeight: 1.43,
-        letterSpacing: '0.01071em'
+        lineHeight: 1.43
+      },
+      body2: {
+        fontSize: '0.75rem',
+        lineHeight: 1.35
       }
     },
     props: {

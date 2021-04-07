@@ -11,7 +11,7 @@ type TopPageLayoutProps = {
 const TopPageLayout = ({ children }: TopPageLayoutProps): JSX.Element => {
   const classes = useStyles()
 
-  const [isSideBarCollapsed, setIsSideBarCollapsed] = useState(true)
+  const [isSideBarCollapsed, setIsSideBarCollapsed] = useState(false)
 
   return (
     <div className={`${classes.root}${isSideBarCollapsed ? ' collapsed' : ''}`}>
