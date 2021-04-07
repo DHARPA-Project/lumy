@@ -3,14 +3,10 @@ import { makeStyles } from '@material-ui/core/styles'
 export default makeStyles(theme => ({
   root: {},
   label: {
-    color: theme.palette.text.secondary,
-    fontSize: '0.75rem',
-    fontWeight: 400
+    color: theme.palette.text.secondary
   },
   steps: {
-    color: theme.palette.text.secondary,
-    fontSize: '0.75rem',
-    fontWeight: 400
+    color: theme.palette.text.secondary
   },
   note: {
     color: 'red'

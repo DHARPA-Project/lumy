@@ -60,9 +60,11 @@ const ThemeContextProvider = ({ children }: ThemeContextProviderProps): JSX.Elem
     typography: {
       body1: {
         fontSize: '0.875rem',
-        fontWeight: 400,
-        lineHeight: 1.43,
-        letterSpacing: '0.01071em'
+        lineHeight: 1.43
+      },
+      body2: {
+        fontSize: '0.75rem',
+        lineHeight: 1.35
       }
     },
     props: {

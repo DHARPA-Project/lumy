@@ -38,10 +38,15 @@ const NavProjectLink = ({
       <ListItem button component={link && NavLink} to={link} className={classes.root} disableRipple>
         <Grid container spacing={1}>
           <Grid item xs={10}>
-            <Typography className={classes.label}>{label}</Typography>
+            <Typography className={classes.label} variant="body2">
+              {label}
+            </Typography>
           </Grid>
           <Grid item xs={2}>
-            <Typography className={classes.steps}>{`${currentStep}/${totalSteps}`}</Typography>
+            <Typography
+              className={classes.steps}
+              variant="body2"
+            >{`${currentStep}/${totalSteps}`}</Typography>
           </Grid>
           <Grid item xs={12}>
             <ProjectProgressBar value={progressPercentage} variant="determinate" />
