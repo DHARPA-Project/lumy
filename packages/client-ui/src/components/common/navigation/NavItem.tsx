@@ -9,6 +9,7 @@ import { NavBarLinkProps } from './NavBarLink'
 import NavHeading from './NavHeading'
 import NavBarLink from './NavBarLink'
 import NavGroup from './NavGroup'
+import NavProjectLink from './NavProjectLink'
 
 type NavItemProps = {
   type: NavItemType
@@ -27,7 +28,8 @@ const NavItem = ({
   sublist,
   isNavBarExpanded,
   nested,
-  type
+  type,
+  ...otherProps
 }: NavItemProps): JSX.Element => {
   const classes = useStyles()
 
@@ -46,7 +48,7 @@ const NavItem = ({
           isNavBarExpanded={isNavBarExpanded}
         />
       )
-    case NavItemType.link:
+    case NavItemType.pageLink:
       return (
         <NavBarLink
           icon={icon}
@@ -56,6 +58,8 @@ const NavItem = ({
           isNavBarExpanded={isNavBarExpanded}
         />
       )
+    case NavItemType.projectLink:
+      return <NavProjectLink isSideBarExpanded={isNavBarExpanded} label={label} link={link} {...otherProps} />
     default:
       return <h1>unknown navigation item</h1>
   }

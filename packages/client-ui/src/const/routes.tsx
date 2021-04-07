@@ -10,7 +10,8 @@ import AllInclusiveIcon from '@material-ui/icons/AllInclusive'
 export enum NavItemType {
   'heading',
   'divider',
-  'link',
+  'pageLink',
+  'projectLink',
   'group'
 }
 
@@ -23,35 +24,35 @@ export default [
     label: 'pages'
   },
   {
-    type: NavItemType.link,
+    type: NavItemType.pageLink,
     label: 'introduction',
     link: '/intro',
     icon: <InfoOutlineIcon />,
     nested: false
   },
   {
-    type: NavItemType.link,
+    type: NavItemType.pageLink,
     label: 'settings',
     link: '/settings',
     icon: <SettingsIcon />,
     nested: false
   },
   {
-    type: NavItemType.link,
+    type: NavItemType.pageLink,
     label: 'notifications',
     link: '/notifications',
     icon: <NotificationsNoneIcon />,
     nested: false
   },
   {
-    type: NavItemType.link,
+    type: NavItemType.pageLink,
     label: 'test',
     link: '/test',
     icon: <AllInclusiveIcon />,
     nested: false
   },
   {
-    type: NavItemType.link,
+    type: NavItemType.pageLink,
     label: 'sample',
     link: '/sample',
     icon: <AcUnitIcon />,
@@ -85,6 +86,34 @@ export default [
         nested: true
       }
     ]
+  },
+  {
+    type: NavItemType.divider
+  },
+  {
+    type: NavItemType.heading,
+    label: 'projects'
+  },
+  {
+    type: NavItemType.projectLink,
+    label: 'Trump Tweet Network complete',
+    link: '/projects/123c',
+    currentStep: 5,
+    totalSteps: 6
+  },
+  {
+    type: NavItemType.projectLink,
+    label: 'Trump Tweet Network partial',
+    link: '/projects/123p',
+    currentStep: 2,
+    totalSteps: 6
+  },
+  {
+    type: NavItemType.projectLink,
+    label: 'Trump Tweet Topics',
+    link: '/projects/456',
+    currentStep: 9,
+    totalSteps: 10
   },
   {
     type: NavItemType.divider
