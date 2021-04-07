@@ -9,7 +9,8 @@ export type BatchFilter = TabularDataFilter
 export const useStepInputValueBatch = (
   stepId: string,
   inputId: string,
-  filter: BatchFilter
+  filter: BatchFilter,
+  viewId = 'default'
 ): [Table, TableStats] => {
   const context = useContext(BackEndContext)
   const [lastValue, setLastValue] = useState<Table>()
@@ -17,7 +18,7 @@ export const useStepInputValueBatch = (
 
   useEffect(() => {
     const handler = handlerAdapter(Messages.ModuleIO.codec.TabularInputValueUpdated.decode, content => {
-      if (content?.id === stepId && content?.inputId === inputId) {
+      if (content?.stepId === stepId && content?.inputId === inputId && content?.viewId == viewId) {
         const [tableStats, table] = deserializeValue<TableStats, Table>(content.value)
         setLastValue(table)
         setLastStats(tableStats)
@@ -25,14 +26,25 @@ export const useStepInputValueBatch = (
     })
     context.subscribe(Target.ModuleIO, handler)
 
-    return () => context.unsubscribe(Target.ModuleIO, handler)
+    return () => {
+      context.unsubscribe(Target.ModuleIO, handler)
+      context.sendMessage(
+        Target.ModuleIO,
+        Messages.ModuleIO.codec.UnregisterTabularInputView.encode({
+          viewId,
+          inputId,
+          stepId
+        })
+      )
+    }
   }, [])
 
   useEffect(() => {
     context.sendMessage(
       Target.ModuleIO,
       Messages.ModuleIO.codec.GetTabularInputValue.encode({
-        id: stepId,
+        viewId,
+        stepId,
         inputId,
         filter
       })

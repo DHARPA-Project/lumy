@@ -41,7 +41,7 @@ const DataSelection = ({ step }: Props): JSX.Element => {
   return (
     <div key={step.id}>
       <h3>Choose items for the corpus:</h3>
-      {repositoryItemsBatch == null ? (
+      {repositoryItemsBatch == null || tableStats == null ? (
         ''
       ) : (
         <TableView

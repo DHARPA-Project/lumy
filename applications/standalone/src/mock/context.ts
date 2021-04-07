@@ -125,13 +125,14 @@ export class MockContext implements IBackEndContext {
       this._signals[Target.ModuleIO].emit(udpatedMessage)
     })(msg)
 
-    adapter(Messages.ModuleIO.codec.GetTabularInputValue.decode, ({ id, inputId, filter }) => {
+    adapter(Messages.ModuleIO.codec.GetTabularInputValue.decode, ({ viewId, stepId, inputId, filter }) => {
       const { pageSize, offset = 0 } = filter
 
       const filteredTable = testTable.slice(offset, offset + pageSize)
 
       const updatedMessage = Messages.ModuleIO.codec.TabularInputValueUpdated.encode({
-        id,
+        viewId,
+        stepId,
         inputId,
         filter,
         value: (serializeFilteredTable(filteredTable, testTable) as unknown) as Record<string, unknown>

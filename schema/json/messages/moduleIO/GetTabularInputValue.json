@@ -5,7 +5,11 @@
   "description": "Get a filtered version of a tabular input of a step from the current workflow.",
   "additionalProperties": false,
   "properties": {
-    "id": {
+    "viewId": {
+      "type": "string",
+      "description": "An ID associated with this filtered version of the tabular value.\nThis is needed to distinguish between different views of the same data value that may exist independently."
+    },
+    "stepId": {
       "type": "string",
       "description": "Unique ID of the step within the workflow that we are getting parameters for."
     },
@@ -18,7 +22,8 @@
     }
   },
   "required": [
-    "id",
+    "viewId",
+    "stepId",
     "inputId",
     "filter"
   ]

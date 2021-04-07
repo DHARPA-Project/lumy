@@ -1,4 +1,5 @@
 import base64
+from typing import Any, Union
 
 import pyarrow as pa
 from dharpa.vre.types.generated import DataType, DataValueContainer, TableStats
@@ -29,3 +30,9 @@ def serialize_filtered_table(
     container = serialize_table(full_table)
     container.value = val
     return container
+
+
+def serialize(value: Any) -> Union[DataValueContainer, Any]:
+    if isinstance(value, pa.Table):
+        return serialize_table(value)
+    return value

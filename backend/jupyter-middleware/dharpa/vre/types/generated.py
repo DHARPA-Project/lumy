@@ -186,10 +186,15 @@ class MsgModuleIOGetTabularInputValue:
     Get a filtered version of a tabular input of a step from the current workflow.
     """
     filter: DataTabularDataFilter
-    """Unique ID of the step within the workflow that we are getting parameters for."""
-    id: str
     """Unique ID of the input"""
     input_id: str
+    """Unique ID of the step within the workflow that we are getting parameters for."""
+    step_id: str
+    """An ID associated with this filtered version of the tabular value.
+    This is needed to distinguish between different views of the same data value that may
+    exist independently.
+    """
+    view_id: str
 
 
 @dataclass
@@ -243,12 +248,36 @@ class MsgModuleIOTabularInputValueUpdated:
     A filtered version of a tabular input of a step from the current workflow.
     """
     filter: DataTabularDataFilter
-    """Unique ID of the step within the workflow that we are getting parameters for."""
-    id: str
     """Unique ID of the input"""
     input_id: str
+    """Unique ID of the step within the workflow that we are getting parameters for."""
+    step_id: str
     """The actual value payload. TODO: The type will be set later"""
     value: Union[Dict[str, Any], None, str]
+    """An ID associated with this filtered version of the tabular value.
+    This is needed to distinguish between different views of the same data value that may
+    exist independently.
+    """
+    view_id: str
+
+
+@dataclass
+class MsgModuleIOUnregisterTabularInputView:
+    """Target: "moduleIO"
+    Message type: "UnregisterTabularInputView"
+    
+    If there is a view of a table with the provided ID, unregister this view and stop sending
+    updates about it to the frontend.
+    """
+    """Unique ID of the input"""
+    input_id: str
+    """Unique ID of the step within the workflow that we are getting parameters for."""
+    step_id: str
+    """An ID associated with this filtered version of the tabular value.
+    This is needed to distinguish between different views of the same data value that may
+    exist independently.
+    """
+    view_id: str
 
 
 @dataclass

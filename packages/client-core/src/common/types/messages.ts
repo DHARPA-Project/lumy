@@ -18,7 +18,8 @@ import {
   MsgModuleIOInputValuesUpdated,
   MsgModuleIOUpdateInputValues,
   MsgModuleIOGetTabularInputValue,
-  MsgModuleIOTabularInputValueUpdated
+  MsgModuleIOTabularInputValueUpdated,
+  MsgModuleIOUnregisterTabularInputView
 } from './generated'
 
 /**
@@ -69,6 +70,7 @@ export namespace ModuleIO {
   export type UpdateInputValues = MsgModuleIOUpdateInputValues
   export type GetTabularInputValue = MsgModuleIOGetTabularInputValue
   export type TabularInputValueUpdated = MsgModuleIOTabularInputValueUpdated
+  export type UnregisterTabularInputView = MsgModuleIOUnregisterTabularInputView
 
   export namespace codec {
     export const GetPreview = Codec<GetPreview>('GetPreview')
@@ -81,6 +83,7 @@ export namespace ModuleIO {
     export const UpdateInputValues = Codec<UpdateInputValues>('UpdateInputValues')
     export const GetTabularInputValue = Codec<GetTabularInputValue>('GetTabularInputValue')
     export const TabularInputValueUpdated = Codec<TabularInputValueUpdated>('TabularInputValueUpdated')
+    export const UnregisterTabularInputView = Codec<UnregisterTabularInputView>('UnregisterTabularInputView')
   }
 }
 
