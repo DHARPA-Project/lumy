@@ -6,6 +6,7 @@ import Typography from '@material-ui/core/Typography'
 import Grow from '@material-ui/core/Grow'
 
 import DoubleArrowIcon from '@material-ui/icons/DoubleArrow'
+import ExploreIcon from '@material-ui/icons/Explore'
 import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew'
 
 import routes from '../../../const/routes'
@@ -18,7 +19,7 @@ type SideBarProps = {
   setIsSideBarCollapsed: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const NavBar = ({ isSideBarCollapsed, setIsSideBarCollapsed }: SideBarProps): JSX.Element => {
+const SideBar = ({ isSideBarCollapsed, setIsSideBarCollapsed }: SideBarProps): JSX.Element => {
   const classes = useStyles()
 
   return (
@@ -36,8 +37,8 @@ const NavBar = ({ isSideBarCollapsed, setIsSideBarCollapsed }: SideBarProps): JS
           style={{ transformOrigin: '0 0 0' }}
           {...(isSideBarCollapsed ? { timeout: 0 } : { timeout: 1000 })}
         >
-          <Typography variant="h6" component="h2" className={classes.logo}>
-            DHARPA
+          <Typography variant="h6" component="h2" color="primary" className={classes.logo}>
+            <ExploreIcon /> &nbsp;DHARPA
           </Typography>
         </Grow>
       </div>
@@ -59,4 +60,4 @@ const NavBar = ({ isSideBarCollapsed, setIsSideBarCollapsed }: SideBarProps): JS
   )
 }
 
-export default NavBar
+export default SideBar

@@ -9,6 +9,7 @@ import { NavBarLinkProps } from './NavBarLink'
 import NavHeading from './NavHeading'
 import NavBarLink from './NavBarLink'
 import NavGroup from './NavGroup'
+import NavProjectLink from './NavProjectLink'
 
 type NavItemProps = {
   type: NavItemType
@@ -18,6 +19,8 @@ type NavItemProps = {
   icon?: JSX.Element
   nested?: boolean
   sublist?: NavBarLinkProps[]
+  currentStep?: number
+  totalSteps?: number
 }
 
 const NavItem = ({
@@ -27,7 +30,9 @@ const NavItem = ({
   sublist,
   isNavBarExpanded,
   nested,
-  type
+  type,
+  currentStep,
+  totalSteps
 }: NavItemProps): JSX.Element => {
   const classes = useStyles()
 
@@ -46,7 +51,7 @@ const NavItem = ({
           isNavBarExpanded={isNavBarExpanded}
         />
       )
-    case NavItemType.link:
+    case NavItemType.pageLink:
       return (
         <NavBarLink
           icon={icon}
@@ -54,6 +59,16 @@ const NavItem = ({
           link={link}
           nested={nested}
           isNavBarExpanded={isNavBarExpanded}
+        />
+      )
+    case NavItemType.projectLink:
+      return (
+        <NavProjectLink
+          isSideBarExpanded={isNavBarExpanded}
+          label={label}
+          link={link}
+          currentStep={currentStep}
+          totalSteps={totalSteps}
         />
       )
     default:

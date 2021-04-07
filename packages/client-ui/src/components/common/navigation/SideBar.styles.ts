@@ -26,7 +26,10 @@ export default makeStyles(theme => ({
     marginBottom: theme.spacing(12)
   },
   logo: {
-    textTransform: 'uppercase'
+    display: 'flex',
+    alignItems: 'center',
+    textTransform: 'uppercase',
+    fontWeight: 700
   },
   sideBarToggleButton: {
     position: 'absolute',
