@@ -14,16 +14,18 @@ def serialize_table(table: pa.Table) -> DataValueContainer:
     )
 
 
-def serialize_filtered_table(table: pa.Table) -> DataValueContainer:
+def serialize_filtered_table(
+        filtered_table: pa.Table,
+        full_table: pa.Table) -> DataValueContainer:
     sink = pa.BufferOutputStream()
 
-    writer = pa.ipc.new_file(sink, table.schema)
-    writer.write(table)
+    writer = pa.ipc.new_file(sink, filtered_table.schema)
+    writer.write(filtered_table)
     writer.close()
 
     val = sink.getvalue().to_pybytes()
     val = base64.b64encode(val).decode('ascii')
 
-    container = serialize_table(table)
+    container = serialize_table(full_table)
     container.value = val
     return container

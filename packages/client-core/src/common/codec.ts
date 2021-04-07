@@ -25,14 +25,14 @@ export function serializeTable(table: Table): DataValueContainer {
   }
 }
 
-export function serializeFilteredTable(table: Table): DataValueContainer {
+export function serializeFilteredTable(filteredTable: Table, fullTable: Table): DataValueContainer {
   const wr = new RecordBatchWriter()
 
-  const arr = wr.writeAll(table).finish().toUint8Array(true)
+  const arr = wr.writeAll(filteredTable).finish().toUint8Array(true)
   const value = btoa(String.fromCharCode.apply(null, [...arr]))
 
   return {
-    ...serializeTable(table),
+    ...serializeTable(fullTable),
     value
   }
 }

@@ -1,21 +1,26 @@
 import { useContext, useState, useEffect } from 'react'
 import { Table } from 'apache-arrow'
 import { BackEndContext, handlerAdapter, Target } from '../common/context'
-import { Messages } from '../common/types'
-import { TabularDataFilter } from '../common/types'
+import { Messages, TableStats, TabularDataFilter } from '../common/types'
 import { deserializeValue } from '../common/codec'
 
 export type BatchFilter = TabularDataFilter
 
-export const useStepInputValueBatch = (stepId: string, inputId: string, filter: BatchFilter): [Table] => {
+export const useStepInputValueBatch = (
+  stepId: string,
+  inputId: string,
+  filter: BatchFilter
+): [Table, TableStats] => {
   const context = useContext(BackEndContext)
   const [lastValue, setLastValue] = useState<Table>()
+  const [lastStats, setLastStats] = useState<TableStats>()
 
   useEffect(() => {
     const handler = handlerAdapter(Messages.ModuleIO.codec.TabularInputValueUpdated.decode, content => {
       if (content?.id === stepId && content?.inputId === inputId) {
-        const [, table] = deserializeValue<unknown, Table>(content.value)
+        const [tableStats, table] = deserializeValue<TableStats, Table>(content.value)
         setLastValue(table)
+        setLastStats(tableStats)
       }
     })
     context.subscribe(Target.ModuleIO, handler)
@@ -34,5 +39,5 @@ export const useStepInputValueBatch = (stepId: string, inputId: string, filter: 
     )
   }, [filter, stepId, inputId])
 
-  return [lastValue]
+  return [lastValue, lastStats]
 }

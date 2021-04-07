@@ -18,6 +18,18 @@ import {
 } from '@dharpa-vre/client-core'
 import { viewProvider } from '@dharpa-vre/modules'
 
+const testTableNumbers = [...Array(30).keys()]
+
+const testTable = Table.new(
+  [
+    Utf8Vector.from(testTableNumbers.map(n => `uri-${n}`)),
+    Utf8Vector.from(testTableNumbers.map(n => `Item ${n}`)),
+    Int32Vector.from(testTableNumbers),
+    Float32Vector.from(testTableNumbers.map(n => Math.random() * n))
+  ],
+  ['uri', 'columnA', 'columnB', 'columnC']
+)
+
 const adapter = <T>(decoder: IDecode<T>, handler: (msg: T) => void) => {
   return (msg: ME<unknown>) => handlerAdapter(decoder, handler)(undefined, msg as ME<T>)
 }
@@ -115,22 +127,14 @@ export class MockContext implements IBackEndContext {
 
     adapter(Messages.ModuleIO.codec.GetTabularInputValue.decode, ({ id, inputId, filter }) => {
       const { pageSize, offset = 0 } = filter
-      const numbers = [...Array(pageSize).keys()].map(n => n + offset)
 
-      const table = Table.new(
-        [
-          Utf8Vector.from(numbers.map(n => `uri-${n}`)),
-          Utf8Vector.from(numbers.map(n => `Item ${n}`)),
-          Int32Vector.from(numbers),
-          Float32Vector.from(numbers.map(n => Math.random() * n))
-        ],
-        ['uri', 'columnA', 'columnB', 'columnC']
-      )
+      const filteredTable = testTable.slice(offset, offset + pageSize)
+
       const updatedMessage = Messages.ModuleIO.codec.TabularInputValueUpdated.encode({
         id,
         inputId,
         filter,
-        value: (serializeFilteredTable(table) as unknown) as Record<string, unknown>
+        value: (serializeFilteredTable(filteredTable, testTable) as unknown) as Record<string, unknown>
       })
       this._signals[Target.ModuleIO].emit(updatedMessage)
     })(msg)

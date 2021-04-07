@@ -26,13 +26,17 @@ class ModuleIOHandler(MessageHandler):
             if self.context.is_tabular_input(msg.step_id, input_id):
                 filter = self.context.get_step_tabular_input_filter(
                     msg.step_id, input_id)
-                value = self.context.get_step_tabular_input_value(
+                filtered_table = self.context.get_step_tabular_input_value(
                     msg.step_id, input_id, filter)
+                values = self.context.get_step_input_values(
+                    msg.step_id, input_ids=[input_id], include_tabular=True)
+                table = values[input_id]
                 self.publisher.publish(MsgModuleIOTabularInputValueUpdated(
                     id=msg.step_id,
                     input_id=camelcase(input_id),
                     filter=filter,
-                    value=to_dict(serialize_filtered_table(value))
+                    value=to_dict(serialize_filtered_table(
+                        filtered_table, table))
                 ))
             else:
                 non_tabular_inputs_ids.append(input_id)
@@ -75,16 +79,19 @@ class ModuleIOHandler(MessageHandler):
     def _handle_GetTabularInputValue(self,
                                      msg: MsgModuleIOGetTabularInputValue):
         input_id = snakecase(msg.input_id)
-        value = self.context.get_step_tabular_input_value(
+        filtered_table = self.context.get_step_tabular_input_value(
             msg.id, input_id, msg.filter)
+        values = self.context.get_step_input_values(
+            msg.id, input_ids=[input_id], include_tabular=True)
+        table = values[input_id]
 
         current_filter = self.context.get_step_tabular_input_filter(
             msg.id, input_id)
 
-        if value is not None:
+        if filtered_table is not None:
             self.publisher.publish(MsgModuleIOTabularInputValueUpdated(
                 id=msg.id,
                 input_id=camelcase(input_id),
                 filter=current_filter,
-                value=to_dict(serialize_filtered_table(value))
+                value=to_dict(serialize_filtered_table(filtered_table, table))
             ))
