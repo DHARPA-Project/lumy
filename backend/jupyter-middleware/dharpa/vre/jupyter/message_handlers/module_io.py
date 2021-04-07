@@ -98,36 +98,6 @@ class ModuleIOHandler(MessageHandler):
                             filtered_table, table))
                     ))
 
-        # for input_id in msg.io_ids:
-
-        #     if self.context.is_tabular_input(msg.step_id, input_id):
-        #         # filter = self.context.get_step_tabular_input_filter(
-        #         #     msg.step_id, input_id)
-        #         filtered_table = self.context.get_step_tabular_input_value(
-        #             msg.step_id, input_id, filter)
-        #         values = self.context.get_step_input_values(
-        #             msg.step_id, input_ids=[input_id], include_tabular=True)
-        #         table = values[input_id]
-        #         self.publisher.publish(MsgModuleIOTabularInputValueUpdated(
-        #             view_id=msg.view_id,
-        #             step_id=msg.step_id,
-        #             input_id=camelcase(input_id),
-        #             filter=filter,
-        #             value=to_dict(serialize_filtered_table(
-        #                 filtered_table, table))
-        #         ))
-        #     else:
-        #         non_tabular_inputs_ids.append(input_id)
-
-        # if len(non_tabular_inputs_ids) > 0:
-        #     values = self.context.get_step_input_values(
-        #         msg.step_id, input_ids=non_tabular_inputs_ids)
-
-        #     self.publisher.publish(MsgModuleIOInputValuesUpdated(
-        #         msg.step_id,
-        #         values
-        #     ))
-
     def _handle_GetInputValues(self, msg: MsgModuleIOGetInputValues):
         '''
         Return workflow step input values.
