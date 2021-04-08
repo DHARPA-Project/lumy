@@ -187,7 +187,7 @@ export interface MsgModuleIOGetInputValues {
   /**
    * Limit returned values only to inputs with these IDs.
    */
-  inputIds?: unknown[]
+  inputIds?: string[]
 }
 
 /**
@@ -212,13 +212,19 @@ export interface MsgModuleIOGetPreview {
 export interface MsgModuleIOGetTabularInputValue {
   filter: DataTabularDataFilter
   /**
-   * Unique ID of the step within the workflow that we are getting parameters for.
-   */
-  id: string
-  /**
    * Unique ID of the input
    */
   inputId: string
+  /**
+   * Unique ID of the step within the workflow that we are getting parameters for.
+   */
+  stepId: string
+  /**
+   * An ID associated with this filtered version of the tabular value.
+   * This is needed to distinguish between different views of the same data value that may
+   * exist independently.
+   */
+  viewId: string
 }
 
 /**
@@ -301,17 +307,47 @@ export interface MsgModuleIOPreviewUpdated {
 export interface MsgModuleIOTabularInputValueUpdated {
   filter: DataTabularDataFilter
   /**
+   * Unique ID of the input
+   */
+  inputId: string
+  /**
    * Unique ID of the step within the workflow that we are getting parameters for.
    */
-  id: string
+  stepId: string
+  /**
+   * The actual value payload. TODO: The type will be set later
+   */
+  value?: { [key: string]: unknown } | string
+  /**
+   * An ID associated with this filtered version of the tabular value.
+   * This is needed to distinguish between different views of the same data value that may
+   * exist independently.
+   */
+  viewId: string
+}
+
+/**
+ * Target: "moduleIO"
+ * Message type: "UnregisterTabularInputView"
+ *
+ * If there is a view of a table with the provided ID, unregister this view and stop sending
+ * updates about it to the frontend.
+ */
+export interface MsgModuleIOUnregisterTabularInputView {
   /**
    * Unique ID of the input
    */
   inputId: string
   /**
-   * The actual value payload. TODO: The type will be set later
+   * Unique ID of the step within the workflow that we are getting parameters for.
    */
-  value?: { [key: string]: unknown } | string
+  stepId: string
+  /**
+   * An ID associated with this filtered version of the tabular value.
+   * This is needed to distinguish between different views of the same data value that may
+   * exist independently.
+   */
+  viewId: string
 }
 
 /**
@@ -529,4 +565,47 @@ export interface IOStateConnection {
    * ID of the step
    */
   stepId: string
+}
+
+/**
+ * Container for complex data types.
+ * Basic data types are: string, int, float, bool and lists of these types.
+ * Everything else requires a container that contains some metadata hinting what the type
+ * is.
+ * For some types like 'table' the value is not provided because it may be too big.
+ * A batch view of the data value should be used to access such values.
+ */
+export interface DataValueContainer {
+  /**
+   * Type of the data value.
+   */
+  dataType: DataType
+  /**
+   * Some statistical numbers describing data.
+   * The content of this field is type dependent.
+   * E.g. for 'table' this could contain the actual number of rows.
+   */
+  stats?: { [key: string]: unknown }
+  /**
+   * Actual value. This may be provided (e.g. Date) or may not be provided (e.g. Table without
+   * a batch view)
+   */
+  value?: string
+}
+
+/**
+ * Type of the data value.
+ */
+export enum DataType {
+  Table = 'table'
+}
+
+/**
+ * Stats object for arrow table
+ */
+export interface TableStats {
+  /**
+   * Number of rows.
+   */
+  rowsCount: number
 }

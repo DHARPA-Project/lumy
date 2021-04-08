@@ -122,17 +122,6 @@ class AppContext(ABC):
         ...
 
     @abstractmethod
-    def get_step_tabular_input_filter(
-        self,
-        step_id: str,
-        input_id: str
-    ) -> DataTabularDataFilter:
-        '''
-        Return current value of the tabular filter for the step input.
-        '''
-        ...
-
-    @abstractmethod
     def run_processing(self, step_id: Optional[str] = None):
         '''
         Run processing of data through the whole workflow.

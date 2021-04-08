@@ -9,6 +9,7 @@ import NotificationsPage from './pages/NotificationsPage'
 import TestPage from './pages/TestPage'
 import SamplePage from './pages/SamplePage'
 import IntroPage from './pages/IntroPage'
+import ToyVrePage from './pages/ToyVrePage'
 
 export const App = (): JSX.Element => {
   return (
@@ -22,6 +23,7 @@ export const App = (): JSX.Element => {
             <Route path="/notifications" exact component={NotificationsPage} />
             <Route path="/test" exact component={TestPage} />
             <Route path="/sample" exact component={SamplePage} />
+            <Route path="/toy" exact component={ToyVrePage} />
           </Switch>
         </TopPageLayout>
       </Router>

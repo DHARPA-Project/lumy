@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "TableStats",
+  "description": "Stats object for arrow table",
+  "properties": {
+    "rowsCount": {
+      "type": "integer",
+      "description": "Number of rows."
+    }
+  },
+  "required": [
+    "rowsCount"
+  ]
+}

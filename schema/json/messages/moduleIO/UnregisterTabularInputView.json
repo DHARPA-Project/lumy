@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/schema",
   "type": "object",
-  "title": "MsgModuleIOTabularInputValueUpdated",
-  "description": "A filtered version of a tabular input of a step from the current workflow.",
+  "title": "MsgModuleIOUnregisterTabularInputView",
+  "description": "If there is a view of a table with the provided ID, unregister this view and stop sending updates about it to the frontend.",
   "additionalProperties": false,
   "properties": {
     "viewId": {
@@ -16,22 +16,11 @@
     "inputId": {
       "type": "string",
       "description": "Unique ID of the input"
-    },
-    "filter": {
-      "$ref": "https://dharpa.org/schema/types/data/TabularDataFilter.json"
-    },
-    "value": {
-      "type": [
-        "object",
-        "string"
-      ],
-      "description": "The actual value payload. TODO: The type will be set later"
     }
   },
   "required": [
     "viewId",
     "stepId",
-    "inputId",
-    "filter"
+    "inputId"
   ]
 }

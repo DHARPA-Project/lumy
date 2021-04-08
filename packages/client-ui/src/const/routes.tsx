@@ -6,6 +6,7 @@ import AccountTreeIcon from '@material-ui/icons/AccountTree'
 import NotificationsNoneIcon from '@material-ui/icons/NotificationsNone'
 import AcUnitIcon from '@material-ui/icons/AcUnit'
 import AllInclusiveIcon from '@material-ui/icons/AllInclusive'
+import ToysIcon from '@material-ui/icons/Toys'
 
 export enum NavItemType {
   'heading',
@@ -117,5 +118,12 @@ export default [
   },
   {
     type: NavItemType.divider
+  },
+  {
+    type: NavItemType.pageLink,
+    label: 'toy VRE',
+    link: '/toy',
+    icon: <ToysIcon />,
+    nested: false
   }
 ]

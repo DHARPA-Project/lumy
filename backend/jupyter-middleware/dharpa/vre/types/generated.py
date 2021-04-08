@@ -1,6 +1,6 @@
 # flake8: noqa
 from dataclasses import dataclass
-from typing import Optional, List, Any, Dict, Union
+from typing import Optional, List, Dict, Any, Union
 from enum import Enum
 
 
@@ -155,7 +155,7 @@ class MsgModuleIOGetInputValues:
     """Unique ID of the step within the workflow that we are getting parameters for."""
     id: str
     """Limit returned values only to inputs with these IDs."""
-    input_ids: Optional[List[Any]] = None
+    input_ids: Optional[List[str]] = None
 
 
 @dataclass
@@ -186,10 +186,15 @@ class MsgModuleIOGetTabularInputValue:
     Get a filtered version of a tabular input of a step from the current workflow.
     """
     filter: DataTabularDataFilter
-    """Unique ID of the step within the workflow that we are getting parameters for."""
-    id: str
     """Unique ID of the input"""
     input_id: str
+    """Unique ID of the step within the workflow that we are getting parameters for."""
+    step_id: str
+    """An ID associated with this filtered version of the tabular value.
+    This is needed to distinguish between different views of the same data value that may
+    exist independently.
+    """
+    view_id: str
 
 
 @dataclass
@@ -243,12 +248,36 @@ class MsgModuleIOTabularInputValueUpdated:
     A filtered version of a tabular input of a step from the current workflow.
     """
     filter: DataTabularDataFilter
-    """Unique ID of the step within the workflow that we are getting parameters for."""
-    id: str
     """Unique ID of the input"""
     input_id: str
+    """Unique ID of the step within the workflow that we are getting parameters for."""
+    step_id: str
     """The actual value payload. TODO: The type will be set later"""
     value: Union[Dict[str, Any], None, str]
+    """An ID associated with this filtered version of the tabular value.
+    This is needed to distinguish between different views of the same data value that may
+    exist independently.
+    """
+    view_id: str
+
+
+@dataclass
+class MsgModuleIOUnregisterTabularInputView:
+    """Target: "moduleIO"
+    Message type: "UnregisterTabularInputView"
+    
+    If there is a view of a table with the provided ID, unregister this view and stop sending
+    updates about it to the frontend.
+    """
+    """Unique ID of the input"""
+    input_id: str
+    """Unique ID of the step within the workflow that we are getting parameters for."""
+    step_id: str
+    """An ID associated with this filtered version of the tabular value.
+    This is needed to distinguish between different views of the same data value that may
+    exist independently.
+    """
+    view_id: str
 
 
 @dataclass
@@ -412,3 +441,37 @@ class MsgWorkflowUpdated:
     """
     """Current workflow."""
     workflow: Optional[Workflow] = None
+
+
+class DataType(Enum):
+    """Type of the data value."""
+    TABLE = "table"
+
+
+@dataclass
+class DataValueContainer:
+    """Container for complex data types.
+    Basic data types are: string, int, float, bool and lists of these types.
+    Everything else requires a container that contains some metadata hinting what the type
+    is.
+    For some types like 'table' the value is not provided because it may be too big.
+    A batch view of the data value should be used to access such values.
+    """
+    """Type of the data value."""
+    data_type: DataType
+    """Some statistical numbers describing data.
+    The content of this field is type dependent.
+    E.g. for 'table' this could contain the actual number of rows.
+    """
+    stats: Optional[Dict[str, Any]] = None
+    """Actual value. This may be provided (e.g. Date) or may not be provided (e.g. Table without
+    a batch view)
+    """
+    value: Optional[str] = None
+
+
+@dataclass
+class TableStats:
+    """Stats object for arrow table"""
+    """Number of rows."""
+    rows_count: int

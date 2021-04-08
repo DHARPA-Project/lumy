@@ -11,7 +11,10 @@
     },
     "inputIds": {
       "type": "array",
-      "description": "Limit returned values only to inputs with these IDs."
+      "description": "Limit returned values only to inputs with these IDs.",
+      "items": {
+        "type": "string"
+      }
     }
   },
   "required": [

@@ -18,11 +18,6 @@ if TYPE_CHECKING:
 
 WorkflowStructureUpdated = Callable[[WorkflowStructure], None]
 
-DEFAULT_TABULAR_FILTER = DataTabularDataFilter(
-    offset=0,
-    page_size=5
-)
-
 
 class MockAppContext(AppContext):
     _current_workflow: Optional[Workflow] = None
@@ -30,11 +25,6 @@ class MockAppContext(AppContext):
     # steps i/o values: step_id -> { io_id -> value (if exists) }
     _steps_input_values: Dict[str, Dict[str, Any]] = defaultdict(dict)
     _steps_output_values: Dict[str, Dict[str, Any]] = defaultdict(dict)
-
-    # tabular i/o filters: step_id -> { io_id -> filter (if exists) }
-    _steps_inputs_tabular_filters: Dict[
-        str, Dict[str, DataTabularDataFilter]
-    ] = defaultdict(dict)
 
     def __init__(self):
         with pkg_resources.path(resources, 'sample_workflow_1.yml') as path:
@@ -46,6 +36,8 @@ class MockAppContext(AppContext):
             self._current_workflow = workflow
         self.workflow_structure_updated.publish(
             self._current_workflow)
+
+        self._process_all_steps()
 
     @property
     def current_workflow(self):
@@ -152,12 +144,6 @@ class MockAppContext(AppContext):
         input_id: str,
         filter: Optional[DataTabularDataFilter] = None
     ) -> Optional['Table']:
-        if filter is None:
-            filter = self._steps_inputs_tabular_filters[step_id].get(
-                input_id, DEFAULT_TABULAR_FILTER)
-        else:
-            self._steps_inputs_tabular_filters[step_id][input_id] = filter
-
         if self._current_workflow is None:
             return None
 
@@ -166,7 +152,10 @@ class MockAppContext(AppContext):
 
         table: 'Table' = self._steps_input_values[step_id][input_id]
 
-        return table.slice(filter.offset or 0, filter.page_size)
+        if filter:
+            return table.slice(filter.offset or 0, filter.page_size)
+        else:
+            return table
 
     def is_tabular_input(self, step_id: str, input_id: str) -> bool:
         if self._current_workflow is None:
@@ -177,16 +166,6 @@ class MockAppContext(AppContext):
         if input_id in step.inputs:
             return step.inputs[input_id].is_tabular or False
         return True
-
-    def get_step_tabular_input_filter(
-        self,
-        step_id: str,
-        input_id: str
-    ) -> DataTabularDataFilter:
-        return self._steps_inputs_tabular_filters[step_id].get(
-            input_id,
-            DEFAULT_TABULAR_FILTER
-        )
 
     def _get_step_output_values(
         self,
