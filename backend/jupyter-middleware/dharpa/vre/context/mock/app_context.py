@@ -37,6 +37,8 @@ class MockAppContext(AppContext):
         self.workflow_structure_updated.publish(
             self._current_workflow)
 
+        self._process_all_steps()
+
     @property
     def current_workflow(self):
         return self._current_workflow

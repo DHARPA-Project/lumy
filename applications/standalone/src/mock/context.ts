@@ -184,6 +184,17 @@ export class MockContext implements IBackEndContext {
     setTimeout(() => {
       this._isReady = true
       this._statusChangedSignal.emit(this._isReady)
+      /*
+        Process all workflow steps on startup just to populate
+        inputs and outputs with values.
+
+        NOTE: Doing it the ugly way with a timeout because the
+        mock processing functions for each module of the workflow
+        are registered only after module's UI component is
+        lazily loaded by React. It does not happen immediately
+        but it's OK because it's just a mock code.
+      */
+      setTimeout(() => this._processAllWorkflow(), 1000)
     }, parameters?.startupDelayMs ?? 0)
   }
 
@@ -211,7 +222,7 @@ export class MockContext implements IBackEndContext {
 
   private _handleModuleIO(_: MockContext, msg: ME<unknown>) {
     adapter(Messages.ModuleIO.codec.GetPreview.decode, ({ id }) => {
-      this._processPreviewData(id)
+      this._processStepData(id)
     })(msg)
 
     adapter(Messages.ModuleIO.codec.GetInputValues.decode, ({ id: stepId, inputIds }) => {
@@ -228,7 +239,7 @@ export class MockContext implements IBackEndContext {
       Object.entries(inputValues).forEach(([inputId, value]) =>
         this._store.setInputValue(stepId, inputId, value)
       )
-      await this._processPreviewData(stepId)
+      await this._processStepData(stepId)
       const udpatedMessage = Messages.ModuleIO.codec.InputValuesUpdated.encode({
         id: stepId,
         inputValues
@@ -255,7 +266,7 @@ export class MockContext implements IBackEndContext {
     })(msg)
   }
 
-  private async _processPreviewData(stepId: string): Promise<void> {
+  private async _processStepData(stepId: string): Promise<void> {
     if (this._processData == null) return
 
     try {
@@ -278,6 +289,12 @@ export class MockContext implements IBackEndContext {
       this._signals[Target.Activity].emit(
         Messages.Activity.codec.ExecutionState.encode({ state: State.Idle })
       )
+    }
+  }
+
+  private async _processAllWorkflow(): Promise<void> {
+    for (const step of this._currentWorkflow.structure.steps) {
+      await this._processStepData(step.id)
     }
   }
 
