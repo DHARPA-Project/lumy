@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect } from 'react'
-import { Table } from 'apache-arrow'
+import { DataType, Table } from 'apache-arrow'
 import { BackEndContext, handlerAdapter, Target } from '../common/context'
 import { Messages, TableStats, TabularDataFilter } from '../common/types'
 import { deserializeValue } from '../common/codec'
@@ -22,12 +22,17 @@ export type ViewFilter = TabularDataFilter
  * @param filter filter
  * @param viewId ID of the view
  */
-export const useStepInputValueView = (
+export const useStepInputValueView = <
+  T extends {
+    [key: string]: DataType
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } = any
+>(
   stepId: string,
   inputId: string,
   filter: ViewFilter,
   viewId = 'default'
-): [Table, TableStats] => {
+): [Table<T>, TableStats] => {
   const context = useContext(BackEndContext)
   const [lastValue, setLastValue] = useState<Table>()
   const [lastStats, setLastStats] = useState<TableStats>()
@@ -66,7 +71,7 @@ export const useStepInputValueView = (
         filter
       })
     )
-  }, [filter, stepId, inputId])
+  }, [JSON.stringify(filter), stepId, inputId])
 
   return [lastValue, lastStats]
 }

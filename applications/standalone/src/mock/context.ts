@@ -18,7 +18,9 @@ import {
   serialize,
   deserializeValue,
   DataValueType,
-  WorkflowStructure
+  WorkflowStructure,
+  DataProcessorResult,
+  TabularDataFilter
 } from '@dharpa-vre/client-core'
 import { viewProvider } from '@dharpa-vre/modules'
 
@@ -153,6 +155,14 @@ export interface MockContextParameters {
   startupDelayMs?: number
 }
 
+interface ViewFilters {
+  [stepId: string]: {
+    [ioId: string]: {
+      [viewId: string]: TabularDataFilter
+    }
+  }
+}
+
 export class MockContext implements IBackEndContext {
   private _isDisposed = false
   private _store: IOValuesStore
@@ -165,6 +175,8 @@ export class MockContext implements IBackEndContext {
 
   private _signals: Record<Target, Signal<MockContext, ME<unknown>>>
   private _callbacks = new WeakMap()
+
+  private _currentInputViewFilters: ViewFilters = {}
 
   constructor(parameters: MockContextParameters) {
     this._processData = parameters?.processData ?? mockDataProcessorFactory(viewProvider)
@@ -263,6 +275,8 @@ export class MockContext implements IBackEndContext {
         value: (serializeFilteredTable(filteredTable, table) as unknown) as Record<string, unknown>
       })
       this._signals[Target.ModuleIO].emit(updatedMessage)
+
+      this.setInputViewFilter(stepId, inputId, viewId, filter)
     })(msg)
   }
 
@@ -275,7 +289,11 @@ export class MockContext implements IBackEndContext {
       )
 
       const moduleId = this._getModuleIdForStep(stepId)
-      const data = await this._processData(stepId, moduleId, this._store.getInputValues(stepId))
+      const data = await new Promise<DataProcessorResult>((res, rej) => {
+        setTimeout(() =>
+          this._processData(stepId, moduleId, this._store.getInputValues(stepId)).then(res).catch(rej)
+        )
+      })
 
       Object.entries(data?.outputs ?? {}).forEach(([outputId, value]) => {
         if (value != null) this._store.setOutputValue(stepId, outputId, value)
@@ -309,6 +327,25 @@ export class MockContext implements IBackEndContext {
       })
 
       this._signals[Target.ModuleIO].emit(response)
+
+      // tabular inputs
+      Object.entries(this._store.getInputValues(step.id)).forEach(([inputId, value]) => {
+        Object.entries(this.getInputViewFilters(step.id, inputId)).forEach(([viewId, filter]) => {
+          if (value == null) return
+          const table = value as Table
+
+          const filteredTable = table.slice(filter.offset ?? 0, filter.offset ?? 0 + filter.pageSize)
+
+          const updatedMessage = Messages.ModuleIO.codec.TabularInputValueUpdated.encode({
+            viewId,
+            stepId: step.id,
+            inputId,
+            filter,
+            value: (serializeFilteredTable(filteredTable, table) as unknown) as Record<string, unknown>
+          })
+          this._signals[Target.ModuleIO].emit(updatedMessage)
+        })
+      })
     })
   }
 
@@ -341,5 +378,27 @@ export class MockContext implements IBackEndContext {
 
   addFilesToRepository(files: File[]): Promise<void> {
     return Promise.resolve((files as unknown) as void)
+  }
+
+  getInputViewFilters(stepId: string, inputId: string): { [viewId: string]: TabularDataFilter } {
+    return this._currentInputViewFilters?.[stepId]?.[inputId] ?? {}
+  }
+
+  setInputViewFilter(stepId: string, inputId: string, viewId: string, filter: TabularDataFilter): void {
+    const l1 = this._currentInputViewFilters[stepId] ?? {}
+    const l2 = l1[inputId] ?? {}
+    l2[viewId] = filter
+
+    l1[inputId] = l2
+    this._currentInputViewFilters[stepId] = l1
+  }
+
+  removeInputViewFilter(stepId: string, inputId: string, viewId: string): void {
+    const l1 = this._currentInputViewFilters[stepId] ?? {}
+    const l2 = l1[inputId] ?? {}
+    delete l2[viewId]
+
+    l1[inputId] = l2
+    this._currentInputViewFilters[stepId] = l1
   }
 }
