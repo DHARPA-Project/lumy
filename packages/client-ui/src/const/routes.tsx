@@ -3,9 +3,6 @@ import React from 'react'
 import InfoOutlineIcon from '@material-ui/icons/InfoOutlined'
 import SettingsIcon from '@material-ui/icons/Settings'
 import AccountTreeIcon from '@material-ui/icons/AccountTree'
-import NotificationsNoneIcon from '@material-ui/icons/NotificationsNone'
-import AcUnitIcon from '@material-ui/icons/AcUnit'
-import AllInclusiveIcon from '@material-ui/icons/AllInclusive'
 import ToysIcon from '@material-ui/icons/Toys'
 
 export enum NavItemType {
@@ -40,27 +37,10 @@ export default [
   },
   {
     type: NavItemType.pageLink,
-    label: 'notifications',
-    link: '/notifications',
-    icon: <NotificationsNoneIcon />,
+    label: 'toy VRE',
+    link: '/toy',
+    icon: <ToysIcon />,
     nested: false
-  },
-  {
-    type: NavItemType.pageLink,
-    label: 'test',
-    link: '/test',
-    icon: <AllInclusiveIcon />,
-    nested: false
-  },
-  {
-    type: NavItemType.pageLink,
-    label: 'sample',
-    link: '/sample',
-    icon: <AcUnitIcon />,
-    nested: false
-  },
-  {
-    type: NavItemType.divider
   },
   {
     type: NavItemType.group,
@@ -118,12 +98,5 @@ export default [
   },
   {
     type: NavItemType.divider
-  },
-  {
-    type: NavItemType.pageLink,
-    label: 'toy VRE',
-    link: '/toy',
-    icon: <ToysIcon />,
-    nested: false
   }
 ]
