@@ -11,7 +11,7 @@ import Typography from '@material-ui/core/Typography'
 import ProjectProgressBar from '../ProjectProgressBar'
 
 interface NavProjectLinkProps {
-  isSideBarExpanded: boolean
+  isSideBarExpanded?: boolean
   label: string
   link: string
   currentStep: number
@@ -31,7 +31,7 @@ const NavProjectLink = ({
 
   return (
     <Grow
-      in={isSideBarExpanded}
+      in={isSideBarExpanded ?? true}
       style={{ transformOrigin: '0 0 0' }}
       {...(isSideBarExpanded ? { timeout: 1000 } : { timeout: 0 })}
     >

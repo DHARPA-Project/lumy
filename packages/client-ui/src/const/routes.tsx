@@ -13,7 +13,7 @@ export enum NavItemType {
   'group'
 }
 
-export default [
+export const pageRoutes = [
   {
     type: NavItemType.divider
   },
@@ -74,7 +74,11 @@ export default [
   {
     type: NavItemType.heading,
     label: 'projects'
-  },
+  }
+]
+
+export const projectRoutes = [
+  ,
   {
     type: NavItemType.projectLink,
     label: 'Trump Tweet Network complete',
@@ -95,8 +99,5 @@ export default [
     link: '/projects/456',
     currentStep: 9,
     totalSteps: 10
-  },
-  {
-    type: NavItemType.divider
   }
 ]

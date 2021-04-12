@@ -9,7 +9,7 @@ import DoubleArrowIcon from '@material-ui/icons/DoubleArrow'
 import ExploreIcon from '@material-ui/icons/Explore'
 import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew'
 
-import routes from '../../../const/routes'
+import { pageRoutes, projectRoutes } from '../../../const/routes'
 import useStyles from './SideBar.styles'
 
 import NavItem from './NavItem'
@@ -45,7 +45,10 @@ const SideBar = ({ isSideBarCollapsed, setIsSideBarCollapsed }: SideBarProps): J
 
       <nav>
         <List>
-          {routes.map((route, index) => (
+          {pageRoutes.map((route, index) => (
+            <NavItem key={index} isNavBarExpanded={!isSideBarCollapsed} nested={false} {...route} />
+          ))}
+          {projectRoutes.map((route, index) => (
             <NavItem key={index} isNavBarExpanded={!isSideBarCollapsed} nested={false} {...route} />
           ))}
         </List>
