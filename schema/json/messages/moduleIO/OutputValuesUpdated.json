@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "type": "object",
+  "title": "MsgModuleIOOutputValuesUpdated",
+  "description": "Updated output values of a step in the current workflow.",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique ID of the step within the workflow."
+    },
+    "outputValues": {
+      "type": "object",
+      "description": "Output values. Key - valueId, Value - actual value."
+    }
+  },
+  "required": [
+    "id"
+  ]
+}

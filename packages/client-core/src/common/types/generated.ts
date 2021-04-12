@@ -177,6 +177,23 @@ export interface MsgModuleIOExecute {
  * Target: "moduleIO"
  * Message type: "GetInputValues"
  *
+ * Get values of outputs of a step from the current workflow.
+ */
+export interface MsgModuleIOGetOutputValues {
+  /**
+   * Unique ID of the step within the workflow that we are getting values for.
+   */
+  id: string
+  /**
+   * Limit returned values only to outputs with these IDs.
+   */
+  outputIds?: string[]
+}
+
+/**
+ * Target: "moduleIO"
+ * Message type: "GetOutputValues"
+ *
  * Get values of inputs of a step from the current workflow.
  */
 export interface MsgModuleIOGetInputValues {
@@ -243,6 +260,30 @@ export interface DataTabularDataFilter {
 
 /**
  * Target: "moduleIO"
+ * Message type: "GetTabularOutputValue"
+ *
+ * Get a filtered version of a tabular output of a step from the current workflow.
+ */
+export interface MsgModuleIOGetTabularOutputValue {
+  filter: DataTabularDataFilter
+  /**
+   * Unique ID of the output
+   */
+  outputId: string
+  /**
+   * Unique ID of the step within the workflow that we are getting parameters for.
+   */
+  stepId: string
+  /**
+   * An ID associated with this filtered version of the tabular value.
+   * This is needed to distinguish between different views of the same data value that may
+   * exist independently.
+   */
+  viewId: string
+}
+
+/**
+ * Target: "moduleIO"
  * Message type: "InputValuesUpdated"
  *
  * Updated input values of a step in the current workflow.
@@ -275,6 +316,23 @@ export interface MsgModuleIOOutputUpdated {
    * Output data for the module
    */
   outputs: unknown[]
+}
+
+/**
+ * Target: "moduleIO"
+ * Message type: "OutputValuesUpdated"
+ *
+ * Updated output values of a step in the current workflow.
+ */
+export interface MsgModuleIOOutputValuesUpdated {
+  /**
+   * Unique ID of the step within the workflow.
+   */
+  id: string
+  /**
+   * Output values. Key - valueId, Value - actual value.
+   */
+  outputValues?: { [key: string]: unknown }
 }
 
 /**
@@ -328,6 +386,34 @@ export interface MsgModuleIOTabularInputValueUpdated {
 
 /**
  * Target: "moduleIO"
+ * Message type: "TabularOutputValueUpdated"
+ *
+ * A filtered version of a tabular output of a step from the current workflow.
+ */
+export interface MsgModuleIOTabularOutputValueUpdated {
+  filter: DataTabularDataFilter
+  /**
+   * Unique ID of the output
+   */
+  outputId: string
+  /**
+   * Unique ID of the step within the workflow that we are getting parameters for.
+   */
+  stepId: string
+  /**
+   * The actual value payload. TODO: The type will be set later
+   */
+  value?: { [key: string]: unknown } | string
+  /**
+   * An ID associated with this filtered version of the tabular value.
+   * This is needed to distinguish between different views of the same data value that may
+   * exist independently.
+   */
+  viewId: string
+}
+
+/**
+ * Target: "moduleIO"
  * Message type: "UnregisterTabularInputView"
  *
  * If there is a view of a table with the provided ID, unregister this view and stop sending
@@ -338,6 +424,30 @@ export interface MsgModuleIOUnregisterTabularInputView {
    * Unique ID of the input
    */
   inputId: string
+  /**
+   * Unique ID of the step within the workflow that we are getting parameters for.
+   */
+  stepId: string
+  /**
+   * An ID associated with this filtered version of the tabular value.
+   * This is needed to distinguish between different views of the same data value that may
+   * exist independently.
+   */
+  viewId: string
+}
+
+/**
+ * Target: "moduleIO"
+ * Message type: "UnregisterTabularOutputView"
+ *
+ * If there is a view of a table with the provided ID, unregister this view and stop sending
+ * updates about it to the frontend.
+ */
+export interface MsgModuleIOUnregisterTabularOutputView {
+  /**
+   * Unique ID of the output
+   */
+  outputId: string
   /**
    * Unique ID of the step within the workflow that we are getting parameters for.
    */

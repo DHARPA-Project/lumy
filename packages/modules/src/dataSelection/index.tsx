@@ -2,8 +2,8 @@ import React from 'react'
 import {
   ModuleProps,
   useStepInputValue,
-  useStepInputValueBatch,
-  BatchFilter,
+  useStepInputValueView,
+  ViewFilter,
   TableStats
 } from '@dharpa-vre/client-core'
 import { Table } from 'apache-arrow'
@@ -21,16 +21,17 @@ interface OutputValues {
 type Props = ModuleProps<InputValues, OutputValues>
 
 const DataSelection = ({ step }: Props): JSX.Element => {
-  const [repositoryItemsFilter, setRepositoryItemsFilter] = React.useState<BatchFilter>({ pageSize: 5 })
+  const [repositoryItemsFilter, setRepositoryItemsFilter] = React.useState<ViewFilter>({ pageSize: 5 })
   const [selectedItemsUris = [], setSelectedItemsUris] = useStepInputValue<string[]>(
     step.id,
     'selectedItemsUris'
   )
   const [metadataFields = [], setMetadataFields] = useStepInputValue<string[]>(step.id, 'metadataFields')
-  const [repositoryItemsBatch, tableStats] = useStepInputValueBatch(
+  const [repositoryItemsBatch, tableStats] = useStepInputValueView(
     step.id,
     'repositoryItems',
-    repositoryItemsFilter
+    repositoryItemsFilter,
+    'repositoryItemsTableView'
   )
 
   const handleMetadataFieldSelection = (field: string, isSelected: boolean) => {
@@ -85,8 +86,8 @@ export default DataSelection
 interface TableProps<S> {
   table: Table
   tableStats: TableStats
-  filter?: BatchFilter
-  onFilterChanged?: (filter: BatchFilter) => void
+  filter?: ViewFilter
+  onFilterChanged?: (filter: ViewFilter) => void
   selections: S[]
   onSelectionsChanged?: (selections: S[]) => void
   selectionRowIndex?: number

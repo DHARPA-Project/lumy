@@ -19,7 +19,12 @@ import {
   MsgModuleIOUpdateInputValues,
   MsgModuleIOGetTabularInputValue,
   MsgModuleIOTabularInputValueUpdated,
-  MsgModuleIOUnregisterTabularInputView
+  MsgModuleIOUnregisterTabularInputView,
+  MsgModuleIOGetOutputValues,
+  MsgModuleIOOutputValuesUpdated,
+  MsgModuleIOGetTabularOutputValue,
+  MsgModuleIOTabularOutputValueUpdated,
+  MsgModuleIOUnregisterTabularOutputView
 } from './generated'
 
 /**
@@ -67,10 +72,15 @@ export namespace ModuleIO {
   export type OutputUpdated = MsgModuleIOOutputUpdated
   export type GetInputValues = MsgModuleIOGetInputValues
   export type InputValuesUpdated = MsgModuleIOInputValuesUpdated
+  export type GetOutputValues = MsgModuleIOGetOutputValues
+  export type OutputValuesUpdated = MsgModuleIOOutputValuesUpdated
   export type UpdateInputValues = MsgModuleIOUpdateInputValues
   export type GetTabularInputValue = MsgModuleIOGetTabularInputValue
   export type TabularInputValueUpdated = MsgModuleIOTabularInputValueUpdated
   export type UnregisterTabularInputView = MsgModuleIOUnregisterTabularInputView
+  export type GetTabularOutputValue = MsgModuleIOGetTabularOutputValue
+  export type TabularOutputValueUpdated = MsgModuleIOTabularOutputValueUpdated
+  export type UnregisterTabularOutputView = MsgModuleIOUnregisterTabularOutputView
 
   export namespace codec {
     export const GetPreview = Codec<GetPreview>('GetPreview')
@@ -80,10 +90,17 @@ export namespace ModuleIO {
     export const OutputUpdated = Codec<OutputUpdated>('OutputUpdated')
     export const GetInputValues = Codec<GetInputValues>('GetInputValues')
     export const InputValuesUpdated = Codec<InputValuesUpdated>('InputValuesUpdated')
+    export const GetOutputValues = Codec<GetOutputValues>('GetOutputValues')
+    export const OutputValuesUpdated = Codec<OutputValuesUpdated>('OutputValuesUpdated')
     export const UpdateInputValues = Codec<UpdateInputValues>('UpdateInputValues')
     export const GetTabularInputValue = Codec<GetTabularInputValue>('GetTabularInputValue')
     export const TabularInputValueUpdated = Codec<TabularInputValueUpdated>('TabularInputValueUpdated')
     export const UnregisterTabularInputView = Codec<UnregisterTabularInputView>('UnregisterTabularInputView')
+    export const GetTabularOutputValue = Codec<GetTabularOutputValue>('GetTabularOutputValue')
+    export const TabularOutputValueUpdated = Codec<TabularOutputValueUpdated>('TabularOutputValueUpdated')
+    export const UnregisterTabularOutputView = Codec<UnregisterTabularOutputView>(
+      'UnregisterTabularOutputView'
+    )
   }
 }
 

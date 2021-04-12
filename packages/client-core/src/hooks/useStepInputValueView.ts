@@ -4,12 +4,28 @@ import { BackEndContext, handlerAdapter, Target } from '../common/context'
 import { Messages, TableStats, TabularDataFilter } from '../common/types'
 import { deserializeValue } from '../common/codec'
 
-export type BatchFilter = TabularDataFilter
+export type ViewFilter = TabularDataFilter
 
-export const useStepInputValueBatch = (
+/**
+ * Returns a view of a big complex type (Table only at the moment).
+ * A view requires a filter which limits the amount of data returned.
+ * It also required a `viewId` which is registered with the backend when
+ * the hook comes into a scope and unregistered when it leaves the scope.
+ * `viewId` allows us to use different views of the same data (e.g. one for
+ * a table view and another one for a graph).
+ * `viewId` falls back to "default" if not set. It's advisable to always set
+ * it to avoid multiple components using the "default" view and having it
+ * accidentally unregistered if one component leaves the scope.
+ *
+ * @param stepId ID of the step
+ * @param inputId ID of the input
+ * @param filter filter
+ * @param viewId ID of the view
+ */
+export const useStepInputValueView = (
   stepId: string,
   inputId: string,
-  filter: BatchFilter,
+  filter: ViewFilter,
   viewId = 'default'
 ): [Table, TableStats] => {
   const context = useContext(BackEndContext)
@@ -40,6 +56,7 @@ export const useStepInputValueBatch = (
   }, [])
 
   useEffect(() => {
+    if (filter == null || stepId == null || inputId == null) return
     context.sendMessage(
       Target.ModuleIO,
       Messages.ModuleIO.codec.GetTabularInputValue.encode({
