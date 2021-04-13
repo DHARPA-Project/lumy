@@ -278,6 +278,10 @@ export class MockContext implements IBackEndContext {
 
       this.setInputViewFilter(stepId, inputId, viewId, filter)
     })(msg)
+
+    adapter(Messages.ModuleIO.codec.UnregisterTabularInputView.decode, ({ viewId, stepId, inputId }) => {
+      this.removeInputViewFilter(stepId, inputId, viewId)
+    })(msg)
   }
 
   private async _processStepData(stepId: string): Promise<void> {
@@ -380,11 +384,16 @@ export class MockContext implements IBackEndContext {
     return Promise.resolve((files as unknown) as void)
   }
 
-  getInputViewFilters(stepId: string, inputId: string): { [viewId: string]: TabularDataFilter } {
+  private getInputViewFilters(stepId: string, inputId: string): { [viewId: string]: TabularDataFilter } {
     return this._currentInputViewFilters?.[stepId]?.[inputId] ?? {}
   }
 
-  setInputViewFilter(stepId: string, inputId: string, viewId: string, filter: TabularDataFilter): void {
+  private setInputViewFilter(
+    stepId: string,
+    inputId: string,
+    viewId: string,
+    filter: TabularDataFilter
+  ): void {
     const l1 = this._currentInputViewFilters[stepId] ?? {}
     const l2 = l1[inputId] ?? {}
     l2[viewId] = filter
@@ -393,7 +402,7 @@ export class MockContext implements IBackEndContext {
     this._currentInputViewFilters[stepId] = l1
   }
 
-  removeInputViewFilter(stepId: string, inputId: string, viewId: string): void {
+  private removeInputViewFilter(stepId: string, inputId: string, viewId: string): void {
     const l1 = this._currentInputViewFilters[stepId] ?? {}
     const l2 = l1[inputId] ?? {}
     delete l2[viewId]

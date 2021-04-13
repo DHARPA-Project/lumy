@@ -114,10 +114,7 @@ const mockProcessor = ({
     .filter(i => i >= 0)
 
   const selectedItems = selectedItemsRowsIndices
-    .reduce((acc, i) => {
-      if (acc == null) return repositoryItems.slice(i, i + 1)
-      return acc.concat(repositoryItems.slice(i, i + 1))
-    }, undefined as typeof repositoryItems)
+    .reduce((acc, i) => acc.concat(repositoryItems.slice(i, i + 1)), Table.empty(repositoryItems.schema))
     .select('uri', ...(metadataFields ?? []))
 
   return {
