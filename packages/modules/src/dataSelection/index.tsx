@@ -100,6 +100,7 @@ const mockProcessor = ({
   selectedItemsUris = [],
   metadataFields
 }: InputValues): OutputValues => {
+  if (repositoryItems == null) return
   /**
    * Because arrow was built to be zero copy,
    * converting tables to table while filtering by rows
@@ -113,8 +114,17 @@ const mockProcessor = ({
     .map(uri => repositoryItems.getColumn('uri').indexOf(uri))
     .filter(i => i >= 0)
 
+  if (selectedItemsRowsIndices.length === 0) {
+    return {
+      selectedItems: Table.empty(repositoryItems.schema).select('uri', ...(metadataFields ?? []))
+    }
+  }
   const selectedItems = selectedItemsRowsIndices
-    .reduce((acc, i) => acc.concat(repositoryItems.slice(i, i + 1)), Table.empty(repositoryItems.schema))
+    .reduce(
+      (acc, i) =>
+        acc == null ? repositoryItems.slice(i, i + 1) : acc.concat(repositoryItems.slice(i, i + 1)),
+      undefined as typeof repositoryItems
+    )
     .select('uri', ...(metadataFields ?? []))
 
   return {

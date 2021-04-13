@@ -17,6 +17,7 @@ import {
   serializeFilteredTable,
   serialize,
   deserializeValue,
+  deserialize,
   DataValueType,
   WorkflowStructure,
   DataProcessorResult,
@@ -249,14 +250,10 @@ export class MockContext implements IBackEndContext {
 
     adapter(Messages.ModuleIO.codec.UpdateInputValues.decode, async ({ id: stepId, inputValues }) => {
       Object.entries(inputValues).forEach(([inputId, value]) =>
-        this._store.setInputValue(stepId, inputId, value)
+        this._store.setInputValue(stepId, inputId, deserialize(value))
       )
       await this._processStepData(stepId)
-      const udpatedMessage = Messages.ModuleIO.codec.InputValuesUpdated.encode({
-        id: stepId,
-        inputValues
-      })
-      this._signals[Target.ModuleIO].emit(udpatedMessage)
+      this.updateInputValuesForStep(stepId)
     })(msg)
 
     adapter(Messages.ModuleIO.codec.GetTabularInputValue.decode, ({ viewId, stepId, inputId, filter }) => {
@@ -320,37 +317,39 @@ export class MockContext implements IBackEndContext {
     }
   }
 
-  _updatedInputValuesForAllSteps(): void {
-    this._currentWorkflow?.structure?.steps?.forEach(step => {
-      const response = Messages.ModuleIO.codec.InputValuesUpdated.encode({
-        id: step.id,
-        inputValues: Object.entries(this._store.getInputValues(step.id)).reduce(
-          (acc, [k, v]) => ({ ...acc, [k]: serialize(v) }),
-          {} as Record<string, unknown>
-        )
-      })
+  private updateInputValuesForStep(stepId: string) {
+    const msg = {
+      id: stepId,
+      inputValues: Object.entries(this._store.getInputValues(stepId)).reduce(
+        (acc, [k, v]) => ({ ...acc, [k]: serialize(v) }),
+        {} as Record<string, unknown>
+      )
+    }
+    const response = Messages.ModuleIO.codec.InputValuesUpdated.encode(msg)
 
-      this._signals[Target.ModuleIO].emit(response)
+    this._signals[Target.ModuleIO].emit(response)
 
-      // tabular inputs
-      Object.entries(this._store.getInputValues(step.id)).forEach(([inputId, value]) => {
-        Object.entries(this.getInputViewFilters(step.id, inputId)).forEach(([viewId, filter]) => {
-          if (value == null) return
-          const table = value as Table
+    // tabular inputs
+    Object.entries(this._store.getInputValues(stepId)).forEach(([inputId, value]) => {
+      Object.entries(this.getInputViewFilters(stepId, inputId)).forEach(([viewId, filter]) => {
+        if (value == null) return
+        const table = value as Table
+        const filteredTable = table.slice(filter.offset ?? 0, filter.offset ?? 0 + filter.pageSize)
 
-          const filteredTable = table.slice(filter.offset ?? 0, filter.offset ?? 0 + filter.pageSize)
-
-          const updatedMessage = Messages.ModuleIO.codec.TabularInputValueUpdated.encode({
-            viewId,
-            stepId: step.id,
-            inputId,
-            filter,
-            value: (serializeFilteredTable(filteredTable, table) as unknown) as Record<string, unknown>
-          })
-          this._signals[Target.ModuleIO].emit(updatedMessage)
+        const updatedMessage = Messages.ModuleIO.codec.TabularInputValueUpdated.encode({
+          viewId,
+          stepId,
+          inputId,
+          filter,
+          value: (serializeFilteredTable(filteredTable, table) as unknown) as Record<string, unknown>
         })
+        this._signals[Target.ModuleIO].emit(updatedMessage)
       })
     })
+  }
+
+  _updatedInputValuesForAllSteps(): void {
+    this._currentWorkflow?.structure?.steps?.forEach(step => this.updateInputValuesForStep(step.id))
   }
 
   sendMessage<T, U = void>(target: Target, msg: MessageEnvelope<T>): Promise<U> {

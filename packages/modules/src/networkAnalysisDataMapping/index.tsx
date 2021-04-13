@@ -1,24 +1,22 @@
 import React from 'react'
 
-import { ModuleProps, useStepInputValueView } from '@dharpa-vre/client-core'
+import { ModuleProps, TableStats, useStepInputValue, useStepInputValueView } from '@dharpa-vre/client-core'
 import { Table, List, Utf8 } from 'apache-arrow'
+import { MappingTableStructure, toObject, fromObject } from './mappingTable'
 
-/**
- * columns in the `corpus` table.
- */
 type CorpusStructure = {
-  // URI of the corpus item.
   uri: Utf8
-  // Human readable label of the item.
   label: Utf8
-  // If the corpus item is a tabular file - columns in the file.
   columns?: List<Utf8>
 }
 
+type CorpusTable = Table<CorpusStructure>
+type MappingTable = Table<MappingTableStructure>
+
 interface InputValues {
-  corpus: Table<CorpusStructure>
-  nodesMappingTable: Table
-  edgesMappingTable: Table
+  corpus: CorpusTable
+  nodesMappingTable: MappingTable
+  edgesMappingTable: MappingTable
 }
 
 interface OutputValues {
@@ -38,27 +36,56 @@ const NetworkAnalysisDataMapping = ({ step }: Props): JSX.Element => {
     'corpusPageView'
   )
 
-  // const [nodesMappingTableStats, setNodesMappingTable] = useStepInputValue<TableStats>(
-  //   step.id,
-  //   'nodesMappingTable'
-  // )
-  // const [nodesMappingTable] = useStepInputValueView(
-  //   step.id,
-  //   'nodesMappingTable',
-  //   { pageSize: nodesMappingTableStats?.rowsCount ?? 0 },
-  //   'nodesMappingTableMainView'
-  // )
+  const [nodesMappingTableStats, setNodesMappingTable] = useStepInputValue<TableStats, MappingTable>(
+    step.id,
+    'nodesMappingTable'
+  )
+  const [nodesMappingTable] = useStepInputValueView<MappingTableStructure>(
+    step.id,
+    'nodesMappingTable',
+    { pageSize: nodesMappingTableStats?.rowsCount ?? 0 },
+    'nodesMappingTableMainView'
+  )
 
-  // const [edgesMappingTableStats, setEdgesMappingTable] = useStepInputValue<TableStats>(
-  //   step.id,
-  //   'edgesMappingTable'
-  // )
-  // const [edgesMappingTable] = useStepInputValueView(
-  //   step.id,
-  //   'edgesMappingTable',
-  //   { pageSize: edgesMappingTableStats?.rowsCount ?? 0 },
-  //   'edgesMappingTableMainView'
-  // )
+  const [edgesMappingTableStats, setEdgesMappingTable] = useStepInputValue<TableStats, MappingTable>(
+    step.id,
+    'edgesMappingTable'
+  )
+  const [edgesMappingTable] = useStepInputValueView<MappingTableStructure>(
+    step.id,
+    'edgesMappingTable',
+    { pageSize: edgesMappingTableStats?.rowsCount ?? 0 },
+    'edgesMappingTableMainView'
+  )
+
+  const isUsedInMappingTable = (table: MappingTable, fields: string[]) => (uri: string): boolean => {
+    if (table == null) return false
+    return (
+      fields
+        .map(field => (toObject(table)[field] ?? []).find(i => i.uri.toString() === uri) != null)
+        .filter(v => v === true).length > 0
+    )
+  }
+
+  const setUsedInMappingTable = (
+    table: MappingTable,
+    update: (t: MappingTable) => void,
+    mapping: { [key: string]: string }
+  ) => (uri: string, doUse: boolean): void => {
+    const s = table == null ? {} : toObject(table)
+    if (doUse) {
+      Object.entries(mapping).forEach(([field, column]) => {
+        const array = s[field] ?? []
+        array.push({ uri, column })
+        s[field] = array
+      })
+    } else {
+      Object.entries(mapping).forEach(([field, column]) => {
+        s[field] = (s[field] ?? []).filter(i => !(i.uri === uri && i.column === column))
+      })
+    }
+    update(fromObject(s))
+  }
 
   // const [nodesPage] = useStepOutputValueView(
   //   step.id,
@@ -82,7 +109,37 @@ const NetworkAnalysisDataMapping = ({ step }: Props): JSX.Element => {
           {[...(corpusPage ?? [])].map((row, idx) => {
             return (
               <li key={idx}>
-                {row.uri}: {[...(row.columns ?? [])].join(', ')}
+                <dl style={{ display: 'flex', flexDirection: 'row' }}>
+                  <dd>{row.uri}</dd>
+                  <dd>{[...(row.columns ?? [])].join(', ')}</dd>
+                  <dd>
+                    <span>use for nodes (first two columns)</span>
+                    <input
+                      type="checkbox"
+                      checked={isUsedInMappingTable(nodesMappingTable, ['id', 'label'])(row.uri)}
+                      onChange={e =>
+                        setUsedInMappingTable(nodesMappingTable, setNodesMappingTable, {
+                          id: 'a',
+                          label: 'b'
+                        })(row.uri, e.target.checked)
+                      }
+                    />
+                  </dd>
+                  <dd>
+                    <span>use for edges (first three columns)</span>
+                    <input
+                      type="checkbox"
+                      checked={isUsedInMappingTable(edgesMappingTable, ['srcId', 'tgtId', 'weight'])(row.uri)}
+                      onChange={e =>
+                        setUsedInMappingTable(edgesMappingTable, setEdgesMappingTable, {
+                          srcId: 'a',
+                          tgtId: 'b',
+                          weight: 'c'
+                        })(row.uri, e.target.checked)
+                      }
+                    />
+                  </dd>
+                </dl>
               </li>
             )
           })}

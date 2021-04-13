@@ -39,6 +39,10 @@ structure:
           connection:
             stepId: m0.5
             ioId: selectedItems
+        nodesMappingTable:
+          isTabular: true
+        edgesMappingTable:
+          isTabular: true
       outputs:
         nodes:
           isTabular: true

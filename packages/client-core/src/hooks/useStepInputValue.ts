@@ -1,4 +1,6 @@
+import { Table } from 'apache-arrow'
 import { useContext, useState, useEffect } from 'react'
+import { deserialize, serialize, serializeFilteredTable } from '../common/codec'
 import { BackEndContext, handlerAdapter, Target } from '../common/context'
 import { Messages } from '../common/types'
 
@@ -16,10 +18,10 @@ import { Messages } from '../common/types'
  * @param stepId ID of the step
  * @param inputId ID of the input
  */
-export const useStepInputValue = <InputType>(
+export const useStepInputValue = <InputType, UpdateInputType = InputType>(
   stepId: string,
   inputId: string
-): [InputType, (value: InputType) => Promise<void>] => {
+): [InputType, (value: UpdateInputType) => Promise<void>] => {
   const context = useContext(BackEndContext)
   const [lastValue, setLastValue] = useState<InputType>()
 
@@ -27,7 +29,7 @@ export const useStepInputValue = <InputType>(
     const handler = handlerAdapter(Messages.ModuleIO.codec.InputValuesUpdated.decode, content => {
       if (content?.id === stepId) {
         if (inputId in content.inputValues)
-          setLastValue((content.inputValues[inputId] as unknown) as InputType)
+          setLastValue((deserialize(content.inputValues[inputId]) as unknown) as InputType)
       }
     })
     context.subscribe(Target.ModuleIO, handler)
@@ -40,11 +42,12 @@ export const useStepInputValue = <InputType>(
     return () => context.unsubscribe(Target.ModuleIO, handler)
   }, [stepId, inputId])
 
-  const update = (inputValue: InputType): Promise<void> => {
+  const update = (inputValue: UpdateInputType): Promise<void> => {
     const message = Messages.ModuleIO.codec.UpdateInputValues.encode({
       id: stepId,
       inputValues: {
-        [inputId]: inputValue
+        [inputId]:
+          inputValue instanceof Table ? serializeFilteredTable(inputValue, inputValue) : serialize(inputValue)
       }
     })
     return context.sendMessage(Target.ModuleIO, message).then(() => null)
