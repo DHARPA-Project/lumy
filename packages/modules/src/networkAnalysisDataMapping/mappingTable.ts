@@ -21,14 +21,14 @@ type MappingTableObject = {
   [key: string]: MappingTableObjectItem[]
 }
 
-export const toObject = (table: Table<Table.MappingTable>): MappingTableObject => {
-  return table.schema.fields.reduce<MappingTableObject>((acc, field) => {
-    return {
+export const toObject = (table: Table<Table.MappingTable>): MappingTableObject =>
+  table.schema.fields.reduce<MappingTableObject>(
+    (acc, field) => ({
       ...acc,
-      [field.name]: (table.getColumn(field.name).toArray() as unknown) as MappingTableObjectItem[]
-    }
-  }, {})
-}
+      [field.name]: [...table.getColumn(field.name)]
+    }),
+    {}
+  )
 
 export const fromObject = (s: MappingTableObject): Table<Table.MappingTable> => {
   const columnNames = Object.keys(s)

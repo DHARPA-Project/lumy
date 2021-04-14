@@ -67,21 +67,19 @@ const NetworkAnalysisDataMapping = ({ step }: Props): JSX.Element => {
     )
   }
 
-  const setUsedInMappingTable = (
-    table: MappingTable,
-    update: (t: MappingTable) => void,
-    mapping: { [key: string]: string }
-  ) => (uri: string, doUse: boolean): void => {
+  const setUsedInMappingTable = (table: MappingTable, update: (t: MappingTable) => void) => (
+    uri: string,
+    mapping: { [key: string]: string },
+    doUse: boolean
+  ): void => {
     const s = table == null ? {} : toObject(table)
     if (doUse) {
       Object.entries(mapping).forEach(([field, column]) => {
-        const array = s[field] ?? []
-        array.push({ uri, column })
-        s[field] = array
+        s[field] = (s[field] ?? []).concat([{ uri, column }])
       })
     } else {
-      Object.entries(mapping).forEach(([field, column]) => {
-        s[field] = (s[field] ?? []).filter(i => !(i.uri === uri && i.column === column))
+      Object.entries(mapping).forEach(([field]) => {
+        s[field] = (s[field] ?? []).filter(i => i.uri !== uri)
       })
     }
     update(fromObject(s))
@@ -118,10 +116,14 @@ const NetworkAnalysisDataMapping = ({ step }: Props): JSX.Element => {
                       type="checkbox"
                       checked={isUsedInMappingTable(nodesMappingTable, ['id', 'label'])(row.uri)}
                       onChange={e =>
-                        setUsedInMappingTable(nodesMappingTable, setNodesMappingTable, {
-                          id: 'a',
-                          label: 'b'
-                        })(row.uri, e.target.checked)
+                        setUsedInMappingTable(nodesMappingTable, setNodesMappingTable)(
+                          row.uri,
+                          {
+                            id: row.columns?.get(0)?.toString(),
+                            label: row.columns?.get(1)?.toString()
+                          },
+                          e.target.checked
+                        )
                       }
                     />
                   </dd>
@@ -131,11 +133,15 @@ const NetworkAnalysisDataMapping = ({ step }: Props): JSX.Element => {
                       type="checkbox"
                       checked={isUsedInMappingTable(edgesMappingTable, ['srcId', 'tgtId', 'weight'])(row.uri)}
                       onChange={e =>
-                        setUsedInMappingTable(edgesMappingTable, setEdgesMappingTable, {
-                          srcId: 'a',
-                          tgtId: 'b',
-                          weight: 'c'
-                        })(row.uri, e.target.checked)
+                        setUsedInMappingTable(edgesMappingTable, setEdgesMappingTable)(
+                          row.uri,
+                          {
+                            srcId: row.columns?.get(0)?.toString(),
+                            tgtId: row.columns?.get(1)?.toString(),
+                            weight: row.columns?.get(2)?.toString()
+                          },
+                          e.target.checked
+                        )
                       }
                     />
                   </dd>
