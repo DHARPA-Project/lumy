@@ -43,10 +43,9 @@ const NavProjectLink = ({
             </Typography>
           </Grid>
           <Grid item xs={2}>
-            <Typography
-              className={classes.steps}
-              variant="body2"
-            >{`${currentStep}/${totalSteps}`}</Typography>
+            <Typography className={classes.steps} variant="body2">
+              {`${currentStep - 1}/${totalSteps}`}
+            </Typography>
           </Grid>
           <Grid item xs={12}>
             <ProjectProgressBar value={progressPercentage} variant="determinate" />
