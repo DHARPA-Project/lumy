@@ -2,7 +2,6 @@ import { useContext, useState, useEffect } from 'react'
 import { deserializeValue } from '../common/codec'
 import { BackEndContext, handlerAdapter, Target } from '../common/context'
 import { Messages } from '../common/types'
-import { ModuleIO } from '../common/types/messages'
 
 /**
  * Use current value of the output. The value may be undefined if not set.
@@ -33,7 +32,7 @@ export const useStepOutputValue = <OutputType, StatsType = unknown>(
     })
     context.subscribe(Target.ModuleIO, handler)
 
-    const getMsg: ModuleIO.GetOutputValues = { id: stepId, outputIds: [outputId] }
+    const getMsg: Messages.ModuleIO.GetOutputValues = { id: stepId, outputIds: [outputId] }
 
     if (getFullValue != null) {
       getMsg.fullValueOutputIds = [outputId]
