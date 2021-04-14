@@ -146,29 +146,37 @@ class MsgModuleIOExecute:
 
 
 @dataclass
-class MsgModuleIOGetOutputValues:
-    """Target: "moduleIO"
-    Message type: "GetInputValues"
-    
-    Get values of outputs of a step from the current workflow.
-    """
-    """Unique ID of the step within the workflow that we are getting values for."""
-    id: str
-    """Limit returned values only to outputs with these IDs."""
-    output_ids: Optional[List[str]] = None
-
-
-@dataclass
 class MsgModuleIOGetInputValues:
     """Target: "moduleIO"
-    Message type: "GetOutputValues"
+    Message type: "GetInputValues"
     
     Get values of inputs of a step from the current workflow.
     """
     """Unique ID of the step within the workflow that we are getting parameters for."""
     id: str
+    """Input IDs for which the full value should be returned.
+    This is only relevant for big complex types.
+    """
+    full_value_input_ids: Optional[List[str]] = None
     """Limit returned values only to inputs with these IDs."""
     input_ids: Optional[List[str]] = None
+
+
+@dataclass
+class MsgModuleIOGetOutputValues:
+    """Target: "moduleIO"
+    Message type: "GetOutputValues"
+    
+    Get values of outputs of a step from the current workflow.
+    """
+    """Unique ID of the step within the workflow that we are getting values for."""
+    id: str
+    """Output IDs for which the full value should be returned.
+    This is only relevant for big complex types.
+    """
+    full_value_output_ids: Optional[List[str]] = None
+    """Limit returned values only to outputs with these IDs."""
+    output_ids: Optional[List[str]] = None
 
 
 @dataclass

@@ -9,7 +9,7 @@ export type ViewFilter = TabularDataFilter
 /**
  * Returns a view of a big complex type (Table only at the moment).
  * A view requires a filter which limits the amount of data returned.
- * It also required a `viewId` which is registered with the backend when
+ * It also requires a `viewId` which is registered with the backend when
  * the hook comes into a scope and unregistered when it leaves the scope.
  * `viewId` allows us to use different views of the same data (e.g. one for
  * a table view and another one for a graph).

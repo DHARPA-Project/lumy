@@ -177,26 +177,14 @@ export interface MsgModuleIOExecute {
  * Target: "moduleIO"
  * Message type: "GetInputValues"
  *
- * Get values of outputs of a step from the current workflow.
- */
-export interface MsgModuleIOGetOutputValues {
-  /**
-   * Unique ID of the step within the workflow that we are getting values for.
-   */
-  id: string
-  /**
-   * Limit returned values only to outputs with these IDs.
-   */
-  outputIds?: string[]
-}
-
-/**
- * Target: "moduleIO"
- * Message type: "GetOutputValues"
- *
  * Get values of inputs of a step from the current workflow.
  */
 export interface MsgModuleIOGetInputValues {
+  /**
+   * Input IDs for which the full value should be returned.
+   * This is only relevant for big complex types.
+   */
+  fullValueInputIds?: string[]
   /**
    * Unique ID of the step within the workflow that we are getting parameters for.
    */
@@ -205,6 +193,28 @@ export interface MsgModuleIOGetInputValues {
    * Limit returned values only to inputs with these IDs.
    */
   inputIds?: string[]
+}
+
+/**
+ * Target: "moduleIO"
+ * Message type: "GetOutputValues"
+ *
+ * Get values of outputs of a step from the current workflow.
+ */
+export interface MsgModuleIOGetOutputValues {
+  /**
+   * Output IDs for which the full value should be returned.
+   * This is only relevant for big complex types.
+   */
+  fullValueOutputIds?: string[]
+  /**
+   * Unique ID of the step within the workflow that we are getting values for.
+   */
+  id: string
+  /**
+   * Limit returned values only to outputs with these IDs.
+   */
+  outputIds?: string[]
 }
 
 /**

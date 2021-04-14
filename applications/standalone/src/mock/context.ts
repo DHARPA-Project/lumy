@@ -17,7 +17,6 @@ import {
   serializeFilteredTable,
   serialize,
   deserializeValue,
-  deserialize,
   DataValueType,
   WorkflowStructure,
   DataProcessorResult,
@@ -164,6 +163,12 @@ interface ViewFilters {
   }
 }
 
+interface FullValueRequiredFlags {
+  [stepId: string]: {
+    [ioId: string]: boolean
+  }
+}
+
 export class MockContext implements IBackEndContext {
   private _isDisposed = false
   private _store: IOValuesStore
@@ -178,6 +183,7 @@ export class MockContext implements IBackEndContext {
   private _callbacks = new WeakMap()
 
   private _currentInputViewFilters: ViewFilters = {}
+  private _fullValueRequiredFlags: FullValueRequiredFlags = {}
 
   constructor(parameters: MockContextParameters) {
     this._processData = parameters?.processData ?? mockDataProcessorFactory(viewProvider)
@@ -238,19 +244,17 @@ export class MockContext implements IBackEndContext {
       this._processStepData(id)
     })(msg)
 
-    adapter(Messages.ModuleIO.codec.GetInputValues.decode, ({ id: stepId, inputIds }) => {
-      const inputValues = this._store.getInputValues(stepId, inputIds)
-      const response = Messages.ModuleIO.codec.InputValuesUpdated.encode({
-        id: stepId,
-        inputValues
-      })
-
-      this._signals[Target.ModuleIO].emit(response)
-    })(msg)
+    adapter(
+      Messages.ModuleIO.codec.GetInputValues.decode,
+      ({ id: stepId, inputIds, fullValueInputIds = [] }) => {
+        fullValueInputIds.forEach(inputId => this.setFullValueRequired(stepId, inputId, true))
+        this.updateInputValuesForStep(stepId, inputIds)
+      }
+    )(msg)
 
     adapter(Messages.ModuleIO.codec.UpdateInputValues.decode, async ({ id: stepId, inputValues }) => {
       Object.entries(inputValues).forEach(([inputId, value]) =>
-        this._store.setInputValue(stepId, inputId, deserialize(value))
+        this._store.setInputValue(stepId, inputId, deserializeValue(value)[1])
       )
       await this._processStepData(stepId)
       this.updateInputValuesForStep(stepId)
@@ -317,13 +321,21 @@ export class MockContext implements IBackEndContext {
     }
   }
 
-  private updateInputValuesForStep(stepId: string) {
+  private updateInputValuesForStep(stepId: string, inputIdsOnly: string[] = []) {
+    const serializeValue = (inputId: string, value: unknown) => {
+      if (value instanceof Table) {
+        if (this.getFullValueRequired(stepId, inputId)) {
+          return serializeFilteredTable(value, value)
+        }
+      }
+      return serialize(value)
+    }
+
     const msg = {
       id: stepId,
-      inputValues: Object.entries(this._store.getInputValues(stepId)).reduce(
-        (acc, [k, v]) => ({ ...acc, [k]: serialize(v) }),
-        {} as Record<string, unknown>
-      )
+      inputValues: Object.entries(this._store.getInputValues(stepId))
+        .filter(([k]) => (inputIdsOnly.length > 0 ? inputIdsOnly.includes(k) : true))
+        .reduce((acc, [k, v]) => ({ ...acc, [k]: serializeValue(k, v) }), {} as Record<string, unknown>)
     }
     const response = Messages.ModuleIO.codec.InputValuesUpdated.encode(msg)
 
@@ -408,5 +420,15 @@ export class MockContext implements IBackEndContext {
 
     l1[inputId] = l2
     this._currentInputViewFilters[stepId] = l1
+  }
+
+  private getFullValueRequired(stepId: string, inputId: string): boolean {
+    return this._fullValueRequiredFlags?.[stepId]?.[inputId] ?? false
+  }
+
+  private setFullValueRequired(stepId: string, inputId: string, isRequired: boolean) {
+    const l1 = this._fullValueRequiredFlags?.[stepId] ?? {}
+    l1[inputId] = isRequired
+    this._fullValueRequiredFlags[stepId] = l1
   }
 }

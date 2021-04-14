@@ -1,17 +1,24 @@
 {
   "$schema": "http://json-schema.org/schema",
   "type": "object",
-  "title": "MsgModuleIOGetOutputValues",
-  "description": "Get values of outputs of a step from the current workflow.",
+  "title": "MsgModuleIOGetInputValues",
+  "description": "Get values of inputs of a step from the current workflow.",
   "additionalProperties": false,
   "properties": {
     "id": {
       "type": "string",
-      "description": "Unique ID of the step within the workflow that we are getting values for."
+      "description": "Unique ID of the step within the workflow that we are getting parameters for."
     },
-    "outputIds": {
+    "inputIds": {
       "type": "array",
-      "description": "Limit returned values only to outputs with these IDs.",
+      "description": "Limit returned values only to inputs with these IDs.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "fullValueInputIds": {
+      "type": "array",
+      "description": "Input IDs for which the full value should be returned. \nThis is only relevant for big complex types.",
       "items": {
         "type": "string"
       }

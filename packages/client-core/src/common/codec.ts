@@ -58,8 +58,3 @@ export function deserializeValue<S, V>(container: unknown): [S | undefined, V | 
     return [undefined, (container as unknown) as V]
   }
 }
-
-export function deserialize<S = unknown>(container: unknown): S {
-  const [stats, value] = deserializeValue(container)
-  return (value == null ? stats : value) as S
-}

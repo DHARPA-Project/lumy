@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { ModuleProps, TableStats, useStepInputValue, useStepInputValueView } from '@dharpa-vre/client-core'
+import { ModuleProps, useStepInputValue, useStepInputValueView } from '@dharpa-vre/client-core'
 import { Table, List, Utf8 } from 'apache-arrow'
 import { MappingTableStructure, toObject, fromObject } from './mappingTable'
 
@@ -35,27 +35,15 @@ const NetworkAnalysisDataMapping = ({ step }: Props): JSX.Element => {
     { pageSize: DefaultPreviewPageSize },
     'corpusPageView'
   )
-
-  const [nodesMappingTableStats, setNodesMappingTable] = useStepInputValue<TableStats, MappingTable>(
-    step.id,
-    'nodesMappingTable'
-  )
-  const [nodesMappingTable] = useStepInputValueView<MappingTableStructure>(
+  const [nodesMappingTable, setNodesMappingTable] = useStepInputValue<MappingTable>(
     step.id,
     'nodesMappingTable',
-    { pageSize: nodesMappingTableStats?.rowsCount ?? 0 },
-    'nodesMappingTableMainView'
+    true
   )
-
-  const [edgesMappingTableStats, setEdgesMappingTable] = useStepInputValue<TableStats, MappingTable>(
-    step.id,
-    'edgesMappingTable'
-  )
-  const [edgesMappingTable] = useStepInputValueView<MappingTableStructure>(
+  const [edgesMappingTable, setEdgesMappingTable] = useStepInputValue<MappingTable>(
     step.id,
     'edgesMappingTable',
-    { pageSize: edgesMappingTableStats?.rowsCount ?? 0 },
-    'edgesMappingTableMainView'
+    true
   )
 
   const isUsedInMappingTable = (table: MappingTable, fields: string[]) => (uri: string): boolean => {
@@ -85,20 +73,6 @@ const NetworkAnalysisDataMapping = ({ step }: Props): JSX.Element => {
     update(fromObject(s))
   }
 
-  // const [nodesPage] = useStepOutputValueView(
-  //   step.id,
-  //   'nodes',
-  //   { pageSize: DefaultPreviewPageSize },
-  //   'nodesPreview'
-  // )
-
-  // const [edgesPage] = useStepOutputValueView(
-  //   step.id,
-  //   'edges',
-  //   { pageSize: DefaultPreviewPageSize },
-  //   'edgesPreview'
-  // )
-
   return (
     <div style={{ border: '1px dashed #777' }}>
       <div>
@@ -119,8 +93,8 @@ const NetworkAnalysisDataMapping = ({ step }: Props): JSX.Element => {
                         setUsedInMappingTable(nodesMappingTable, setNodesMappingTable)(
                           row.uri,
                           {
-                            id: row.columns?.get(0)?.toString(),
-                            label: row.columns?.get(1)?.toString()
+                            id: row.columns?.get(0),
+                            label: row.columns?.get(1)
                           },
                           e.target.checked
                         )
@@ -136,9 +110,9 @@ const NetworkAnalysisDataMapping = ({ step }: Props): JSX.Element => {
                         setUsedInMappingTable(edgesMappingTable, setEdgesMappingTable)(
                           row.uri,
                           {
-                            srcId: row.columns?.get(0)?.toString(),
-                            tgtId: row.columns?.get(1)?.toString(),
-                            weight: row.columns?.get(2)?.toString()
+                            srcId: row.columns?.get(0),
+                            tgtId: row.columns?.get(1),
+                            weight: row.columns?.get(2)
                           },
                           e.target.checked
                         )
