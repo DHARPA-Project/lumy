@@ -76,28 +76,3 @@ export const pageRoutes = [
     label: 'projects'
   }
 ]
-
-export const projectRoutes = [
-  ,
-  {
-    type: NavItemType.projectLink,
-    label: 'Trump Tweet Network complete',
-    link: '/projects/123c',
-    currentStep: 5,
-    totalSteps: 6
-  },
-  {
-    type: NavItemType.projectLink,
-    label: 'Trump Tweet Network partial',
-    link: '/projects/123p',
-    currentStep: 2,
-    totalSteps: 6
-  },
-  {
-    type: NavItemType.projectLink,
-    label: 'Trump Tweet Topics',
-    link: '/projects/456',
-    currentStep: 9,
-    totalSteps: 10
-  }
-]
