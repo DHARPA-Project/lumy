@@ -40,6 +40,7 @@ export type ProjectType = {
 export type ProjectContextType = {
   projectList: ProjectType[]
   createProject: (name: string, type: string) => void
+  removeProject: (idProjectToDelete: string) => void
 }
 
 type ProjectContextProviderProps = {
@@ -75,13 +76,13 @@ const sampleProjects = [
   }
 ]
 
-const getProjectFromLocalStorage = () => {
+const getProjectsFromLocalStorage = () => {
   const valueInLocalStorage = localStorage.getItem('dharpaProjects')
   return valueInLocalStorage ? JSON.parse(valueInLocalStorage) : sampleProjects
 }
 
 const ProjectContextProvider = ({ children }: ProjectContextProviderProps): JSX.Element => {
-  const [projectList, setProjectList] = useState<ProjectType[]>(getProjectFromLocalStorage)
+  const [projectList, setProjectList] = useState<ProjectType[]>(getProjectsFromLocalStorage)
 
   const createProject = (name: string, type: string): string => {
     const newProjectId = uuidv4()
@@ -105,7 +106,19 @@ const ProjectContextProvider = ({ children }: ProjectContextProviderProps): JSX.
     return newProjectId
   }
 
-  return <ProjectContext.Provider value={{ projectList, createProject }}>{children}</ProjectContext.Provider>
+  const removeProject = (idProjectToDelete: string): void => {
+    setProjectList(previousProjectList => {
+      const newProjectList = previousProjectList.filter(project => project.id !== idProjectToDelete)
+      localStorage.setItem('dharpaProjects', JSON.stringify(newProjectList))
+      return newProjectList
+    })
+  }
+
+  return (
+    <ProjectContext.Provider value={{ projectList, createProject, removeProject }}>
+      {children}
+    </ProjectContext.Provider>
+  )
 }
 
 export default ProjectContextProvider
