@@ -48,6 +48,16 @@ structure:
           isTabular: true
         edges:
           isTabular: true
+    - id: m0.85
+      moduleId: networkAnalysisDavaVis
+      inputs:
+        nodes:
+          isTabular: true
+        edges:
+          isTabular: true
+      outputs:
+        graphData:
+          isTabular: true
     - id: m1
       moduleId: twoArgsMathFunction
       inputs:

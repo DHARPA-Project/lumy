@@ -1,8 +1,14 @@
 import React from 'react'
 
-import { ModuleProps, useStepInputValue, useStepInputValueView } from '@dharpa-vre/client-core'
-import { Table, List, Utf8 } from 'apache-arrow'
+import {
+  ModuleProps,
+  useStepInputValue,
+  useStepInputValueView,
+  withMockProcessor
+} from '@dharpa-vre/client-core'
+import { Table, List, Utf8, Utf8Vector, Int32Vector } from 'apache-arrow'
 import { MappingTableStructure, toObject, fromObject } from './mappingTable'
+import { EdgesStructure, NodesStructure } from '../networkAnalysisDataVis/structure'
 
 type CorpusStructure = {
   uri: Utf8
@@ -13,6 +19,9 @@ type CorpusStructure = {
 type CorpusTable = Table<CorpusStructure>
 type MappingTable = Table<MappingTableStructure>
 
+type NodesTable = Table<NodesStructure>
+type EdgesTable = Table<EdgesStructure>
+
 interface InputValues {
   corpus: CorpusTable
   nodesMappingTable: MappingTable
@@ -20,8 +29,8 @@ interface InputValues {
 }
 
 interface OutputValues {
-  nodes: Table
-  edges: Table
+  nodes: NodesTable
+  edges: EdgesTable
 }
 
 const DefaultPreviewPageSize = 5
@@ -129,4 +138,44 @@ const NetworkAnalysisDataMapping = ({ step }: Props): JSX.Element => {
   )
 }
 
-export default NetworkAnalysisDataMapping
+const mockProcessor = ({}: InputValues): OutputValues => {
+  const numNodes = 123
+  const nums = [...new Array(numNodes).keys()]
+  const numConnections = numNodes * 2
+  const cnums = [...new Array(numConnections).keys()]
+
+  const groups = ['groupA', 'groupB', 'groupC']
+  const getRandomGroup = () => {
+    const idx = Math.floor(Math.random() * groups.length)
+    return groups[idx]
+  }
+
+  const getRandomNodeId = () => {
+    const idx = Math.floor(Math.random() * numNodes)
+    return String(nums[idx])
+  }
+
+  const maxWeight = 30
+  const getRandomWeight = () => Math.floor(Math.random() * maxWeight)
+
+  const nodes = Table.new<NodesStructure>(
+    [
+      Utf8Vector.from(nums.map(i => String(i))),
+      Utf8Vector.from(nums.map(i => `Node ${i}`)),
+      Utf8Vector.from(nums.map(() => getRandomGroup()))
+    ],
+    ['id', 'label', 'group']
+  )
+  const edges = Table.new<EdgesStructure>(
+    [
+      Utf8Vector.from(cnums.map(() => getRandomNodeId())),
+      Utf8Vector.from(cnums.map(() => getRandomNodeId())),
+      Int32Vector.from(cnums.map(() => getRandomWeight()))
+    ],
+    ['srcId', 'tgtId', 'weight']
+  )
+
+  return { nodes, edges }
+}
+
+export default withMockProcessor(NetworkAnalysisDataMapping, mockProcessor)
