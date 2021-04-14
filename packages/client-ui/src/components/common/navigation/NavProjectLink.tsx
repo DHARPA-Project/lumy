@@ -11,7 +11,7 @@ import Typography from '@material-ui/core/Typography'
 import ProjectProgressBar from '../ProjectProgressBar'
 
 interface NavProjectLinkProps {
-  isSideBarExpanded: boolean
+  isSideBarExpanded?: boolean
   label: string
   link: string
   currentStep: number
@@ -31,7 +31,7 @@ const NavProjectLink = ({
 
   return (
     <Grow
-      in={isSideBarExpanded}
+      in={isSideBarExpanded ?? true}
       style={{ transformOrigin: '0 0 0' }}
       {...(isSideBarExpanded ? { timeout: 1000 } : { timeout: 0 })}
     >
@@ -43,10 +43,9 @@ const NavProjectLink = ({
             </Typography>
           </Grid>
           <Grid item xs={2}>
-            <Typography
-              className={classes.steps}
-              variant="body2"
-            >{`${currentStep}/${totalSteps}`}</Typography>
+            <Typography className={classes.steps} variant="body2">
+              {`${currentStep - 1}/${totalSteps}`}
+            </Typography>
           </Grid>
           <Grid item xs={12}>
             <ProjectProgressBar value={progressPercentage} variant="determinate" />
