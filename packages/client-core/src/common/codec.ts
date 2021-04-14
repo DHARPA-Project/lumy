@@ -11,7 +11,7 @@ export type DataValueType =
   | boolean[]
   | number[]
 
-const isDataValueContainer = (v: DataValueType): v is DataValueContainer =>
+const isDataValueContainer = (v: unknown): v is DataValueContainer =>
   (v as DataValueContainer).dataType != null
 
 export function serializeTable(table: Table): DataValueContainer {
@@ -42,7 +42,7 @@ export function serializeFilteredTable(filteredTable: Table, fullTable: Table): 
   }
 }
 
-export function deserializeValue<S, V>(container: DataValueType): [S | undefined, V | undefined] {
+export function deserializeValue<S, V>(container: unknown): [S | undefined, V | undefined] {
   if (isDataValueContainer(container)) {
     if (container.dataType === DataType.Table) {
       const stats = (container.stats as unknown) as S

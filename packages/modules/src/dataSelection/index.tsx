@@ -2,35 +2,50 @@ import React from 'react'
 import {
   ModuleProps,
   useStepInputValue,
-  useStepInputValueBatch,
-  BatchFilter,
-  TableStats
+  useStepInputValueView,
+  ViewFilter,
+  withMockProcessor
 } from '@dharpa-vre/client-core'
-import { Table } from 'apache-arrow'
+import { List, Table, Utf8 } from 'apache-arrow'
+import { TableView } from '../components/TableView'
+
+/**
+ * columns in the `corpus` table.
+ */
+type CorpusStructure = {
+  // URI of the corpus item.
+  uri: Utf8
+  // Human readable label of the item.
+  label: Utf8
+  // If the corpus item is a tabular file - columns in the file.
+  columns?: List<Utf8>
+}
+type CorpusColumns = keyof CorpusStructure
 
 interface InputValues {
-  repositoryItems?: Table
+  repositoryItems?: Table<CorpusStructure>
   selectedItemsUris?: string[]
-  metadataFields?: string[]
+  metadataFields?: CorpusColumns[]
 }
 
 interface OutputValues {
-  corpus?: Table
+  selectedItems?: Table<Partial<CorpusStructure>>
 }
 
 type Props = ModuleProps<InputValues, OutputValues>
 
 const DataSelection = ({ step }: Props): JSX.Element => {
-  const [repositoryItemsFilter, setRepositoryItemsFilter] = React.useState<BatchFilter>({ pageSize: 5 })
+  const [repositoryItemsFilter, setRepositoryItemsFilter] = React.useState<ViewFilter>({ pageSize: 5 })
   const [selectedItemsUris = [], setSelectedItemsUris] = useStepInputValue<string[]>(
     step.id,
     'selectedItemsUris'
   )
   const [metadataFields = [], setMetadataFields] = useStepInputValue<string[]>(step.id, 'metadataFields')
-  const [repositoryItemsBatch, tableStats] = useStepInputValueBatch(
+  const [repositoryItemsBatch, tableStats] = useStepInputValueView(
     step.id,
     'repositoryItems',
-    repositoryItemsFilter
+    repositoryItemsFilter,
+    'repositoryItemsTableView'
   )
 
   const handleMetadataFieldSelection = (field: string, isSelected: boolean) => {
@@ -80,106 +95,41 @@ const DataSelection = ({ step }: Props): JSX.Element => {
   )
 }
 
-export default DataSelection
+const mockProcessor = ({
+  repositoryItems,
+  selectedItemsUris = [],
+  metadataFields
+}: InputValues): OutputValues => {
+  if (repositoryItems == null) return
+  /**
+   * Because arrow was built to be zero copy,
+   * converting tables to table while filtering by rows
+   * is not easy. It can be done with a predicate, but there
+   * is no way to get a new table after filtering. It's ok
+   * for now because it is unlikely be needed on the frontend.
+   * If it will, we may need to move the code below into a utility
+   * file.
+   */
+  const selectedItemsRowsIndices = selectedItemsUris
+    .map(uri => repositoryItems.getColumn('uri').indexOf(uri))
+    .filter(i => i >= 0)
 
-interface TableProps<S> {
-  table: Table
-  tableStats: TableStats
-  filter?: BatchFilter
-  onFilterChanged?: (filter: BatchFilter) => void
-  selections: S[]
-  onSelectionsChanged?: (selections: S[]) => void
-  selectionRowIndex?: number
-  usePagination?: boolean
-  useSelection?: boolean
-}
-
-/**
- * Just an example how to deal with Arrow Table.
- * https://observablehq.com/@theneuralbit/introduction-to-apache-arrow
- *
- * TODO: Make this table beautiful and move it to a separate file to be reused.
- */
-const TableView = <S,>({
-  table,
-  tableStats,
-  selections,
-  filter,
-  usePagination = false,
-  onFilterChanged,
-  onSelectionsChanged,
-  selectionRowIndex = 0,
-  useSelection = false
-}: TableProps<S>): JSX.Element => {
-  const pageSize = filter?.pageSize ?? 10
-  const pageOffset = filter?.offset ?? 0
-
-  const setPageOffset = (offset: number) =>
-    onFilterChanged?.({
-      pageSize,
-      offset
-    })
-
-  const handleRowSelection = (id: S, isSelected: boolean) => {
-    if (isSelected) onSelectionsChanged(selections.concat([id]))
-    else onSelectionsChanged(selections.filter(item => item !== id))
+  if (selectedItemsRowsIndices.length === 0) {
+    return {
+      selectedItems: Table.empty(repositoryItems.schema).select('uri', ...(metadataFields ?? []))
+    }
   }
+  const selectedItems = selectedItemsRowsIndices
+    .reduce(
+      (acc, i) =>
+        acc == null ? repositoryItems.slice(i, i + 1) : acc.concat(repositoryItems.slice(i, i + 1)),
+      undefined as typeof repositoryItems
+    )
+    .select('uri', ...(metadataFields ?? []))
 
-  const colIndices = [...Array(table.numCols).keys()]
-
-  return (
-    <div>
-      <table>
-        <thead>
-          <tr>
-            {useSelection ? <th></th> : ''}
-            {table.schema.fields.map((f, idx) => (
-              <th key={idx}>{f.name}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {[...table].map((row, idx) => (
-            <tr key={idx}>
-              {useSelection ? (
-                <td>
-                  <input
-                    type="checkbox"
-                    checked={selections.includes(row[selectionRowIndex])}
-                    onChange={e => handleRowSelection(row[selectionRowIndex], e.target.checked)}
-                  />
-                </td>
-              ) : (
-                ''
-              )}
-              {colIndices.map(idx => (
-                <td key={idx}>{row[idx]}</td>
-              ))}
-            </tr>
-          ))}
-          <tr></tr>
-        </tbody>
-      </table>
-      {/* pagination */}
-      {usePagination ? (
-        <div>
-          <button
-            onClick={() => setPageOffset(pageOffset > pageSize ? pageOffset - pageSize : 0)}
-            disabled={pageOffset === 0}
-          >
-            Previous page
-          </button>
-          <button
-            onClick={() => setPageOffset(pageOffset + pageSize)}
-            disabled={pageSize + pageOffset >= tableStats.rowsCount}
-          >
-            Next page
-          </button>
-          <em>Total: {tableStats.rowsCount}</em>
-        </div>
-      ) : (
-        ''
-      )}
-    </div>
-  )
+  return {
+    selectedItems
+  }
 }
+
+export default withMockProcessor(DataSelection, mockProcessor)

@@ -154,8 +154,29 @@ class MsgModuleIOGetInputValues:
     """
     """Unique ID of the step within the workflow that we are getting parameters for."""
     id: str
+    """Input IDs for which the full value should be returned.
+    This is only relevant for big complex types.
+    """
+    full_value_input_ids: Optional[List[str]] = None
     """Limit returned values only to inputs with these IDs."""
     input_ids: Optional[List[str]] = None
+
+
+@dataclass
+class MsgModuleIOGetOutputValues:
+    """Target: "moduleIO"
+    Message type: "GetOutputValues"
+    
+    Get values of outputs of a step from the current workflow.
+    """
+    """Unique ID of the step within the workflow that we are getting values for."""
+    id: str
+    """Output IDs for which the full value should be returned.
+    This is only relevant for big complex types.
+    """
+    full_value_output_ids: Optional[List[str]] = None
+    """Limit returned values only to outputs with these IDs."""
+    output_ids: Optional[List[str]] = None
 
 
 @dataclass
@@ -198,6 +219,25 @@ class MsgModuleIOGetTabularInputValue:
 
 
 @dataclass
+class MsgModuleIOGetTabularOutputValue:
+    """Target: "moduleIO"
+    Message type: "GetTabularOutputValue"
+    
+    Get a filtered version of a tabular output of a step from the current workflow.
+    """
+    filter: DataTabularDataFilter
+    """Unique ID of the output"""
+    output_id: str
+    """Unique ID of the step within the workflow that we are getting parameters for."""
+    step_id: str
+    """An ID associated with this filtered version of the tabular value.
+    This is needed to distinguish between different views of the same data value that may
+    exist independently.
+    """
+    view_id: str
+
+
+@dataclass
 class MsgModuleIOInputValuesUpdated:
     """Target: "moduleIO"
     Message type: "InputValuesUpdated"
@@ -223,6 +263,19 @@ class MsgModuleIOOutputUpdated:
     id: str
     """Output data for the module"""
     outputs: List[Any]
+
+
+@dataclass
+class MsgModuleIOOutputValuesUpdated:
+    """Target: "moduleIO"
+    Message type: "OutputValuesUpdated"
+    
+    Updated output values of a step in the current workflow.
+    """
+    """Unique ID of the step within the workflow."""
+    id: str
+    """Output values. Key - valueId, Value - actual value."""
+    output_values: Optional[Dict[str, Any]] = None
 
 
 @dataclass
@@ -262,6 +315,27 @@ class MsgModuleIOTabularInputValueUpdated:
 
 
 @dataclass
+class MsgModuleIOTabularOutputValueUpdated:
+    """Target: "moduleIO"
+    Message type: "TabularOutputValueUpdated"
+    
+    A filtered version of a tabular output of a step from the current workflow.
+    """
+    filter: DataTabularDataFilter
+    """Unique ID of the output"""
+    output_id: str
+    """Unique ID of the step within the workflow that we are getting parameters for."""
+    step_id: str
+    """The actual value payload. TODO: The type will be set later"""
+    value: Union[Dict[str, Any], None, str]
+    """An ID associated with this filtered version of the tabular value.
+    This is needed to distinguish between different views of the same data value that may
+    exist independently.
+    """
+    view_id: str
+
+
+@dataclass
 class MsgModuleIOUnregisterTabularInputView:
     """Target: "moduleIO"
     Message type: "UnregisterTabularInputView"
@@ -271,6 +345,25 @@ class MsgModuleIOUnregisterTabularInputView:
     """
     """Unique ID of the input"""
     input_id: str
+    """Unique ID of the step within the workflow that we are getting parameters for."""
+    step_id: str
+    """An ID associated with this filtered version of the tabular value.
+    This is needed to distinguish between different views of the same data value that may
+    exist independently.
+    """
+    view_id: str
+
+
+@dataclass
+class MsgModuleIOUnregisterTabularOutputView:
+    """Target: "moduleIO"
+    Message type: "UnregisterTabularOutputView"
+    
+    If there is a view of a table with the provided ID, unregister this view and stop sending
+    updates about it to the frontend.
+    """
+    """Unique ID of the output"""
+    output_id: str
     """Unique ID of the step within the workflow that we are getting parameters for."""
     step_id: str
     """An ID associated with this filtered version of the tabular value.

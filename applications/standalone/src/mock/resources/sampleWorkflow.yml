@@ -23,8 +23,30 @@ structure:
             ioId: repositoryItems
         selectedItemsUris:
           default: []
+        metadataFields:
+          default: []
       outputs:
         selectedItems:
+          isTabular: true
+          connection:
+            stepId: m0.75
+            ioId: corpus
+    - id: m0.75
+      moduleId: networkAnalysisDataMapping
+      inputs:
+        corpus:
+          isTabular: true
+          connection:
+            stepId: m0.5
+            ioId: selectedItems
+        nodesMappingTable:
+          isTabular: true
+        edgesMappingTable:
+          isTabular: true
+      outputs:
+        nodes:
+          isTabular: true
+        edges:
           isTabular: true
     - id: m1
       moduleId: twoArgsMathFunction

@@ -18,7 +18,9 @@ import {
   serialize,
   deserializeValue,
   DataValueType,
-  WorkflowStructure
+  WorkflowStructure,
+  DataProcessorResult,
+  TabularDataFilter
 } from '@dharpa-vre/client-core'
 import { viewProvider } from '@dharpa-vre/modules'
 
@@ -153,6 +155,20 @@ export interface MockContextParameters {
   startupDelayMs?: number
 }
 
+interface ViewFilters {
+  [stepId: string]: {
+    [ioId: string]: {
+      [viewId: string]: TabularDataFilter
+    }
+  }
+}
+
+interface FullValueRequiredFlags {
+  [stepId: string]: {
+    [ioId: string]: boolean
+  }
+}
+
 export class MockContext implements IBackEndContext {
   private _isDisposed = false
   private _store: IOValuesStore
@@ -165,6 +181,9 @@ export class MockContext implements IBackEndContext {
 
   private _signals: Record<Target, Signal<MockContext, ME<unknown>>>
   private _callbacks = new WeakMap()
+
+  private _currentInputViewFilters: ViewFilters = {}
+  private _fullValueRequiredFlags: FullValueRequiredFlags = {}
 
   constructor(parameters: MockContextParameters) {
     this._processData = parameters?.processData ?? mockDataProcessorFactory(viewProvider)
@@ -225,26 +244,20 @@ export class MockContext implements IBackEndContext {
       this._processStepData(id)
     })(msg)
 
-    adapter(Messages.ModuleIO.codec.GetInputValues.decode, ({ id: stepId, inputIds }) => {
-      const inputValues = this._store.getInputValues(stepId, inputIds)
-      const response = Messages.ModuleIO.codec.InputValuesUpdated.encode({
-        id: stepId,
-        inputValues
-      })
-
-      this._signals[Target.ModuleIO].emit(response)
-    })(msg)
+    adapter(
+      Messages.ModuleIO.codec.GetInputValues.decode,
+      ({ id: stepId, inputIds, fullValueInputIds = [] }) => {
+        fullValueInputIds.forEach(inputId => this.setFullValueRequired(stepId, inputId, true))
+        this.updateInputValuesForStep(stepId, inputIds)
+      }
+    )(msg)
 
     adapter(Messages.ModuleIO.codec.UpdateInputValues.decode, async ({ id: stepId, inputValues }) => {
       Object.entries(inputValues).forEach(([inputId, value]) =>
-        this._store.setInputValue(stepId, inputId, value)
+        this._store.setInputValue(stepId, inputId, deserializeValue(value)[1])
       )
       await this._processStepData(stepId)
-      const udpatedMessage = Messages.ModuleIO.codec.InputValuesUpdated.encode({
-        id: stepId,
-        inputValues
-      })
-      this._signals[Target.ModuleIO].emit(udpatedMessage)
+      this.updateInputValuesForStep(stepId)
     })(msg)
 
     adapter(Messages.ModuleIO.codec.GetTabularInputValue.decode, ({ viewId, stepId, inputId, filter }) => {
@@ -263,6 +276,12 @@ export class MockContext implements IBackEndContext {
         value: (serializeFilteredTable(filteredTable, table) as unknown) as Record<string, unknown>
       })
       this._signals[Target.ModuleIO].emit(updatedMessage)
+
+      this.setInputViewFilter(stepId, inputId, viewId, filter)
+    })(msg)
+
+    adapter(Messages.ModuleIO.codec.UnregisterTabularInputView.decode, ({ viewId, stepId, inputId }) => {
+      this.removeInputViewFilter(stepId, inputId, viewId)
     })(msg)
   }
 
@@ -275,7 +294,11 @@ export class MockContext implements IBackEndContext {
       )
 
       const moduleId = this._getModuleIdForStep(stepId)
-      const data = await this._processData(stepId, moduleId, this._store.getInputValues(stepId))
+      const data = await new Promise<DataProcessorResult>((res, rej) => {
+        setTimeout(() =>
+          this._processData(stepId, moduleId, this._store.getInputValues(stepId)).then(res).catch(rej)
+        )
+      })
 
       Object.entries(data?.outputs ?? {}).forEach(([outputId, value]) => {
         if (value != null) this._store.setOutputValue(stepId, outputId, value)
@@ -298,18 +321,47 @@ export class MockContext implements IBackEndContext {
     }
   }
 
-  _updatedInputValuesForAllSteps(): void {
-    this._currentWorkflow?.structure?.steps?.forEach(step => {
-      const response = Messages.ModuleIO.codec.InputValuesUpdated.encode({
-        id: step.id,
-        inputValues: Object.entries(this._store.getInputValues(step.id)).reduce(
-          (acc, [k, v]) => ({ ...acc, [k]: serialize(v) }),
-          {} as Record<string, unknown>
-        )
-      })
+  private updateInputValuesForStep(stepId: string, inputIdsOnly: string[] = []) {
+    const serializeValue = (inputId: string, value: unknown) => {
+      if (value instanceof Table) {
+        if (this.getFullValueRequired(stepId, inputId)) {
+          return serializeFilteredTable(value, value)
+        }
+      }
+      return serialize(value)
+    }
 
-      this._signals[Target.ModuleIO].emit(response)
+    const msg = {
+      id: stepId,
+      inputValues: Object.entries(this._store.getInputValues(stepId))
+        .filter(([k]) => (inputIdsOnly.length > 0 ? inputIdsOnly.includes(k) : true))
+        .reduce((acc, [k, v]) => ({ ...acc, [k]: serializeValue(k, v) }), {} as Record<string, unknown>)
+    }
+    const response = Messages.ModuleIO.codec.InputValuesUpdated.encode(msg)
+
+    this._signals[Target.ModuleIO].emit(response)
+
+    // tabular inputs
+    Object.entries(this._store.getInputValues(stepId)).forEach(([inputId, value]) => {
+      Object.entries(this.getInputViewFilters(stepId, inputId)).forEach(([viewId, filter]) => {
+        if (value == null) return
+        const table = value as Table
+        const filteredTable = table.slice(filter.offset ?? 0, filter.offset ?? 0 + filter.pageSize)
+
+        const updatedMessage = Messages.ModuleIO.codec.TabularInputValueUpdated.encode({
+          viewId,
+          stepId,
+          inputId,
+          filter,
+          value: (serializeFilteredTable(filteredTable, table) as unknown) as Record<string, unknown>
+        })
+        this._signals[Target.ModuleIO].emit(updatedMessage)
+      })
     })
+  }
+
+  _updatedInputValuesForAllSteps(): void {
+    this._currentWorkflow?.structure?.steps?.forEach(step => this.updateInputValuesForStep(step.id))
   }
 
   sendMessage<T, U = void>(target: Target, msg: MessageEnvelope<T>): Promise<U> {
@@ -341,5 +393,42 @@ export class MockContext implements IBackEndContext {
 
   addFilesToRepository(files: File[]): Promise<void> {
     return Promise.resolve((files as unknown) as void)
+  }
+
+  private getInputViewFilters(stepId: string, inputId: string): { [viewId: string]: TabularDataFilter } {
+    return this._currentInputViewFilters?.[stepId]?.[inputId] ?? {}
+  }
+
+  private setInputViewFilter(
+    stepId: string,
+    inputId: string,
+    viewId: string,
+    filter: TabularDataFilter
+  ): void {
+    const l1 = this._currentInputViewFilters[stepId] ?? {}
+    const l2 = l1[inputId] ?? {}
+    l2[viewId] = filter
+
+    l1[inputId] = l2
+    this._currentInputViewFilters[stepId] = l1
+  }
+
+  private removeInputViewFilter(stepId: string, inputId: string, viewId: string): void {
+    const l1 = this._currentInputViewFilters[stepId] ?? {}
+    const l2 = l1[inputId] ?? {}
+    delete l2[viewId]
+
+    l1[inputId] = l2
+    this._currentInputViewFilters[stepId] = l1
+  }
+
+  private getFullValueRequired(stepId: string, inputId: string): boolean {
+    return this._fullValueRequiredFlags?.[stepId]?.[inputId] ?? false
+  }
+
+  private setFullValueRequired(stepId: string, inputId: string, isRequired: boolean) {
+    const l1 = this._fullValueRequiredFlags?.[stepId] ?? {}
+    l1[inputId] = isRequired
+    this._fullValueRequiredFlags[stepId] = l1
   }
 }
