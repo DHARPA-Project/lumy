@@ -47,9 +47,7 @@ const CreateProjectForm = ({ workflowCategory, closeModal }: CreateProjectFormPr
     setWorkflowNameError('')
   }
 
-  useEffect(() => {
-    clearTimeout(timeoutRef.current)
-  }, [])
+  useEffect(() => () => clearTimeout(timeoutRef.current), [])
 
   useEffect(() => {
     clearValidationWarnings()
