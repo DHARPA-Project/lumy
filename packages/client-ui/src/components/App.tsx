@@ -8,21 +8,23 @@ import TopPageLayout from './common/TopPageLayout'
 import SettingsPage from './pages/SettingsPage'
 import IntroPage from './pages/IntroPage'
 import ToyVrePage from './pages/ToyVrePage'
+import NetworkAnalysisIntroPage from './pages/NetworkAnalysisIntroPage'
 
 export const App = (): JSX.Element => {
   return (
     <ThemeContextProvider>
       <ProjectContextProvider>
-      <Router>
-        <TopPageLayout>
-          <Switch>
-            <Redirect from="/" exact to="/intro" />
-            <Route path="/intro" exact component={IntroPage} />
-            <Route path="/settings" exact component={SettingsPage} />
-            <Route path="/toy" exact component={ToyVrePage} />
-          </Switch>
-        </TopPageLayout>
-      </Router>
+        <Router>
+          <TopPageLayout>
+            <Switch>
+              <Redirect from="/" exact to="/intro" />
+              <Route path="/intro" exact component={IntroPage} />
+              <Route path="/settings" exact component={SettingsPage} />
+              <Route path="/toy" exact component={ToyVrePage} />
+              <Route path="/workflows/network-analysis" exact component={NetworkAnalysisIntroPage} />
+            </Switch>
+          </TopPageLayout>
+        </Router>
       </ProjectContextProvider>
     </ThemeContextProvider>
   )
