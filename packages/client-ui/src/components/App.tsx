@@ -9,6 +9,7 @@ import SettingsPage from './pages/SettingsPage'
 import IntroPage from './pages/IntroPage'
 import ToyVrePage from './pages/ToyVrePage'
 import NetworkAnalysisIntroPage from './pages/NetworkAnalysisIntroPage'
+import ProjectPage from './pages/ProjectPage'
 
 export const App = (): JSX.Element => {
   return (
@@ -22,6 +23,7 @@ export const App = (): JSX.Element => {
               <Route path="/settings" exact component={SettingsPage} />
               <Route path="/toy" exact component={ToyVrePage} />
               <Route path="/workflows/network-analysis" exact component={NetworkAnalysisIntroPage} />
+              <Route path="/projects/:id" exact component={ProjectPage} />
             </Switch>
           </TopPageLayout>
         </Router>
