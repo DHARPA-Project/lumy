@@ -1,5 +1,5 @@
 import React from 'react'
-import { Table, Utf8Vector, Int32Vector, Float32Vector } from 'apache-arrow'
+import { Table, Utf8Vector, Utf8, List, Field, ListVector } from 'apache-arrow'
 import {
   ModuleProps,
   useAddFilesToRepository,
@@ -62,15 +62,15 @@ const DataUpload = ({ step }: Props): JSX.Element => {
 const mockProcessor = (_inputValues: InputValues): OutputValues => {
   const testTableNumbers = [...Array(30).keys()]
 
-  const testTable = Table.new(
-    [
-      Utf8Vector.from(testTableNumbers.map(n => `uri-${n}`)),
-      Utf8Vector.from(testTableNumbers.map(n => `Item ${n}`)),
-      Int32Vector.from(testTableNumbers),
-      Float32Vector.from(testTableNumbers.map(n => Math.random() * n))
-    ],
-    ['uri', 'columnA', 'columnB', 'columnC']
-  )
+  const testTable = Table.new({
+    uri: Utf8Vector.from(testTableNumbers.map(n => `uri-${n}`)),
+    label: Utf8Vector.from(testTableNumbers.map(n => `Item ${n}`)),
+    columns: ListVector.from({
+      values: testTableNumbers.map(n => [`a${n}`, `b${n}`, `c${n}`]),
+      type: new List(Field.new({ name: 0, type: new Utf8() })),
+      highWaterMark: 1 // NOTE: working around a stride serialisation bug in arrowjs
+    })
+  })
 
   return { repositoryItems: testTable }
 }

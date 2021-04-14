@@ -15,6 +15,13 @@
       "items": {
         "type": "string"
       }
+    },
+    "fullValueInputIds": {
+      "type": "array",
+      "description": "Input IDs for which the full value should be returned. \nThis is only relevant for big complex types.",
+      "items": {
+        "type": "string"
+      }
     }
   },
   "required": [
