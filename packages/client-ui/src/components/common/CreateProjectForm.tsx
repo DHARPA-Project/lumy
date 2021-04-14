@@ -1,4 +1,5 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
+import { useHistory } from 'react-router-dom'
 
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
@@ -20,7 +21,11 @@ type CreateProjectFormProps = {
 const CreateProjectForm = ({ workflowCategory, closeModal }: CreateProjectFormProps): JSX.Element => {
   const classes = useStyles()
 
-  const { addProject } = useContext(ProjectContext)
+  const history = useHistory()
+
+  const timeoutRef = useRef(null)
+
+  const { createProject } = useContext(ProjectContext)
 
   const [workflowName, setWorkflowName] = useState<string>('')
   const [workflowType, setWorkflowType] = useState<string>(workflowCategory)
@@ -43,6 +48,10 @@ const CreateProjectForm = ({ workflowCategory, closeModal }: CreateProjectFormPr
   }
 
   useEffect(() => {
+    clearTimeout(timeoutRef.current)
+  }, [])
+
+  useEffect(() => {
     clearValidationWarnings()
     // clear all validation warnings whenever the following form values are updated
   }, [workflowName])
@@ -61,11 +70,14 @@ const CreateProjectForm = ({ workflowCategory, closeModal }: CreateProjectFormPr
     const isFormValid = validateForm()
     if (!isFormValid) return
 
-    addProject(workflowName, workflowType as string)
+    const newProjectId = createProject(workflowName, workflowType as string)
     setWorkflowName('')
     setWorkflowType('')
     closeModal()
-    window.alert('new project created!')
+
+    timeoutRef.current = setTimeout(() => {
+      history.push(`/projects/${newProjectId}`)
+    }, 1000)
   }
 
   return (

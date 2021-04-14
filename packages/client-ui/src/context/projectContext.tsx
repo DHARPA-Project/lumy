@@ -39,7 +39,7 @@ export type ProjectType = {
 
 export type ProjectContextType = {
   projectList: ProjectType[]
-  addProject: (name: string, type: string) => void
+  createProject: (name: string, type: string) => void
 }
 
 type ProjectContextProviderProps = {
@@ -83,12 +83,14 @@ const getProjectFromLocalStorage = () => {
 const ProjectContextProvider = ({ children }: ProjectContextProviderProps): JSX.Element => {
   const [projectList, setProjectList] = useState<ProjectType[]>(getProjectFromLocalStorage)
 
-  const addProject = (name: string, type: string) => {
+  const createProject = (name: string, type: string): string => {
+    const newProjectId = uuidv4()
+
     setProjectList(previousProjectList => {
       const newProjectList = [
         ...previousProjectList,
         {
-          id: uuidv4(),
+          id: newProjectId,
           date: Date.now(),
           type: type,
           name: name,
@@ -99,9 +101,11 @@ const ProjectContextProvider = ({ children }: ProjectContextProviderProps): JSX.
       localStorage.setItem('dharpaProjects', JSON.stringify(newProjectList))
       return newProjectList
     })
+
+    return newProjectId
   }
 
-  return <ProjectContext.Provider value={{ projectList, addProject }}>{children}</ProjectContext.Provider>
+  return <ProjectContext.Provider value={{ projectList, createProject }}>{children}</ProjectContext.Provider>
 }
 
 export default ProjectContextProvider
