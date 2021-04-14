@@ -5,7 +5,6 @@ import useStyles from './DialogModal.styles'
 import Dialog from '@material-ui/core/Dialog'
 import DialogTitle from '@material-ui/core/DialogTitle'
 import DialogContent from '@material-ui/core/DialogContent'
-import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 
 import CloseIcon from '@material-ui/icons/Close'
@@ -33,11 +32,7 @@ const DialogModal = ({ title, children, isModalOpen, setIsModalOpen }: DialogMod
         <CloseIcon />
       </Button>
 
-      <DialogTitle className={classes.dialogTitle}>
-        <Typography variant="h6" component="h1">
-          {title}
-        </Typography>
-      </DialogTitle>
+      <DialogTitle className={classes.dialogTitle}>{title}</DialogTitle>
 
       <DialogContent>{children}</DialogContent>
     </Dialog>
