@@ -3,6 +3,7 @@ import React, { useState, createContext } from 'react'
 import CssBaseline from '@material-ui/core/CssBaseline'
 
 import teal from '@material-ui/core/colors/teal'
+import amber from '@material-ui/core/colors/amber'
 
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
 
@@ -55,6 +56,9 @@ const ThemeContextProvider = ({ children }: ThemeContextProviderProps): JSX.Elem
       type: darkModeEnabled ? 'dark' : 'light',
       primary: {
         main: teal[500]
+      },
+      secondary: {
+        main: amber[500]
       }
     },
     typography: {

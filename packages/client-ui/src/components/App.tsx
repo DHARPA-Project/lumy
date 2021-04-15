@@ -2,31 +2,32 @@ import React from 'react'
 import { Switch, Route, HashRouter as Router, Redirect } from 'react-router-dom'
 
 import ThemeContextProvider from '../context/themeContext'
+import ProjectContextProvider from '../context/projectContext'
 
 import TopPageLayout from './common/TopPageLayout'
 import SettingsPage from './pages/SettingsPage'
-import NotificationsPage from './pages/NotificationsPage'
-import TestPage from './pages/TestPage'
-import SamplePage from './pages/SamplePage'
 import IntroPage from './pages/IntroPage'
 import ToyVrePage from './pages/ToyVrePage'
+import NetworkAnalysisIntroPage from './pages/NetworkAnalysisIntroPage'
+import ProjectPage from './pages/ProjectPage'
 
 export const App = (): JSX.Element => {
   return (
     <ThemeContextProvider>
-      <Router>
-        <TopPageLayout>
-          <Switch>
-            <Redirect from="/" exact to="/intro" />
-            <Route path="/intro" exact component={IntroPage} />
-            <Route path="/settings" exact component={SettingsPage} />
-            <Route path="/notifications" exact component={NotificationsPage} />
-            <Route path="/test" exact component={TestPage} />
-            <Route path="/sample" exact component={SamplePage} />
-            <Route path="/toy" exact component={ToyVrePage} />
-          </Switch>
-        </TopPageLayout>
-      </Router>
+      <ProjectContextProvider>
+        <Router>
+          <TopPageLayout>
+            <Switch>
+              <Redirect from="/" exact to="/intro" />
+              <Route path="/intro" exact component={IntroPage} />
+              <Route path="/settings" exact component={SettingsPage} />
+              <Route path="/toy" exact component={ToyVrePage} />
+              <Route path="/workflows/network-analysis" exact component={NetworkAnalysisIntroPage} />
+              <Route path="/projects/:id" exact component={ProjectPage} />
+            </Switch>
+          </TopPageLayout>
+        </Router>
+      </ProjectContextProvider>
     </ThemeContextProvider>
   )
 }
