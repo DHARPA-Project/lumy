@@ -47,7 +47,12 @@ const CreateProjectForm = ({ workflowCategory, closeModal }: CreateProjectFormPr
     setWorkflowNameError('')
   }
 
-  useEffect(() => () => clearTimeout(timeoutRef.current), [])
+  const resetForm = () => {
+    setWorkflowName('')
+    setWorkflowType(workflowCategory)
+  }
+
+  useEffect(() => clearTimeout(timeoutRef.current), [])
 
   useEffect(() => {
     clearValidationWarnings()
@@ -69,8 +74,7 @@ const CreateProjectForm = ({ workflowCategory, closeModal }: CreateProjectFormPr
     if (!isFormValid) return
 
     const newProjectId = createProject(workflowName, workflowType as string)
-    setWorkflowName('')
-    setWorkflowType('')
+    resetForm()
     closeModal()
 
     timeoutRef.current = setTimeout(() => {
