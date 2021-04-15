@@ -130,6 +130,17 @@ class IOValuesStore {
     }, {} as { [inputId: string]: unknown })
   }
 
+  getOutputValues(stepId: string, outputIds?: string[]): { [outputId: string]: unknown } {
+    const step = this._workflowStructure.steps.find(step => step.id === stepId)
+    const allOutputIds = Object.keys(step?.outputs ?? {})
+    const actualOutputIds = outputIds ?? allOutputIds
+
+    return actualOutputIds.reduce((acc, outputId) => {
+      const value = this.getOutputValue(stepId, outputId)
+      return value == null ? acc : { ...acc, [outputId]: value }
+    }, {} as { [outputId: string]: unknown })
+  }
+
   private setValue<T = unknown>(stepId: string, ioId: string, value: T, isInput: boolean) {
     const [actualStepId, inputId] = isInput ? [stepId, ioId] : this.getCorrespondingInput(stepId, ioId)
     if ((actualStepId == null || inputId == null) && !isInput) {
@@ -252,6 +263,14 @@ export class MockContext implements IBackEndContext {
       }
     )(msg)
 
+    adapter(
+      Messages.ModuleIO.codec.GetOutputValues.decode,
+      ({ id: stepId, outputIds, fullValueOutputIds = [] }) => {
+        fullValueOutputIds.forEach(outputId => this.setFullValueRequired(stepId, outputId, true))
+        this.updateOutputValuesForStep(stepId, outputIds)
+      }
+    )(msg)
+
     adapter(Messages.ModuleIO.codec.UpdateInputValues.decode, async ({ id: stepId, inputValues }) => {
       Object.entries(inputValues).forEach(([inputId, value]) =>
         this._store.setInputValue(stepId, inputId, deserializeValue(value)[1])
@@ -307,7 +326,8 @@ export class MockContext implements IBackEndContext {
       const response = Messages.ModuleIO.codec.PreviewUpdated.encode({ id: stepId, ...data })
       this._signals[Target.ModuleIO].emit(response)
 
-      this._updatedInputValuesForAllSteps()
+      this.updateInputValuesForAllSteps()
+      this.updateOutputValuesForAllSteps()
     } finally {
       this._signals[Target.Activity].emit(
         Messages.Activity.codec.ExecutionState.encode({ state: State.Idle })
@@ -360,8 +380,32 @@ export class MockContext implements IBackEndContext {
     })
   }
 
-  _updatedInputValuesForAllSteps(): void {
+  private updateOutputValuesForStep(stepId: string, outputIdsOnly: string[] = []) {
+    const serializeValue = (outputId: string, value: unknown) => {
+      if (value instanceof Table) {
+        if (this.getFullValueRequired(stepId, outputId)) {
+          return serializeFilteredTable(value, value)
+        }
+      }
+      return serialize(value)
+    }
+
+    const msg: Messages.ModuleIO.OutputValuesUpdated = {
+      id: stepId,
+      outputValues: Object.entries(this._store.getOutputValues(stepId))
+        .filter(([k]) => (outputIdsOnly.length > 0 ? outputIdsOnly.includes(k) : true))
+        .reduce((acc, [k, v]) => ({ ...acc, [k]: serializeValue(k, v) }), {} as Record<string, unknown>)
+    }
+    const response = Messages.ModuleIO.codec.OutputValuesUpdated.encode(msg)
+
+    this._signals[Target.ModuleIO].emit(response)
+  }
+
+  private updateInputValuesForAllSteps(): void {
     this._currentWorkflow?.structure?.steps?.forEach(step => this.updateInputValuesForStep(step.id))
+  }
+  private updateOutputValuesForAllSteps(): void {
+    this._currentWorkflow?.structure?.steps?.forEach(step => this.updateOutputValuesForStep(step.id))
   }
 
   sendMessage<T, U = void>(target: Target, msg: MessageEnvelope<T>): Promise<U> {

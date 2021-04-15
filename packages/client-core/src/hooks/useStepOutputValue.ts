@@ -1,4 +1,5 @@
 import { useContext, useState, useEffect } from 'react'
+import { deserializeValue } from '../common/codec'
 import { BackEndContext, handlerAdapter, Target } from '../common/context'
 import { Messages } from '../common/types'
 
@@ -10,26 +11,37 @@ import { Messages } from '../common/types'
  * @param stepId ID of the step
  * @param outputId ID of the output
  */
-export const useStepOutputValue = <OutputType>(stepId: string, outputId: string): [OutputType] => {
+export const useStepOutputValue = <OutputType, StatsType = unknown>(
+  stepId: string,
+  outputId: string,
+  getFullValue?: boolean
+): [OutputType, StatsType] => {
   const context = useContext(BackEndContext)
   const [lastValue, setLastValue] = useState<OutputType>()
+  const [lastStats, setLastStats] = useState<StatsType>()
 
   useEffect(() => {
     const handler = handlerAdapter(Messages.ModuleIO.codec.OutputValuesUpdated.decode, content => {
       if (content?.id === stepId) {
-        if (outputId in content.outputValues)
-          setLastValue((content.outputValues[outputId] as unknown) as OutputType)
+        if (outputId in content.outputValues) {
+          const [stats, value] = deserializeValue<StatsType, OutputType>(content.outputValues[outputId])
+          setLastValue(value)
+          setLastStats(stats)
+        }
       }
     })
     context.subscribe(Target.ModuleIO, handler)
 
-    context.sendMessage(
-      Target.ModuleIO,
-      Messages.ModuleIO.codec.GetOutputValues.encode({ id: stepId, outputIds: [outputId] })
-    )
+    const getMsg: Messages.ModuleIO.GetOutputValues = { id: stepId, outputIds: [outputId] }
+
+    if (getFullValue != null) {
+      getMsg.fullValueOutputIds = [outputId]
+    }
+
+    context.sendMessage(Target.ModuleIO, Messages.ModuleIO.codec.GetOutputValues.encode(getMsg))
 
     return () => context.unsubscribe(Target.ModuleIO, handler)
   }, [stepId, outputId])
 
-  return [lastValue]
+  return [lastValue, lastStats]
 }

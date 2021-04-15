@@ -46,7 +46,29 @@ structure:
       outputs:
         nodes:
           isTabular: true
+          connection:
+            stepId: m0.85
+            ioId: nodes
         edges:
+          isTabular: true
+          connection:
+            stepId: m0.85
+            ioId: edges
+    - id: m0.85
+      moduleId: networkAnalysisDataVis
+      inputs:
+        nodes:
+          isTabular: true
+          connection:
+            stepId: m0.75
+            ioId: nodes
+        edges:
+          isTabular: true
+          connection:
+            stepId: m0.75
+            ioId: edges
+      outputs:
+        graphData:
           isTabular: true
     - id: m1
       moduleId: twoArgsMathFunction
