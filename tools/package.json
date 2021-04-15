@@ -15,6 +15,7 @@
     "gen": "yarn compile && node dist/generateCodeFromSchema"
   },
   "devDependencies": {
+    "json-schema-to-typescript": "^10.1.4",
     "prettier": "^2.2.1",
     "quicktype": "^15.0.260",
     "quicktype-core": "^6.0.70",
