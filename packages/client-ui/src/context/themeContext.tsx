@@ -38,7 +38,7 @@ export const ThemeContext = createContext<ThemeContextType>(null)
 
 const getThemeFromLocalStorage = () => {
   const valueInLocalStorage = localStorage.getItem('darkModeEnabled')
-  return valueInLocalStorage ? JSON.parse(valueInLocalStorage) : true
+  return valueInLocalStorage ? JSON.parse(valueInLocalStorage) : false
 }
 
 const ThemeContextProvider = ({ children }: ThemeContextProviderProps): JSX.Element => {

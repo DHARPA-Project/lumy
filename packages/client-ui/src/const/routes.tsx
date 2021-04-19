@@ -1,7 +1,6 @@
 import React from 'react'
 
 import InfoOutlineIcon from '@material-ui/icons/InfoOutlined'
-import SettingsIcon from '@material-ui/icons/Settings'
 import AccountTreeIcon from '@material-ui/icons/AccountTree'
 import ToysIcon from '@material-ui/icons/Toys'
 
@@ -26,13 +25,6 @@ export const pageRoutes = [
     label: 'introduction',
     link: '/intro',
     icon: <InfoOutlineIcon />,
-    nested: false
-  },
-  {
-    type: NavItemType.pageLink,
-    label: 'settings',
-    link: '/settings',
-    icon: <SettingsIcon />,
     nested: false
   },
   {
