@@ -5,7 +5,6 @@ import ThemeContextProvider from '../context/themeContext'
 import ProjectContextProvider from '../context/projectContext'
 
 import TopPageLayout from './common/TopPageLayout'
-import SettingsPage from './pages/SettingsPage'
 import IntroPage from './pages/IntroPage'
 import ToyVrePage from './pages/ToyVrePage'
 import NetworkAnalysisIntroPage from './pages/NetworkAnalysisIntroPage'
@@ -20,7 +19,6 @@ export const App = (): JSX.Element => {
             <Switch>
               <Redirect from="/" exact to="/intro" />
               <Route path="/intro" exact component={IntroPage} />
-              <Route path="/settings" exact component={SettingsPage} />
               <Route path="/toy" exact component={ToyVrePage} />
               <Route path="/workflows/network-analysis" exact component={NetworkAnalysisIntroPage} />
               <Route path="/projects/:id" exact component={ProjectPage} />
