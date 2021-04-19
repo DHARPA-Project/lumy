@@ -1,4 +1,4 @@
-import { makeStyles } from '@material-ui/core/styles'
+import { lighten, makeStyles } from '@material-ui/core/styles'
 
 export default makeStyles(theme => ({
   root: {
@@ -13,7 +13,7 @@ export default makeStyles(theme => ({
     '& thead th': {
       fontWeight: '600',
       color: theme.palette.text.primary,
-      backgroundColor: theme.palette.background.default
+      backgroundColor: lighten(theme.palette.primary.light, 0.75)
     },
     '& tbody td': {
       fontWeight: '300'
