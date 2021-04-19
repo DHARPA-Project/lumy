@@ -5,7 +5,8 @@ export default makeStyles(theme => ({
     padding: theme.spacing(5)
   },
   dialogTitle: {
-    textAlign: 'center'
+    textAlign: 'center',
+    color: theme.palette.primary.main
   },
   closeButton: {
     position: 'absolute',

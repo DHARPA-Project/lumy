@@ -2,8 +2,8 @@ import { makeStyles } from '@material-ui/core/styles'
 
 export default makeStyles(theme => ({
   row: {
-    '&:nth-of-type(4n+1), &:nth-of-type(4n+2)': {
-      backgroundColor: theme.palette.action.hover
+    '&:nth-of-type(4n+3), &:nth-of-type(4n+4)': {
+      backgroundColor: theme.palette.background.default
     }
   },
   cellContainer: {
