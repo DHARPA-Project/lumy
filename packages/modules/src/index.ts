@@ -7,7 +7,8 @@ const modules = [
   'simplePlot',
   'dataUpload',
   'dataSelection',
-  'networkAnalysisDataMapping'
+  'networkAnalysisDataMapping',
+  'networkAnalysisDataVis'
 ]
 
 export const viewProvider = new SimpleModuleViewProvider(
