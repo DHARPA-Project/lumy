@@ -8,6 +8,7 @@ import {
 import { Table, Bool, Float32Vector, Vector, Float32 } from 'apache-arrow'
 import { EdgesStructure, NodesStructure } from './structure'
 import '@dharpa/web-components'
+import { Button, Grid } from '@material-ui/core'
 
 /**
  * TODO: This will go away when we add types to `@dharpa/web-components`
@@ -70,6 +71,7 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
   const [edges] = useStepInputValue<EdgesTable>(step.id, 'edges', true)
   const [graphData] = useStepOutputValue<GraphDataStructure>(step.id, 'graphData', true)
   const graphRef = React.useRef<NetworkGraphElement>(null)
+  const [isDisplayIsolated, setIsDisplayIsolated] = React.useState(false)
 
   React.useEffect(() => {
     if (graphRef.current == null) return
@@ -89,22 +91,27 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
         value: row.weight
       })),
       chartParams: {
-        displayIsolatedNodes: 'yes',
+        displayIsolatedNodes: isDisplayIsolated ? 'yes' : 'no',
         nodesSize: 'equal',
         nodesIdCol: 'Id'
       }
     }
 
     graphRef.current.data = data
-  }, [nodes, edges])
+  }, [nodes, edges, isDisplayIsolated])
 
   // console.log('NetworkAnalysisDataVis', nodes, edges, graphData)
 
   return (
-    <div>
-      <span>[network analysis data vis placeholder]</span>
-      <dharpa-network-force width="600" height="400" ref={graphRef} />
-    </div>
+    <Grid container>
+      <Grid>
+        <div>
+          <span>[network analysis data vis placeholder]</span>
+          <dharpa-network-force width="600" height="400" ref={graphRef} />
+          <Button onClick={() => setIsDisplayIsolated(!isDisplayIsolated)}>toggle isolated</Button>
+        </div>
+      </Grid>
+    </Grid>
   )
 }
 
