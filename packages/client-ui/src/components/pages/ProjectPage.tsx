@@ -1,11 +1,13 @@
 import React, { useContext } from 'react'
 import { useHistory, useRouteMatch } from 'react-router-dom'
 
-import { ProjectContext } from '../../context/projectContext'
+import { ProjectContext, workflowCategories } from '../../context/projectContext'
 
 import Button from '@material-ui/core/Button'
 
 import DeleteIcon from '@material-ui/icons/Delete'
+
+import NetworkAnalysisProject from '../NetworkAnalysisProject'
 
 const ProjectPage = (): JSX.Element => {
   const match = useRouteMatch()
@@ -23,21 +25,27 @@ const ProjectPage = (): JSX.Element => {
 
   return (
     <div className="project-page">
-      <h1>{currentProject.name}</h1>
-      <p>ID: {currentProject.id}</p>
-      <p>category: {currentProject.type}</p>
-      <p>date: {new Date(currentProject.date).toUTCString()}</p>
+      {currentProject.type === workflowCategories.networkAnalysis.name ? (
+        <NetworkAnalysisProject project={currentProject} />
+      ) : (
+        <>
+          <h1>{currentProject.name}</h1>
+          <p>ID: {currentProject.id}</p>
+          <p>category: {currentProject.type}</p>
+          <p>date: {new Date(currentProject.date).toUTCString()}</p>
 
-      <Button
-        type="submit"
-        variant="contained"
-        color="secondary"
-        startIcon={<DeleteIcon />}
-        onClick={handleRemoveProject}
-        size="small"
-      >
-        Remove Project
-      </Button>
+          <Button
+            type="submit"
+            variant="contained"
+            color="secondary"
+            startIcon={<DeleteIcon />}
+            onClick={handleRemoveProject}
+            size="small"
+          >
+            Remove Project
+          </Button>
+        </>
+      )}
     </div>
   )
 }
