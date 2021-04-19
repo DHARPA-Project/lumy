@@ -1,5 +1,6 @@
 import React, { useContext } from 'react'
 
+import Paper from '@material-ui/core/Paper'
 import IconButton from '@material-ui/core/IconButton'
 import List from '@material-ui/core/List'
 import Typography from '@material-ui/core/Typography'
@@ -26,7 +27,7 @@ const SideBar = ({ isSideBarCollapsed, setIsSideBarCollapsed }: SideBarProps): J
   const { projectList } = useContext(ProjectContext)
 
   return (
-    <div className={`${classes.root}${isSideBarCollapsed ? ' collapsed' : ''}`}>
+    <Paper className={`${classes.root}${isSideBarCollapsed ? ' collapsed' : ''}`}>
       <div className={classes.sideBarTop}>
         <div
           onClick={() => setIsSideBarCollapsed(prevStatus => !prevStatus)}
@@ -71,7 +72,7 @@ const SideBar = ({ isSideBarCollapsed, setIsSideBarCollapsed }: SideBarProps): J
           <PowerSettingsNewIcon />
         </IconButton>
       </div>
-    </div>
+    </Paper>
   )
 }
 
