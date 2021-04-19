@@ -11,7 +11,6 @@ export default makeStyles(theme => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.standard
     }),
-    borderRight: `1px solid ${theme.palette.divider}`,
     '&.collapsed': {
       width: theme.layout.sideBarCollapsedWidth
     }
