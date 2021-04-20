@@ -968,9 +968,9 @@
     classnames "^2.2"
     tslib "~1.13.0"
 
-"@dharpa/web-components@github:DHARPA-Project/web-components#fd5717e":
+"@dharpa/web-components@github:DHARPA-Project/web-components#feature/network_graph1":
   version "0.1.0"
-  resolved "https://codeload.github.com/DHARPA-Project/web-components/tar.gz/fd5717ec382256802713f22ae43fa94dad8922c9"
+  resolved "https://codeload.github.com/DHARPA-Project/web-components/tar.gz/676a6afe3d0d8263d556c6ae868cdcd0059771bf"
   dependencies:
     d3 "6"
     lit-element "2"
