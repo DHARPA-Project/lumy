@@ -245,7 +245,7 @@ export class MockContext implements IBackEndContext {
   private _handleWorkflow(_: MockContext, msg: ME<unknown>) {
     adapter(Messages.Workflow.codec.GetCurrent.decode, () => {
       const msg = Messages.Workflow.codec.Updated.encode({
-        workflow: this._currentWorkflow
+        workflow: (this._currentWorkflow.structure as unknown) as { [key: string]: unknown }
       })
       this._signals[Target.Workflow].emit(msg)
     })(msg)
