@@ -29,7 +29,7 @@ const DataUpload = ({ step }: Props): JSX.Element => {
   const [files, setFiles] = React.useState<File[]>([])
   const [isUploading, setIsUploading] = React.useState<boolean>(false)
   const [addFilesToRepository] = useAddFilesToRepository()
-  const [, setInputs] = useStepInputValues(step.id)
+  const [, setInputs] = useStepInputValues(step.stepId)
 
   const handleFilesAdded = (newFiles: File[]) => setFiles(files.concat(newFiles))
   const handleUploadFiles = () => {
@@ -43,7 +43,7 @@ const DataUpload = ({ step }: Props): JSX.Element => {
   }
 
   return (
-    <div key={step.id}>
+    <div key={step.stepId}>
       <Dropzone onFilesDropped={handleFilesAdded} />
       <em>Files to be uploaded:</em>
       <ul>

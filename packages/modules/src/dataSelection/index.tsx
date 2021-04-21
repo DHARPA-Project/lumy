@@ -37,12 +37,12 @@ type Props = ModuleProps<InputValues, OutputValues>
 const DataSelection = ({ step }: Props): JSX.Element => {
   const [repositoryItemsFilter, setRepositoryItemsFilter] = React.useState<ViewFilter>({ pageSize: 5 })
   const [selectedItemsUris = [], setSelectedItemsUris] = useStepInputValue<string[]>(
-    step.id,
+    step.stepId,
     'selectedItemsUris'
   )
-  const [metadataFields = [], setMetadataFields] = useStepInputValue<string[]>(step.id, 'metadataFields')
+  const [metadataFields = [], setMetadataFields] = useStepInputValue<string[]>(step.stepId, 'metadataFields')
   const [repositoryItemsBatch, tableStats] = useStepInputValueView(
-    step.id,
+    step.stepId,
     'repositoryItems',
     repositoryItemsFilter,
     'repositoryItemsTableView'
@@ -54,7 +54,7 @@ const DataSelection = ({ step }: Props): JSX.Element => {
   }
 
   return (
-    <div key={step.id}>
+    <div key={step.stepId}>
       <h3>Choose items for the corpus:</h3>
       {repositoryItemsBatch == null || tableStats == null ? (
         ''

@@ -1,5 +1,6 @@
 import React from 'react'
 import { ModuleProps, useStepInputValues, withMockProcessor } from '@dharpa-vre/client-core'
+import { getStepsConnections } from '@dharpa-vre/client-core/src/common/utils/workflow'
 
 interface InputValues {
   operator?: string
@@ -21,9 +22,8 @@ const SupportedFunctions = {
   pow: 'Power'
 }
 
-const TwoArgsMathFunction = ({ step }: Props): JSX.Element => {
-  const { inputs } = step
-  const [inputValues, setInputValues] = useStepInputValues<InputValues>(step.id)
+const TwoArgsMathFunction = ({ step, inputConnections }: Props): JSX.Element => {
+  const [inputValues, setInputValues] = useStepInputValues<InputValues>(step.stepId)
   const [a, setA] = React.useState<string>('')
   const [b, setB] = React.useState<string>('')
   const [operator, setOperator] = React.useState<string>('add')
@@ -46,7 +46,8 @@ const TwoArgsMathFunction = ({ step }: Props): JSX.Element => {
     setInputValues(updatedValues)
   }, [a, b, operator])
 
-  const isConnected = (input: keyof InputValues): boolean => inputs?.[input]?.connection != null
+  const isConnected = (inputId: keyof InputValues): boolean =>
+    getStepsConnections(inputConnections, inputId).length > 0
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>

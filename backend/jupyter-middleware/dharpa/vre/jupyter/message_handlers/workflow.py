@@ -1,5 +1,5 @@
 import logging
-
+from typing import cast, Dict, Any
 from dharpa.vre.jupyter.base import MessageHandler
 from dharpa.vre.types import MsgWorkflowUpdated
 
@@ -13,5 +13,5 @@ class WorkflowMessageHandler(MessageHandler):
         Return current workflow.
         '''
         self.publisher.publish(MsgWorkflowUpdated(
-            self._context.current_workflow
+            cast(Dict[str, Any], self._context.current_workflow)
         ))

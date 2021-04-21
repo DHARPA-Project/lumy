@@ -43,14 +43,14 @@ class DataUploadModule(KiaraModule):
             "filenames": ValueSchema(
                 type=ValueType.any, doc="A list of files."
             ),
-            "metadata_sets": ValueSchema(
+            "metadataSets": ValueSchema(
                 type=ValueType.any, doc="A list of metadata."
             ),
         }
 
     def create_output_schema(self) -> Mapping[str, ValueSchema]:
         return {
-            "repository_items": ValueSchema(
+            "repositoryItems": ValueSchema(
                 type=ValueType.any,
                 doc="Repository items.",
             )

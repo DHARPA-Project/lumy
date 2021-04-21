@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { useStepInputValues, WorkflowStep } from '@dharpa-vre/client-core'
+import { useStepInputValues, StepDesc } from '@dharpa-vre/client-core'
 
 export interface WorkflowModulePanelProps {
-  step: WorkflowStep
+  step: StepDesc['step']
 }
 
 type DummyInputs = { [parameterId: string]: unknown }
@@ -24,7 +24,7 @@ const fromText = (v: string) => {
 }
 
 export const WorkflowModulePanel = ({ step }: WorkflowModulePanelProps): JSX.Element => {
-  const [parameters, updateParameters] = useStepInputValues<DummyInputs>(step.id)
+  const [parameters, updateParameters] = useStepInputValues<DummyInputs>(step.stepId)
   const [changedParametersText, setChangedParametersText] = useState<string>(toText(parameters))
   const [editingError, setEditingError] = useState<string>()
 
@@ -44,7 +44,7 @@ export const WorkflowModulePanel = ({ step }: WorkflowModulePanelProps): JSX.Ele
   return (
     <>
       <h3>
-        Parameters for module &quot;{step.moduleId}&quot; ({step.id}):
+        Parameters for module &quot;{step.moduleType}&quot; ({step.stepId}):
       </h3>
       <textarea
         rows={5}

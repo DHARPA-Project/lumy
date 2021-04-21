@@ -1,1 +1,1 @@
-from . import mock
+from . import mock  # noqa

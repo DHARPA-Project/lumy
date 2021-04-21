@@ -39,18 +39,18 @@ type Props = ModuleProps<InputValues, OutputValues>
 
 const NetworkAnalysisDataMapping = ({ step }: Props): JSX.Element => {
   const [corpusPage] = useStepInputValueView<CorpusStructure>(
-    step.id,
+    step.stepId,
     'corpus',
     { pageSize: DefaultPreviewPageSize },
     'corpusPageView'
   )
   const [nodesMappingTable, setNodesMappingTable] = useStepInputValue<MappingTable>(
-    step.id,
+    step.stepId,
     'nodesMappingTable',
     true
   )
   const [edgesMappingTable, setEdgesMappingTable] = useStepInputValue<MappingTable>(
-    step.id,
+    step.stepId,
     'edgesMappingTable',
     true
   )

@@ -18,7 +18,7 @@
       "module_type": "networkAnalysisDataMapping",
       "step_id": "m2",
       "input_links": {
-        "corpus": "m1.corpus"
+        "corpus": "m1.selectedItems"
       }
     },
     {

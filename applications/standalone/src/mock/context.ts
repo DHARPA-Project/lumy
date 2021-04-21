@@ -5,7 +5,6 @@ import {
   IBackEndContext,
   Target,
   MessageEnvelope,
-  Workflow,
   ModuleViewProvider,
   Messages,
   ME,
@@ -18,9 +17,10 @@ import {
   serialize,
   deserializeValue,
   DataValueType,
-  WorkflowStructure,
   DataProcessorResult,
-  TabularDataFilter
+  TabularDataFilter,
+  PipelineState,
+  workflowUtils
 } from '@dharpa-vre/client-core'
 import { viewProvider } from '@dharpa-vre/modules'
 
@@ -30,14 +30,14 @@ const adapter = <T>(decoder: IDecode<T>, handler: (msg: T) => void) => {
 
 class IOValuesStore {
   private _store: Storage
-  private _workflowStructure: WorkflowStructure
+  private _workflowStructure: PipelineState
   private _storeKey: string
   private _values: Record<string, unknown>
   private _outputValues: Record<string, unknown>
 
   private _keySeparator = '♨️'
 
-  constructor(workflowStructure: WorkflowStructure, storeKey = '__dharpa_mock_input_values') {
+  constructor(workflowStructure: PipelineState, storeKey = '__dharpa_mock_input_values') {
     this._store = window.localStorage
     this._workflowStructure = workflowStructure
     this._storeKey = storeKey
@@ -89,18 +89,19 @@ class IOValuesStore {
   }
 
   private getCorrespondingInput(stepId: string, outputId: string): [string, string] {
-    const stepWithOutput = this._workflowStructure.steps.find(step => step.id === stepId)
-    if (stepWithOutput == null) return [undefined, undefined]
+    const connections = workflowUtils.getConnectedInputs(this._workflowStructure, stepId, outputId)
 
-    const descriptor = stepWithOutput.outputs[outputId]
-    return [descriptor?.connection?.stepId, descriptor?.connection?.ioId]
+    if (connections.length === 0) return [undefined, undefined]
+    // NOTE: even though more than one input can be connected to an output,
+    // for the mock context we just pick the first one.
+    return connections[0]
   }
 
   private getDefaultValue<T = unknown>(stepId: string, inputId: string): T | undefined {
-    const step = this._workflowStructure.steps.find(step => step.id === stepId)
+    const stepInput = this._workflowStructure.stepInputs[stepId]
 
-    const descriptor = step.inputs[inputId]
-    return (descriptor?.defaultValue as unknown) as T
+    const defaultValue = stepInput?.values?.[inputId]?.valueSchema?.default
+    return (defaultValue as unknown) as T
   }
 
   private getValue<T = unknown>(stepId: string, ioId: string, isInput: boolean): T | undefined {
@@ -121,8 +122,8 @@ class IOValuesStore {
   }
 
   getInputValues(stepId: string, inputIds?: string[]): { [inputId: string]: unknown } {
-    const step = this._workflowStructure.steps.find(step => step.id === stepId)
-    const allInputIds = Object.keys(step?.inputs ?? {})
+    const stepDesc = this._workflowStructure.structure.steps[stepId]
+    const allInputIds = Object.keys(stepDesc?.inputConnections ?? {})
     const actualInputIds = inputIds ?? allInputIds
     return actualInputIds.reduce((acc, inputId) => {
       const value = this.getInputValue(stepId, inputId)
@@ -131,8 +132,8 @@ class IOValuesStore {
   }
 
   getOutputValues(stepId: string, outputIds?: string[]): { [outputId: string]: unknown } {
-    const step = this._workflowStructure.steps.find(step => step.id === stepId)
-    const allOutputIds = Object.keys(step?.outputs ?? {})
+    const stepDesc = this._workflowStructure.structure.steps[stepId]
+    const allOutputIds = Object.keys(stepDesc?.outputConnections ?? {})
     const actualOutputIds = outputIds ?? allOutputIds
 
     return actualOutputIds.reduce((acc, outputId) => {
@@ -162,7 +163,7 @@ class IOValuesStore {
 
 export interface MockContextParameters {
   processData?: DataProcessor
-  currentWorkflow: Workflow
+  currentWorkflow: PipelineState
   startupDelayMs?: number
 }
 
@@ -188,7 +189,7 @@ export class MockContext implements IBackEndContext {
   private _isReady = false
   private _statusChangedSignal = new Signal<MockContext, boolean>(this)
 
-  private _currentWorkflow: Workflow
+  private _currentWorkflow: PipelineState
 
   private _signals: Record<Target, Signal<MockContext, ME<unknown>>>
   private _callbacks = new WeakMap()
@@ -200,7 +201,7 @@ export class MockContext implements IBackEndContext {
     this._processData = parameters?.processData ?? mockDataProcessorFactory(viewProvider)
     this._currentWorkflow = parameters?.currentWorkflow
 
-    this._store = new IOValuesStore(this._currentWorkflow.structure)
+    this._store = new IOValuesStore(this._currentWorkflow)
 
     this._signals = {
       [Target.Activity]: new Signal<MockContext, ME<unknown>>(this),
@@ -237,8 +238,8 @@ export class MockContext implements IBackEndContext {
   }
 
   private _getModuleIdForStep(stepId: string): string {
-    const step = this._currentWorkflow.structure.steps.find(step => step.id === stepId)
-    return step?.moduleId
+    const stepDesc = this._currentWorkflow.structure.steps[stepId]
+    return stepDesc?.step?.moduleType
   }
 
   private _handleWorkflow(_: MockContext, msg: ME<unknown>) {
@@ -336,8 +337,8 @@ export class MockContext implements IBackEndContext {
   }
 
   private async _processAllWorkflow(): Promise<void> {
-    for (const step of this._currentWorkflow.structure.steps) {
-      await this._processStepData(step.id)
+    for (const stepId in this._currentWorkflow.structure.steps) {
+      await this._processStepData(stepId)
     }
   }
 
@@ -402,10 +403,14 @@ export class MockContext implements IBackEndContext {
   }
 
   private updateInputValuesForAllSteps(): void {
-    this._currentWorkflow?.structure?.steps?.forEach(step => this.updateInputValuesForStep(step.id))
+    Object.keys(this._currentWorkflow.structure.steps).forEach(stepId =>
+      this.updateInputValuesForStep(stepId)
+    )
   }
   private updateOutputValuesForAllSteps(): void {
-    this._currentWorkflow?.structure?.steps?.forEach(step => this.updateOutputValuesForStep(step.id))
+    Object.keys(this._currentWorkflow.structure.steps).forEach(stepId =>
+      this.updateOutputValuesForStep(stepId)
+    )
   }
 
   sendMessage<T, U = void>(target: Target, msg: MessageEnvelope<T>): Promise<U> {

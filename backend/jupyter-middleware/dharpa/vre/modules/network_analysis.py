@@ -53,6 +53,10 @@ class NetworkAnalysisDataVisModule(KiaraModule):
             "graphData": ValueSchema(
                 type=ValueType.any,
                 doc="Nodes table.",
+            ),
+            "shortestPath": ValueSchema(
+                type=ValueType.any,
+                doc="Shortest path array.",
             )
         }
 

@@ -9,7 +9,7 @@ interface InputValues {
 type Props = ModuleProps<InputValues, unknown>
 
 const SimplePlot = ({ step }: Props): JSX.Element => {
-  const [inputValues] = useStepInputValues<InputValues>(step.id)
+  const [inputValues] = useStepInputValues<InputValues>(step.stepId)
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
