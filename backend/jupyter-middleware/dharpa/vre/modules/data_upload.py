@@ -1,8 +1,10 @@
 from dataclasses import dataclass
 from random import random
-from typing import List
+from typing import List, Mapping
 
 import pyarrow as pa
+from kiara.data.values import ValueSchema, ValueType
+from kiara.module import KiaraModule, StepInputs, StepOutputs
 
 from .registry import dharpa_module
 
@@ -32,3 +34,27 @@ class Outputs:
 @dharpa_module('dataUpload')
 def data_upload_process(inputs: Inputs, outputs: Outputs) -> None:
     outputs.repository_items = repository_items
+
+
+class DataUploadModule(KiaraModule):
+
+    def create_input_schema(self) -> Mapping[str, ValueSchema]:
+        return {
+            "filenames": ValueSchema(
+                type=ValueType.any, doc="A list of files."
+            ),
+            "metadata_sets": ValueSchema(
+                type=ValueType.any, doc="A list of metadata."
+            ),
+        }
+
+    def create_output_schema(self) -> Mapping[str, ValueSchema]:
+        return {
+            "repository_items": ValueSchema(
+                type=ValueType.any,
+                doc="Repository items.",
+            )
+        }
+
+    def process(self, inputs: StepInputs, outputs: StepOutputs) -> None:
+        outputs.repository_items = repository_items

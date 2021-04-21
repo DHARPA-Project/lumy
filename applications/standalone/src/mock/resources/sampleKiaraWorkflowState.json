@@ -1,0 +1,962 @@
+{
+  "$schema": "https://dharpa.org/kiara/development/entities/modules/PipelineState.json",
+  "structure": {
+    "pipeline_id": "mockWorkflow_0",
+    "steps": {
+      "m0": {
+        "step": {
+          "step_id": "m0",
+          "parent_id": "mockWorkflow_0",
+          "module_type": "dataUpload",
+          "module_config": {},
+          "processing_stage": 1,
+          "input_links": {}
+        },
+        "processing_stage": 1,
+        "input_connections": {
+          "filenames": [
+            "__pipeline__.m0__filenames"
+          ],
+          "metadata_sets": [
+            "__pipeline__.m0__metadata_sets"
+          ]
+        },
+        "output_connections": {
+          "repository_items": [
+            "__pipeline__.m0__repository_items"
+          ]
+        }
+      },
+      "m1": {
+        "step": {
+          "step_id": "m1",
+          "parent_id": "mockWorkflow_0",
+          "module_type": "dataSelection",
+          "module_config": {},
+          "processing_stage": 1,
+          "input_links": {
+            "repositoryItems": [
+              {
+                "step_id": "m0",
+                "value_name": "repositoryItems",
+                "sub_value": null
+              }
+            ]
+          }
+        },
+        "processing_stage": 1,
+        "input_connections": {
+          "repository_items": [
+            "__pipeline__.m1__repository_items"
+          ],
+          "selected_items_uris": [
+            "__pipeline__.m1__selected_items_uris"
+          ],
+          "metadata_fields": [
+            "__pipeline__.m1__metadata_fields"
+          ]
+        },
+        "output_connections": {
+          "corpus": [
+            "m2.corpus",
+            "__pipeline__.m1__corpus"
+          ]
+        }
+      },
+      "m2": {
+        "step": {
+          "step_id": "m2",
+          "parent_id": "mockWorkflow_0",
+          "module_type": "networkAnalysisDataMapping",
+          "module_config": {},
+          "processing_stage": 2,
+          "input_links": {
+            "corpus": [
+              {
+                "step_id": "m1",
+                "value_name": "corpus",
+                "sub_value": null
+              }
+            ]
+          }
+        },
+        "processing_stage": 2,
+        "input_connections": {
+          "corpus": [
+            "m1.corpus"
+          ],
+          "nodesMappingTable": [
+            "__pipeline__.m2__nodesMappingTable"
+          ],
+          "edgesMappingTable": [
+            "__pipeline__.m2__edgesMappingTable"
+          ]
+        },
+        "output_connections": {
+          "nodes": [
+            "m3.nodes",
+            "__pipeline__.m2__nodes"
+          ],
+          "edges": [
+            "m3.edges",
+            "__pipeline__.m2__edges"
+          ]
+        }
+      },
+      "m3": {
+        "step": {
+          "step_id": "m3",
+          "parent_id": "mockWorkflow_0",
+          "module_type": "networkAnalysisDataVis",
+          "module_config": {},
+          "processing_stage": 3,
+          "input_links": {
+            "nodes": [
+              {
+                "step_id": "m2",
+                "value_name": "nodes",
+                "sub_value": null
+              }
+            ],
+            "edges": [
+              {
+                "step_id": "m2",
+                "value_name": "edges",
+                "sub_value": null
+              }
+            ]
+          }
+        },
+        "processing_stage": 3,
+        "input_connections": {
+          "nodes": [
+            "m2.nodes"
+          ],
+          "edges": [
+            "m2.edges"
+          ]
+        },
+        "output_connections": {
+          "graphData": [
+            "__pipeline__.m3__graphData"
+          ]
+        }
+      },
+      "m4": {
+        "step": {
+          "step_id": "m4",
+          "parent_id": "mockWorkflow_0",
+          "module_type": "twoArgsMathFunction",
+          "module_config": {},
+          "processing_stage": 1,
+          "input_links": {}
+        },
+        "processing_stage": 1,
+        "input_connections": {
+          "a": [
+            "__pipeline__.m4__a"
+          ],
+          "b": [
+            "__pipeline__.m4__b"
+          ],
+          "operator": [
+            "__pipeline__.m4__operator"
+          ]
+        },
+        "output_connections": {
+          "c": [
+            "m5.a",
+            "__pipeline__.m4__c"
+          ]
+        }
+      },
+      "m5": {
+        "step": {
+          "step_id": "m5",
+          "parent_id": "mockWorkflow_0",
+          "module_type": "twoArgsMathFunction",
+          "module_config": {},
+          "processing_stage": 2,
+          "input_links": {
+            "a": [
+              {
+                "step_id": "m4",
+                "value_name": "c",
+                "sub_value": null
+              }
+            ]
+          }
+        },
+        "processing_stage": 2,
+        "input_connections": {
+          "a": [
+            "m4.c"
+          ],
+          "b": [
+            "__pipeline__.m5__b"
+          ],
+          "operator": [
+            "__pipeline__.m5__operator"
+          ]
+        },
+        "output_connections": {
+          "c": [
+            "__pipeline__.m5__c"
+          ]
+        }
+      }
+    },
+    "processing_stages": [
+      [
+        "m0",
+        "m1",
+        "m4"
+      ],
+      [
+        "m2",
+        "m5"
+      ],
+      [
+        "m3"
+      ]
+    ],
+    "pipeline_input_connections": {
+      "m0__filenames": [
+        "m0.filenames"
+      ],
+      "m0__metadata_sets": [
+        "m0.metadata_sets"
+      ],
+      "m1__repository_items": [
+        "m1.repository_items"
+      ],
+      "m1__selected_items_uris": [
+        "m1.selected_items_uris"
+      ],
+      "m1__metadata_fields": [
+        "m1.metadata_fields"
+      ],
+      "m2__nodesMappingTable": [
+        "m2.nodesMappingTable"
+      ],
+      "m2__edgesMappingTable": [
+        "m2.edgesMappingTable"
+      ],
+      "m4__a": [
+        "m4.a"
+      ],
+      "m4__b": [
+        "m4.b"
+      ],
+      "m4__operator": [
+        "m4.operator"
+      ],
+      "m5__b": [
+        "m5.b"
+      ],
+      "m5__operator": [
+        "m5.operator"
+      ]
+    },
+    "pipeline_output_connections": {
+      "m0__repository_items": "m0.repository_items",
+      "m1__corpus": "m1.corpus",
+      "m2__nodes": "m2.nodes",
+      "m2__edges": "m2.edges",
+      "m3__graphData": "m3.graphData",
+      "m4__c": "m4.c",
+      "m5__c": "m5.c"
+    }
+  },
+  "pipeline_inputs": {
+    "values": {
+      "m0__filenames": {
+        "id": "90e7906c-1d25-4b15-8c73-1eb7509f7450",
+        "is_valid": false,
+        "value_schema": {
+          "type": "any",
+          "doc": "A list of files.",
+          "default": null,
+          "sub_schema": null
+        },
+        "is_constant": false,
+        "origin": "pipeline_input:mockWorkflow_0.filenames",
+        "last_update": "2021-04-20T16:44:47.208334",
+        "is_streaming": false,
+        "metadata": {}
+      },
+      "m0__metadata_sets": {
+        "id": "20dc99d0-43c3-4cbf-b5ef-2e969a581d8c",
+        "is_valid": false,
+        "value_schema": {
+          "type": "any",
+          "doc": "A list of metadata.",
+          "default": null,
+          "sub_schema": null
+        },
+        "is_constant": false,
+        "origin": "pipeline_input:mockWorkflow_0.metadata_sets",
+        "last_update": "2021-04-20T16:44:47.208477",
+        "is_streaming": false,
+        "metadata": {}
+      },
+      "m1__repository_items": {
+        "id": "0fa6ad3a-ecfc-44b3-bde9-07a476b46d68",
+        "is_valid": false,
+        "value_schema": {
+          "type": "any",
+          "doc": "A list of repository items.",
+          "default": null,
+          "sub_schema": null
+        },
+        "is_constant": false,
+        "origin": "pipeline_input:mockWorkflow_0.repository_items",
+        "last_update": "2021-04-20T16:44:47.208601",
+        "is_streaming": false,
+        "metadata": {}
+      },
+      "m1__selected_items_uris": {
+        "id": "3a0494bb-5d0a-464d-9315-ae5bafac9e33",
+        "is_valid": false,
+        "value_schema": {
+          "type": "any",
+          "doc": "URIs of selected items.",
+          "default": null,
+          "sub_schema": null
+        },
+        "is_constant": false,
+        "origin": "pipeline_input:mockWorkflow_0.selected_items_uris",
+        "last_update": "2021-04-20T16:44:47.208717",
+        "is_streaming": false,
+        "metadata": {}
+      },
+      "m1__metadata_fields": {
+        "id": "638a6f7b-1d2f-4529-85b8-13b7838f4245",
+        "is_valid": false,
+        "value_schema": {
+          "type": "any",
+          "doc": "Metadata field.",
+          "default": null,
+          "sub_schema": null
+        },
+        "is_constant": false,
+        "origin": "pipeline_input:mockWorkflow_0.metadata_fields",
+        "last_update": "2021-04-20T16:44:47.208837",
+        "is_streaming": false,
+        "metadata": {}
+      },
+      "m2__nodesMappingTable": {
+        "id": "9c23ed10-0fc5-4069-a57a-68dec6cfa103",
+        "is_valid": false,
+        "value_schema": {
+          "type": "any",
+          "doc": "Nodes mapping table.",
+          "default": null,
+          "sub_schema": null
+        },
+        "is_constant": false,
+        "origin": "pipeline_input:mockWorkflow_0.nodesMappingTable",
+        "last_update": "2021-04-20T16:44:47.209037",
+        "is_streaming": false,
+        "metadata": {}
+      },
+      "m2__edgesMappingTable": {
+        "id": "04a60a15-afde-4f38-a2a8-c8438427c1dd",
+        "is_valid": false,
+        "value_schema": {
+          "type": "any",
+          "doc": "Edges mapping table.",
+          "default": null,
+          "sub_schema": null
+        },
+        "is_constant": false,
+        "origin": "pipeline_input:mockWorkflow_0.edgesMappingTable",
+        "last_update": "2021-04-20T16:44:47.209155",
+        "is_streaming": false,
+        "metadata": {}
+      },
+      "m4__a": {
+        "id": "89ca1c44-67bb-493c-8605-0d5b2ba1e0d0",
+        "is_valid": false,
+        "value_schema": {
+          "type": "any",
+          "doc": "a.",
+          "default": null,
+          "sub_schema": null
+        },
+        "is_constant": false,
+        "origin": "pipeline_input:mockWorkflow_0.a",
+        "last_update": "2021-04-20T16:44:47.209413",
+        "is_streaming": false,
+        "metadata": {}
+      },
+      "m4__b": {
+        "id": "49b51863-2a1d-4961-a21f-2a3a0d0c68c0",
+        "is_valid": false,
+        "value_schema": {
+          "type": "any",
+          "doc": "b.",
+          "default": null,
+          "sub_schema": null
+        },
+        "is_constant": false,
+        "origin": "pipeline_input:mockWorkflow_0.b",
+        "last_update": "2021-04-20T16:44:47.209534",
+        "is_streaming": false,
+        "metadata": {}
+      },
+      "m4__operator": {
+        "id": "795a4b54-16bc-4d70-9c2a-dba89c975255",
+        "is_valid": false,
+        "value_schema": {
+          "type": "any",
+          "doc": "operator.",
+          "default": null,
+          "sub_schema": null
+        },
+        "is_constant": false,
+        "origin": "pipeline_input:mockWorkflow_0.operator",
+        "last_update": "2021-04-20T16:44:47.209649",
+        "is_streaming": false,
+        "metadata": {}
+      },
+      "m5__b": {
+        "id": "a9a8edf4-88d4-40f7-9b1f-1cb4e13afd8b",
+        "is_valid": false,
+        "value_schema": {
+          "type": "any",
+          "doc": "b.",
+          "default": null,
+          "sub_schema": null
+        },
+        "is_constant": false,
+        "origin": "pipeline_input:mockWorkflow_0.b",
+        "last_update": "2021-04-20T16:44:47.209843",
+        "is_streaming": false,
+        "metadata": {}
+      },
+      "m5__operator": {
+        "id": "c3afde14-8e64-4ca5-b4b1-9890f9620558",
+        "is_valid": false,
+        "value_schema": {
+          "type": "any",
+          "doc": "operator.",
+          "default": null,
+          "sub_schema": null
+        },
+        "is_constant": false,
+        "origin": "pipeline_input:mockWorkflow_0.operator",
+        "last_update": "2021-04-20T16:44:47.209970",
+        "is_streaming": false,
+        "metadata": {}
+      }
+    }
+  },
+  "pipeline_outputs": {
+    "values": {
+      "m0__repository_items": {
+        "id": "10566b46-5100-428d-ad74-dc0edc03a318",
+        "is_valid": false,
+        "value_schema": {
+          "type": "any",
+          "doc": "-- linked value --",
+          "default": null,
+          "sub_schema": null
+        },
+        "is_constant": false,
+        "origin": null,
+        "last_update": "2021-04-20T16:44:47.207490",
+        "is_streaming": false,
+        "metadata": {}
+      },
+      "m1__corpus": {
+        "id": "8453429d-dabe-4d8b-8be4-29ad986a4098",
+        "is_valid": false,
+        "value_schema": {
+          "type": "any",
+          "doc": "-- linked value --",
+          "default": null,
+          "sub_schema": null
+        },
+        "is_constant": false,
+        "origin": null,
+        "last_update": "2021-04-20T16:44:47.207639",
+        "is_streaming": false,
+        "metadata": {}
+      },
+      "m2__nodes": {
+        "id": "de59be2d-8284-4353-bd20-e2cd07960113",
+        "is_valid": false,
+        "value_schema": {
+          "type": "any",
+          "doc": "-- linked value --",
+          "default": null,
+          "sub_schema": null
+        },
+        "is_constant": false,
+        "origin": null,
+        "last_update": "2021-04-20T16:44:47.207763",
+        "is_streaming": false,
+        "metadata": {}
+      },
+      "m2__edges": {
+        "id": "ebe737a8-10a5-4a8c-9990-7e5c172fd3e1",
+        "is_valid": false,
+        "value_schema": {
+          "type": "any",
+          "doc": "-- linked value --",
+          "default": null,
+          "sub_schema": null
+        },
+        "is_constant": false,
+        "origin": null,
+        "last_update": "2021-04-20T16:44:47.207888",
+        "is_streaming": false,
+        "metadata": {}
+      },
+      "m3__graphData": {
+        "id": "96db4263-a9c8-4843-ba5b-12ec3d1d35a8",
+        "is_valid": false,
+        "value_schema": {
+          "type": "any",
+          "doc": "-- linked value --",
+          "default": null,
+          "sub_schema": null
+        },
+        "is_constant": false,
+        "origin": null,
+        "last_update": "2021-04-20T16:44:47.208013",
+        "is_streaming": false,
+        "metadata": {}
+      },
+      "m4__c": {
+        "id": "b0882575-cf0c-42a6-89b6-92ad82f35b8a",
+        "is_valid": false,
+        "value_schema": {
+          "type": "any",
+          "doc": "-- linked value --",
+          "default": null,
+          "sub_schema": null
+        },
+        "is_constant": false,
+        "origin": null,
+        "last_update": "2021-04-20T16:44:47.208134",
+        "is_streaming": false,
+        "metadata": {}
+      },
+      "m5__c": {
+        "id": "8e591a9f-beab-4958-87fe-fb424e5209f8",
+        "is_valid": false,
+        "value_schema": {
+          "type": "any",
+          "doc": "-- linked value --",
+          "default": null,
+          "sub_schema": null
+        },
+        "is_constant": false,
+        "origin": null,
+        "last_update": "2021-04-20T16:44:47.208259",
+        "is_streaming": false,
+        "metadata": {}
+      }
+    }
+  },
+  "step_inputs": {
+    "m0": {
+      "values": {
+        "filenames": {
+          "id": "e718baea-840f-41bc-b0ef-928e7b414375",
+          "is_valid": false,
+          "value_schema": {
+            "type": "any",
+            "doc": "-- linked value --",
+            "default": null,
+            "sub_schema": null
+          },
+          "is_constant": false,
+          "origin": "step_input:mockWorkflow_0.m0.filenames",
+          "last_update": "2021-04-20T16:44:47.208400",
+          "is_streaming": false,
+          "metadata": {}
+        },
+        "metadata_sets": {
+          "id": "4d5485d1-6421-40af-aa5f-a962319cb1d5",
+          "is_valid": false,
+          "value_schema": {
+            "type": "any",
+            "doc": "-- linked value --",
+            "default": null,
+            "sub_schema": null
+          },
+          "is_constant": false,
+          "origin": "step_input:mockWorkflow_0.m0.metadata_sets",
+          "last_update": "2021-04-20T16:44:47.208539",
+          "is_streaming": false,
+          "metadata": {}
+        }
+      }
+    },
+    "m1": {
+      "values": {
+        "repository_items": {
+          "id": "8493c75f-3f6d-43b9-940d-487bac0ae262",
+          "is_valid": false,
+          "value_schema": {
+            "type": "any",
+            "doc": "-- linked value --",
+            "default": null,
+            "sub_schema": null
+          },
+          "is_constant": false,
+          "origin": "step_input:mockWorkflow_0.m1.repository_items",
+          "last_update": "2021-04-20T16:44:47.208659",
+          "is_streaming": false,
+          "metadata": {}
+        },
+        "selected_items_uris": {
+          "id": "ce1e019b-3ab7-407f-87f0-d73ecce9963c",
+          "is_valid": false,
+          "value_schema": {
+            "type": "any",
+            "doc": "-- linked value --",
+            "default": null,
+            "sub_schema": null
+          },
+          "is_constant": false,
+          "origin": "step_input:mockWorkflow_0.m1.selected_items_uris",
+          "last_update": "2021-04-20T16:44:47.208775",
+          "is_streaming": false,
+          "metadata": {}
+        },
+        "metadata_fields": {
+          "id": "b2037b7a-8026-4313-aad4-ab0bd345cf9c",
+          "is_valid": false,
+          "value_schema": {
+            "type": "any",
+            "doc": "-- linked value --",
+            "default": null,
+            "sub_schema": null
+          },
+          "is_constant": false,
+          "origin": "step_input:mockWorkflow_0.m1.metadata_fields",
+          "last_update": "2021-04-20T16:44:47.208902",
+          "is_streaming": false,
+          "metadata": {}
+        }
+      }
+    },
+    "m2": {
+      "values": {
+        "corpus": {
+          "id": "c6e9476d-2225-4196-b5fa-16440d3330cc",
+          "is_valid": false,
+          "value_schema": {
+            "type": "any",
+            "doc": "-- linked value --",
+            "default": null,
+            "sub_schema": null
+          },
+          "is_constant": false,
+          "origin": "step_input:mockWorkflow_0.m2.corpus",
+          "last_update": "2021-04-20T16:44:47.208978",
+          "is_streaming": false,
+          "metadata": {}
+        },
+        "nodesMappingTable": {
+          "id": "e4663ff3-1fea-4ede-9cd1-eaca6c266340",
+          "is_valid": false,
+          "value_schema": {
+            "type": "any",
+            "doc": "-- linked value --",
+            "default": null,
+            "sub_schema": null
+          },
+          "is_constant": false,
+          "origin": "step_input:mockWorkflow_0.m2.nodesMappingTable",
+          "last_update": "2021-04-20T16:44:47.209098",
+          "is_streaming": false,
+          "metadata": {}
+        },
+        "edgesMappingTable": {
+          "id": "9ccaf9fe-624d-48cc-a627-c985b318af70",
+          "is_valid": false,
+          "value_schema": {
+            "type": "any",
+            "doc": "-- linked value --",
+            "default": null,
+            "sub_schema": null
+          },
+          "is_constant": false,
+          "origin": "step_input:mockWorkflow_0.m2.edgesMappingTable",
+          "last_update": "2021-04-20T16:44:47.209212",
+          "is_streaming": false,
+          "metadata": {}
+        }
+      }
+    },
+    "m3": {
+      "values": {
+        "nodes": {
+          "id": "4ccff7fa-613b-4808-96e8-c029d579a223",
+          "is_valid": false,
+          "value_schema": {
+            "type": "any",
+            "doc": "-- linked value --",
+            "default": null,
+            "sub_schema": null
+          },
+          "is_constant": false,
+          "origin": "step_input:mockWorkflow_0.m3.nodes",
+          "last_update": "2021-04-20T16:44:47.209278",
+          "is_streaming": false,
+          "metadata": {}
+        },
+        "edges": {
+          "id": "58c7b6cb-0cc8-47b0-a850-1128ceed7c51",
+          "is_valid": false,
+          "value_schema": {
+            "type": "any",
+            "doc": "-- linked value --",
+            "default": null,
+            "sub_schema": null
+          },
+          "is_constant": false,
+          "origin": "step_input:mockWorkflow_0.m3.edges",
+          "last_update": "2021-04-20T16:44:47.209349",
+          "is_streaming": false,
+          "metadata": {}
+        }
+      }
+    },
+    "m4": {
+      "values": {
+        "a": {
+          "id": "d30bdb6d-483c-4922-bd66-b9c99b2706ba",
+          "is_valid": false,
+          "value_schema": {
+            "type": "any",
+            "doc": "-- linked value --",
+            "default": null,
+            "sub_schema": null
+          },
+          "is_constant": false,
+          "origin": "step_input:mockWorkflow_0.m4.a",
+          "last_update": "2021-04-20T16:44:47.209474",
+          "is_streaming": false,
+          "metadata": {}
+        },
+        "b": {
+          "id": "92550085-0453-4694-9205-89d6a9f3f2b7",
+          "is_valid": false,
+          "value_schema": {
+            "type": "any",
+            "doc": "-- linked value --",
+            "default": null,
+            "sub_schema": null
+          },
+          "is_constant": false,
+          "origin": "step_input:mockWorkflow_0.m4.b",
+          "last_update": "2021-04-20T16:44:47.209592",
+          "is_streaming": false,
+          "metadata": {}
+        },
+        "operator": {
+          "id": "b4c1b924-405d-4dc0-a3e5-ce2f35fc1459",
+          "is_valid": false,
+          "value_schema": {
+            "type": "any",
+            "doc": "-- linked value --",
+            "default": null,
+            "sub_schema": null
+          },
+          "is_constant": false,
+          "origin": "step_input:mockWorkflow_0.m4.operator",
+          "last_update": "2021-04-20T16:44:47.209709",
+          "is_streaming": false,
+          "metadata": {}
+        }
+      }
+    },
+    "m5": {
+      "values": {
+        "a": {
+          "id": "2c612fa4-34ef-429b-807c-aa71cc0b468c",
+          "is_valid": false,
+          "value_schema": {
+            "type": "any",
+            "doc": "-- linked value --",
+            "default": null,
+            "sub_schema": null
+          },
+          "is_constant": false,
+          "origin": "step_input:mockWorkflow_0.m5.a",
+          "last_update": "2021-04-20T16:44:47.209779",
+          "is_streaming": false,
+          "metadata": {}
+        },
+        "b": {
+          "id": "63960590-39e4-4355-8bb3-2cdc6e3bc927",
+          "is_valid": false,
+          "value_schema": {
+            "type": "any",
+            "doc": "-- linked value --",
+            "default": null,
+            "sub_schema": null
+          },
+          "is_constant": false,
+          "origin": "step_input:mockWorkflow_0.m5.b",
+          "last_update": "2021-04-20T16:44:47.209904",
+          "is_streaming": false,
+          "metadata": {}
+        },
+        "operator": {
+          "id": "76ccaa6f-abd1-4d5e-954c-3a1eb11c543e",
+          "is_valid": false,
+          "value_schema": {
+            "type": "any",
+            "doc": "-- linked value --",
+            "default": null,
+            "sub_schema": null
+          },
+          "is_constant": false,
+          "origin": "step_input:mockWorkflow_0.m5.operator",
+          "last_update": "2021-04-20T16:44:47.210028",
+          "is_streaming": false,
+          "metadata": {}
+        }
+      }
+    }
+  },
+  "step_outputs": {
+    "m0": {
+      "values": {
+        "repository_items": {
+          "id": "f97fc15b-9797-457e-b712-5773fe5ccbba",
+          "is_valid": false,
+          "value_schema": {
+            "type": "any",
+            "doc": "Repository items.",
+            "default": null,
+            "sub_schema": null
+          },
+          "is_constant": false,
+          "origin": "step_output:mockWorkflow_0.m0.repository_items",
+          "last_update": "2021-04-20T16:44:47.207342",
+          "is_streaming": false,
+          "metadata": {}
+        }
+      }
+    },
+    "m1": {
+      "values": {
+        "corpus": {
+          "id": "63db8888-d2ad-42f7-8a8b-745a72592040",
+          "is_valid": false,
+          "value_schema": {
+            "type": "any",
+            "doc": "Selected corpus.",
+            "default": null,
+            "sub_schema": null
+          },
+          "is_constant": false,
+          "origin": "step_output:mockWorkflow_0.m1.corpus",
+          "last_update": "2021-04-20T16:44:47.207570",
+          "is_streaming": false,
+          "metadata": {}
+        }
+      }
+    },
+    "m2": {
+      "values": {
+        "nodes": {
+          "id": "b32ed886-e091-46f2-ae28-6e4bfa35ed54",
+          "is_valid": false,
+          "value_schema": {
+            "type": "any",
+            "doc": "Nodes table.",
+            "default": null,
+            "sub_schema": null
+          },
+          "is_constant": false,
+          "origin": "step_output:mockWorkflow_0.m2.nodes",
+          "last_update": "2021-04-20T16:44:47.207699",
+          "is_streaming": false,
+          "metadata": {}
+        },
+        "edges": {
+          "id": "13752989-d424-4962-9dcb-efa3a26aef51",
+          "is_valid": false,
+          "value_schema": {
+            "type": "any",
+            "doc": "Edges table.",
+            "default": null,
+            "sub_schema": null
+          },
+          "is_constant": false,
+          "origin": "step_output:mockWorkflow_0.m2.edges",
+          "last_update": "2021-04-20T16:44:47.207823",
+          "is_streaming": false,
+          "metadata": {}
+        }
+      }
+    },
+    "m3": {
+      "values": {
+        "graphData": {
+          "id": "b1439b06-0925-4549-b2f6-6035899c8371",
+          "is_valid": false,
+          "value_schema": {
+            "type": "any",
+            "doc": "Nodes table.",
+            "default": null,
+            "sub_schema": null
+          },
+          "is_constant": false,
+          "origin": "step_output:mockWorkflow_0.m3.graphData",
+          "last_update": "2021-04-20T16:44:47.207947",
+          "is_streaming": false,
+          "metadata": {}
+        }
+      }
+    },
+    "m4": {
+      "values": {
+        "c": {
+          "id": "4c2c23db-24db-49d4-8e61-e1b4ff4b9dd8",
+          "is_valid": false,
+          "value_schema": {
+            "type": "any",
+            "doc": "c.",
+            "default": null,
+            "sub_schema": null
+          },
+          "is_constant": false,
+          "origin": "step_output:mockWorkflow_0.m4.c",
+          "last_update": "2021-04-20T16:44:47.208069",
+          "is_streaming": false,
+          "metadata": {}
+        }
+      }
+    },
+    "m5": {
+      "values": {
+        "c": {
+          "id": "74ce3cf6-f0db-45c6-a207-b4880a0fb0d8",
+          "is_valid": false,
+          "value_schema": {
+            "type": "any",
+            "doc": "c.",
+            "default": null,
+            "sub_schema": null
+          },
+          "is_constant": false,
+          "origin": "step_output:mockWorkflow_0.m5.c",
+          "last_update": "2021-04-20T16:44:47.208194",
+          "is_streaming": false,
+          "metadata": {}
+        }
+      }
+    }
+  },
+  "status": "stale"
+}

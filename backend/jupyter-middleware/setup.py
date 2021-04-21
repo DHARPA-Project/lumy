@@ -47,6 +47,19 @@ setup_args = dict(
         "Programming Language :: Python :: 3.8",
         "Framework :: Jupyter",
     ],
+    entry_points={
+        'kiara.modules': [
+            'dataUpload=dharpa.vre.modules.data_upload:DataUploadModule',
+            'dataSelection=dharpa.vre.modules.data_selection:DataSelectionModule',
+            'networkAnalysisDataMapping=dharpa.vre.modules.network_analysis:NetworkAnalysisDataMappingModule',
+            'networkAnalysisDataVis=dharpa.vre.modules.network_analysis:NetworkAnalysisDataVisModule',
+            'twoArgsMathFunction=dharpa.vre.modules.two_args_math_fn:TwoArgsMathFnModule',
+            # 'simplePlot=kiara_modules.default.dev:DummyModule',
+        ],
+        'kiara.pipelines': [
+            'mock=dharpa.vre.context:mock'
+        ]
+    }
 )
 
 if __name__ == "__main__":
