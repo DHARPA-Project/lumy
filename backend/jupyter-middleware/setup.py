@@ -32,9 +32,6 @@ setup_args = dict(
         'stringcase>=1.2.0',
         'pyyaml',
         'pyarrow==3.0.0',
-        'kiara'
-    ],
-    dependency_links=[
         'http://github.com/DHARPA-Project/kiara/tarball/master#egg=kiara'
     ],
     zip_safe=False,
