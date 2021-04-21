@@ -32,7 +32,7 @@ setup_args = dict(
         'stringcase>=1.2.0',
         'pyyaml',
         'pyarrow==3.0.0',
-        'http://github.com/DHARPA-Project/kiara/tarball/master#egg=kiara'
+        'kiara@http://github.com/DHARPA-Project/kiara/tarball/master#egg=kiara'
     ],
     zip_safe=False,
     include_package_data=True,
