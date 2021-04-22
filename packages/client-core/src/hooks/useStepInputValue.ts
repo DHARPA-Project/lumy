@@ -36,7 +36,8 @@ export const useStepInputValue = <InputType, StatsType = unknown>(
   useEffect(() => {
     const handler = handlerAdapter(Messages.ModuleIO.codec.InputValuesUpdated.decode, content => {
       if (content?.id === stepId) {
-        if (inputId in content.inputValues) {
+        const values = content.inputValues ?? {}
+        if (inputId in values) {
           const [stats, value] = deserializeValue<StatsType, InputType>(content.inputValues[inputId])
           setLastValue(value)
           setLastStats(stats)

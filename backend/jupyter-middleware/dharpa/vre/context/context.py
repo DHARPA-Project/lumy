@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, List, Optional
+from typing import TYPE_CHECKING, Dict, List, Optional, Union
+from kiara.pipeline.structure import PipelineStructureDesc
 
 from dharpa.vre.types import Workflow, State
 from dharpa.vre.types.generated import DataTabularDataFilter
@@ -29,7 +30,7 @@ class AppContext(ABC):
     _event_processing_state_changed = SimplePublisher[State]()
 
     @abstractmethod
-    def load_workflow(self, workflow_file: Path) -> None:
+    def load_workflow(self, workflow_file_or_name: Union[Path, str]) -> None:
         '''
         Load workflow and set it as the current workflow.
         A synchronous method which should raise an exception if
@@ -40,9 +41,10 @@ class AppContext(ABC):
 
     @property
     @abstractmethod
-    def current_workflow(self) -> Optional[Workflow]:
+    def current_workflow_structure(self) -> Optional[PipelineStructureDesc]:
         '''
-        Returns current workflow or `None` if no workflow has been loaded.
+        Returns current workflow structure or `None` if no
+        workflow has been loaded.
         '''
         ...
 

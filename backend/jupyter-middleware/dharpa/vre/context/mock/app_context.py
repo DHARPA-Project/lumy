@@ -2,7 +2,7 @@ import dataclasses
 import importlib.resources as pkg_resources
 from collections import defaultdict
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Union
 
 from dharpa.vre.context.context import AppContext, UpdatedIO
 from dharpa.vre.context.mock import resources
@@ -30,8 +30,11 @@ class MockAppContext(AppContext):
         with pkg_resources.path(resources, 'sample_workflow_1.yml') as path:
             self.load_workflow(path)
 
-    def load_workflow(self, workflow_file: Path) -> None:
-        with open(workflow_file, 'r') as f:
+    def load_workflow(self, workflow_file_or_name: Union[Path, str]) -> None:
+        assert isinstance(workflow_file_or_name, Path), \
+            'Only Path is supported'
+
+        with open(workflow_file_or_name, 'r') as f:
             workflow = from_yaml(Workflow, f.read())
             self._current_workflow = workflow
         self.workflow_structure_updated.publish(
@@ -40,7 +43,8 @@ class MockAppContext(AppContext):
         self._process_all_steps()
 
     @property
-    def current_workflow(self):
+    def current_workflow_structure(self):
+        # NOTE: returns old mock structure
         return self._current_workflow
 
     def _get_step(self, step_id: str) -> Optional[WorkflowStep]:
