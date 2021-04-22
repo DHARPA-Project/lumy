@@ -18,6 +18,10 @@ logger = logging.getLogger(__name__)
 class KiaraAppContext(AppContext, PipelineController):
     _current_workflow: KiaraWorkflow
 
+    def __init__(self):
+        PipelineController.__init__(self, None)
+        AppContext.__init__(self)
+
     def load_workflow(self, workflow_file_or_name: Union[Path, str]) -> None:
         '''
         AppContext

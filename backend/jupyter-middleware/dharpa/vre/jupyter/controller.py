@@ -53,8 +53,9 @@ class IpythonKernelController(TargetPublisher):
     def __init__(self):
         super().__init__()
         # self._context = MockAppContext()
-        self._context = KiaraAppContext()
-        self._context.load_workflow('mockWorkflow')
+        context = KiaraAppContext()
+        context.load_workflow('mockWorkflow')
+        self._context = context
 
         self._handlers = {
             Target.Workflow: WorkflowMessageHandler(
