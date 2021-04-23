@@ -39,13 +39,13 @@ class TwoArgsMathFnModule(KiaraModule):
     def create_input_schema(self) -> Mapping[str, ValueSchema]:
         return {
             "a": ValueSchema(
-                type=ValueType.any, doc="a."
+                type=ValueType.any, doc="a.", default=1
             ),
             "b": ValueSchema(
-                type=ValueType.any, doc="b."
+                type=ValueType.any, doc="b.", default=1
             ),
             "operator": ValueSchema(
-                type=ValueType.any, doc="operator."
+                type=ValueType.any, doc="operator.", default='add'
             )
         }
 

@@ -12,7 +12,6 @@ from dharpa.vre.types.generated import (DataTabularDataFilter,
                                         MsgModuleIOUpdateInputValues)
 from dharpa.vre.utils.codec import serialize_filtered_table, serialize
 from dharpa.vre.utils.dataclasses import to_dict
-from stringcase import camelcase, snakecase
 
 logger = logging.getLogger(__name__)
 
@@ -92,7 +91,7 @@ class ModuleIOHandler(MessageHandler):
                     self.publisher.publish(MsgModuleIOTabularInputValueUpdated(
                         view_id=view_id,
                         step_id=msg.step_id,
-                        input_id=camelcase(input_id),
+                        input_id=input_id,
                         filter=filter,
                         value=to_dict(serialize_filtered_table(
                             filtered_table, table))
@@ -126,7 +125,7 @@ class ModuleIOHandler(MessageHandler):
 
     def _handle_GetTabularInputValue(self,
                                      msg: MsgModuleIOGetTabularInputValue):
-        input_id = snakecase(msg.input_id)
+        input_id = msg.input_id
         filter = msg.filter or DEFAULT_TABULAR_FILTER
         self._tabular_views_filters.set(
             msg.step_id, input_id, msg.view_id, filter)
@@ -140,7 +139,7 @@ class ModuleIOHandler(MessageHandler):
             self.publisher.publish(MsgModuleIOTabularInputValueUpdated(
                 view_id=msg.view_id,
                 step_id=msg.step_id,
-                input_id=camelcase(input_id),
+                input_id=input_id,
                 filter=filter,
                 value=to_dict(serialize_filtered_table(filtered_table, table))
             ))
@@ -150,5 +149,5 @@ class ModuleIOHandler(MessageHandler):
         msg: MsgModuleIOUnregisterTabularInputView
     ):
         self._tabular_views_filters.remove(
-            msg.step_id, snakecase(msg.input_id), msg.view_id
+            msg.step_id, msg.input_id, msg.view_id
         )

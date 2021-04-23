@@ -33,25 +33,25 @@ class DataSelectionModule(KiaraModule):
     def create_input_schema(self) -> Mapping[str, ValueSchema]:
         return {
             "repositoryItems": ValueSchema(
-                type=ValueType.any, doc="A list of repository items."
+                type=ValueType.table, doc="A list of repository items."
             ),
             "selectedItemsUris": ValueSchema(
-                type=ValueType.any, doc="URIs of selected items."
+                type=ValueType.any, doc="URIs of selected items.", default=[]
             ),
             "metadataFields": ValueSchema(
-                type=ValueType.any, doc="Metadata field."
+                type=ValueType.any, doc="Metadata field.", default=[]
             )
         }
 
     def create_output_schema(self) -> Mapping[str, ValueSchema]:
         return {
             "selectedItems": ValueSchema(
-                type=ValueType.any,
+                type=ValueType.table,
                 doc="Selected corpus.",
             )
         }
 
     def process(self, inputs: StepInputs, outputs: StepOutputs) -> None:
-        repo = inputs.repository_items.to_pandas()
-        outputs.corpus = pa.Table.from_pandas(
-            repo[repo['uri'].isin(inputs.selected_items_uris or [])])
+        repo = inputs.repositoryItems.to_pandas()
+        outputs.selectedItems = pa.Table.from_pandas(
+            repo[repo['uri'].isin(inputs.selectedItemsUris or [])])

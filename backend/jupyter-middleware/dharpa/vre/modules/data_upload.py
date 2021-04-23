@@ -41,20 +41,20 @@ class DataUploadModule(KiaraModule):
     def create_input_schema(self) -> Mapping[str, ValueSchema]:
         return {
             "filenames": ValueSchema(
-                type=ValueType.any, doc="A list of files."
+                type=ValueType.any, doc="A list of files.", default=[]
             ),
             "metadataSets": ValueSchema(
-                type=ValueType.any, doc="A list of metadata."
+                type=ValueType.any, doc="A list of metadata.", default=[]
             ),
         }
 
     def create_output_schema(self) -> Mapping[str, ValueSchema]:
         return {
             "repositoryItems": ValueSchema(
-                type=ValueType.any,
+                type=ValueType.table,
                 doc="Repository items.",
             )
         }
 
     def process(self, inputs: StepInputs, outputs: StepOutputs) -> None:
-        outputs.repository_items = repository_items
+        outputs.repositoryItems = repository_items

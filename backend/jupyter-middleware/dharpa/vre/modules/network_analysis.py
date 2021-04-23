@@ -8,30 +8,31 @@ class NetworkAnalysisDataMappingModule(KiaraModule):
     def create_input_schema(self) -> Mapping[str, ValueSchema]:
         return {
             "corpus": ValueSchema(
-                type=ValueType.any, doc="Corpus items."
+                type=ValueType.table, doc="Corpus items."
             ),
             "nodesMappingTable": ValueSchema(
-                type=ValueType.any, doc="Nodes mapping table."
+                type=ValueType.table, doc="Nodes mapping table.", default={}
             ),
             "edgesMappingTable": ValueSchema(
-                type=ValueType.any, doc="Edges mapping table."
+                type=ValueType.table, doc="Edges mapping table.", default={}
             )
         }
 
     def create_output_schema(self) -> Mapping[str, ValueSchema]:
         return {
             "nodes": ValueSchema(
-                type=ValueType.any,
+                type=ValueType.table,
                 doc="Nodes table.",
             ),
             "edges": ValueSchema(
-                type=ValueType.any,
+                type=ValueType.table,
                 doc="Edges table.",
             )
         }
 
     def process(self, inputs: StepInputs, outputs: StepOutputs) -> None:
-        pass
+        outputs.nodes = {}
+        outputs.edges = {}
 
 
 class NetworkAnalysisDataVisModule(KiaraModule):
@@ -39,11 +40,11 @@ class NetworkAnalysisDataVisModule(KiaraModule):
     def create_input_schema(self) -> Mapping[str, ValueSchema]:
         return {
             "nodes": ValueSchema(
-                type=ValueType.any,
+                type=ValueType.table,
                 doc="Nodes table.",
             ),
             "edges": ValueSchema(
-                type=ValueType.any,
+                type=ValueType.table,
                 doc="Edges table.",
             )
         }
@@ -51,7 +52,7 @@ class NetworkAnalysisDataVisModule(KiaraModule):
     def create_output_schema(self) -> Mapping[str, ValueSchema]:
         return {
             "graphData": ValueSchema(
-                type=ValueType.any,
+                type=ValueType.table,
                 doc="Nodes table.",
             ),
             "shortestPath": ValueSchema(
@@ -61,4 +62,5 @@ class NetworkAnalysisDataVisModule(KiaraModule):
         }
 
     def process(self, inputs: StepInputs, outputs: StepOutputs) -> None:
-        pass
+        outputs.graphData = {}
+        outputs.shortestPath = []
