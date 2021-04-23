@@ -1,3 +1,4 @@
+from enum import Enum
 import json
 import logging
 import sys
@@ -28,6 +29,21 @@ from ipykernel.comm import Comm
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 logger.addHandler(logging.StreamHandler(sys.stdout))
+
+
+def preprocess_dict(d):
+    def val(v):
+        if isinstance(v, dict):
+            return preprocess_dict(v)
+        else:
+            if isinstance(v, Enum):
+                return v.value
+            return v
+
+    return {
+        k: val(v)
+        for k, v in d.items()
+    }
 
 
 class IpythonKernelController(TargetPublisher):
@@ -102,14 +118,17 @@ class IpythonKernelController(TargetPublisher):
 
     def publish_on_target(self, target: Target, msg: MessageEnvelope) -> None:
         comm = self._comms[target]
+        ready_msg = preprocess_dict(to_dict(msg))
+        msg_str = json.dumps(ready_msg)
         logger.debug(
-            f'Message published on "{target}": {json.dumps(to_dict(msg))}')
-        comm.send(to_dict(msg))
+            f'Message published on "{target}": {msg_str}')
+        comm.send(ready_msg)
 
     def _handle_message(self, target: Target, message: Dict) -> None:
         message_data: Dict = message.get('content', {}).get('data', {})
+        msg_str = json.dumps(message_data)
         logger.debug(
-            f'Message received on "{target}": {json.dumps(message_data)}')
+            f'Message received on "{target}": {msg_str}')
 
         if message_data.get('action', None) is None:
             logger.warn(

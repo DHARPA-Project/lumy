@@ -1,78 +1,57 @@
-from dataclasses import asdict
-from enum import Enum
-from typing import IO, Any, Dict, Optional, Type, TypeVar, Union
+from dataclasses import is_dataclass
+from typing import IO, Any, Dict, Optional, Type, TypeVar, Union, cast
 
 import yaml
-from dacite import from_dict as dacite_from_dict
-from stringcase import camelcase, snakecase
+from dataclasses_json import LetterCase, dataclass_json
 
 try:
     from yaml import CLoader as Loader
 except ImportError:
     from yaml import Loader
-try:
-    from collections.abc import Mapping
-except ImportError:
-    from collections import Mapping
 
 
 T = TypeVar('T')
 
 
-def enum_aware_dict_factory(data):
-    return {
-        field: value.value if isinstance(value, Enum) else value
-        for field, value in data
-    }
-
-
-def _process_keys(str_or_iter: T, fn) -> T:
-    if isinstance(str_or_iter, list):
-        return [_process_keys(k, fn) for k in str_or_iter]  # type: ignore
-    elif isinstance(str_or_iter, Mapping):
-        return {
-            fn(k): _process_keys(v, fn)  # type: ignore
-            for k, v in str_or_iter.items()
-        }
-    else:
-        return str_or_iter
-
-
-def to_snake_case(v):
-    return _process_keys(v, snakecase)
-
-
-def to_camel_case(v):
-    return _process_keys(v, camelcase)
+def is_dataclass_json(data):
+    return hasattr(data, 'to_dict')
 
 
 def from_yaml(
     data_class: Type[T],
-    yaml_content: Union[bytes, IO[bytes], str, IO[str]],
-    convert_to_snake_case: bool = True
+    yaml_content: Union[bytes, IO[bytes], str, IO[str]]
 ) -> T:
     content: Dict = yaml.load(yaml_content, Loader=Loader)
-    if convert_to_snake_case:
-        content = to_snake_case(content)
-    return dacite_from_dict(data_class, content)
+    return from_dict(data_class, content)
 
 
-def to_dict(
-    data: Any,
-    return_camel_case=True
-) -> Dict:
-    d = asdict(data, dict_factory=enum_aware_dict_factory)
-    if return_camel_case:
-        d = to_camel_case(d)
-    return d
+def __ensure_dataclass_json_instance(obj: T) -> T:
+    assert is_dataclass(obj), f'Expected {obj} to be a dataclass'
+    if isinstance(obj, type):
+        return dataclass_json(obj, letter_case=LetterCase.CAMEL)
+    else:
+        dataclass_json(obj.__class__, letter_case=LetterCase.CAMEL)
+        return obj
+
+
+def to_dict(data: Any) -> Dict:
+    if is_dataclass(data):
+        if is_dataclass_json(data):
+            return data.to_dict()
+        else:
+            return __ensure_dataclass_json_instance(data).to_dict()
+    return dict(data)
 
 
 def from_dict(
     data_class: Type[T],
     data: Optional[Dict],
-    convert_to_snake_case: bool = True
 ) -> T:
-    data_dict: Dict = data or {}
-    if convert_to_snake_case:
-        data_dict = to_snake_case(data_dict)
-    return dacite_from_dict(data_class, data_dict)
+    assert is_dataclass(
+        data_class), f'Expected type {data_class} to be a dataclass'
+
+    if not is_dataclass_json(data):
+        cls = __ensure_dataclass_json_instance(data_class)
+    else:
+        cls = data_class
+    return cast(Any, cls).from_dict(data)

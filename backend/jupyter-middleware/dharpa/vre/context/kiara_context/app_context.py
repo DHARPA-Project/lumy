@@ -128,7 +128,14 @@ class KiaraAppContext(AppContext, PipelineController):
         if not self.is_tabular_input(step_id, input_id):
             return None
 
-        return get_value_data(self.get_step_input(step_id, input_id))
+        table = get_value_data(self.get_step_input(step_id, input_id))
+        if table is None:
+            return
+
+        if filter:
+            return table.slice(filter.offset or 0, filter.page_size)
+        else:
+            return table
 
     def is_tabular_input(self, step_id: str, input_id: str) -> bool:
         '''
