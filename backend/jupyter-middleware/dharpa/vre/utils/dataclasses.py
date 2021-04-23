@@ -3,6 +3,8 @@ from typing import IO, Any, Dict, Optional, Type, TypeVar, Union, cast
 
 import yaml
 from dataclasses_json import LetterCase, dataclass_json
+from pydantic import BaseModel  # pylint: disable=no-name-in-module
+from stringcase import camelcase
 
 try:
     from yaml import CLoader as Loader
@@ -34,12 +36,32 @@ def __ensure_dataclass_json_instance(obj: T) -> T:
         return obj
 
 
+def is_pydantic(obj: Any):
+    return isinstance(obj, BaseModel)
+
+
+def pydantic_to_dict(obj: Any):
+    if not is_pydantic(obj):
+        if isinstance(obj, dict):
+            return dict({k: pydantic_to_dict(v) for k, v in obj.items()})
+        if isinstance(obj, list):
+            return [pydantic_to_dict(v) for v in obj]
+        return obj
+
+    def iter(obj):
+        for k, v in BaseModel._iter(obj, to_dict=False):
+            yield camelcase(k), pydantic_to_dict(v)
+    return dict(iter(obj))
+
+
 def to_dict(data: Any) -> Dict:
     if is_dataclass(data):
         if is_dataclass_json(data):
             return data.to_dict()
         else:
             return __ensure_dataclass_json_instance(data).to_dict()
+    elif is_pydantic(data):
+        return cast(Dict, pydantic_to_dict(data))
     return dict(data)
 
 

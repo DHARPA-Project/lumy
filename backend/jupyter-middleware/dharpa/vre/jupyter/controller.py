@@ -7,7 +7,6 @@ from uuid import uuid4
 
 from IPython import get_ipython
 from dharpa.vre.context.context import AppContext
-from dharpa.vre.context.mock.app_context import MockAppContext
 from dharpa.vre.context.kiara_context.app_context import KiaraAppContext
 
 from dharpa.vre.jupyter.base import (
