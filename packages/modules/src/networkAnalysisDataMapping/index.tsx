@@ -1,11 +1,6 @@
 import React from 'react'
 
-import {
-  ModuleProps,
-  useStepInputValue,
-  useStepInputValueView,
-  withMockProcessor
-} from '@dharpa-vre/client-core'
+import { ModuleProps, useStepInputValue, withMockProcessor } from '@dharpa-vre/client-core'
 import { Table, List, Utf8, Utf8Vector, Int32Vector } from 'apache-arrow'
 import { MappingTableStructure, toObject, fromObject } from './mappingTable'
 import { EdgesStructure, NodesStructure } from '../networkAnalysisDataVis/structure'
@@ -38,21 +33,18 @@ const DefaultPreviewPageSize = 5
 type Props = ModuleProps<InputValues, OutputValues>
 
 const NetworkAnalysisDataMapping = ({ step }: Props): JSX.Element => {
-  const [corpusPage] = useStepInputValueView<CorpusStructure>(
-    step.stepId,
-    'corpus',
-    { pageSize: DefaultPreviewPageSize },
-    'corpusPageView'
-  )
+  const [corpusPage] = useStepInputValue<CorpusTable>(step.stepId, 'corpus', {
+    pageSize: DefaultPreviewPageSize
+  })
   const [nodesMappingTable, setNodesMappingTable] = useStepInputValue<MappingTable>(
     step.stepId,
     'nodesMappingTable',
-    true
+    { fullValue: true }
   )
   const [edgesMappingTable, setEdgesMappingTable] = useStepInputValue<MappingTable>(
     step.stepId,
     'edgesMappingTable',
-    true
+    { fullValue: true }
   )
 
   const isUsedInMappingTable = (table: MappingTable, fields: string[]) => (uri: string): boolean => {

@@ -1,7 +1,8 @@
 import { useContext, useState, useEffect } from 'react'
-import { deserializeValue } from '../common/codec'
+import { deserialize } from '../common/codec'
 import { BackEndContext, handlerAdapter, Target } from '../common/context'
-import { Messages } from '../common/types'
+import { Messages, TabularDataFilter } from '../common/types'
+import { getHash } from '../common/utils/hash'
 
 /**
  * Use current value of the output. The value may be undefined if not set.
@@ -14,34 +15,51 @@ import { Messages } from '../common/types'
 export const useStepOutputValue = <OutputType, StatsType = unknown>(
   stepId: string,
   outputId: string,
-  getFullValue?: boolean
+  filter?: TabularDataFilter
 ): [OutputType, StatsType] => {
   const context = useContext(BackEndContext)
   const [lastValue, setLastValue] = useState<OutputType>()
   const [lastStats, setLastStats] = useState<StatsType>()
 
+  const getValue = () => {
+    const msg = Messages.ModuleIO.codec.GetOutputValue.encode({
+      stepId,
+      outputId,
+      filter
+    })
+    context.sendMessage(Target.ModuleIO, msg)
+  }
+
   useEffect(() => {
     const handler = handlerAdapter(Messages.ModuleIO.codec.OutputValuesUpdated.decode, content => {
-      if (content?.id === stepId) {
-        if (outputId in content.outputValues) {
-          const [stats, value] = deserializeValue<StatsType, OutputType>(content.outputValues[outputId])
-          setLastValue(value)
-          setLastStats(stats)
-        }
+      if (content.stepId === stepId && content.outputIds.includes(outputId)) {
+        getValue()
       }
     })
     context.subscribe(Target.ModuleIO, handler)
 
-    const getMsg: Messages.ModuleIO.GetOutputValues = { id: stepId, outputIds: [outputId] }
+    const getValueHandler = handlerAdapter(Messages.ModuleIO.codec.OutputValue.decode, content => {
+      if (
+        content.stepId === stepId &&
+        content.outputId === outputId &&
+        getHash(content.filter) === getHash(filter)
+      ) {
+        const [value, stats] = deserialize<OutputType, StatsType>(content.value, content.stats, content.type)
+        setLastValue(value)
+        setLastStats(stats)
+      }
+    })
 
-    if (getFullValue != null) {
-      getMsg.fullValueOutputIds = [outputId]
+    context.subscribe(Target.ModuleIO, getValueHandler)
+
+    // get value straight away
+    getValue()
+
+    return () => {
+      context.unsubscribe(Target.ModuleIO, handler)
+      context.unsubscribe(Target.ModuleIO, getValueHandler)
     }
-
-    context.sendMessage(Target.ModuleIO, Messages.ModuleIO.codec.GetOutputValues.encode(getMsg))
-
-    return () => context.unsubscribe(Target.ModuleIO, handler)
-  }, [stepId, outputId])
+  }, [stepId, outputId, getHash(filter)])
 
   return [lastValue, lastStats]
 }

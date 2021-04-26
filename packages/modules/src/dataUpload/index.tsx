@@ -3,7 +3,7 @@ import { Table, Utf8Vector, Utf8, List, Field, ListVector } from 'apache-arrow'
 import {
   ModuleProps,
   useAddFilesToRepository,
-  useStepInputValues,
+  useStepInputValue,
   withMockProcessor
 } from '@dharpa-vre/client-core'
 import { Dropzone } from './Dropzone'
@@ -29,14 +29,14 @@ const DataUpload = ({ step }: Props): JSX.Element => {
   const [files, setFiles] = React.useState<File[]>([])
   const [isUploading, setIsUploading] = React.useState<boolean>(false)
   const [addFilesToRepository] = useAddFilesToRepository()
-  const [, setInputs] = useStepInputValues(step.stepId)
+  const [, setFilenames] = useStepInputValue<string[]>(step.stepId, 'filenames')
 
   const handleFilesAdded = (newFiles: File[]) => setFiles(files.concat(newFiles))
   const handleUploadFiles = () => {
     setIsUploading(true)
     addFilesToRepository(files)
       .then(() => {
-        setInputs({ filenames: files.map(f => f.name) })
+        setFilenames(files.map(f => f.name))
         setFiles([])
       })
       .finally(() => setIsUploading(false))

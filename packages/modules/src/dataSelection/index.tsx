@@ -2,9 +2,9 @@ import React from 'react'
 import {
   ModuleProps,
   useStepInputValue,
-  useStepInputValueView,
-  ViewFilter,
-  withMockProcessor
+  TabularDataFilter,
+  withMockProcessor,
+  TableStats
 } from '@dharpa-vre/client-core'
 import { List, Table, Utf8 } from 'apache-arrow'
 import { TableView } from '../components/TableView'
@@ -35,17 +35,16 @@ interface OutputValues {
 type Props = ModuleProps<InputValues, OutputValues>
 
 const DataSelection = ({ step }: Props): JSX.Element => {
-  const [repositoryItemsFilter, setRepositoryItemsFilter] = React.useState<ViewFilter>({ pageSize: 5 })
+  const [repositoryItemsFilter, setRepositoryItemsFilter] = React.useState<TabularDataFilter>({ pageSize: 5 })
   const [selectedItemsUris = [], setSelectedItemsUris] = useStepInputValue<string[]>(
     step.stepId,
     'selectedItemsUris'
   )
   const [metadataFields = [], setMetadataFields] = useStepInputValue<string[]>(step.stepId, 'metadataFields')
-  const [repositoryItemsBatch, tableStats] = useStepInputValueView(
+  const [repositoryItemsBatch, , tableStats] = useStepInputValue<Table<CorpusStructure>, TableStats>(
     step.stepId,
     'repositoryItems',
-    repositoryItemsFilter,
-    'repositoryItemsTableView'
+    repositoryItemsFilter
   )
 
   const handleMetadataFieldSelection = (field: string, isSelected: boolean) => {

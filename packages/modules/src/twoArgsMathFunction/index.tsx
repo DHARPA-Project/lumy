@@ -1,5 +1,5 @@
 import React from 'react'
-import { ModuleProps, useStepInputValues, withMockProcessor } from '@dharpa-vre/client-core'
+import { ModuleProps, useStepInputValue, withMockProcessor } from '@dharpa-vre/client-core'
 import { getStepsConnections } from '@dharpa-vre/client-core/src/common/utils/workflow'
 
 interface InputValues {
@@ -23,28 +23,30 @@ const SupportedFunctions = {
 }
 
 const TwoArgsMathFunction = ({ step, inputConnections }: Props): JSX.Element => {
-  const [inputValues, setInputValues] = useStepInputValues<InputValues>(step.stepId)
-  const [a, setA] = React.useState<string>('')
-  const [b, setB] = React.useState<string>('')
-  const [operator, setOperator] = React.useState<string>('add')
+  const [a, setA] = useStepInputValue<number>(step.stepId, 'a')
+  const [b, setB] = useStepInputValue<number>(step.stepId, 'b')
+  const [operator = 'add', setOperator] = useStepInputValue<string>(step.stepId, 'operator')
+
+  // const [inputValues, setInputValues] = useStepInputValues<InputValues>(step.stepId)
+  const [aStr, setAStr] = React.useState<string>('')
+  const [bStr, setBStr] = React.useState<string>('')
+  // const [operator, setOperator] = React.useState<string>('add')
 
   React.useEffect(() => {
-    if (inputValues == null) return
-    if (inputValues.a != null && String(inputValues.a) !== a) setA(String(inputValues.a))
-    if (inputValues.b != null && String(inputValues.b) !== b) setB(String(inputValues.b))
-    if (inputValues.operator != null && inputValues.operator !== operator) setOperator(inputValues.operator)
-  }, [inputValues])
+    if (a != null) setAStr(String(a))
+  }, [a])
+  React.useEffect(() => {
+    if (b != null) setBStr(String(b))
+  }, [b])
 
   React.useEffect(() => {
-    if (inputValues == null) return
-    const updatedValues = { ...inputValues, operator }
-    const aValue = parseFloat(a)
-    if (!isNaN(aValue)) updatedValues.a = aValue
-    const bValue = parseFloat(b)
-    if (!isNaN(bValue)) updatedValues.b = bValue
-
-    setInputValues(updatedValues)
-  }, [a, b, operator])
+    const v = parseFloat(aStr)
+    if (!isNaN(v) && v !== a) setA(v)
+  }, [aStr])
+  React.useEffect(() => {
+    const v = parseFloat(bStr)
+    if (!isNaN(v) && v !== b) setB(v)
+  }, [bStr])
 
   const isConnected = (inputId: keyof InputValues): boolean =>
     getStepsConnections(inputConnections, inputId).length > 0
@@ -70,14 +72,24 @@ const TwoArgsMathFunction = ({ step, inputConnections }: Props): JSX.Element => 
       {/* input A */}
       <label>
         Input A:
-        <input type="number" value={a} disabled={isConnected('a')} onChange={e => setA(e.target.value)} />
+        <input
+          type="number"
+          value={aStr}
+          disabled={isConnected('a')}
+          onChange={e => setAStr(e.target.value)}
+        />
         {isConnected('a') ? <em>Already connected</em> : ''}
       </label>
 
       {/* input B */}
       <label>
         Input B:
-        <input type="number" value={b} disabled={isConnected('b')} onChange={e => setB(e.target.value)} />
+        <input
+          type="number"
+          value={bStr}
+          disabled={isConnected('b')}
+          onChange={e => setBStr(e.target.value)}
+        />
         {isConnected('b') ? <em>Already connected</em> : ''}
       </label>
     </div>

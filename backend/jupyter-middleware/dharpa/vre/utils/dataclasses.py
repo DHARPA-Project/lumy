@@ -54,7 +54,9 @@ def pydantic_to_dict(obj: Any):
     return dict(iter(obj))
 
 
-def to_dict(data: Any) -> Dict:
+def to_dict(data: Any) -> Optional[Dict]:
+    if data is None:
+        return None
     if is_dataclass(data):
         if is_dataclass_json(data):
             return data.to_dict()

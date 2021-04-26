@@ -1,5 +1,5 @@
 import React from 'react'
-import { ModuleProps, useStepInputValues } from '@dharpa-vre/client-core'
+import { ModuleProps, useStepInputValue } from '@dharpa-vre/client-core'
 
 interface InputValues {
   x?: number | number[]
@@ -9,18 +9,19 @@ interface InputValues {
 type Props = ModuleProps<InputValues, unknown>
 
 const SimplePlot = ({ step }: Props): JSX.Element => {
-  const [inputValues] = useStepInputValues<InputValues>(step.stepId)
+  const [x] = useStepInputValue<number>(step.stepId, 'x')
+  const [y] = useStepInputValue<number>(step.stepId, 'y')
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <h6>Values below will be plotted:</h6>
       <label>
         X:
-        <input type="number" value={String(inputValues?.x)} disabled={true} />
+        <input type="number" value={x == null ? '' : String(x)} disabled={true} />
       </label>
       <label>
         Y:
-        <input type="number" value={String(inputValues?.y)} disabled={true} />
+        <input type="number" value={x == null ? '' : String(y)} disabled={true} />
       </label>
     </div>
   )

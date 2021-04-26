@@ -2,19 +2,22 @@
   "$schema": "http://json-schema.org/schema",
   "type": "object",
   "title": "MsgModuleIOUpdateInputValues",
-  "description": "Update input values of a step in the current workflow.\nTODO: At the moment only those values that are not outputs of other modules (hence the ones used in the UI).",
+  "description": "Update input values of a step in the current workflow.\nOnly disconnected values can be updated.",
   "additionalProperties": false,
   "properties": {
-    "id": {
+    "stepId": {
       "type": "string",
       "description": "Unique ID of the step within the workflow."
     },
     "inputValues": {
       "type": "object",
-      "description": "Input values."
+      "description": "Input values.",
+      "additionalProperties": {
+        "$ref": "https://dharpa.org/schema/types/data/DataValueContainer.json"
+      }
     }
   },
   "required": [
-    "id"
+    "stepId"
   ]
 }

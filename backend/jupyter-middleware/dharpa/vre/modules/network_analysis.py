@@ -1,6 +1,7 @@
 from typing import Mapping
 from kiara.data.values import ValueSchema, ValueType
 from kiara.module import KiaraModule, StepInputs, StepOutputs
+import pyarrow as pa
 
 
 class NetworkAnalysisDataMappingModule(KiaraModule):
@@ -11,10 +12,12 @@ class NetworkAnalysisDataMappingModule(KiaraModule):
                 type=ValueType.table, doc="Corpus items."
             ),
             "nodesMappingTable": ValueSchema(
-                type=ValueType.table, doc="Nodes mapping table.", default={}
+                type=ValueType.table, doc="Nodes mapping table.",
+                default=pa.Table.from_pydict({})
             ),
             "edgesMappingTable": ValueSchema(
-                type=ValueType.table, doc="Edges mapping table.", default={}
+                type=ValueType.table, doc="Edges mapping table.",
+                default=pa.Table.from_pydict({})
             )
         }
 
@@ -31,8 +34,8 @@ class NetworkAnalysisDataMappingModule(KiaraModule):
         }
 
     def process(self, inputs: StepInputs, outputs: StepOutputs) -> None:
-        outputs.nodes = {}
-        outputs.edges = {}
+        outputs.nodes = pa.Table.from_pydict({})
+        outputs.edges = pa.Table.from_pydict({})
 
 
 class NetworkAnalysisDataVisModule(KiaraModule):

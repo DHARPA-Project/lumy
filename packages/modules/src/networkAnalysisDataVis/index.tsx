@@ -47,9 +47,9 @@ interface OutputValues {
 type Props = ModuleProps<InputValues, OutputValues>
 
 const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
-  const [nodes] = useStepInputValue<NodesStructure>(step.stepId, 'nodes', true)
-  const [edges] = useStepInputValue<EdgesStructure>(step.stepId, 'edges', true)
-  const [graphData] = useStepOutputValue<GraphDataStructure>(step.stepId, 'graphData', true)
+  const [nodes] = useStepInputValue<NodesStructure>(step.stepId, 'nodes', { fullValue: true })
+  const [edges] = useStepInputValue<EdgesStructure>(step.stepId, 'edges', { fullValue: true })
+  const [graphData] = useStepOutputValue<GraphDataStructure>(step.stepId, 'graphData', { fullValue: true })
 
   console.log('NetworkAnalysisDataVis', nodes, edges, graphData)
 
