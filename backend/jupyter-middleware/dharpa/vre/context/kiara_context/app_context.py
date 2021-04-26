@@ -110,11 +110,16 @@ class KiaraAppContext(AppContext, PipelineController):
         input_connections = self.get_current_pipeline_state() \
             .structure.steps[step_id].input_connections
 
+        updated_values = {}
+
         for input_id, value in (input_values or {}).items():
             pipeline_input_id = get_pipeline_input_id(
                 input_connections[input_id])
             if pipeline_input_id is not None and value is not None:
                 self._current_workflow.inputs[pipeline_input_id] = value
+                updated_values[input_id] = value
+
+        return updated_values
 
     def get_step_tabular_input_value(
         self,

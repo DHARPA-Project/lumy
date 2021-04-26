@@ -1,5 +1,6 @@
 import logging
 from typing import Dict, List, Optional, Tuple
+from collections import defaultdict
 
 from dharpa.vre.context.context import UpdatedIO
 from dharpa.vre.jupyter.base import MessageHandler
@@ -10,7 +11,7 @@ from dharpa.vre.types.generated import (DataTabularDataFilter,
                                         MsgModuleIOTabularInputValueUpdated,
                                         MsgModuleIOUnregisterTabularInputView,
                                         MsgModuleIOUpdateInputValues)
-from dharpa.vre.utils.codec import serialize_filtered_table, serialize
+from dharpa.vre.utils.codec import serialize_table_stats_and_value, serialize
 from dharpa.vre.utils.dataclasses import to_dict
 
 logger = logging.getLogger(__name__)
@@ -60,6 +61,9 @@ class TabularViewsFilters:
 class ModuleIOHandler(MessageHandler):
 
     _tabular_views_filters = TabularViewsFilters()
+    # IDs of complex input values that must be returned in full.
+    # stepId -> list of inputId
+    _full_input_values: Dict[str, List[str]] = defaultdict(list)
 
     def initialize(self):
         self.context.step_input_values_updated.subscribe(
@@ -93,7 +97,7 @@ class ModuleIOHandler(MessageHandler):
                         step_id=msg.step_id,
                         input_id=input_id,
                         filter=filter,
-                        value=to_dict(serialize_filtered_table(
+                        value=to_dict(serialize_table_stats_and_value(
                             filtered_table, table))
                     ))
 
@@ -102,11 +106,22 @@ class ModuleIOHandler(MessageHandler):
         Return workflow step input values.
         '''
         values = self.context.get_step_input_values(
-            msg.id)
+            msg.id, msg.input_ids)
+
+        if msg.full_value_input_ids is not None:
+            full_values = self.context.get_step_input_values(
+                msg.id, msg.full_value_input_ids, True)
+        else:
+            full_values = None
+
+        if values is None:
+            values = {}
+        if full_values is None:
+            full_values = {}
 
         self.publisher.publish(MsgModuleIOInputValuesUpdated(
             msg.id,
-            values
+            {**values, **full_values}
         ))
 
     def _handle_UpdateInputValues(self, msg: MsgModuleIOUpdateInputValues):
@@ -141,7 +156,8 @@ class ModuleIOHandler(MessageHandler):
                 step_id=msg.step_id,
                 input_id=input_id,
                 filter=filter,
-                value=to_dict(serialize_filtered_table(filtered_table, table))
+                value=to_dict(serialize_table_stats_and_value(
+                    filtered_table, table))
             ))
 
     def _handle_UnregisterTabularInputView(
