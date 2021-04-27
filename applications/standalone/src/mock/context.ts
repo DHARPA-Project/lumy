@@ -5,39 +5,78 @@ import {
   IBackEndContext,
   Target,
   MessageEnvelope,
-  Workflow,
   ModuleViewProvider,
   Messages,
   ME,
-  handlerAdapter,
   IDecode,
   DataProcessor,
   mockDataProcessorFactory,
   State,
-  serializeFilteredTable,
   serialize,
-  deserializeValue,
-  DataValueType,
-  WorkflowStructure,
+  deserializeDataValue,
   DataProcessorResult,
-  TabularDataFilter
+  TabularDataFilter,
+  PipelineState,
+  workflowUtils,
+  DataType,
+  deserialize,
+  TableStats
 } from '@dharpa-vre/client-core'
 import { viewProvider } from '@dharpa-vre/modules'
 
-const adapter = <T>(decoder: IDecode<T>, handler: (msg: T) => void) => {
-  return (msg: ME<unknown>) => handlerAdapter(decoder, handler)(undefined, msg as ME<T>)
+const adapter = <T>(decoder: IDecode<T>, handler: (msg: T) => Promise<ME<unknown> | undefined | void>) => {
+  return (msg: ME<unknown>): Promise<ME<unknown> | undefined | void> => {
+    const content = decoder(msg as ME<T>)
+    if (content !== undefined) return handler(content)
+    return undefined
+  }
+}
+
+const getValueType = (value: unknown): string => {
+  if (value instanceof Table) return DataType.Table
+  return DataType.Simple
+}
+
+const getValueStats = <S = unknown>(value: unknown): S => {
+  if (value instanceof Table) {
+    const table = value
+    const tableStats: TableStats = {
+      rowsCount: table.length
+    }
+    return (tableStats as unknown) as S
+  }
+  return undefined as S
+}
+
+const getFilteredValue = <T = unknown>(value: T, filter?: TabularDataFilter): T => {
+  if (value instanceof Table) {
+    const table = value
+    if (filter?.fullValue) return table
+    if (filter == null) return undefined
+
+    const offset = filter?.offset ?? 0
+    const pageSize = filter?.pageSize ?? 5
+    const filteredTable = table.slice(offset, offset + pageSize)
+    return (filteredTable as unknown) as T
+  }
+  return value
+}
+
+interface IOValueStoreValue {
+  type: string
+  value: unknown
 }
 
 class IOValuesStore {
   private _store: Storage
-  private _workflowStructure: WorkflowStructure
+  private _workflowStructure: PipelineState
   private _storeKey: string
   private _values: Record<string, unknown>
   private _outputValues: Record<string, unknown>
 
   private _keySeparator = '♨️'
 
-  constructor(workflowStructure: WorkflowStructure, storeKey = '__dharpa_mock_input_values') {
+  constructor(workflowStructure: PipelineState, storeKey = '__dharpa_mock_input_values') {
     this._store = window.localStorage
     this._workflowStructure = workflowStructure
     this._storeKey = storeKey
@@ -46,16 +85,17 @@ class IOValuesStore {
     this._outputValues = {}
   }
 
-  private serializeValue(value: unknown): unknown {
-    if (value instanceof Table) return serializeFilteredTable(value, value)
-    return serialize(value)
+  private serializeValue(value: unknown): IOValueStoreValue {
+    if (value instanceof Table) return { type: DataType.Table, value: serialize(value) }
+    return { type: 'unknown', value: serialize(value) }
   }
 
-  private deserializeValue(value: DataValueType): unknown {
-    return deserializeValue(value)[1]
+  private deserializeValue(value: IOValueStoreValue): unknown {
+    if (value?.type == null) return undefined
+    return deserialize(value.value, undefined, value.type)[0]
   }
 
-  private getSerializedFromStore(): Record<string, DataValueType> {
+  private getSerializedFromStore(): Record<string, IOValueStoreValue> {
     this._values = {}
     const storeDataString: string | undefined = this._store.getItem(this._storeKey)
     try {
@@ -89,18 +129,20 @@ class IOValuesStore {
   }
 
   private getCorrespondingInput(stepId: string, outputId: string): [string, string] {
-    const stepWithOutput = this._workflowStructure.steps.find(step => step.id === stepId)
-    if (stepWithOutput == null) return [undefined, undefined]
+    const connections = workflowUtils.getConnectedInputs(this._workflowStructure, stepId, outputId)
 
-    const descriptor = stepWithOutput.outputs[outputId]
-    return [descriptor?.connection?.stepId, descriptor?.connection?.ioId]
+    if (connections.length === 0) return [undefined, undefined]
+    // NOTE: even though more than one input can be connected to an output,
+    // for the mock context we just pick the first one.
+    return connections[0]
   }
 
   private getDefaultValue<T = unknown>(stepId: string, inputId: string): T | undefined {
-    const step = this._workflowStructure.steps.find(step => step.id === stepId)
+    const stepInput = this._workflowStructure.stepInputs[stepId]
 
-    const descriptor = step.inputs[inputId]
-    return (descriptor?.defaultValue as unknown) as T
+    const defaultValue = stepInput?.values?.[inputId]?.valueSchema?.default
+    if (defaultValue == null) return undefined
+    return (defaultValue as unknown) as T
   }
 
   private getValue<T = unknown>(stepId: string, ioId: string, isInput: boolean): T | undefined {
@@ -121,8 +163,8 @@ class IOValuesStore {
   }
 
   getInputValues(stepId: string, inputIds?: string[]): { [inputId: string]: unknown } {
-    const step = this._workflowStructure.steps.find(step => step.id === stepId)
-    const allInputIds = Object.keys(step?.inputs ?? {})
+    const stepDesc = this._workflowStructure.structure.steps[stepId]
+    const allInputIds = Object.keys(stepDesc?.inputConnections ?? {})
     const actualInputIds = inputIds ?? allInputIds
     return actualInputIds.reduce((acc, inputId) => {
       const value = this.getInputValue(stepId, inputId)
@@ -131,8 +173,8 @@ class IOValuesStore {
   }
 
   getOutputValues(stepId: string, outputIds?: string[]): { [outputId: string]: unknown } {
-    const step = this._workflowStructure.steps.find(step => step.id === stepId)
-    const allOutputIds = Object.keys(step?.outputs ?? {})
+    const stepDesc = this._workflowStructure.structure.steps[stepId]
+    const allOutputIds = Object.keys(stepDesc?.outputConnections ?? {})
     const actualOutputIds = outputIds ?? allOutputIds
 
     return actualOutputIds.reduce((acc, outputId) => {
@@ -162,22 +204,8 @@ class IOValuesStore {
 
 export interface MockContextParameters {
   processData?: DataProcessor
-  currentWorkflow: Workflow
+  currentWorkflow: PipelineState
   startupDelayMs?: number
-}
-
-interface ViewFilters {
-  [stepId: string]: {
-    [ioId: string]: {
-      [viewId: string]: TabularDataFilter
-    }
-  }
-}
-
-interface FullValueRequiredFlags {
-  [stepId: string]: {
-    [ioId: string]: boolean
-  }
 }
 
 export class MockContext implements IBackEndContext {
@@ -188,19 +216,16 @@ export class MockContext implements IBackEndContext {
   private _isReady = false
   private _statusChangedSignal = new Signal<MockContext, boolean>(this)
 
-  private _currentWorkflow: Workflow
+  private _currentWorkflow: PipelineState
 
   private _signals: Record<Target, Signal<MockContext, ME<unknown>>>
   private _callbacks = new WeakMap()
-
-  private _currentInputViewFilters: ViewFilters = {}
-  private _fullValueRequiredFlags: FullValueRequiredFlags = {}
 
   constructor(parameters: MockContextParameters) {
     this._processData = parameters?.processData ?? mockDataProcessorFactory(viewProvider)
     this._currentWorkflow = parameters?.currentWorkflow
 
-    this._store = new IOValuesStore(this._currentWorkflow.structure)
+    this._store = new IOValuesStore(this._currentWorkflow)
 
     this._signals = {
       [Target.Activity]: new Signal<MockContext, ME<unknown>>(this),
@@ -237,71 +262,76 @@ export class MockContext implements IBackEndContext {
   }
 
   private _getModuleIdForStep(stepId: string): string {
-    const step = this._currentWorkflow.structure.steps.find(step => step.id === stepId)
-    return step?.moduleId
+    const stepDesc = this._currentWorkflow.structure.steps[stepId]
+    return stepDesc?.step?.moduleType
   }
 
-  private _handleWorkflow(_: MockContext, msg: ME<unknown>) {
-    adapter(Messages.Workflow.codec.GetCurrent.decode, () => {
-      const msg = Messages.Workflow.codec.Updated.encode({
-        workflow: this._currentWorkflow
-      })
-      this._signals[Target.Workflow].emit(msg)
-    })(msg)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private async _handleActivity(_: MockContext, _msg: ME<unknown>): Promise<ME<unknown> | undefined | void> {
+    return Promise.resolve()
   }
 
-  private _handleModuleIO(_: MockContext, msg: ME<unknown>) {
-    adapter(Messages.ModuleIO.codec.GetPreview.decode, ({ id }) => {
-      this._processStepData(id)
-    })(msg)
+  private async _handleWorkflow(_: MockContext, msg: ME<unknown>): Promise<ME<unknown> | undefined | void> {
+    switch (msg.action) {
+      case Messages.Workflow.codec.GetCurrent.action:
+        return adapter(Messages.Workflow.codec.GetCurrent.decode, async () => {
+          const msg = Messages.Workflow.codec.Updated.encode({
+            workflow: (this._currentWorkflow.structure as unknown) as { [key: string]: unknown }
+          })
+          this._signals[Target.Workflow].emit(msg)
+        })(msg)
+      default:
+        break
+    }
+  }
 
-    adapter(
-      Messages.ModuleIO.codec.GetInputValues.decode,
-      ({ id: stepId, inputIds, fullValueInputIds = [] }) => {
-        fullValueInputIds.forEach(inputId => this.setFullValueRequired(stepId, inputId, true))
-        this.updateInputValuesForStep(stepId, inputIds)
-      }
-    )(msg)
+  private async _handleModuleIO(_: MockContext, msg: ME<unknown>): Promise<ME<unknown> | undefined | void> {
+    switch (msg.action) {
+      case Messages.ModuleIO.codec.GetPreview.action:
+        return adapter(Messages.ModuleIO.codec.GetPreview.decode, async ({ id }) => {
+          await this._processStepData(id)
+        })(msg)
+      case Messages.ModuleIO.codec.GetInputValue.action:
+        return adapter(Messages.ModuleIO.codec.GetInputValue.decode, async ({ stepId, inputId, filter }) => {
+          const storeValue = this._store.getInputValue(stepId, inputId)
 
-    adapter(
-      Messages.ModuleIO.codec.GetOutputValues.decode,
-      ({ id: stepId, outputIds, fullValueOutputIds = [] }) => {
-        fullValueOutputIds.forEach(outputId => this.setFullValueRequired(stepId, outputId, true))
-        this.updateOutputValuesForStep(stepId, outputIds)
-      }
-    )(msg)
+          return Messages.ModuleIO.codec.InputValue.encode({
+            stepId,
+            inputId,
+            filter,
+            value: serialize(getFilteredValue(storeValue, filter)),
+            stats: getValueStats(storeValue),
+            type: getValueType(storeValue)
+          })
+        })(msg)
+      case Messages.ModuleIO.codec.GetOutputValue.action:
+        return adapter(
+          Messages.ModuleIO.codec.GetOutputValue.decode,
+          async ({ stepId, outputId, filter }) => {
+            const storeValue = this._store.getOutputValue(stepId, outputId)
 
-    adapter(Messages.ModuleIO.codec.UpdateInputValues.decode, async ({ id: stepId, inputValues }) => {
-      Object.entries(inputValues).forEach(([inputId, value]) =>
-        this._store.setInputValue(stepId, inputId, deserializeValue(value)[1])
-      )
-      await this._processStepData(stepId)
-      this.updateInputValuesForStep(stepId)
-    })(msg)
+            return Messages.ModuleIO.codec.OutputValue.encode({
+              stepId,
+              outputId,
+              filter,
+              value: serialize(getFilteredValue(storeValue, filter)),
+              stats: getValueStats(storeValue),
+              type: getValueType(storeValue)
+            })
+          }
+        )(msg)
+      case Messages.ModuleIO.codec.UpdateInputValues.action:
+        return adapter(Messages.ModuleIO.codec.UpdateInputValues.decode, async ({ stepId, inputValues }) => {
+          Object.entries(inputValues).forEach(([inputId, value]) =>
+            this._store.setInputValue(stepId, inputId, deserializeDataValue(value))
+          )
+          this.updateInputValuesForStep(stepId, Object.keys(inputValues))
 
-    adapter(Messages.ModuleIO.codec.GetTabularInputValue.decode, ({ viewId, stepId, inputId, filter }) => {
-      const { pageSize, offset = 0 } = filter
-
-      const table = this._store.getInputValue<Table>(stepId, inputId)
-      if (table == null) return
-
-      const filteredTable = table.slice(offset, offset + pageSize)
-
-      const updatedMessage = Messages.ModuleIO.codec.TabularInputValueUpdated.encode({
-        viewId,
-        stepId,
-        inputId,
-        filter,
-        value: (serializeFilteredTable(filteredTable, table) as unknown) as Record<string, unknown>
-      })
-      this._signals[Target.ModuleIO].emit(updatedMessage)
-
-      this.setInputViewFilter(stepId, inputId, viewId, filter)
-    })(msg)
-
-    adapter(Messages.ModuleIO.codec.UnregisterTabularInputView.decode, ({ viewId, stepId, inputId }) => {
-      this.removeInputViewFilter(stepId, inputId, viewId)
-    })(msg)
+          await this._processStepData(stepId)
+        })(msg)
+      default:
+        break
+    }
   }
 
   private async _processStepData(stepId: string): Promise<void> {
@@ -336,65 +366,28 @@ export class MockContext implements IBackEndContext {
   }
 
   private async _processAllWorkflow(): Promise<void> {
-    for (const step of this._currentWorkflow.structure.steps) {
-      await this._processStepData(step.id)
+    for (const stepId in this._currentWorkflow.structure.steps) {
+      await this._processStepData(stepId)
     }
   }
 
   private updateInputValuesForStep(stepId: string, inputIdsOnly: string[] = []) {
-    const serializeValue = (inputId: string, value: unknown) => {
-      if (value instanceof Table) {
-        if (this.getFullValueRequired(stepId, inputId)) {
-          return serializeFilteredTable(value, value)
-        }
-      }
-      return serialize(value)
-    }
+    const allInputIds = Object.keys(this._store.getInputValues(stepId))
 
-    const msg = {
-      id: stepId,
-      inputValues: Object.entries(this._store.getInputValues(stepId))
-        .filter(([k]) => (inputIdsOnly.length > 0 ? inputIdsOnly.includes(k) : true))
-        .reduce((acc, [k, v]) => ({ ...acc, [k]: serializeValue(k, v) }), {} as Record<string, unknown>)
-    }
-    const response = Messages.ModuleIO.codec.InputValuesUpdated.encode(msg)
+    const response = Messages.ModuleIO.codec.InputValuesUpdated.encode({
+      stepId,
+      inputIds: allInputIds.filter(([k]) => (inputIdsOnly.length > 0 ? inputIdsOnly.includes(k) : true))
+    })
 
     this._signals[Target.ModuleIO].emit(response)
-
-    // tabular inputs
-    Object.entries(this._store.getInputValues(stepId)).forEach(([inputId, value]) => {
-      Object.entries(this.getInputViewFilters(stepId, inputId)).forEach(([viewId, filter]) => {
-        if (value == null) return
-        const table = value as Table
-        const filteredTable = table.slice(filter.offset ?? 0, filter.offset ?? 0 + filter.pageSize)
-
-        const updatedMessage = Messages.ModuleIO.codec.TabularInputValueUpdated.encode({
-          viewId,
-          stepId,
-          inputId,
-          filter,
-          value: (serializeFilteredTable(filteredTable, table) as unknown) as Record<string, unknown>
-        })
-        this._signals[Target.ModuleIO].emit(updatedMessage)
-      })
-    })
   }
 
   private updateOutputValuesForStep(stepId: string, outputIdsOnly: string[] = []) {
-    const serializeValue = (outputId: string, value: unknown) => {
-      if (value instanceof Table) {
-        if (this.getFullValueRequired(stepId, outputId)) {
-          return serializeFilteredTable(value, value)
-        }
-      }
-      return serialize(value)
-    }
+    const allOutputIds = Object.keys(this._store.getOutputValues(stepId))
 
     const msg: Messages.ModuleIO.OutputValuesUpdated = {
-      id: stepId,
-      outputValues: Object.entries(this._store.getOutputValues(stepId))
-        .filter(([k]) => (outputIdsOnly.length > 0 ? outputIdsOnly.includes(k) : true))
-        .reduce((acc, [k, v]) => ({ ...acc, [k]: serializeValue(k, v) }), {} as Record<string, unknown>)
+      stepId,
+      outputIds: allOutputIds.filter(([k]) => (outputIdsOnly.length > 0 ? outputIdsOnly.includes(k) : true))
     }
     const response = Messages.ModuleIO.codec.OutputValuesUpdated.encode(msg)
 
@@ -402,15 +395,29 @@ export class MockContext implements IBackEndContext {
   }
 
   private updateInputValuesForAllSteps(): void {
-    this._currentWorkflow?.structure?.steps?.forEach(step => this.updateInputValuesForStep(step.id))
+    Object.keys(this._currentWorkflow.structure.steps).forEach(stepId =>
+      this.updateInputValuesForStep(stepId)
+    )
   }
   private updateOutputValuesForAllSteps(): void {
-    this._currentWorkflow?.structure?.steps?.forEach(step => this.updateOutputValuesForStep(step.id))
+    Object.keys(this._currentWorkflow.structure.steps).forEach(stepId =>
+      this.updateOutputValuesForStep(stepId)
+    )
   }
 
-  sendMessage<T, U = void>(target: Target, msg: MessageEnvelope<T>): Promise<U> {
-    this._signals[target].emit(msg)
-    return Promise.resolve(undefined)
+  async sendMessage<T, U = void>(target: Target, msg: MessageEnvelope<T>): Promise<U> {
+    const response = await (async () => {
+      switch (target) {
+        case Target.Activity:
+          return this._handleActivity(undefined, msg).then(x => (x as unknown) as U)
+        case Target.ModuleIO:
+          return this._handleModuleIO(undefined, msg).then(x => (x as unknown) as U)
+        case Target.Workflow:
+          return this._handleWorkflow(undefined, msg).then(x => (x as unknown) as U)
+      }
+    })()
+    if (response != null) this._signals[target].emit((response as unknown) as ME<unknown>)
+    return
   }
 
   subscribe<T>(target: Target, callback: (ctx: IBackEndContext, msg: MessageEnvelope<T>) => void): void {
@@ -437,42 +444,5 @@ export class MockContext implements IBackEndContext {
 
   addFilesToRepository(files: File[]): Promise<void> {
     return Promise.resolve((files as unknown) as void)
-  }
-
-  private getInputViewFilters(stepId: string, inputId: string): { [viewId: string]: TabularDataFilter } {
-    return this._currentInputViewFilters?.[stepId]?.[inputId] ?? {}
-  }
-
-  private setInputViewFilter(
-    stepId: string,
-    inputId: string,
-    viewId: string,
-    filter: TabularDataFilter
-  ): void {
-    const l1 = this._currentInputViewFilters[stepId] ?? {}
-    const l2 = l1[inputId] ?? {}
-    l2[viewId] = filter
-
-    l1[inputId] = l2
-    this._currentInputViewFilters[stepId] = l1
-  }
-
-  private removeInputViewFilter(stepId: string, inputId: string, viewId: string): void {
-    const l1 = this._currentInputViewFilters[stepId] ?? {}
-    const l2 = l1[inputId] ?? {}
-    delete l2[viewId]
-
-    l1[inputId] = l2
-    this._currentInputViewFilters[stepId] = l1
-  }
-
-  private getFullValueRequired(stepId: string, inputId: string): boolean {
-    return this._fullValueRequiredFlags?.[stepId]?.[inputId] ?? false
-  }
-
-  private setFullValueRequired(stepId: string, inputId: string, isRequired: boolean) {
-    const l1 = this._fullValueRequiredFlags?.[stepId] ?? {}
-    l1[inputId] = isRequired
-    this._fullValueRequiredFlags[stepId] = l1
   }
 }

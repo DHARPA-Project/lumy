@@ -6,7 +6,7 @@ type Props = ModuleProps<unknown, unknown>
 const Default = ({ step }: Props): JSX.Element => {
   return (
     <div>
-      <h3>Default module view for workflow step of type &quot;{step.moduleId}&quot;</h3>
+      <h3>Default module view for workflow step of type &quot;{step.moduleType}&quot;</h3>
       <pre>{JSON.stringify(step, null, 2)}</pre>
     </div>
   )

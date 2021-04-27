@@ -10,21 +10,16 @@ import {
   MsgParametersSnapshots,
   MsgProgress,
   MsgModuleIOExecute,
-  MsgModuleIOOutputUpdated,
   MsgNotesGetNotes,
   MsgNotesAdd,
   MsgNotesNotes,
-  MsgModuleIOGetInputValues,
   MsgModuleIOInputValuesUpdated,
   MsgModuleIOUpdateInputValues,
-  MsgModuleIOGetTabularInputValue,
-  MsgModuleIOTabularInputValueUpdated,
-  MsgModuleIOUnregisterTabularInputView,
-  MsgModuleIOGetOutputValues,
   MsgModuleIOOutputValuesUpdated,
-  MsgModuleIOGetTabularOutputValue,
-  MsgModuleIOTabularOutputValueUpdated,
-  MsgModuleIOUnregisterTabularOutputView
+  MsgModuleIOGetInputValue,
+  MsgModuleIOInputValue,
+  MsgModuleIOGetOutputValue,
+  MsgModuleIOOutputValue
 } from './generated'
 
 /**
@@ -69,38 +64,26 @@ export namespace ModuleIO {
   export type PreviewUpdated = MsgModuleIOPreviewUpdated
   export type UpdatePreviewParameters = MsgModuleIOUpdatePreviewParameters
   export type Execute = MsgModuleIOExecute
-  export type OutputUpdated = MsgModuleIOOutputUpdated
-  export type GetInputValues = MsgModuleIOGetInputValues
   export type InputValuesUpdated = MsgModuleIOInputValuesUpdated
-  export type GetOutputValues = MsgModuleIOGetOutputValues
   export type OutputValuesUpdated = MsgModuleIOOutputValuesUpdated
   export type UpdateInputValues = MsgModuleIOUpdateInputValues
-  export type GetTabularInputValue = MsgModuleIOGetTabularInputValue
-  export type TabularInputValueUpdated = MsgModuleIOTabularInputValueUpdated
-  export type UnregisterTabularInputView = MsgModuleIOUnregisterTabularInputView
-  export type GetTabularOutputValue = MsgModuleIOGetTabularOutputValue
-  export type TabularOutputValueUpdated = MsgModuleIOTabularOutputValueUpdated
-  export type UnregisterTabularOutputView = MsgModuleIOUnregisterTabularOutputView
+  export type GetInputValue = MsgModuleIOGetInputValue
+  export type InputValue = MsgModuleIOInputValue
+  export type GetOutputValue = MsgModuleIOGetOutputValue
+  export type OutputValue = MsgModuleIOOutputValue
 
   export namespace codec {
     export const GetPreview = Codec<GetPreview>('GetPreview')
     export const PreviewUpdated = Codec<PreviewUpdated>('PreviewUpdated')
     export const UpdatePreviewParameters = Codec<UpdatePreviewParameters>('UpdatePreviewParameters')
     export const Execute = Codec<Execute>('Execute')
-    export const OutputUpdated = Codec<OutputUpdated>('OutputUpdated')
-    export const GetInputValues = Codec<GetInputValues>('GetInputValues')
     export const InputValuesUpdated = Codec<InputValuesUpdated>('InputValuesUpdated')
-    export const GetOutputValues = Codec<GetOutputValues>('GetOutputValues')
     export const OutputValuesUpdated = Codec<OutputValuesUpdated>('OutputValuesUpdated')
     export const UpdateInputValues = Codec<UpdateInputValues>('UpdateInputValues')
-    export const GetTabularInputValue = Codec<GetTabularInputValue>('GetTabularInputValue')
-    export const TabularInputValueUpdated = Codec<TabularInputValueUpdated>('TabularInputValueUpdated')
-    export const UnregisterTabularInputView = Codec<UnregisterTabularInputView>('UnregisterTabularInputView')
-    export const GetTabularOutputValue = Codec<GetTabularOutputValue>('GetTabularOutputValue')
-    export const TabularOutputValueUpdated = Codec<TabularOutputValueUpdated>('TabularOutputValueUpdated')
-    export const UnregisterTabularOutputView = Codec<UnregisterTabularOutputView>(
-      'UnregisterTabularOutputView'
-    )
+    export const GetInputValue = Codec<GetInputValue>('GetInputValue')
+    export const InputValue = Codec<InputValue>('InputValue')
+    export const GetOutputValue = Codec<GetOutputValue>('GetOutputValue')
+    export const OutputValue = Codec<OutputValue>('OutputValue')
   }
 }
 

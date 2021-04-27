@@ -1,12 +1,12 @@
-import { TableStats, ViewFilter } from '@dharpa-vre/client-core'
+import { TableStats, TabularDataFilter } from '@dharpa-vre/client-core'
 import { Table } from 'apache-arrow'
 import React from 'react'
 
 export interface TableProps<S> {
   table: Table
   tableStats: TableStats
-  filter?: ViewFilter
-  onFilterChanged?: (filter: ViewFilter) => void
+  filter?: TabularDataFilter
+  onFilterChanged?: (filter: TabularDataFilter) => void
   selections: S[]
   onSelectionsChanged?: (selections: S[]) => void
   selectionRowIndex?: number

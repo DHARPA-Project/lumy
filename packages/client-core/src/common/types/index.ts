@@ -11,3 +11,4 @@ export type {
 export { State, DataType } from './generated'
 export * as Messages from './messages'
 export * from './base'
+export type { PipelineState, Structure as PipelineStructure, StepDesc } from './kiaraGenerated'

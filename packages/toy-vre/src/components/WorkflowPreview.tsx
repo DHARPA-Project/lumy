@@ -1,23 +1,25 @@
 import React from 'react'
-import { ModuleViewFactory, Workflow, WorkflowStep } from '@dharpa-vre/client-core'
+import { ModuleViewFactory, PipelineStructure, StepDesc } from '@dharpa-vre/client-core'
 
 export interface WorkflowPreviewProps {
-  workflow: Workflow
-  onStepSelected?: (step: WorkflowStep) => void
+  workflow: PipelineStructure
+  onStepSelected?: (step: StepDesc) => void
 }
 
 export const WorkflowPreview = ({ workflow, onStepSelected }: WorkflowPreviewProps): JSX.Element => {
   return (
     <div>
       <h1>Workflow:</h1>
-      <h2>
-        {workflow.label} ({workflow.id})
-      </h2>
+      <h2>({workflow.pipelineId})</h2>
       <h2>Steps:</h2>
       <ul>
-        {workflow.structure.steps.map(step => (
-          <li key={step.id} onClick={() => onStepSelected?.(step)}>
-            <ModuleViewFactory step={step} />
+        {Object.values(workflow.steps).map(stepDesc => (
+          <li key={stepDesc.step.stepId} onClick={() => onStepSelected?.(stepDesc)}>
+            <ModuleViewFactory
+              step={stepDesc.step}
+              inputConnections={stepDesc.inputConnections}
+              outputConnections={stepDesc.outputConnections}
+            />
           </li>
         ))}
       </ul>

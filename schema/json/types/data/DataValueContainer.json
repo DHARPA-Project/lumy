@@ -3,22 +3,18 @@
   "type": "object",
   "additionalProperties": false,
   "title": "DataValueContainer",
-  "description": "Container for complex data types. \nBasic data types are: string, int, float, bool and lists of these types. \nEverything else requires a container that contains some metadata hinting what the type is. \nFor some types like 'table' the value is not provided because it may be too big. \nA batch view of the data value should be used to access such values.",
+  "description": "Used to send serialized data from front end to back end.",
   "properties": {
     "dataType": {
       "type": "string",
       "enum": [
-        "table"
+        "table",
+        "simple"
       ],
       "description": "Type of the data value."
     },
-    "stats": {
-      "type": "object",
-      "description": "Some statistical numbers describing data.\nThe content of this field is type dependent.\nE.g. for 'table' this could contain the actual number of rows."
-    },
     "value": {
-      "type": "string",
-      "description": "Actual value. This may be provided (e.g. Date) or may not be provided (e.g. Table without a batch view)"
+      "description": "Actual serialized value."
     }
   },
   "required": [
