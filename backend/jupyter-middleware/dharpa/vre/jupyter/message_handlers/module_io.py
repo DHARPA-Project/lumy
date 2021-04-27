@@ -86,4 +86,6 @@ class ModuleIOHandler(MessageHandler):
             ))
 
             # TODO: This is here temporary for dev purposes
+            # In reality there might be multiple configurations
+            # in which the pipeline will run: everything, subset, etc
             self.context.run_processing(msg.step_id)

@@ -2,8 +2,8 @@ import logging
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union, cast
 
-from dharpa.vre.context.context import AppContext
-from dharpa.vre.types.generated import DataTabularDataFilter, TableStats
+from dharpa.vre.context.context import AppContext, UpdatedIO
+from dharpa.vre.types.generated import DataTabularDataFilter, State, TableStats
 from pyarrow import Table
 
 from kiara import Kiara, PipelineController
@@ -51,26 +51,8 @@ def get_pipeline_input_id(ids: List[str]) -> Optional[str]:
             return parts[1]
 
 
-class VREPipelineController(PipelineController):
-    def __init__(self):
-        super().__init__(pipeline=None)
-
-    def step_inputs_changed(self, event: "StepInputEvent"):
-        '''
-        PipelineController
-        '''
-        pass
-
-    def step_outputs_changed(self, event: "StepOutputEvent"):
-        '''
-        PipelineController
-        '''
-        pass
-
-
-class KiaraAppContext(AppContext):
+class KiaraAppContext(AppContext, PipelineController):
     _current_workflow: KiaraWorkflow
-    _pipeline_controller: VREPipelineController
 
     def load_workflow(self, workflow_file_or_name: Union[Path, str]) -> None:
         '''
@@ -80,18 +62,18 @@ class KiaraAppContext(AppContext):
             'Path is not supported yet'
         kiara: Kiara = Kiara.instance()
 
-        controller = VREPipelineController()
-
         self._current_workflow = kiara.create_workflow(
-            workflow_file_or_name, controller=controller)
-        self._pipeline_controller = controller
+            workflow_file_or_name, controller=self)
+
         # TODO: access the pipeline here because it is lazily created
         # in the getter. If not done, any code later accessing pipeline in
         # a different way will fail.
         self._current_workflow.pipeline
 
-        # TODO: executing workflow right away for testing only
+        # TODO: kiara does not set default values yet. Temporarily doing it
+        # here for all the modules
         self.set_default_values()
+        # TODO: executing workflow right away for dev purposes only
         self.execute_all_steps()
 
     @property
@@ -99,10 +81,7 @@ class KiaraAppContext(AppContext):
         '''
         AppContext
         '''
-        if self._pipeline_controller is None:
-            return None
-
-        return self._pipeline_controller.get_current_pipeline_state().structure
+        return self.get_current_pipeline_state().structure
 
     def get_step_input_value(
         self,
@@ -110,18 +89,14 @@ class KiaraAppContext(AppContext):
         input_id: str,
         filter: Optional[DataTabularDataFilter] = None
     ) -> Tuple[Any, Any]:
-        if self._pipeline_controller is None:
-            return (None, None)
-
-        inputs = self._pipeline_controller.get_current_pipeline_state(
-        ).step_inputs[step_id]
+        inputs = self.get_current_pipeline_state().step_inputs[step_id]
         if inputs is None:
             return (None, None)
 
         if input_id not in inputs.values:
             return (None, None)
 
-        value = self._pipeline_controller.get_step_input(step_id, input_id)
+        value = self.get_step_input(step_id, input_id)
 
         return get_value_data(value, filter)
 
@@ -131,18 +106,14 @@ class KiaraAppContext(AppContext):
         output_id: str,
         filter: Optional[DataTabularDataFilter] = None
     ) -> Tuple[Any, Any]:
-        if self._pipeline_controller is None:
-            return (None, None)
-
-        outputs = self._pipeline_controller.get_current_pipeline_state(
-        ).step_outputs[step_id]
+        outputs = self.get_current_pipeline_state().step_outputs[step_id]
         if outputs is None:
             return (None, None)
 
         if output_id not in outputs.values:
             return (None, None)
 
-        value = self._pipeline_controller.get_step_output(step_id, output_id)
+        value = self.get_step_output(step_id, output_id)
 
         return get_value_data(value, filter)
 
@@ -151,11 +122,7 @@ class KiaraAppContext(AppContext):
         step_id: str,
         input_values: Optional[Dict[str, Any]]
     ):
-        if self._pipeline_controller is None:
-            return
-
-        input_connections = self._pipeline_controller \
-            .get_current_pipeline_state() \
+        input_connections = self.get_current_pipeline_state() \
             .structure.steps[step_id].input_connections
 
         updated_values = {}
@@ -168,31 +135,42 @@ class KiaraAppContext(AppContext):
                 updated_values[input_id] = value
 
     def run_processing(self, step_id: Optional[str] = None):
-        if self._pipeline_controller is None:
-            return
-
-        if step_id is not None:
-            self._pipeline_controller.process_step(step_id)
-        else:
-            self.execute_all_steps()
+        try:
+            self.processing_state_changed.publish(State.BUSY)
+            if step_id is not None:
+                self.process_step(step_id)
+            else:
+                self.execute_all_steps()
+        finally:
+            self.processing_state_changed.publish(State.IDLE)
 
     def execute_all_steps(self):
-        if self._pipeline_controller is None:
-            return
-
-        for stage in self._pipeline_controller.processing_stages:
+        for stage in self.processing_stages:
             for step_id in stage:
-                self._pipeline_controller.process_step(step_id)
+                self.process_step(step_id)
 
     def set_default_values(self):
-        if self._pipeline_controller is None:
-            return
-
-        inputs = self._pipeline_controller.get_current_pipeline_state() \
+        inputs = self.get_current_pipeline_state() \
             .pipeline_inputs.values.items()
         default_pipeline_inputs = {
             key: pipeline_value.value_schema.default
             for key, pipeline_value in inputs
             if pipeline_value.value_schema.default is not None
         }
-        self._pipeline_controller.pipeline_inputs = default_pipeline_inputs
+        self.pipeline_inputs = default_pipeline_inputs
+
+    def step_inputs_changed(self, event: "StepInputEvent"):
+        '''
+        PipelineController
+        '''
+        for step_id, input_ids in event.updated_step_inputs.items():
+            msg = UpdatedIO(step_id=step_id, io_ids=input_ids)
+            self.step_input_values_updated.publish(msg)
+
+    def step_outputs_changed(self, event: "StepOutputEvent"):
+        '''
+        PipelineController
+        '''
+        for step_id, output_ids in event.updated_step_outputs.items():
+            msg = UpdatedIO(step_id=step_id, io_ids=output_ids)
+            self.step_output_values_updated.publish(msg)
