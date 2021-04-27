@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Union
 
 from dharpa.vre.context.context import AppContext, UpdatedIO
 from dharpa.vre.context.mock import resources
-from dharpa.vre.modules import get_module_processor
+from dharpa.vre.dev.modules import get_module_processor
 from dharpa.vre.types import Workflow, WorkflowStructure
 from dharpa.vre.types.generated import (DataTabularDataFilter, State,
                                         WorkflowStep)
@@ -17,6 +17,10 @@ if TYPE_CHECKING:
     from pyarrow import Table
 
 WorkflowStructureUpdated = Callable[[WorkflowStructure], None]
+
+# !!! NOTE
+# The mock context is out of sync with the most recent version of the context.
+# Consider removing if it is not used for a while.
 
 
 class MockAppContext(AppContext):

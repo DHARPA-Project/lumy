@@ -50,15 +50,14 @@ setup_args = dict(
     ],
     entry_points={
         'kiara.modules': [
-            'dataUpload=dharpa.vre.modules.data_upload:DataUploadModule',
-            'dataSelection=dharpa.vre.modules.data_selection:DataSelectionModule',  # noqa
-            'networkAnalysisDataMapping=dharpa.vre.modules.network_analysis:NetworkAnalysisDataMappingModule',  # noqa
-            'networkAnalysisDataVis=dharpa.vre.modules.network_analysis:NetworkAnalysisDataVisModule',  # noqa
-            'twoArgsMathFunction=dharpa.vre.modules.two_args_math_fn:TwoArgsMathFnModule',  # noqa
-            # 'simplePlot=kiara_modules.default.dev:DummyModule',
+            'dataUpload=dharpa.vre.dev.modules.data_upload:DataUploadModule',
+            'dataSelection=dharpa.vre.dev.modules.data_selection:DataSelectionModule',  # noqa
+            'networkAnalysisDataMapping=dharpa.vre.dev.modules.network_analysis:NetworkAnalysisDataMappingModule',  # noqa
+            'networkAnalysisDataVis=dharpa.vre.dev.modules.network_analysis:NetworkAnalysisDataVisModule',  # noqa
+            'twoArgsMathFunction=dharpa.vre.dev.modules.two_args_math_fn:TwoArgsMathFnModule',  # noqa
         ],
         'kiara.pipelines': [
-            'mock=dharpa.vre.context:mock'
+            'mock=dharpa.vre:dev'
         ]
     }
 )

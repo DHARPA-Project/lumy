@@ -1,7 +1,7 @@
 {
   "$schema": "https://dharpa.org/kiara/development/entities/modules/PipelineModuleConfig.json",
-  "module_type_name": "mockWorkflow",
-  "doc": "Mock workflow. Used to experiment with the VRE",
+  "module_type_name": "networkAnalysisDev",
+  "doc": "Network analysis development workflow. Mostly used to experiment with the VRE",
   "steps": [
     {
       "module_type": "dataUpload",
