@@ -5,18 +5,27 @@ import { Messages, TabularDataFilter } from '../common/types'
 import { getHash } from '../common/utils/hash'
 
 /**
- * Use current value of the output. The value may be undefined if not set.
- * If the value is a big complex type (e.g. Table), only a stats object
- * is returned. Use the `view` hook to retrieve a view of the data.
+ * Use current value of the output. The value may be undefined if not set or
+ * not received from the backend yet. If the value is a big complex type
+ * (e.g. Table), only a stats object is returned and the actual valus is
+ * kept `undefined`, unless `filter` is provided.
+ *
+ * The filter defines what slice of big type to return. In case of a table
+ * this can be used for pagination. If a `fullValue` is set in the filter,
+ * the whole value is returned. Use this with care - if the value is really big
+ * it may hang up the browser.
+ *
+ * If filter is used with simple values, it will be ignored.
  *
  * @param stepId ID of the step
  * @param outputId ID of the output
+ * @param filter optional filter for complex types
  */
 export const useStepOutputValue = <OutputType, StatsType = unknown>(
   stepId: string,
   outputId: string,
   filter?: TabularDataFilter
-): [OutputType, StatsType] => {
+): [OutputType | undefined, StatsType | undefined] => {
   const context = useContext(BackEndContext)
   const [lastValue, setLastValue] = useState<OutputType>()
   const [lastStats, setLastStats] = useState<StatsType>()
