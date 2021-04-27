@@ -6,3 +6,5 @@ export * from './common/ModuleFactory'
 export * from './common/mock'
 export * from './hooks'
 export * from './common/codec'
+
+export * as workflowUtils from './common/utils/workflow'

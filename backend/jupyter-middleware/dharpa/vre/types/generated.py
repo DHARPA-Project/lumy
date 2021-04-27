@@ -1,6 +1,6 @@
 # flake8: noqa
 from dataclasses import dataclass
-from typing import Optional, List, Dict, Any, Union
+from typing import Optional, List, Any, Dict, Union
 from enum import Enum
 
 
@@ -146,37 +146,52 @@ class MsgModuleIOExecute:
 
 
 @dataclass
-class MsgModuleIOGetInputValues:
-    """Target: "moduleIO"
-    Message type: "GetInputValues"
-    
-    Get values of inputs of a step from the current workflow.
-    """
-    """Unique ID of the step within the workflow that we are getting parameters for."""
-    id: str
-    """Input IDs for which the full value should be returned.
-    This is only relevant for big complex types.
-    """
-    full_value_input_ids: Optional[List[str]] = None
-    """Limit returned values only to inputs with these IDs."""
-    input_ids: Optional[List[str]] = None
+class DataTabularDataFilter:
+    """Filter for tabular data"""
+    """Whether to ignore other filter items and return full value."""
+    full_value: Optional[bool] = None
+    """Offset of the page"""
+    offset: Optional[int] = None
+    """Size of the page"""
+    page_size: Optional[int] = None
 
 
 @dataclass
-class MsgModuleIOGetOutputValues:
+class MsgModuleIOGetInputValue:
     """Target: "moduleIO"
-    Message type: "GetOutputValues"
+    Message type: "GetInputValue"
     
-    Get values of outputs of a step from the current workflow.
+    Get value of a step input from the current workflow.
+    This is a 'pull' request meaning that a synchronous response will be returned. The
+    behaviour of the response is different depending on whether it is a simple or complex
+    value.
+    For simple values the filter is ignored and full value is always returned.
+    For complex values only stats are returned unless 'filter' is set and is not empty.
     """
-    """Unique ID of the step within the workflow that we are getting values for."""
-    id: str
-    """Output IDs for which the full value should be returned.
-    This is only relevant for big complex types.
+    """ID of the input"""
+    input_id: str
+    """Unique ID of the step within the workflow that we are getting parameters for."""
+    step_id: str
+    filter: Optional[DataTabularDataFilter] = None
+
+
+@dataclass
+class MsgModuleIOGetOutputValue:
+    """Target: "moduleIO"
+    Message type: "GetOutputValue"
+    
+    Get value of a step output from the current workflow.
+    This is a 'pull' request meaning that a synchronous response will be returned. The
+    behaviour of the response is different depending on whether it is a simple or complex
+    value.
+    For simple values the filter is ignored and full value is always returned.
+    For complex values only stats are returned unless 'filter' is set and is not empty.
     """
-    full_value_output_ids: Optional[List[str]] = None
-    """Limit returned values only to outputs with these IDs."""
-    output_ids: Optional[List[str]] = None
+    """ID of the output"""
+    output_id: str
+    """Unique ID of the step within the workflow that we are getting parameters for."""
+    step_id: str
+    filter: Optional[DataTabularDataFilter] = None
 
 
 @dataclass
@@ -191,50 +206,29 @@ class MsgModuleIOGetPreview:
 
 
 @dataclass
-class DataTabularDataFilter:
-    """Filter for tabular data"""
-    """Size of the page"""
-    page_size: int
-    """Offset of the page"""
-    offset: Optional[int] = None
-
-
-@dataclass
-class MsgModuleIOGetTabularInputValue:
+class MsgModuleIOInputValue:
     """Target: "moduleIO"
-    Message type: "GetTabularInputValue"
+    Message type: "InputValue"
     
-    Get a filtered version of a tabular input of a step from the current workflow.
+    Response to GetInputValue 'pull' request.
+    Contains value and stats for an input.
     """
-    filter: DataTabularDataFilter
-    """Unique ID of the input"""
+    """ID of the input"""
     input_id: str
     """Unique ID of the step within the workflow that we are getting parameters for."""
     step_id: str
-    """An ID associated with this filtered version of the tabular value.
-    This is needed to distinguish between different views of the same data value that may
-    exist independently.
+    """Type of the input value"""
+    type: str
+    """Actual serialized value.
+    It may be undefined if not set. It may be a filtered value in case of a complex value.
+    Filter is also returned if the value is filtered.
     """
-    view_id: str
-
-
-@dataclass
-class MsgModuleIOGetTabularOutputValue:
-    """Target: "moduleIO"
-    Message type: "GetTabularOutputValue"
-    
-    Get a filtered version of a tabular output of a step from the current workflow.
+    value: Any
+    filter: Optional[DataTabularDataFilter] = None
+    """Stats of the value if applicable. Simple types usually do not include stats.
+    Complex ones like table do.
     """
-    filter: DataTabularDataFilter
-    """Unique ID of the output"""
-    output_id: str
-    """Unique ID of the step within the workflow that we are getting parameters for."""
-    step_id: str
-    """An ID associated with this filtered version of the tabular value.
-    This is needed to distinguish between different views of the same data value that may
-    exist independently.
-    """
-    view_id: str
+    stats: Optional[Dict[str, Any]] = None
 
 
 @dataclass
@@ -242,27 +236,38 @@ class MsgModuleIOInputValuesUpdated:
     """Target: "moduleIO"
     Message type: "InputValuesUpdated"
     
-    Updated input values of a step in the current workflow.
-    TODO: At the moment only those values that are not outputs of other modules (hence the
-    ones used in the UI).
+    Input IDs of a step in the current workflow that had their values updated.
     """
+    """IDs of inputs that had their values updated."""
+    input_ids: List[str]
     """Unique ID of the step within the workflow."""
-    id: str
-    """Input values."""
-    input_values: Optional[Dict[str, Any]] = None
+    step_id: str
 
 
 @dataclass
-class MsgModuleIOOutputUpdated:
+class MsgModuleIOOutputValue:
     """Target: "moduleIO"
-    Message type: "OutputUpdated"
+    Message type: "OutputValue"
     
-    Contains output data of a step from the current workflow after it was recalculated.
+    Response to GetOutputValue 'pull' request.
+    Contains value and stats for an output.
     """
-    """Unique ID of the step within the workflow."""
-    id: str
-    """Output data for the module"""
-    outputs: List[Any]
+    """ID of the output"""
+    output_id: str
+    """Unique ID of the step within the workflow that we are getting parameters for."""
+    step_id: str
+    """Type of the output value"""
+    type: str
+    """Actual serialized value.
+    It may be undefined if not set. It may be a filtered value in case of a complex value.
+    Filter is also returned if the value is filtered.
+    """
+    value: Any
+    filter: Optional[DataTabularDataFilter] = None
+    """Stats of the value if applicable. Simple types usually do not include stats.
+    Complex ones like table do.
+    """
+    stats: Optional[Dict[str, Any]] = None
 
 
 @dataclass
@@ -270,12 +275,12 @@ class MsgModuleIOOutputValuesUpdated:
     """Target: "moduleIO"
     Message type: "OutputValuesUpdated"
     
-    Updated output values of a step in the current workflow.
+    Output IDs of a step in the current workflow that had their values updated.
     """
+    """IDs of outputs that had their values updated."""
+    output_ids: List[str]
     """Unique ID of the step within the workflow."""
-    id: str
-    """Output values. Key - valueId, Value - actual value."""
-    output_values: Optional[Dict[str, Any]] = None
+    step_id: str
 
 
 @dataclass
@@ -293,84 +298,19 @@ class MsgModuleIOPreviewUpdated:
     outputs: Dict[str, Any]
 
 
-@dataclass
-class MsgModuleIOTabularInputValueUpdated:
-    """Target: "moduleIO"
-    Message type: "TabularInputValueUpdated"
-    
-    A filtered version of a tabular input of a step from the current workflow.
-    """
-    filter: DataTabularDataFilter
-    """Unique ID of the input"""
-    input_id: str
-    """Unique ID of the step within the workflow that we are getting parameters for."""
-    step_id: str
-    """The actual value payload. TODO: The type will be set later"""
-    value: Union[Dict[str, Any], None, str]
-    """An ID associated with this filtered version of the tabular value.
-    This is needed to distinguish between different views of the same data value that may
-    exist independently.
-    """
-    view_id: str
+class DataType(Enum):
+    """Type of the data value."""
+    SIMPLE = "simple"
+    TABLE = "table"
 
 
 @dataclass
-class MsgModuleIOTabularOutputValueUpdated:
-    """Target: "moduleIO"
-    Message type: "TabularOutputValueUpdated"
-    
-    A filtered version of a tabular output of a step from the current workflow.
-    """
-    filter: DataTabularDataFilter
-    """Unique ID of the output"""
-    output_id: str
-    """Unique ID of the step within the workflow that we are getting parameters for."""
-    step_id: str
-    """The actual value payload. TODO: The type will be set later"""
-    value: Union[Dict[str, Any], None, str]
-    """An ID associated with this filtered version of the tabular value.
-    This is needed to distinguish between different views of the same data value that may
-    exist independently.
-    """
-    view_id: str
-
-
-@dataclass
-class MsgModuleIOUnregisterTabularInputView:
-    """Target: "moduleIO"
-    Message type: "UnregisterTabularInputView"
-    
-    If there is a view of a table with the provided ID, unregister this view and stop sending
-    updates about it to the frontend.
-    """
-    """Unique ID of the input"""
-    input_id: str
-    """Unique ID of the step within the workflow that we are getting parameters for."""
-    step_id: str
-    """An ID associated with this filtered version of the tabular value.
-    This is needed to distinguish between different views of the same data value that may
-    exist independently.
-    """
-    view_id: str
-
-
-@dataclass
-class MsgModuleIOUnregisterTabularOutputView:
-    """Target: "moduleIO"
-    Message type: "UnregisterTabularOutputView"
-    
-    If there is a view of a table with the provided ID, unregister this view and stop sending
-    updates about it to the frontend.
-    """
-    """Unique ID of the output"""
-    output_id: str
-    """Unique ID of the step within the workflow that we are getting parameters for."""
-    step_id: str
-    """An ID associated with this filtered version of the tabular value.
-    This is needed to distinguish between different views of the same data value that may
-    exist independently.
-    """
-    view_id: str
+class DataValueContainer:
+    """Used to send serialized data from front end to back end."""
+    """Type of the data value."""
+    data_type: DataType
+    """Actual serialized value."""
+    value: Any
 
 
 @dataclass
@@ -379,13 +319,12 @@ class MsgModuleIOUpdateInputValues:
     Message type: "UpdateInputValues"
     
     Update input values of a step in the current workflow.
-    TODO: At the moment only those values that are not outputs of other modules (hence the
-    ones used in the UI).
+    Only disconnected values can be updated.
     """
     """Unique ID of the step within the workflow."""
-    id: str
+    step_id: str
     """Input values."""
-    input_values: Optional[Dict[str, Any]] = None
+    input_values: Optional[Dict[str, DataValueContainer]] = None
 
 
 @dataclass
@@ -470,6 +409,27 @@ class MsgParametersSnapshots:
 
 
 @dataclass
+class MsgWorkflowUpdated:
+    """Target: "workflow"
+    Message type: "Updated"
+    
+    Contains current workflow.
+    """
+    """Current workflow state. Type: PipelineState from
+    https://dharpa.org/kiara/development/entities/modules/PipelineState.json .
+    Not using it as a reference because of a code generation bug.
+    """
+    workflow: Optional[Dict[str, Any]] = None
+
+
+@dataclass
+class TableStats:
+    """Stats object for arrow table"""
+    """Number of rows."""
+    rows_count: int
+
+
+@dataclass
 class IOStateConnection:
     """Incoming or outgoing connection of a module"""
     """ID of the input or output"""
@@ -513,58 +473,10 @@ class WorkflowStructure:
 
 @dataclass
 class Workflow:
-    """Current workflow.
-    
-    Represents a workflow.
-    """
+    """Represents a workflow."""
     """Unique ID of the workflow."""
     id: str
     """Human readable name of the workflow."""
     label: str
     """Modular structure of the workflow."""
     structure: WorkflowStructure
-
-
-@dataclass
-class MsgWorkflowUpdated:
-    """Target: "workflow"
-    Message type: "Updated"
-    
-    Contains current workflow.
-    """
-    """Current workflow."""
-    workflow: Optional[Workflow] = None
-
-
-class DataType(Enum):
-    """Type of the data value."""
-    TABLE = "table"
-
-
-@dataclass
-class DataValueContainer:
-    """Container for complex data types.
-    Basic data types are: string, int, float, bool and lists of these types.
-    Everything else requires a container that contains some metadata hinting what the type
-    is.
-    For some types like 'table' the value is not provided because it may be too big.
-    A batch view of the data value should be used to access such values.
-    """
-    """Type of the data value."""
-    data_type: DataType
-    """Some statistical numbers describing data.
-    The content of this field is type dependent.
-    E.g. for 'table' this could contain the actual number of rows.
-    """
-    stats: Optional[Dict[str, Any]] = None
-    """Actual value. This may be provided (e.g. Date) or may not be provided (e.g. Table without
-    a batch view)
-    """
-    value: Optional[str] = None
-
-
-@dataclass
-class TableStats:
-    """Stats object for arrow table"""
-    """Number of rows."""
-    rows_count: int

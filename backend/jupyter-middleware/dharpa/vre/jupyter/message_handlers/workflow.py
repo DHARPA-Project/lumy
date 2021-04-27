@@ -2,6 +2,7 @@ import logging
 
 from dharpa.vre.jupyter.base import MessageHandler
 from dharpa.vre.types import MsgWorkflowUpdated
+from dharpa.vre.utils.dataclasses import to_dict
 
 logger = logging.getLogger(__name__)
 
@@ -13,5 +14,6 @@ class WorkflowMessageHandler(MessageHandler):
         Return current workflow.
         '''
         self.publisher.publish(MsgWorkflowUpdated(
-            self._context.current_workflow
+            None if self._context.current_workflow_structure is None
+            else to_dict(self._context.current_workflow_structure)
         ))

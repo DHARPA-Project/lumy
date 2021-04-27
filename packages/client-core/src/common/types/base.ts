@@ -9,11 +9,13 @@ export type IDecode<T, A extends string = string> = (msg: ME<T, A>) => T | undef
 export type IEncode<T, A extends string = string> = (content: T) => MessageEnvelope<T, A>
 
 type ICodec<T, A extends string = string> = {
+  readonly action: A
   decode: IDecode<T, A>
   encode: IEncode<T, A>
 }
 
 export const Codec = <T, A extends string = string>(action: A): ICodec<T, A> => ({
+  action,
   decode: (msg: ME<T, A>): T | undefined => {
     if (msg.action === action) return msg.content
     return undefined

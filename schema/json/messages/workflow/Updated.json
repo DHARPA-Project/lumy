@@ -6,8 +6,8 @@
   "additionalProperties": false,
   "properties": {
     "workflow": {
-      "$ref": "https://dharpa.org/schema/types/workflow/Workflow.json",
-      "description": "Current workflow."
+      "type": "object",
+      "description": "Current workflow state. Type: PipelineState from https://dharpa.org/kiara/development/entities/modules/PipelineState.json .\nNot using it as a reference because of a code generation bug."
     }
   },
   "required": []

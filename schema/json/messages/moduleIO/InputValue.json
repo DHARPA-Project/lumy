@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "type": "object",
+  "title": "MsgModuleIOInputValue",
+  "description": "Response to GetInputValue 'pull' request.\nContains value and stats for an input.",
+  "additionalProperties": false,
+  "properties": {
+    "stepId": {
+      "type": "string",
+      "description": "Unique ID of the step within the workflow that we are getting parameters for."
+    },
+    "inputId": {
+      "type": "string",
+      "description": "ID of the input"
+    },
+    "type": {
+      "type": "string",
+      "description": "Type of the input value"
+    },
+    "stats": {
+      "type": "object",
+      "description": "Stats of the value if applicable. Simple types usually do not include stats.\nComplex ones like table do."
+    },
+    "value": {
+      "description": "Actual serialized value.\nIt may be undefined if not set. It may be a filtered value in case of a complex value.\nFilter is also returned if the value is filtered."
+    },
+    "filter": {
+      "$ref": "https://dharpa.org/schema/types/data/TabularDataFilter.json"
+    }
+  },
+  "required": [
+    "stepId",
+    "inputId",
+    "type"
+  ]
+}

@@ -1,7 +1,9 @@
 from collections import defaultdict
+from dataclasses import is_dataclass
 from typing import Dict, Type
 from .generated import *  # noqa
 from ..target import Target
+from dataclasses_json import dataclass_json, LetterCase
 
 target_action_mapping: Dict[Target, Dict[str, Type]] = defaultdict(dict)
 
@@ -9,6 +11,8 @@ target_action_mapping: Dict[Target, Dict[str, Type]] = defaultdict(dict)
 # to make it easier to deal with publishing of the messages
 
 for k, v in list(globals().items()):
+    if is_dataclass(v):
+        dataclass_json(v, letter_case=LetterCase.CAMEL)
     if k.startswith('Msg'):
         if k.startswith('MsgModuleIO'):
             v._action = k.replace('MsgModuleIO', '')

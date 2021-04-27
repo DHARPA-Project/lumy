@@ -175,46 +175,66 @@ export interface MsgModuleIOExecute {
 
 /**
  * Target: "moduleIO"
- * Message type: "GetInputValues"
+ * Message type: "GetInputValue"
  *
- * Get values of inputs of a step from the current workflow.
+ * Get value of a step input from the current workflow.
+ * This is a 'pull' request meaning that a synchronous response will be returned. The
+ * behaviour of the response is different depending on whether it is a simple or complex
+ * value.
+ * For simple values the filter is ignored and full value is always returned.
+ * For complex values only stats are returned unless 'filter' is set and is not empty.
  */
-export interface MsgModuleIOGetInputValues {
+export interface MsgModuleIOGetInputValue {
+  filter?: DataTabularDataFilter
   /**
-   * Input IDs for which the full value should be returned.
-   * This is only relevant for big complex types.
+   * ID of the input
    */
-  fullValueInputIds?: string[]
+  inputId: string
   /**
    * Unique ID of the step within the workflow that we are getting parameters for.
    */
-  id: string
+  stepId: string
+}
+
+/**
+ * Filter for tabular data
+ */
+export interface DataTabularDataFilter {
   /**
-   * Limit returned values only to inputs with these IDs.
+   * Whether to ignore other filter items and return full value.
    */
-  inputIds?: string[]
+  fullValue?: boolean
+  /**
+   * Offset of the page
+   */
+  offset?: number
+  /**
+   * Size of the page
+   */
+  pageSize?: number
 }
 
 /**
  * Target: "moduleIO"
- * Message type: "GetOutputValues"
+ * Message type: "GetOutputValue"
  *
- * Get values of outputs of a step from the current workflow.
+ * Get value of a step output from the current workflow.
+ * This is a 'pull' request meaning that a synchronous response will be returned. The
+ * behaviour of the response is different depending on whether it is a simple or complex
+ * value.
+ * For simple values the filter is ignored and full value is always returned.
+ * For complex values only stats are returned unless 'filter' is set and is not empty.
  */
-export interface MsgModuleIOGetOutputValues {
+export interface MsgModuleIOGetOutputValue {
+  filter?: DataTabularDataFilter
   /**
-   * Output IDs for which the full value should be returned.
-   * This is only relevant for big complex types.
+   * ID of the output
    */
-  fullValueOutputIds?: string[]
+  outputId: string
   /**
-   * Unique ID of the step within the workflow that we are getting values for.
+   * Unique ID of the step within the workflow that we are getting parameters for.
    */
-  id: string
-  /**
-   * Limit returned values only to outputs with these IDs.
-   */
-  outputIds?: string[]
+  stepId: string
 }
 
 /**
@@ -232,117 +252,104 @@ export interface MsgModuleIOGetPreview {
 
 /**
  * Target: "moduleIO"
- * Message type: "GetTabularInputValue"
+ * Message type: "InputValue"
  *
- * Get a filtered version of a tabular input of a step from the current workflow.
+ * Response to GetInputValue 'pull' request.
+ * Contains value and stats for an input.
  */
-export interface MsgModuleIOGetTabularInputValue {
-  filter: DataTabularDataFilter
+export interface MsgModuleIOInputValue {
+  filter?: DataTabularDataFilter
   /**
-   * Unique ID of the input
+   * ID of the input
    */
   inputId: string
   /**
-   * Unique ID of the step within the workflow that we are getting parameters for.
+   * Stats of the value if applicable. Simple types usually do not include stats.
+   * Complex ones like table do.
    */
-  stepId: string
-  /**
-   * An ID associated with this filtered version of the tabular value.
-   * This is needed to distinguish between different views of the same data value that may
-   * exist independently.
-   */
-  viewId: string
-}
-
-/**
- * Filter for tabular data
- */
-export interface DataTabularDataFilter {
-  /**
-   * Offset of the page
-   */
-  offset?: number
-  /**
-   * Size of the page
-   */
-  pageSize: number
-}
-
-/**
- * Target: "moduleIO"
- * Message type: "GetTabularOutputValue"
- *
- * Get a filtered version of a tabular output of a step from the current workflow.
- */
-export interface MsgModuleIOGetTabularOutputValue {
-  filter: DataTabularDataFilter
-  /**
-   * Unique ID of the output
-   */
-  outputId: string
+  stats?: { [key: string]: unknown }
   /**
    * Unique ID of the step within the workflow that we are getting parameters for.
    */
   stepId: string
   /**
-   * An ID associated with this filtered version of the tabular value.
-   * This is needed to distinguish between different views of the same data value that may
-   * exist independently.
+   * Type of the input value
    */
-  viewId: string
+  type: string
+  /**
+   * Actual serialized value.
+   * It may be undefined if not set. It may be a filtered value in case of a complex value.
+   * Filter is also returned if the value is filtered.
+   */
+  value?: unknown
 }
 
 /**
  * Target: "moduleIO"
  * Message type: "InputValuesUpdated"
  *
- * Updated input values of a step in the current workflow.
- * TODO: At the moment only those values that are not outputs of other modules (hence the
- * ones used in the UI).
+ * Input IDs of a step in the current workflow that had their values updated.
  */
 export interface MsgModuleIOInputValuesUpdated {
   /**
+   * IDs of inputs that had their values updated.
+   */
+  inputIds: string[]
+  /**
    * Unique ID of the step within the workflow.
    */
-  id: string
-  /**
-   * Input values.
-   */
-  inputValues?: { [key: string]: unknown }
+  stepId: string
 }
 
 /**
  * Target: "moduleIO"
- * Message type: "OutputUpdated"
+ * Message type: "OutputValue"
  *
- * Contains output data of a step from the current workflow after it was recalculated.
+ * Response to GetOutputValue 'pull' request.
+ * Contains value and stats for an output.
  */
-export interface MsgModuleIOOutputUpdated {
+export interface MsgModuleIOOutputValue {
+  filter?: DataTabularDataFilter
   /**
-   * Unique ID of the step within the workflow.
+   * ID of the output
    */
-  id: string
+  outputId: string
   /**
-   * Output data for the module
+   * Stats of the value if applicable. Simple types usually do not include stats.
+   * Complex ones like table do.
    */
-  outputs: unknown[]
+  stats?: { [key: string]: unknown }
+  /**
+   * Unique ID of the step within the workflow that we are getting parameters for.
+   */
+  stepId: string
+  /**
+   * Type of the output value
+   */
+  type: string
+  /**
+   * Actual serialized value.
+   * It may be undefined if not set. It may be a filtered value in case of a complex value.
+   * Filter is also returned if the value is filtered.
+   */
+  value?: unknown
 }
 
 /**
  * Target: "moduleIO"
  * Message type: "OutputValuesUpdated"
  *
- * Updated output values of a step in the current workflow.
+ * Output IDs of a step in the current workflow that had their values updated.
  */
 export interface MsgModuleIOOutputValuesUpdated {
   /**
+   * IDs of outputs that had their values updated.
+   */
+  outputIds: string[]
+  /**
    * Unique ID of the step within the workflow.
    */
-  id: string
-  /**
-   * Output values. Key - valueId, Value - actual value.
-   */
-  outputValues?: { [key: string]: unknown }
+  stepId: string
 }
 
 /**
@@ -368,125 +375,42 @@ export interface MsgModuleIOPreviewUpdated {
 
 /**
  * Target: "moduleIO"
- * Message type: "TabularInputValueUpdated"
- *
- * A filtered version of a tabular input of a step from the current workflow.
- */
-export interface MsgModuleIOTabularInputValueUpdated {
-  filter: DataTabularDataFilter
-  /**
-   * Unique ID of the input
-   */
-  inputId: string
-  /**
-   * Unique ID of the step within the workflow that we are getting parameters for.
-   */
-  stepId: string
-  /**
-   * The actual value payload. TODO: The type will be set later
-   */
-  value?: { [key: string]: unknown } | string
-  /**
-   * An ID associated with this filtered version of the tabular value.
-   * This is needed to distinguish between different views of the same data value that may
-   * exist independently.
-   */
-  viewId: string
-}
-
-/**
- * Target: "moduleIO"
- * Message type: "TabularOutputValueUpdated"
- *
- * A filtered version of a tabular output of a step from the current workflow.
- */
-export interface MsgModuleIOTabularOutputValueUpdated {
-  filter: DataTabularDataFilter
-  /**
-   * Unique ID of the output
-   */
-  outputId: string
-  /**
-   * Unique ID of the step within the workflow that we are getting parameters for.
-   */
-  stepId: string
-  /**
-   * The actual value payload. TODO: The type will be set later
-   */
-  value?: { [key: string]: unknown } | string
-  /**
-   * An ID associated with this filtered version of the tabular value.
-   * This is needed to distinguish between different views of the same data value that may
-   * exist independently.
-   */
-  viewId: string
-}
-
-/**
- * Target: "moduleIO"
- * Message type: "UnregisterTabularInputView"
- *
- * If there is a view of a table with the provided ID, unregister this view and stop sending
- * updates about it to the frontend.
- */
-export interface MsgModuleIOUnregisterTabularInputView {
-  /**
-   * Unique ID of the input
-   */
-  inputId: string
-  /**
-   * Unique ID of the step within the workflow that we are getting parameters for.
-   */
-  stepId: string
-  /**
-   * An ID associated with this filtered version of the tabular value.
-   * This is needed to distinguish between different views of the same data value that may
-   * exist independently.
-   */
-  viewId: string
-}
-
-/**
- * Target: "moduleIO"
- * Message type: "UnregisterTabularOutputView"
- *
- * If there is a view of a table with the provided ID, unregister this view and stop sending
- * updates about it to the frontend.
- */
-export interface MsgModuleIOUnregisterTabularOutputView {
-  /**
-   * Unique ID of the output
-   */
-  outputId: string
-  /**
-   * Unique ID of the step within the workflow that we are getting parameters for.
-   */
-  stepId: string
-  /**
-   * An ID associated with this filtered version of the tabular value.
-   * This is needed to distinguish between different views of the same data value that may
-   * exist independently.
-   */
-  viewId: string
-}
-
-/**
- * Target: "moduleIO"
  * Message type: "UpdateInputValues"
  *
  * Update input values of a step in the current workflow.
- * TODO: At the moment only those values that are not outputs of other modules (hence the
- * ones used in the UI).
+ * Only disconnected values can be updated.
  */
 export interface MsgModuleIOUpdateInputValues {
   /**
-   * Unique ID of the step within the workflow.
-   */
-  id: string
-  /**
    * Input values.
    */
-  inputValues?: { [key: string]: unknown }
+  inputValues?: { [key: string]: DataValueContainer }
+  /**
+   * Unique ID of the step within the workflow.
+   */
+  stepId: string
+}
+
+/**
+ * Used to send serialized data from front end to back end.
+ */
+export interface DataValueContainer {
+  /**
+   * Type of the data value.
+   */
+  dataType: DataType
+  /**
+   * Actual serialized value.
+   */
+  value?: unknown
+}
+
+/**
+ * Type of the data value.
+ */
+export enum DataType {
+  Simple = 'simple',
+  Table = 'table'
 }
 
 /**
@@ -599,14 +523,24 @@ export interface MsgParametersSnapshots {
  */
 export interface MsgWorkflowUpdated {
   /**
-   * Current workflow.
+   * Current workflow state. Type: PipelineState from
+   * https://dharpa.org/kiara/development/entities/modules/PipelineState.json .
+   * Not using it as a reference because of a code generation bug.
    */
-  workflow?: Workflow
+  workflow?: { [key: string]: unknown }
 }
 
 /**
- * Current workflow.
- *
+ * Stats object for arrow table
+ */
+export interface TableStats {
+  /**
+   * Number of rows.
+   */
+  rowsCount: number
+}
+
+/**
  * Represents a workflow.
  */
 export interface Workflow {
@@ -685,47 +619,4 @@ export interface IOStateConnection {
    * ID of the step
    */
   stepId: string
-}
-
-/**
- * Container for complex data types.
- * Basic data types are: string, int, float, bool and lists of these types.
- * Everything else requires a container that contains some metadata hinting what the type
- * is.
- * For some types like 'table' the value is not provided because it may be too big.
- * A batch view of the data value should be used to access such values.
- */
-export interface DataValueContainer {
-  /**
-   * Type of the data value.
-   */
-  dataType: DataType
-  /**
-   * Some statistical numbers describing data.
-   * The content of this field is type dependent.
-   * E.g. for 'table' this could contain the actual number of rows.
-   */
-  stats?: { [key: string]: unknown }
-  /**
-   * Actual value. This may be provided (e.g. Date) or may not be provided (e.g. Table without
-   * a batch view)
-   */
-  value?: string
-}
-
-/**
- * Type of the data value.
- */
-export enum DataType {
-  Table = 'table'
-}
-
-/**
- * Stats object for arrow table
- */
-export interface TableStats {
-  /**
-   * Number of rows.
-   */
-  rowsCount: number
 }

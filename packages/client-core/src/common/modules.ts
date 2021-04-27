@@ -1,13 +1,11 @@
 import { FC } from 'react'
-import { WorkflowIOState, WorkflowStep } from './types'
+import { StepDesc } from './types'
 
-interface TypedWorkflowStep<Input, Output> extends WorkflowStep {
-  inputs: { [key in keyof Input]: WorkflowIOState }
-  outputs: { [key in keyof Output]: WorkflowIOState }
-}
-
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export interface ModuleProps<Input, Output> {
-  step: TypedWorkflowStep<Input, Output>
+  step: StepDesc['step']
+  inputConnections: StepDesc['inputConnections']
+  outputConnections: StepDesc['outputConnections']
 }
 
 export interface ModuleViewProvider {
