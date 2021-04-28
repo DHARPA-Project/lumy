@@ -20,6 +20,9 @@ import {
   Radio
 } from '@material-ui/core'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
+import { useElement, NetworkForce } from '@dharpa-vre/datavis-components'
+
+useElement('network-force')
 
 export type GraphDataStructure = {
   degree: Float32
@@ -66,6 +69,7 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
   const [nodesSize, setNodesSize] = React.useState<string>(null)
   const [isDisplayIsolated, setIsDisplayIsolated] = React.useState(false)
   const [expandedAccordionId, setExpandedAccordionId] = React.useState<number>(null)
+  const graphRef = React.useRef<NetworkForce>(null)
 
   const StyledAccordion = withStyles({
     root: {
@@ -85,7 +89,7 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
   })(Accordion)
 
   React.useEffect(() => {
-    // if (graphRef.current == null) return
+    if (graphRef.current == null) return
 
     const nodesList = nodes == null ? [] : [...nodes.toArray()]
     const edgesList = edges == null ? [] : [...edges.toArray()]
@@ -108,10 +112,8 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
       }))
     }
 
-    console.log('*', data)
-
-    // graphRef.current.nodes = data.nodes
-    // graphRef.current.edges = data.links
+    graphRef.current.nodes = data.nodes
+    graphRef.current.edges = data.links
   }, [nodes, edges, isDisplayIsolated, nodesSize])
 
   console.log('NetworkAnalysisDataVis', nodes, edges, graphData)
@@ -147,7 +149,7 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
           </StyledAccordion>
         </Grid>
         <Grid item xs={9}>
-          {/* <dharpa-network-force width="600" height="400" ref={graphRef} /> */}
+          <network-force displayIsolatedNodes={true} ref={graphRef} />
         </Grid>
         <div>
           <span>[network analysis data vis placeholder]</span>
