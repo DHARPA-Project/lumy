@@ -21,6 +21,7 @@ import {
 } from '@material-ui/core'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { useElement, NetworkForce } from '@dharpa-vre/datavis-components'
+import { useBbox } from '../hooks/useBbox'
 
 useElement('network-force')
 
@@ -60,102 +61,119 @@ interface OutputValues {
   shortestPath: string[]
 }
 
+const StyledAccordion = withStyles({
+  root: {
+    border: '1px solid rgba(0, 0, 0, .125)',
+    boxShadow: 'none',
+    '&:not(:last-child)': {
+      borderBottom: 0
+    },
+    '&:before': {
+      display: 'none'
+    },
+    '&$expanded': {
+      margin: 'auto'
+    }
+  },
+  expanded: {}
+})(Accordion)
+
 type Props = ModuleProps<InputValues, OutputValues>
 
 const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
   const [nodes] = useStepInputValue<NodesTable>(step.stepId, 'nodes', { fullValue: true })
   const [edges] = useStepInputValue<EdgesTable>(step.stepId, 'edges', { fullValue: true })
   const [graphData] = useStepOutputValue<GraphDataTable>(step.stepId, 'graphData', { fullValue: true })
-  const [nodesSize, setNodesSize] = React.useState<string>(null)
+  const [nodesScalingMethod, setNodesScalingMethod] = React.useState<string>('equal')
   const [isDisplayIsolated, setIsDisplayIsolated] = React.useState(false)
   const [expandedAccordionId, setExpandedAccordionId] = React.useState<number>(null)
   const graphRef = React.useRef<NetworkForce>(null)
+  const graphContainerRef = React.useRef()
+  const graphBox = useBbox(graphContainerRef)
 
-  const StyledAccordion = withStyles({
-    root: {
-      border: '1px solid rgba(0, 0, 0, .125)',
-      boxShadow: 'none',
-      '&:not(:last-child)': {
-        borderBottom: 0
-      },
-      '&:before': {
-        display: 'none'
-      },
-      '&$expanded': {
-        margin: 'auto'
-      }
-    },
-    expanded: {}
-  })(Accordion)
+  const graphWidth = graphBox?.width ?? 0
+  const graphHeight = (graphWidth * 2) / 3
 
   React.useEffect(() => {
-    if (graphRef.current == null) return
+    if (graphRef.current == null || nodes == null || graphData == null) return
 
-    const nodesList = nodes == null ? [] : [...nodes.toArray()]
-    const edgesList = edges == null ? [] : [...edges.toArray()]
-    let scalarList: number[] = []
-    if (graphData != null && nodesSize != null)
-      scalarList = [...graphData.toArray()].map(
-        row => row.get((nodesSize as unknown) as keyof GraphDataStructure) as number
-      )
+    const scalerColumn = graphData.getColumn(nodesScalingMethod as keyof GraphDataStructure)
 
-    const data = {
-      nodes: nodesList.map((row, idx) => ({
-        id: row.id,
-        label: row.label,
-        group: row.group,
-        scaler: scalarList[idx]
-      })),
-      links: edgesList.map(row => ({
-        source: row.srcId,
-        target: row.tgtId
-      }))
-    }
+    graphRef.current.nodes = [...nodes.toArray()].map((node, idx) => ({
+      id: node.id,
+      group: node.group,
+      label: node.label,
+      scaler: scalerColumn?.get(idx) as number
+    }))
+  }, [nodes, nodesScalingMethod, graphData, graphRef.current])
 
-    graphRef.current.nodes = data.nodes
-    graphRef.current.edges = data.links
-  }, [nodes, edges, isDisplayIsolated, nodesSize])
+  React.useEffect(() => {
+    if (graphRef.current == null || edges == null) return
 
-  console.log('NetworkAnalysisDataVis', nodes, edges, graphData)
+    graphRef.current.edges = [...edges.toArray()].map(edge => ({
+      sourceId: edge.srcId,
+      targetId: edge.tgtId
+    }))
+  }, [edges, graphRef.current])
 
   return (
     <Grid container>
       <Grid container spacing={3}>
         <Grid item xs={3}>
-          <StyledAccordion
-            expanded={expandedAccordionId === 0}
-            onChange={(e, isExpanded) => setExpandedAccordionId(isExpanded ? 0 : null)}
-          >
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography>Nodes size</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <RadioGroup value={nodesSize} onChange={e => setNodesSize(e.target.value)}>
-                <FormControlLabel value="equal" control={<Radio />} label="Equal" />
-                <FormControlLabel value="degree" control={<Radio />} label="Degree" />
-                <FormControlLabel value="betweenness" control={<Radio />} label="Betweenness Centrality" />
-                <FormControlLabel value="eigenvector" control={<Radio />} label="Eigenvector Centrality" />
-              </RadioGroup>
-            </AccordionDetails>
-          </StyledAccordion>
-          <StyledAccordion
-            expanded={expandedAccordionId === 1}
-            onChange={(e, isExpanded) => setExpandedAccordionId(isExpanded ? 1 : null)}
-          >
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography>Nodes filtering</Typography>
-            </AccordionSummary>
-            <AccordionDetails></AccordionDetails>
-          </StyledAccordion>
+          <Grid container spacing={1} direction="column">
+            <Grid item>
+              <StyledAccordion
+                expanded={expandedAccordionId === 0}
+                onChange={(e, isExpanded) => setExpandedAccordionId(isExpanded ? 0 : null)}
+              >
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <Typography>Nodes size</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <RadioGroup
+                    value={nodesScalingMethod}
+                    onChange={e => setNodesScalingMethod(e.target.value)}
+                  >
+                    <FormControlLabel value="equal" control={<Radio />} label="Equal" />
+                    <FormControlLabel value="degree" control={<Radio />} label="Degree" />
+                    <FormControlLabel
+                      value="betweenness"
+                      control={<Radio />}
+                      label="Betweenness Centrality"
+                    />
+                    <FormControlLabel
+                      value="eigenvector"
+                      control={<Radio />}
+                      label="Eigenvector Centrality"
+                    />
+                  </RadioGroup>
+                </AccordionDetails>
+              </StyledAccordion>
+              <StyledAccordion
+                expanded={expandedAccordionId === 1}
+                onChange={(e, isExpanded) => setExpandedAccordionId(isExpanded ? 1 : null)}
+              >
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <Typography>Nodes filtering</Typography>
+                </AccordionSummary>
+                <AccordionDetails></AccordionDetails>
+              </StyledAccordion>
+            </Grid>
+            <Grid item>
+              <Button onClick={() => setIsDisplayIsolated(!isDisplayIsolated)}>
+                {isDisplayIsolated ? 'Hide isolated nodes' : 'Display isolated nodes'}
+              </Button>
+            </Grid>
+          </Grid>
         </Grid>
-        <Grid item xs={9}>
-          <network-force displayIsolatedNodes={true} ref={graphRef} />
+        <Grid item xs={9} ref={graphContainerRef}>
+          <network-force
+            displayIsolatedNodes={isDisplayIsolated ? true : undefined}
+            width={graphWidth}
+            height={graphHeight}
+            ref={graphRef}
+          />
         </Grid>
-        <div>
-          <span>[network analysis data vis placeholder]</span>
-
-          <Button onClick={() => setIsDisplayIsolated(!isDisplayIsolated)}>toggle isolated</Button>
-        </div>
       </Grid>
     </Grid>
   )
