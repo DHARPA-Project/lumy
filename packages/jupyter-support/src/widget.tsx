@@ -8,7 +8,8 @@ const centeredStyle = {
   'text-align': 'center',
   marginTop: '30%',
   fontWeight: 100,
-  fontSize: '2rem'
+  fontSize: '2rem',
+  width: '100%'
 }
 
 /**
