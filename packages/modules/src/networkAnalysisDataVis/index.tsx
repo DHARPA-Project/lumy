@@ -78,15 +78,72 @@ const StyledAccordion = withStyles({
   expanded: {}
 })(Accordion)
 
+type ScalingMethods = keyof Omit<GraphDataStructure, 'isLarge'>
+
+interface NavigationProps {
+  nodesScalingMethod: ScalingMethods
+  isDisplayIsolated: boolean
+  onNodesScalingMethodUpdated?: (m: ScalingMethods) => void
+  onDisplayIsolatedUpdated?: (isIsolated: boolean) => void
+}
+
+const Navigation = ({
+  nodesScalingMethod,
+  isDisplayIsolated,
+  onNodesScalingMethodUpdated,
+  onDisplayIsolatedUpdated
+}: NavigationProps): JSX.Element => {
+  const [expandedAccordionId, setExpandedAccordionId] = React.useState<number>(null)
+
+  return (
+    <Grid container spacing={1} direction="column">
+      <Grid item>
+        <StyledAccordion
+          expanded={expandedAccordionId === 0}
+          onChange={(e, isExpanded) => setExpandedAccordionId(isExpanded ? 0 : null)}
+        >
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography>Nodes size</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <RadioGroup
+              value={nodesScalingMethod ?? ''}
+              onChange={e => onNodesScalingMethodUpdated?.(e.target.value as ScalingMethods)}
+            >
+              <FormControlLabel value="" control={<Radio />} label="Equal" />
+              <FormControlLabel value="degree" control={<Radio />} label="Degree" />
+              <FormControlLabel value="betweenness" control={<Radio />} label="Betweenness Centrality" />
+              <FormControlLabel value="eigenvector" control={<Radio />} label="Eigenvector Centrality" />
+            </RadioGroup>
+          </AccordionDetails>
+        </StyledAccordion>
+        <StyledAccordion
+          expanded={expandedAccordionId === 1}
+          onChange={(e, isExpanded) => setExpandedAccordionId(isExpanded ? 1 : null)}
+        >
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography>Nodes filtering</Typography>
+          </AccordionSummary>
+          <AccordionDetails></AccordionDetails>
+        </StyledAccordion>
+      </Grid>
+      <Grid item>
+        <Button onClick={() => onDisplayIsolatedUpdated?.(!isDisplayIsolated)}>
+          {isDisplayIsolated ? 'Hide isolated nodes' : 'Display isolated nodes'}
+        </Button>
+      </Grid>
+    </Grid>
+  )
+}
+
 type Props = ModuleProps<InputValues, OutputValues>
 
 const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
   const [nodes] = useStepInputValue<NodesTable>(step.stepId, 'nodes', { fullValue: true })
   const [edges] = useStepInputValue<EdgesTable>(step.stepId, 'edges', { fullValue: true })
   const [graphData] = useStepOutputValue<GraphDataTable>(step.stepId, 'graphData', { fullValue: true })
-  const [nodesScalingMethod, setNodesScalingMethod] = React.useState<string>('equal')
+  const [nodesScalingMethod, setNodesScalingMethod] = React.useState<ScalingMethods>()
   const [isDisplayIsolated, setIsDisplayIsolated] = React.useState(false)
-  const [expandedAccordionId, setExpandedAccordionId] = React.useState<number>(null)
   const graphRef = React.useRef<NetworkForce>(null)
   const graphContainerRef = React.useRef()
   const graphBox = useBbox(graphContainerRef)
@@ -97,7 +154,7 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
   React.useEffect(() => {
     if (graphRef.current == null || nodes == null || graphData == null) return
 
-    const scalerColumn = graphData.getColumn(nodesScalingMethod as keyof GraphDataStructure)
+    const scalerColumn = graphData.getColumn(nodesScalingMethod)
 
     graphRef.current.nodes = [...nodes.toArray()].map((node, idx) => ({
       id: node.id,
@@ -120,51 +177,12 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
     <Grid container>
       <Grid container spacing={3}>
         <Grid item xs={3}>
-          <Grid container spacing={1} direction="column">
-            <Grid item>
-              <StyledAccordion
-                expanded={expandedAccordionId === 0}
-                onChange={(e, isExpanded) => setExpandedAccordionId(isExpanded ? 0 : null)}
-              >
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                  <Typography>Nodes size</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <RadioGroup
-                    value={nodesScalingMethod}
-                    onChange={e => setNodesScalingMethod(e.target.value)}
-                  >
-                    <FormControlLabel value="equal" control={<Radio />} label="Equal" />
-                    <FormControlLabel value="degree" control={<Radio />} label="Degree" />
-                    <FormControlLabel
-                      value="betweenness"
-                      control={<Radio />}
-                      label="Betweenness Centrality"
-                    />
-                    <FormControlLabel
-                      value="eigenvector"
-                      control={<Radio />}
-                      label="Eigenvector Centrality"
-                    />
-                  </RadioGroup>
-                </AccordionDetails>
-              </StyledAccordion>
-              <StyledAccordion
-                expanded={expandedAccordionId === 1}
-                onChange={(e, isExpanded) => setExpandedAccordionId(isExpanded ? 1 : null)}
-              >
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                  <Typography>Nodes filtering</Typography>
-                </AccordionSummary>
-                <AccordionDetails></AccordionDetails>
-              </StyledAccordion>
-            </Grid>
-            <Grid item>
-              <Button onClick={() => setIsDisplayIsolated(!isDisplayIsolated)}>
-                {isDisplayIsolated ? 'Hide isolated nodes' : 'Display isolated nodes'}
-              </Button>
-            </Grid>
-          </Grid>
+          <Navigation
+            nodesScalingMethod={nodesScalingMethod}
+            isDisplayIsolated={isDisplayIsolated}
+            onNodesScalingMethodUpdated={setNodesScalingMethod}
+            onDisplayIsolatedUpdated={setIsDisplayIsolated}
+          />
         </Grid>
         <Grid item xs={9} ref={graphContainerRef}>
           <network-force
