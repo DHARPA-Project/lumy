@@ -1,24 +1,45 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { LitElement, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import * as d3 from 'd3'
 
+type MetadataId = string | number
+
+export interface NodeMetadata {
+  id: MetadataId
+  group: string
+  scaler?: number
+  [key: string]: unknown
+}
+
+export interface EdgeMetadata {
+  sourceId: MetadataId
+  targetId: MetadataId
+}
+
+interface GraphNodeDatum extends d3.SimulationNodeDatum {
+  metadata: NodeMetadata
+}
+interface GraphLinkDatum extends d3.SimulationLinkDatum<GraphNodeDatum> {
+  metadata: EdgeMetadata
+}
+
+type DragEvent = d3.D3DragEvent<Element, GraphNodeDatum, GraphNodeDatum>
+
 const colorScale = d3.scaleOrdinal(d3.schemeTableau10)
 
-const drag = (simulation: d3.Simulation<SimulationNodeDatum, SimulationLinkDatum>) => {
-  function dragstarted(event: any) {
+const drag = (simulation: d3.Simulation<GraphNodeDatum, GraphLinkDatum>) => {
+  function dragstarted(event: DragEvent) {
     if (!event.active) simulation.alphaTarget(0.3).restart()
     event.subject.fx = event.subject.x
     event.subject.fy = event.subject.y
   }
 
-  function dragged(event: any) {
+  function dragged(event: DragEvent) {
     event.subject.fx = event.x
     event.subject.fy = event.y
   }
 
-  function dragended(event: any) {
+  function dragended(event: DragEvent) {
     if (!event.active) simulation.alphaTarget(0)
     event.subject.fx = null
     event.subject.fy = null
@@ -27,23 +48,35 @@ const drag = (simulation: d3.Simulation<SimulationNodeDatum, SimulationLinkDatum
   return d3.drag().on('start', dragstarted).on('drag', dragged).on('end', dragended)
 }
 
-export interface NodeDatum {
-  id: string | number
-  group: string
-  scaler?: number
-  label?: string
+const mergeNodes = (
+  currentNodes: GraphNodeDatum[],
+  updatedNodesMetadata: NodeMetadata[]
+): GraphNodeDatum[] => {
+  return updatedNodesMetadata.map(metadata => {
+    const node = currentNodes.find(n => n.metadata.id === metadata.id)
+    if (node != null) {
+      node.metadata = metadata
+      return node
+    }
+    return { metadata }
+  })
 }
 
-export interface EdgeDatum {
-  source: string | number
-  target: string | number
+const mergeLinks = (
+  currentLinks: GraphLinkDatum[],
+  updatedEdgesMetadata: EdgeMetadata[]
+): GraphLinkDatum[] => {
+  return updatedEdgesMetadata.map(metadata => {
+    const link = currentLinks.find(
+      n => n.metadata.sourceId === metadata.sourceId && n.metadata.targetId === metadata.targetId
+    )
+    if (link != null) {
+      link.metadata = metadata
+      return link
+    }
+    return { metadata, source: metadata.sourceId, target: metadata.targetId }
+  })
 }
-
-// Types for force simulation.
-// When nodes and edges are copied in the node below
-// they become these objects
-interface SimulationNodeDatum extends NodeDatum, d3.SimulationNodeDatum {}
-type SimulationLinkDatum = d3.SimulationLinkDatum<SimulationNodeDatum>
 
 /**
  * Network analysis force graph.
@@ -58,11 +91,23 @@ export class NetworkForce extends LitElement {
   @property({ type: Boolean }) displayIsolatedNodes = false
 
   /** Nodes of the graph */
-  @property({ attribute: false }) nodes: NodeDatum[] = []
+  @property({ attribute: false }) nodes: NodeMetadata[] = []
   /** Edges of the graph */
-  @property({ attribute: false }) edges: EdgeDatum[] = []
+  @property({ attribute: false }) edges: EdgeMetadata[] = []
   /** A list of IDs of nodes representing the shortest path between two nodes */
   @property({ attribute: false }) shortestPath: (string | number)[] = []
+
+  /**
+   * Keeping a reference to current nodes and links.
+   * Note that these objects are different from `nodes` and `edges`,
+   * they are mutated by `d3.forceSimulation` functions when the
+   * graph is rendered or nodes are dragged by the user. It is therefore
+   * important to update these objects whenever nodes and edges change
+   * instead of replacing them entirely. Otherwise the force simulation
+   * will be re-executed which will make the graph jolt.
+   */
+  currentGraphNodes: GraphNodeDatum[] = []
+  currentGraphLinks: GraphLinkDatum[] = []
 
   render(): unknown {
     return html`
@@ -75,26 +120,25 @@ export class NetworkForce extends LitElement {
 
   updated(): void {
     const svg = d3.select(this.shadowRoot.firstElementChild)
-    const viewBox = this.displayIsolatedNodes
-      ? [0, 0, this.width, this.height]
-      : [-this.width / 2, -this.height / 2, this.width, this.height]
+    const viewBox = [0, 0, this.width, this.height]
     svg.attr('viewBox', viewBox.join(' '))
 
-    // create a copy because simulation modifies them.
-    const nodes: SimulationNodeDatum[] = this.nodes.map(v => ({ ...v })) ?? []
-    const edges: SimulationLinkDatum[] = this.edges.map(v => ({ ...v })) ?? []
+    // Just make sure we are not trying to render edges without nodes
+    if (this.nodes.length === 0 && this.edges.length > 0) return
 
-    const simulPrep = d3
-      .forceSimulation(nodes)
+    this.currentGraphNodes = mergeNodes(this.currentGraphNodes, this.nodes)
+    this.currentGraphLinks = mergeLinks(this.currentGraphLinks, this.edges)
+
+    const simulation = d3
+      .forceSimulation(this.currentGraphNodes)
       .force(
         'link',
-        d3.forceLink<SimulationNodeDatum, SimulationLinkDatum>(edges).id(d => String(d.id))
+        d3.forceLink<GraphNodeDatum, GraphLinkDatum>(this.currentGraphLinks).id(d => String(d.metadata.id))
       )
       .force('charge', d3.forceManyBody())
-
-    const simulation = this.displayIsolatedNodes
-      ? simulPrep.force('center', d3.forceCenter(this.width / 2, this.height / 2))
-      : simulPrep.force('x', d3.forceX()).force('y', d3.forceY())
+      .force('center', d3.forceCenter(this.width / 2, this.height / 2))
+      .force('x', this.displayIsolatedNodes ? null : d3.forceX())
+      .force('y', this.displayIsolatedNodes ? null : d3.forceY())
 
     const edgesGroup = svg.select('g.edges').attr('stroke', '#999').attr('stroke-opacity', 0.6)
 
@@ -102,24 +146,18 @@ export class NetworkForce extends LitElement {
 
     const link = edgesGroup
       .selectAll('line')
-      .data(edges)
+      .data(this.currentGraphLinks)
       .join('line')
       .attr('class', 'graph-links')
       .attr('stroke-width', d => {
-        const sourceId = (d.source as SimulationNodeDatum).id
-        const targetId = (d.target as SimulationNodeDatum).id
-
         if (shortestPathIsProvided) {
-          return this.edgeIsInShortestPath(sourceId, targetId) ? 1 : 0.5
+          return this.edgeIsInShortestPath(d) ? 1 : 0.5
         }
         return 0.5
       })
       .attr('opacity', d => {
-        const sourceId = (d.source as SimulationNodeDatum).id
-        const targetId = (d.target as SimulationNodeDatum).id
-
         if (shortestPathIsProvided) {
-          return this.edgeIsInShortestPath(sourceId, targetId) ? 1 : 0.2
+          return this.edgeIsInShortestPath(d) ? 1 : 0.2
         }
         return 1
       })
@@ -127,21 +165,24 @@ export class NetworkForce extends LitElement {
     const nodesGroup = svg.select('g.nodes').attr('stroke', '#fff').attr('stroke-width', 1.5)
 
     // nodes scaler
-    const scaleNode = d3.scaleLinear((this.nodes ?? []).map(node => node.scaler ?? 0)).range([3, 20])
+    const scaleNode = d3
+      .scaleLinear(this.currentGraphNodes.map(node => node.metadata.scaler ?? 0))
+      .range([3, 20])
 
     const node = nodesGroup
       .selectAll('circle')
-      .data(nodes)
+      .data(this.currentGraphNodes)
       .join('circle')
       .attr('class', 'graph-node')
       .attr('opacity', d => {
         if (shortestPathIsProvided) {
-          return this.shortestPath.includes(d.id) ? 1 : 0.2
+          return this.shortestPath.includes(d.metadata.id) ? 1 : 0.2
         }
         return 1
       })
-      .attr('r', d => scaleNode(d.scaler ?? 0) ?? 5)
-      .attr('fill', d => colorScale(d.group))
+      .attr('r', d => scaleNode(d.metadata.scaler ?? 0) ?? 5)
+      .attr('fill', d => colorScale(d.metadata.group))
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .call((drag(simulation) as unknown) as any)
       .on('click', (_e, node) => {
         this.dispatchEvent(new CustomEvent('node-clicked', { detail: node }))
@@ -149,22 +190,22 @@ export class NetworkForce extends LitElement {
 
     simulation.on('tick', () => {
       link
-        .attr('x1', (d: any) => d.source.x)
-        .attr('y1', (d: any) => d.source.y)
-        .attr('x2', (d: any) => d.target.x)
-        .attr('y2', (d: any) => d.target.y)
+        .attr('x1', d => (d.source as GraphNodeDatum).x)
+        .attr('y1', d => (d.source as GraphNodeDatum).y)
+        .attr('x2', d => (d.target as GraphNodeDatum).x)
+        .attr('y2', d => (d.target as GraphNodeDatum).y)
 
       node.attr('cx', d => d.x ?? 0).attr('cy', d => d.y ?? 0)
     })
-
-    // return svg.node()
   }
 
-  edgeIsInShortestPath(source: EdgeDatum['source'], target: EdgeDatum['target']): boolean {
-    const sourceIdx = this.shortestPath.findIndex(id => source === id)
+  edgeIsInShortestPath(edge: GraphLinkDatum): boolean {
+    const { sourceId, targetId } = edge.metadata
+
+    const sourceIdx = this.shortestPath.findIndex(id => sourceId === id)
     if (sourceIdx >= 0) {
-      const targetId = this.shortestPath[sourceIdx + 1]
-      return targetId === target
+      const tId = this.shortestPath[sourceIdx + 1]
+      return tId === targetId
     }
     return false
   }
@@ -177,7 +218,7 @@ declare global {
   // watch development here: https://github.com/Polymer/lit-element/issues/1172
   namespace JSX {
     interface IntrinsicElements {
-      'network-force': Partial<NetworkForce> & { ref?: any }
+      'network-force': Partial<NetworkForce> & { ref?: unknown }
     }
   }
 }
