@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { LitElement, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import * as d3 from 'd3'
@@ -7,18 +5,18 @@ import * as d3 from 'd3'
 const colorScale = d3.scaleOrdinal(d3.schemeTableau10)
 
 const drag = (simulation: d3.Simulation<SimulationNodeDatum, SimulationLinkDatum>) => {
-  function dragstarted(event: any) {
+  function dragstarted(event: DragEvent) {
     if (!event.active) simulation.alphaTarget(0.3).restart()
     event.subject.fx = event.subject.x
     event.subject.fy = event.subject.y
   }
 
-  function dragged(event: any) {
+  function dragged(event: DragEvent) {
     event.subject.fx = event.x
     event.subject.fy = event.y
   }
 
-  function dragended(event: any) {
+  function dragended(event: DragEvent) {
     if (!event.active) simulation.alphaTarget(0)
     event.subject.fx = null
     event.subject.fy = null
@@ -44,6 +42,8 @@ export interface EdgeDatum {
 // they become these objects
 interface SimulationNodeDatum extends NodeDatum, d3.SimulationNodeDatum {}
 type SimulationLinkDatum = d3.SimulationLinkDatum<SimulationNodeDatum>
+
+type DragEvent = d3.D3DragEvent<Element, SimulationNodeDatum, SimulationNodeDatum>
 
 /**
  * Network analysis force graph.
@@ -142,6 +142,7 @@ export class NetworkForce extends LitElement {
       })
       .attr('r', d => scaleNode(d.scaler ?? 0) ?? 5)
       .attr('fill', d => colorScale(d.group))
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .call((drag(simulation) as unknown) as any)
       .on('click', (_e, node) => {
         this.dispatchEvent(new CustomEvent('node-clicked', { detail: node }))
@@ -149,15 +150,13 @@ export class NetworkForce extends LitElement {
 
     simulation.on('tick', () => {
       link
-        .attr('x1', (d: any) => d.source.x)
-        .attr('y1', (d: any) => d.source.y)
-        .attr('x2', (d: any) => d.target.x)
-        .attr('y2', (d: any) => d.target.y)
+        .attr('x1', d => (d.source as SimulationNodeDatum).x)
+        .attr('y1', d => (d.source as SimulationNodeDatum).y)
+        .attr('x2', d => (d.target as SimulationNodeDatum).x)
+        .attr('y2', d => (d.target as SimulationNodeDatum).y)
 
       node.attr('cx', d => d.x ?? 0).attr('cy', d => d.y ?? 0)
     })
-
-    // return svg.node()
   }
 
   edgeIsInShortestPath(source: EdgeDatum['source'], target: EdgeDatum['target']): boolean {
@@ -177,7 +176,7 @@ declare global {
   // watch development here: https://github.com/Polymer/lit-element/issues/1172
   namespace JSX {
     interface IntrinsicElements {
-      'network-force': Partial<NetworkForce> & { ref?: any }
+      'network-force': Partial<NetworkForce> & { ref?: unknown }
     }
   }
 }
