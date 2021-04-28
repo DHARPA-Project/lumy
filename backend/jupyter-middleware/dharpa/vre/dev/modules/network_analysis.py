@@ -2,6 +2,8 @@ from typing import Mapping
 from kiara.data.values import ValueSchema, ValueType
 from kiara.module import KiaraModule, StepInputs, StepOutputs
 import pyarrow as pa
+import numpy as np
+import math
 
 
 class NetworkAnalysisDataMappingModule(KiaraModule):
@@ -34,8 +36,28 @@ class NetworkAnalysisDataMappingModule(KiaraModule):
         }
 
     def process(self, inputs: StepInputs, outputs: StepOutputs) -> None:
-        outputs.nodes = pa.Table.from_pydict({})
-        outputs.edges = pa.Table.from_pydict({})
+        num_nodes = 123
+        nums = np.arange(0, num_nodes)
+        num_groups = 5
+        groups = np.array(
+            list(map(lambda x: f'group_{x}', np.arange(0, num_groups))))
+        ids = np.array(list(map(str, nums)))
+
+        outputs.nodes = pa.Table.from_pydict({
+            'id': ids,
+            'label': np.array(list(map(lambda x: f'Item {x}', nums))),
+            'group': np.random.choice(groups, nums.shape)
+        })
+
+        num_edges = math.floor(num_nodes * 1.5)
+        enums = np.arange(0, num_edges, 1)
+
+        outputs.edges = pa.Table.from_pydict({
+            'srcId': np.array(list(map(
+                lambda _: np.random.choice(ids), enums))),
+            'tgtId': np.array(list(map(
+                lambda _: np.random.choice(ids), enums)))
+        })
 
 
 class NetworkAnalysisDataVisModule(KiaraModule):
@@ -65,5 +87,13 @@ class NetworkAnalysisDataVisModule(KiaraModule):
         }
 
     def process(self, inputs: StepInputs, outputs: StepOutputs) -> None:
-        outputs.graphData = {}
         outputs.shortestPath = []
+
+        ids = inputs.nodes['id'].to_numpy()
+
+        outputs.graphData = pa.Table.from_pydict({
+            'degree': np.random.rand(*ids.shape),
+            'eigenvector': np.random.rand(*ids.shape),
+            'betweenness': np.random.rand(*ids.shape),
+            'isLarge': np.random.rand(*ids.shape) > 0.5
+        })

@@ -1,0 +1,7 @@
+.dharpa-vre-flex {
+  display: flex !important;
+}
+
+.dharpa-vre-flex > * {
+  min-height: auto !important;
+}
