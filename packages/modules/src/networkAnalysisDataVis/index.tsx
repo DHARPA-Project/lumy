@@ -7,7 +7,6 @@ import {
 } from '@dharpa-vre/client-core'
 import { Table, Bool, Float32Vector, Vector, Float32 } from 'apache-arrow'
 import { EdgesStructure, NodesStructure } from './structure'
-import '@dharpa/web-components'
 import {
   withStyles,
   Button,
@@ -21,24 +20,6 @@ import {
   Radio
 } from '@material-ui/core'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-
-/**
- * TODO: This will go away when we add types to `@dharpa/web-components`
- */
-interface NetworkGraphElement {
-  width?: number | string
-  height?: number | string
-  data?: unknown
-  ref?: React.Ref<unknown>
-}
-
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      'dharpa-network-force': NetworkGraphElement
-    }
-  }
-}
 
 export type GraphDataStructure = {
   degree: Float32
@@ -79,14 +60,10 @@ interface OutputValues {
 type Props = ModuleProps<InputValues, OutputValues>
 
 const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
-  const [nodes] = useStepInputValue<NodesTable>(step.id, 'nodes', true)
-  const [edges] = useStepInputValue<EdgesTable>(step.id, 'edges', true)
-  const [graphData] = useStepOutputValue<GraphDataTable>(step.id, 'graphData', true)
+  const [nodes] = useStepInputValue<NodesTable>(step.stepId, 'nodes', { fullValue: true })
+  const [edges] = useStepInputValue<EdgesTable>(step.stepId, 'edges', { fullValue: true })
+  const [graphData] = useStepOutputValue<GraphDataTable>(step.stepId, 'graphData', { fullValue: true })
   const [nodesSize, setNodesSize] = React.useState<string>(null)
-  const handleNodesSize = event => {
-    setNodesSize(event.target.value)
-  }
-  const graphRef = React.useRef<NetworkGraphElement>(null)
   const [isDisplayIsolated, setIsDisplayIsolated] = React.useState(false)
   const [expandedAccordionId, setExpandedAccordionId] = React.useState<number>(null)
 
@@ -108,7 +85,7 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
   })(Accordion)
 
   React.useEffect(() => {
-    if (graphRef.current == null) return
+    // if (graphRef.current == null) return
 
     const nodesList = nodes == null ? [] : [...nodes.toArray()]
     const edgesList = edges == null ? [] : [...edges.toArray()]
@@ -131,8 +108,10 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
       }))
     }
 
-    graphRef.current.nodes = data.nodes
-    graphRef.current.edges = data.links
+    console.log('*', data)
+
+    // graphRef.current.nodes = data.nodes
+    // graphRef.current.edges = data.links
   }, [nodes, edges, isDisplayIsolated, nodesSize])
 
   console.log('NetworkAnalysisDataVis', nodes, edges, graphData)
@@ -149,7 +128,7 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
               <Typography>Nodes size</Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <RadioGroup value={nodesSize} onChange={handleNodesSize}>
+              <RadioGroup value={nodesSize} onChange={e => setNodesSize(e.target.value)}>
                 <FormControlLabel value="equal" control={<Radio />} label="Equal" />
                 <FormControlLabel value="degree" control={<Radio />} label="Degree" />
                 <FormControlLabel value="betweenness" control={<Radio />} label="Betweenness Centrality" />
@@ -168,7 +147,7 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
           </StyledAccordion>
         </Grid>
         <Grid item xs={9}>
-          <dharpa-network-force width="600" height="400" ref={graphRef} />
+          {/* <dharpa-network-force width="600" height="400" ref={graphRef} /> */}
         </Grid>
         <div>
           <span>[network analysis data vis placeholder]</span>

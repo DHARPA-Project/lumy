@@ -1,12 +1,14 @@
+from enum import Enum
 import json
 import logging
 import sys
-from typing import Dict
+from typing import Any, Dict, Optional
 from uuid import uuid4
 
 from IPython import get_ipython
 from dharpa.vre.context.context import AppContext
-from dharpa.vre.context.mock.app_context import MockAppContext
+from dharpa.vre.context.kiara.app_context import KiaraAppContext
+
 from dharpa.vre.jupyter.base import (
     MessageEnvelope,
     MessageHandler,
@@ -26,6 +28,21 @@ from ipykernel.comm import Comm
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 logger.addHandler(logging.StreamHandler(sys.stdout))
+
+
+def preprocess_dict(d):
+    def val(v):
+        if isinstance(v, dict):
+            return preprocess_dict(v)
+        else:
+            if isinstance(v, Enum):
+                return v.value
+            return v
+
+    return {
+        k: val(v)
+        for k, v in d.items()
+    }
 
 
 class IpythonKernelController(TargetPublisher):
@@ -50,7 +67,9 @@ class IpythonKernelController(TargetPublisher):
 
     def __init__(self):
         super().__init__()
-        self._context = MockAppContext()
+        context = KiaraAppContext()
+        context.load_workflow('networkAnalysisDev')
+        self._context = context
 
         self._handlers = {
             Target.Workflow: WorkflowMessageHandler(
@@ -66,7 +85,12 @@ class IpythonKernelController(TargetPublisher):
                 self._comms[target] = comm
 
                 def _recv(msg):
-                    self._handle_message(target, msg)
+                    response = self._handle_message(target, msg)
+                    if response is not None:
+                        data = preprocess_dict(to_dict(response))
+                        logger.debug(
+                            f'Sending response on {target.value} {data}')
+                        comm.send(data)
 
                 _recv(open_msg)
                 comm.on_msg(_recv)
@@ -97,14 +121,17 @@ class IpythonKernelController(TargetPublisher):
 
     def publish_on_target(self, target: Target, msg: MessageEnvelope) -> None:
         comm = self._comms[target]
+        ready_msg = preprocess_dict(to_dict(msg))
+        msg_str = json.dumps(ready_msg)
         logger.debug(
-            f'Message published on "{target}": {json.dumps(to_dict(msg))}')
-        comm.send(to_dict(msg))
+            f'Message published on "{target}": {msg_str}')
+        comm.send(ready_msg)
 
-    def _handle_message(self, target: Target, message: Dict) -> None:
+    def _handle_message(self, target: Target, message: Dict) -> Optional[Any]:
         message_data: Dict = message.get('content', {}).get('data', {})
+        msg_str = json.dumps(message_data)
         logger.debug(
-            f'Message received on "{target}": {json.dumps(message_data)}')
+            f'Message received on "{target}": {msg_str}')
 
         if message_data.get('action', None) is None:
             logger.warn(
@@ -121,7 +148,7 @@ class IpythonKernelController(TargetPublisher):
             if handler is None:
                 logger.warn(f'No handler found for target "{target}"')
             else:
-                handler(msg)
+                return handler(msg)
         except Exception as e:
             error_id = str(uuid4())
             logger.exception(

@@ -28,10 +28,11 @@ setup_args = dict(
         'ipython',
         'ipykernel',
         'tinypubsub>=0.1.0',
-        'dacite',
         'stringcase>=1.2.0',
+        'dataclasses-json>=0.5.2',
         'pyyaml',
-        'pyarrow==3.0.0'
+        'pyarrow==3.0.0',
+        'kiara@git+https://github.com/DHARPA-Project/kiara.git#egg=kiara'
     ],
     zip_safe=False,
     include_package_data=True,
@@ -47,6 +48,18 @@ setup_args = dict(
         "Programming Language :: Python :: 3.8",
         "Framework :: Jupyter",
     ],
+    entry_points={
+        'kiara.modules': [
+            'dataUpload=dharpa.vre.dev.modules.data_upload:DataUploadModule',
+            'dataSelection=dharpa.vre.dev.modules.data_selection:DataSelectionModule',  # noqa
+            'networkAnalysisDataMapping=dharpa.vre.dev.modules.network_analysis:NetworkAnalysisDataMappingModule',  # noqa
+            'networkAnalysisDataVis=dharpa.vre.dev.modules.network_analysis:NetworkAnalysisDataVisModule',  # noqa
+            'twoArgsMathFunction=dharpa.vre.dev.modules.two_args_math_fn:TwoArgsMathFnModule',  # noqa
+        ],
+        'kiara.pipelines': [
+            'mock=dharpa.vre:dev'
+        ]
+    }
 )
 
 if __name__ == "__main__":

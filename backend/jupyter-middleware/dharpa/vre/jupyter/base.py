@@ -18,6 +18,18 @@ class MessageEnvelope:
     content: Optional[Dict] = None
 
 
+def prepare_result(message: Any) -> Optional[MessageEnvelope]:
+    if message is None:
+        return None
+    action = getattr(message.__class__, '_action', None)
+    assert action is not None, f'Message of class {message.__class__} \
+        does not have "_action" property'
+    return MessageEnvelope(
+        action=action,
+        content=to_dict(message)
+    )
+
+
 class TargetPublisher(ABC):
     @abstractmethod
     def publish_on_target(self, target: Target, msg: MessageEnvelope) -> None:
@@ -90,7 +102,8 @@ class MessageHandler(ABC):
                 # If no message class has been found it might be that
                 # the handler does not need a message.
                 if not self.__handler_needs_message(handler):
-                    return handler()
+                    result = handler()
+                    return prepare_result(result)
                 else:
                     logger.warn(
                         f'{self.__class__}: \
@@ -98,7 +111,8 @@ class MessageHandler(ABC):
                                 action: {msg.action}')
             else:
                 message = from_dict(message_class, msg.content)
-                return handler(message)
+                result = handler(message)
+                return prepare_result(result)
         else:
             logger.warn(
                 f'{self.__class__}: \

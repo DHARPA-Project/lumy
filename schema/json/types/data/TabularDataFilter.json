@@ -12,9 +12,11 @@
     "offset": {
       "type": "integer",
       "description": "Offset of the page"
+    },
+    "fullValue": {
+      "type": "boolean",
+      "description": "Whether to ignore other filter items and return full value."
     }
   },
-  "required": [
-    "pageSize"
-  ]
+  "required": []
 }

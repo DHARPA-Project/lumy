@@ -2,16 +2,16 @@ import React from 'react'
 import { render } from 'react-dom'
 import YAML from 'js-yaml'
 
-import { BackEndContextProvider, useBackendIsReady, Workflow } from '@dharpa-vre/client-core'
+import { BackEndContextProvider, PipelineState, useBackendIsReady } from '@dharpa-vre/client-core'
 import { App } from '@dharpa-vre/client-ui'
 
 import { MockContext } from './mock/context'
 
 import './index.scss'
 
-import currentWorkflowData from './mock/resources/sampleWorkflow.yml'
+import currentWorkflowData from './mock/resources/sampleKiaraWorkflowState.yml'
 
-const currentWorkflow: Workflow = YAML.load(currentWorkflowData)
+const currentWorkflow: PipelineState = YAML.load(currentWorkflowData)
 
 const BackEndAvailabilityScreen = (): JSX.Element => {
   const backendIsReady = useBackendIsReady()

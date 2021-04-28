@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "type": "object",
+  "title": "MsgModuleIOGetInputValue",
+  "description": "Get value of a step input from the current workflow.\nThis is a 'pull' request meaning that a synchronous response will be returned. The behaviour of the response is different depending on whether it is a simple or complex value.\nFor simple values the filter is ignored and full value is always returned.\nFor complex values only stats are returned unless 'filter' is set and is not empty.",
+  "additionalProperties": false,
+  "properties": {
+    "stepId": {
+      "type": "string",
+      "description": "Unique ID of the step within the workflow that we are getting parameters for."
+    },
+    "inputId": {
+      "type": "string",
+      "description": "ID of the input"
+    },
+    "filter": {
+      "$ref": "https://dharpa.org/schema/types/data/TabularDataFilter.json"
+    }
+  },
+  "required": [
+    "stepId",
+    "inputId"
+  ]
+}
