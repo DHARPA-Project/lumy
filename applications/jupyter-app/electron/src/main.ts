@@ -4,6 +4,8 @@ import { app, BrowserWindow } from 'electron'
 import { spawn, ChildProcess } from 'child_process'
 import { waitForPort, getFreePort } from './networkUtils'
 
+const AppMainHtmlFile = process.env.DHARPA_VRE_MAIN_FILE ?? '../src/index.html'
+
 function generateToken(length: number): string {
   return crypto
     .randomBytes(Math.ceil(length / 2))
@@ -21,7 +23,7 @@ function createWindow(port: number, token: string) {
     }
   })
 
-  return win.loadFile('../src/index.html')
+  return win.loadFile(AppMainHtmlFile)
 }
 
 function startJupyterServerProcess(

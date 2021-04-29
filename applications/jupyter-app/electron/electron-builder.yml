@@ -1,0 +1,16 @@
+appId: "org.dharpa.vre"
+productName: "DHARPA VRE"
+directories:
+  buildResources: build
+  output: electron_dist
+files:
+  - electron/dist/*
+  - main.py
+  - dist
+  - from: electron/src/indexApp.html
+    to: dist/index.html
+asar: false
+extraMetadata:
+  main: electron/dist/main.js
+mac:
+  target: default
