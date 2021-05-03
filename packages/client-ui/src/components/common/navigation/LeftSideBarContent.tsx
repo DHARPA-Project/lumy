@@ -1,9 +1,9 @@
 import React, { useContext } from 'react'
 
-import IconButton from '@material-ui/core/IconButton'
 import List from '@material-ui/core/List'
 import Typography from '@material-ui/core/Typography'
 import Grow from '@material-ui/core/Grow'
+import Fab from '@material-ui/core/Fab'
 
 import DoubleArrowIcon from '@material-ui/icons/DoubleArrow'
 import ExploreIcon from '@material-ui/icons/Explore'
@@ -26,27 +26,31 @@ const LeftSideBarContent = (): JSX.Element => {
   return (
     <>
       <div className={classes.sideBarTop}>
-        <div
+        <Fab
+          variant="extended"
+          size="small"
+          color="primary"
+          aria-label="toggle"
+          className={classes.sideBarToggleButton + (isLeftSideBarExpanded ? ' aside' : '')}
           onClick={() => setIsLeftSideBarExpanded(prevStatus => !prevStatus)}
-          className={classes.sideBarToggleButton}
         >
           <DoubleArrowIcon
             className={classes.sideBarExpandArrow + (isLeftSideBarExpanded ? ' inward' : '')}
           />
-        </div>
+        </Fab>
 
         <Grow
           in={isLeftSideBarExpanded}
           style={{ transformOrigin: '0 0 0' }}
           {...(!isLeftSideBarExpanded ? { timeout: 0 } : { timeout: 1000 })}
         >
-          <Typography variant="h6" component="h2" color="primary" className={classes.logo}>
+          <Typography variant="h6" component="h2" color="secondary" className={classes.logo}>
             <ExploreIcon /> &nbsp;DHARPA
           </Typography>
         </Grow>
       </div>
 
-      <nav>
+      <nav className={classes.navList}>
         <List>
           {pageRoutes.map((route, index) => (
             <NavItem key={index} isNavBarExpanded={isLeftSideBarExpanded} nested={false} {...route} />
@@ -67,9 +71,15 @@ const LeftSideBarContent = (): JSX.Element => {
       </nav>
 
       <div className={classes.sideBarBottom}>
-        <IconButton onClick={() => alert('shutting the app down...')}>
+        <Fab
+          variant="extended"
+          size="small"
+          color="primary"
+          aria-label="quit"
+          onClick={() => alert('shutting the app down...')}
+        >
           <PowerSettingsNewIcon />
-        </IconButton>
+        </Fab>
       </div>
     </>
   )
