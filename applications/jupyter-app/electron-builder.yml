@@ -1,0 +1,14 @@
+appId: "org.dharpa.vre"
+productName: "DHARPA VRE"
+directories:
+  # buildResources: dist
+  output: electron_dist
+files:
+  - dist/**/*
+  - src/server/**/*
+  - '!node_modules/**/*'
+asar: false
+extraMetadata:
+  main: dist/electron/main.js
+mac:
+  target: default

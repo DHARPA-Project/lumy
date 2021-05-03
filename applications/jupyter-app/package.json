@@ -6,18 +6,18 @@
     "jupyter"
   ],
   "homepage": "https://dharpa.org",
-  "main": "src/index.ts",
+  "main": "src/webapp/index.ts",
   "license": "AGPL-3.0-only",
   "author": "roman@kalyakin.com",
   "scripts": {
-    "watch": "webpack -c webpack.config.js --watch --progress",
-    "serve": "webpack serve -c webpack.config.js",
-    "build": "webpack build -c webpack.config.js",
+    "webapp:watch": "webpack -c webpack.config.webapp.js --watch --progress",
+    "webapp:serve": "webpack serve -c webpack.config.webapp.js",
+    "webapp:build": "webpack build -c webpack.config.webapp.js",
+    "electron:build": "webpack build -c webpack.config.electron.js",
+    "electron:serve": "electron dist/electron/main.js",
     "clean": "rimraf build",
     "prepublishOnly": "yarn build",
-    "start": "python main.py",
-    "compile-electron": "tsc -p electron",
-    "run-electron": "electron electron/dist/main.js"
+    "electron:package": "electron-builder -c electron-builder.yml"
   },
   "dependencies": {
     "@dharpa-vre/jupyter-support": "*",
@@ -42,6 +42,7 @@
     "@typescript-eslint/parser": "4",
     "babel-loader": "8",
     "electron": "12",
+    "electron-builder": "^22.10.5",
     "eslint": "7",
     "eslint-config-prettier": "7",
     "eslint-plugin-prettier": "3",
@@ -53,6 +54,7 @@
     "sass-loader": "11",
     "source-map-loader": "2",
     "svg-url-loader": "7",
+    "ts-loader": "9",
     "typescript": "4",
     "webpack": "5"
   },

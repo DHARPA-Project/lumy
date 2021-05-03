@@ -4,6 +4,8 @@ import { app, BrowserWindow } from 'electron'
 import { spawn, ChildProcess } from 'child_process'
 import { waitForPort, getFreePort } from './networkUtils'
 
+const AppMainHtmlFile = path.resolve(__dirname, '../webapp/index.html')
+
 function generateToken(length: number): string {
   return crypto
     .randomBytes(Math.ceil(length / 2))
@@ -21,7 +23,7 @@ function createWindow(port: number, token: string) {
     }
   })
 
-  return win.loadFile('../src/index.html')
+  return win.loadFile(AppMainHtmlFile)
 }
 
 function startJupyterServerProcess(
@@ -29,7 +31,7 @@ function startJupyterServerProcess(
   token: string,
   closeHandler: (code: number) => void
 ): Promise<ChildProcess> {
-  const mainFile = path.resolve(__dirname, '../../main.py')
+  const mainFile = path.resolve(__dirname, '../../src/server/main.py')
   const cwd = path.resolve(__dirname, '../..')
 
   return new Promise((res, rej) => {

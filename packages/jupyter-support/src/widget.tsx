@@ -5,7 +5,7 @@ import { BackEndContextProvider, useBackendIsReady } from '@dharpa-vre/client-co
 import { App } from '@dharpa-vre/client-ui'
 
 const centeredStyle = {
-  'text-align': 'center',
+  textAlign: 'center' as const,
   marginTop: '30%',
   fontWeight: 100,
   fontSize: '2rem',

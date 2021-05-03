@@ -11,18 +11,21 @@ from jupyterlab_server import LabServerApp
 
 
 HERE = os.path.dirname(__file__)
+PROJECT_DIR = os.path.normpath(os.path.join(HERE, '..', '..'))
 
-with open(os.path.abspath(os.path.join(HERE, 'package.json'))) as fid:
+with open(os.path.abspath(os.path.join(PROJECT_DIR, 'package.json'))) as fid:
     pkg = json.load(fid)
     version = pkg['version']
     name = pkg['name'].replace('@', '').replace('/', '_')
 
 serverapp_config = {}
 
+# exposed for use in electron
 port_override = os.getenv('JUPYTER_PORT_OVERRIDE', None)
 if port_override is not None:
     serverapp_config['port'] = int(port_override)
 
+# exposed for use in electron
 origin_pat_override = os.getenv('JUPYTER_ORIGIN_PAT_OVERRIDE', None)
 if origin_pat_override is not None:
     serverapp_config['allow_origin_pat'] = origin_pat_override
@@ -72,14 +75,15 @@ class VREApp(LabServerApp):
     load_other_extensions = False
     name = name
     app_name = 'VRE Jupyter App'
-    static_dir = os.path.join(HERE, 'dist')
+    static_dir = os.path.join(PROJECT_DIR, 'dist', 'webapp')
     templates_dir = os.path.join(HERE, 'templates')
     app_version = version
-    app_settings_dir = os.path.join(HERE, 'dist', 'application_settings')
-    schemas_dir = os.path.join(HERE, 'dist', 'schemas')
-    themes_dir = os.path.join(HERE, 'dist', 'themes')
-    user_settings_dir = os.path.join(HERE, 'dist', 'user_settings')
-    workspaces_dir = os.path.join(HERE, 'dist', 'workspaces')
+    # app_settings_dir = os.path.join(
+    #     PROJECT_DIR, 'dist', 'application_settings')
+    # schemas_dir = os.path.join(PROJECT_DIR, 'dist', 'schemas')
+    # themes_dir = os.path.join(PROJECT_DIR, 'dist', 'themes')
+    # user_settings_dir = os.path.join(PROJECT_DIR, 'dist', 'user_settings')
+    # workspaces_dir = os.path.join(PROJECT_DIR, 'dist', 'workspaces')
     open_browser = False
 
     serverapp_config = serverapp_config

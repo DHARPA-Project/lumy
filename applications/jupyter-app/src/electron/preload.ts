@@ -1,4 +1,4 @@
-const { contextBridge } = require('electron')
+import { contextBridge } from 'electron'
 
 /**
  * Get jupyter related configuration options from the arguments

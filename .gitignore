@@ -266,6 +266,7 @@ dist
 labextension
 .venv
 applications/**/tmp
+applications/**/electron_dist
 
 /tools/schema
 /tools/*.d.ts
