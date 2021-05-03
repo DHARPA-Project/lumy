@@ -8,6 +8,7 @@ import { PageLayoutContext } from '../../context/pageLayoutContext'
 
 import LeftSideBarContainer from './navigation/LeftSideBarContainer'
 import LeftSideBarContent from './navigation/LeftSideBarContent'
+import RightSideBarContainer from './toolbar/RightSideBarContainer'
 
 type TopPageLayoutProps = {
   children: React.ReactNode
@@ -17,17 +18,26 @@ const TopPageLayout = ({ children }: TopPageLayoutProps): JSX.Element => {
   const classes = useStyles()
 
   const { sidebarTheme } = useContext(ThemeContext)
-  const { isLeftSideBarExpanded } = useContext(PageLayoutContext)
+  const { isLeftSideBarExpanded, isRightSideBarVisible } = useContext(PageLayoutContext)
 
   return (
-    <div className={`${classes.root}${isLeftSideBarExpanded ? '' : ' collapsed'}`}>
+    <div className={classes.root}>
       <ThemeProvider theme={sidebarTheme}>
         <LeftSideBarContainer>
           <LeftSideBarContent />
         </LeftSideBarContainer>
+        <RightSideBarContainer></RightSideBarContainer>
       </ThemeProvider>
 
-      <div className={classes.pageContent}>{children}</div>
+      <div
+        className={
+          classes.pageContent +
+          (isLeftSideBarExpanded ? ' left-pinch' : '') +
+          (isRightSideBarVisible ? ' right-pinch' : '')
+        }
+      >
+        {children}
+      </div>
     </div>
   )
 }
