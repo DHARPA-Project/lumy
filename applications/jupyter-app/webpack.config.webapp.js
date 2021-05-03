@@ -4,9 +4,10 @@ const webpack = require('webpack')
 const HTMLWebPackPlugin = require('html-webpack-plugin')
 
 module.exports = {
-  entry: { index: './src/index.ts' },
+  entry: { index: './src/webapp/index.ts' },
   output: {
-    filename: '[name].bundle.js'
+    filename: '[name].bundle.js',
+    path: path.resolve(__dirname, 'dist/webapp')
   },
   devtool: 'source-map',
   // stats: 'detailed',
@@ -122,7 +123,7 @@ module.exports = {
   plugins: [
     new HTMLWebPackPlugin({
       filename: 'index.html',
-      template: path.join(__dirname, 'src', 'index.html')
+      template: path.join(__dirname, 'src', 'webapp', 'index.html')
     }),
     new webpack.DefinePlugin({
       'process.env.USE_JUPYTER_LAB': JSON.stringify(false)

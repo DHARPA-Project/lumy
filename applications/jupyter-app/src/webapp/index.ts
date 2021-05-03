@@ -6,7 +6,7 @@
 // )
 
 ///<reference types="webpack-env" />
-import { prepareConfigData } from './pageConfig'
+import { prepareConfigData, processTokenFromUrl } from './pageConfig'
 import { SessionContext } from '@jupyterlab/apputils'
 import { SessionManager, KernelManager, KernelSpecManager, ServiceManager } from '@jupyterlab/services'
 import { Widget } from '@lumino/widgets'
@@ -22,6 +22,8 @@ declare global {
 
 async function main(): Promise<void> {
   prepareConfigData()
+  processTokenFromUrl()
+  console.log('in main')
   const kernelManager = new KernelManager()
   const specsManager = new KernelSpecManager()
   const sessionManager = new SessionManager({ kernelManager })

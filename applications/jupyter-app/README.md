@@ -25,7 +25,7 @@ yarn build
 Run the VRE app:
 
 ```
-python main.py
+python src/server/main.py
 ```
 
 ## Running in development mode
@@ -35,7 +35,7 @@ To enable Webpack hot reloading we can proxy the Jupyter endpoints from the app 
 In one terminal session start the app:
 
 ```
-python main.py
+python src/server/main.py
 ```
 
 In the other session start Webpack dev server in watch mode.
@@ -49,7 +49,7 @@ The first time the Jupyter app is started, the webapp accessed via webpack dev s
 
 ## Running as an Electron app
 
-**NOTE**: This will work in "development" mode. Packaging has not been sorted out yet.
+## Running in development mode
 
 Build webapp part:
 

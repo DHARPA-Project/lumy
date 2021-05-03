@@ -4,7 +4,7 @@ import { app, BrowserWindow } from 'electron'
 import { spawn, ChildProcess } from 'child_process'
 import { waitForPort, getFreePort } from './networkUtils'
 
-const AppMainHtmlFile = process.env.DHARPA_VRE_MAIN_FILE ?? '../src/index.html'
+const AppMainHtmlFile = '../webapp/index.html'
 
 function generateToken(length: number): string {
   return crypto
@@ -31,7 +31,7 @@ function startJupyterServerProcess(
   token: string,
   closeHandler: (code: number) => void
 ): Promise<ChildProcess> {
-  const mainFile = path.resolve(__dirname, '../../main.py')
+  const mainFile = path.resolve(__dirname, '../../src/server/main.py')
   const cwd = path.resolve(__dirname, '../..')
 
   return new Promise((res, rej) => {

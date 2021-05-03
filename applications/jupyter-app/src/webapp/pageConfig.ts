@@ -10,3 +10,15 @@ export function prepareConfigData(): void {
   }
   Object.entries(__vreJupyterParameters ?? {}).forEach(([key, value]) => PageConfig.setOption(key, value))
 }
+
+export function processTokenFromUrl(): void {
+  const parsedUrl = new URL(window.location.href)
+  const token = parsedUrl.searchParams.get('token')
+
+  if (token == null) return
+
+  PageConfig.setOption('token', token)
+
+  parsedUrl.searchParams.delete('token')
+  window.history.replaceState({}, '', parsedUrl.href)
+}
