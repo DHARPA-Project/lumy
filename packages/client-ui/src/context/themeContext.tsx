@@ -2,10 +2,11 @@ import React, { useState, createContext } from 'react'
 
 import CssBaseline from '@material-ui/core/CssBaseline'
 
-import teal from '@material-ui/core/colors/teal'
+// import teal from '@material-ui/core/colors/teal'
 import amber from '@material-ui/core/colors/amber'
 
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
+import { createMuiTheme, MuiThemeProvider, Theme } from '@material-ui/core/styles'
+import { PaletteType, ThemeOptions } from '@material-ui/core'
 
 declare module '@material-ui/core/styles/createMuiTheme' {
   interface Theme {
@@ -28,6 +29,7 @@ declare module '@material-ui/core/styles/createMuiTheme' {
 export type ThemeContextType = {
   darkModeEnabled: boolean
   toggleDarkMode: () => void
+  sidebarTheme: Theme
 }
 
 type ThemeContextProviderProps = {
@@ -51,41 +53,54 @@ const ThemeContextProvider = ({ children }: ThemeContextProviderProps): JSX.Elem
     })
   }
 
-  const theme = createMuiTheme({
+  const createCustomTheme = (additionalOptions?: ThemeOptions) =>
+    createMuiTheme({
+      palette: {
+        type: darkModeEnabled ? ('dark' as PaletteType) : ('light' as PaletteType),
+        // primary: {
+        //   main: teal[500]
+        // },
+        secondary: {
+          main: amber[500]
+        }
+      },
+      typography: {
+        body1: {
+          fontSize: '0.875rem',
+          lineHeight: 1.43
+        },
+        body2: {
+          fontSize: '0.75rem',
+          lineHeight: 1.35
+        }
+      },
+      props: {
+        MuiSvgIcon: {
+          fontSize: 'small'
+        }
+      },
+      layout: {
+        sideBarFullWidth: '200px',
+        sideBarCollapsedWidth: '52px',
+        navLinkTextWidth: 90
+      },
+      ...additionalOptions
+    })
+
+  const globalTheme = createCustomTheme()
+  const sidebarTheme = createCustomTheme({
     palette: {
-      type: darkModeEnabled ? 'dark' : 'light',
-      primary: {
-        main: teal[500]
-      },
-      secondary: {
-        main: amber[500]
+      type: 'dark',
+      background: {
+        paper: '#222A45',
+        default: '#1a2038'
       }
-    },
-    typography: {
-      body1: {
-        fontSize: '0.875rem',
-        lineHeight: 1.43
-      },
-      body2: {
-        fontSize: '0.75rem',
-        lineHeight: 1.35
-      }
-    },
-    props: {
-      MuiSvgIcon: {
-        fontSize: 'small'
-      }
-    },
-    layout: {
-      sideBarFullWidth: '200px',
-      sideBarCollapsedWidth: '52px',
-      navLinkTextWidth: 90
     }
   })
 
   return (
-    <ThemeContext.Provider value={{ darkModeEnabled, toggleDarkMode }}>
-      <MuiThemeProvider theme={theme}>
+    <ThemeContext.Provider value={{ darkModeEnabled, toggleDarkMode, sidebarTheme }}>
+      <MuiThemeProvider theme={globalTheme}>
         <CssBaseline />
         {children}
       </MuiThemeProvider>
