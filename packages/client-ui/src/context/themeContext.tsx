@@ -14,6 +14,9 @@ declare module '@material-ui/core/styles/createMuiTheme' {
       sideBarFullWidth: React.CSSProperties['width']
       sideBarCollapsedWidth: React.CSSProperties['width']
       navLinkTextWidth: React.CSSProperties['width']
+      toolBarWidth: React.CSSProperties['width']
+      navBarTop: React.CSSProperties['height']
+      navBarBottom: React.CSSProperties['height']
     }
   }
   // allow configuration using `createMuiTheme`
@@ -22,6 +25,9 @@ declare module '@material-ui/core/styles/createMuiTheme' {
       sideBarFullWidth?: React.CSSProperties['width']
       sideBarCollapsedWidth?: React.CSSProperties['width']
       navLinkTextWidth: React.CSSProperties['width']
+      toolBarWidth: React.CSSProperties['width']
+      navBarTop: React.CSSProperties['height']
+      navBarBottom: React.CSSProperties['height']
     }
   }
 }
@@ -53,7 +59,12 @@ const ThemeContextProvider = ({ children }: ThemeContextProviderProps): JSX.Elem
     })
   }
 
-  const createCustomTheme = (additionalOptions?: ThemeOptions) =>
+  /**
+   * Shallow-merge additional options on top of default options to create custom MUI themes
+   * @param extendedOptions object containing default Material UI theme options
+   * @returns extended Material UI theme object
+   */
+  const createCustomTheme = (extendedOptions?: ThemeOptions) =>
     createMuiTheme({
       palette: {
         type: darkModeEnabled ? ('dark' as PaletteType) : ('light' as PaletteType),
@@ -82,11 +93,17 @@ const ThemeContextProvider = ({ children }: ThemeContextProviderProps): JSX.Elem
       layout: {
         sideBarFullWidth: '200px',
         sideBarCollapsedWidth: '52px',
-        navLinkTextWidth: 90
+        navLinkTextWidth: 90,
+        toolBarWidth: '50px',
+        navBarTop: '20vh',
+        navBarBottom: '10vh'
       },
-      ...additionalOptions
+      ...extendedOptions
     })
 
+  // Keep in mind that createCustomTheme() performs a shallow merge...
+  // ... of default option and extended option objects; deeply nested properties...
+  // ... of default theme may be lost if not copied over to extended option object
   const globalTheme = createCustomTheme()
   const sidebarTheme = createCustomTheme({
     palette: {
@@ -94,6 +111,9 @@ const ThemeContextProvider = ({ children }: ThemeContextProviderProps): JSX.Elem
       background: {
         paper: '#222A45',
         default: '#1a2038'
+      },
+      secondary: {
+        main: amber[500]
       }
     }
   })
