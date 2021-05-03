@@ -4,7 +4,7 @@ import { app, BrowserWindow } from 'electron'
 import { spawn, ChildProcess } from 'child_process'
 import { waitForPort, getFreePort } from './networkUtils'
 
-const AppMainHtmlFile = '../webapp/index.html'
+const AppMainHtmlFile = path.resolve(__dirname, '../webapp/index.html')
 
 function generateToken(length: number): string {
   return crypto

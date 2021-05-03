@@ -19,7 +19,7 @@ If you already have JupyterLab installed in virtual environment, this server is 
 Build the VRE webapp entry point.
 
 ```
-yarn build
+yarn webapp:build
 ```
 
 Run the VRE app:
@@ -41,7 +41,7 @@ python src/server/main.py
 In the other session start Webpack dev server in watch mode.
 
 ```
-yarn serve
+yarn webapp:serve
 ```
 
 Access the Webpack dev server via http://localhost:8080
@@ -54,17 +54,25 @@ The first time the Jupyter app is started, the webapp accessed via webpack dev s
 Build webapp part:
 
 ```
-yarn build
+yarn webapp:build
 ```
 
 Build electron part:
 
 ```
-yarn compile-electron
+yarn electron:build
 ```
 
 Start electron:
 
 ```
-yarn run-electron
+yarn electron:serve
+```
+
+## Creating a bundle
+
+```
+yarn webapp:build
+yarn electron:build
+yarn electron:package
 ```

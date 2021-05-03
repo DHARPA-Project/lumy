@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { LineChart, Line, XAxis, YAxis, Label, ResponsiveContainer } from 'recharts/lib'
+import { LineChart, Line, XAxis, YAxis, Label, ResponsiveContainer } from 'recharts'
 
 import { useTheme } from '@material-ui/core/styles'
 
