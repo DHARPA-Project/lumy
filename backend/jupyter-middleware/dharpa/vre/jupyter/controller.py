@@ -18,7 +18,8 @@ from dharpa.vre.jupyter.base import (
 from dharpa.vre.jupyter.message_handlers import (
     ModuleIOHandler,
     WorkflowMessageHandler,
-    ActivityHandler
+    ActivityHandler,
+    DataRepositoryHandler
 )
 from dharpa.vre.types.generated import MsgError
 from dharpa.vre.utils.dataclasses import to_dict
@@ -77,7 +78,9 @@ class IpythonKernelController(TargetPublisher):
             Target.ModuleIO: ModuleIOHandler(
                 self._context, self, Target.ModuleIO),
             Target.Activity: ActivityHandler(
-                self._context, self, Target.Activity)
+                self._context, self, Target.Activity),
+            Target.DataRepository: DataRepositoryHandler(
+                self._context, self, Target.DataRepository),
         }
 
         def _open_handle_factory(target: Target):
@@ -110,6 +113,11 @@ class IpythonKernelController(TargetPublisher):
         get_ipython().kernel.comm_manager.register_target(
             Target.ModuleIO.value,
             _open_handle_factory(Target.ModuleIO)
+        )
+
+        get_ipython().kernel.comm_manager.register_target(
+            Target.DataRepository.value,
+            _open_handle_factory(Target.DataRepository)
         )
 
         self._is_ready = True
