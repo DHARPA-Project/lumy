@@ -1,9 +1,10 @@
 import React from 'react'
+import { DataRepositoryItemsTable } from '../hooks'
 import { ModuleViewProvider } from './modules'
 
 type DefaultIO = { [key: string]: unknown }
 
-export type MockProcessor<I, O> = (inputValues: I) => O
+export type MockProcessor<I, O> = (inputValues: I, dataRepositoryTable?: DataRepositoryItemsTable) => O
 
 const noOpMockProcessor: MockProcessor<unknown, DefaultIO> = () => ({})
 
@@ -36,7 +37,10 @@ export type DataProcessor<I = DataProcessorResult['inputs'], O = DataProcessorRe
   inputValues: I
 ) => Promise<DataProcessorResult<I, O>>
 
-export const mockDataProcessorFactory = (viewProvider: ModuleViewProvider) => {
+export const mockDataProcessorFactory = (
+  viewProvider: ModuleViewProvider,
+  dataRepositoryTable?: DataRepositoryItemsTable
+) => {
   return async function (
     stepId: string,
     moduleId: string,
@@ -50,7 +54,7 @@ export const mockDataProcessorFactory = (viewProvider: ModuleViewProvider) => {
     const outputs = getMockProcessor<DataProcessorResult['inputs'], DataProcessorResult['outputs']>(
       viewProvider,
       moduleId
-    )(inputValues)
+    )(inputValues, dataRepositoryTable)
 
     return {
       inputs: inputValues,

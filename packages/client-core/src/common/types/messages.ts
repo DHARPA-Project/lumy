@@ -19,7 +19,9 @@ import {
   MsgModuleIOGetInputValue,
   MsgModuleIOInputValue,
   MsgModuleIOGetOutputValue,
-  MsgModuleIOOutputValue
+  MsgModuleIOOutputValue,
+  MsgDataRepositoryItems,
+  MsgDataRepositoryFindItems
 } from './generated'
 
 /**
@@ -84,6 +86,16 @@ export namespace ModuleIO {
     export const InputValue = Codec<InputValue>('InputValue')
     export const GetOutputValue = Codec<GetOutputValue>('GetOutputValue')
     export const OutputValue = Codec<OutputValue>('OutputValue')
+  }
+}
+
+export namespace DataRepository {
+  export type Items = MsgDataRepositoryItems
+  export type FindItems = MsgDataRepositoryFindItems
+
+  export namespace codec {
+    export const Items = Codec<Items>('Items')
+    export const FindItems = Codec<FindItems>('FindItems')
   }
 }
 

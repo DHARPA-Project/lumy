@@ -19,7 +19,11 @@ export enum Target {
   /**
    * Used to get preview processed data for the module.
    */
-  ModuleIO = 'module_io'
+  ModuleIO = 'module_io',
+  /**
+   * Data repository related messages.
+   */
+  DataRepository = 'data_repository'
 }
 
 /**

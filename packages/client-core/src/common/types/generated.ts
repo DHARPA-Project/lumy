@@ -78,7 +78,7 @@ export interface MsgDataRepositoryCreateSubset {
  * Request to find items in data repository
  */
 export interface MsgDataRepositoryFindItems {
-  filter?: DataRepositoryItemsFilter
+  filter: DataRepositoryItemsFilter
 }
 
 /**
@@ -88,7 +88,7 @@ export interface DataRepositoryItemsFilter {
   /**
    * Start from item
    */
-  pageOffset?: number
+  offset?: number
   /**
    * Number of items to return
    */
@@ -97,46 +97,20 @@ export interface DataRepositoryItemsFilter {
 
 /**
  * Target: "dataRepository"
- * Message type: "GetItemPreview"
- *
- * Item preview
- */
-export interface MsgDataRepositoryGetItemPreview {
-  /**
-   * Item ID
-   */
-  id: string
-}
-
-/**
- * Target: "dataRepository"
- * Message type: "ItemPreview"
- *
- * Item preview
- */
-export interface MsgDataRepositoryItemPreview {
-  item: DataRepositoryItem
-}
-
-/**
- * Item from data repository
- */
-export interface DataRepositoryItem {
-  /**
-   * Unique ID of the item
-   */
-  id: string
-}
-
-/**
- * Target: "dataRepository"
  * Message type: "Items"
  *
- * Items from data repository
+ * Items from data repository.
  */
 export interface MsgDataRepositoryItems {
-  filter?: DataRepositoryItemsFilter
-  items: DataRepositoryItem[]
+  filter: DataRepositoryItemsFilter
+  /**
+   * Serialized table with items as rows.
+   */
+  items: unknown
+  /**
+   * Stats of the data repository.
+   */
+  stats: { [key: string]: unknown }
 }
 
 /**

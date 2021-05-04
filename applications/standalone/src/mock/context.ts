@@ -1,5 +1,5 @@
 import { Signal } from '@lumino/signaling'
-import { Table } from 'apache-arrow'
+import { Field, List, ListVector, Table, Utf8, Utf8Vector } from 'apache-arrow'
 
 import {
   IBackEndContext,
@@ -20,7 +20,9 @@ import {
   workflowUtils,
   DataType,
   deserialize,
-  TableStats
+  TableStats,
+  DataRepositoryItemsTable,
+  DataRepositoryItemsStats
 } from '@dharpa-vre/client-core'
 import { viewProvider } from '@dharpa-vre/modules'
 
@@ -60,6 +62,27 @@ const getFilteredValue = <T = unknown>(value: T, filter?: TabularDataFilter): T 
     return (filteredTable as unknown) as T
   }
   return value
+}
+
+const getMockDataRepositoryTable = (numItems = 30): DataRepositoryItemsTable => {
+  const rowNumbers = [...Array(numItems).keys()]
+  const isTableType = rowNumbers.map(() => Math.random() >= 0.5)
+
+  return Table.new({
+    id: Utf8Vector.from(rowNumbers.map(n => `id-${n}`)),
+    alias: Utf8Vector.from(rowNumbers.map(n => `Item #${n}`)),
+    type: Utf8Vector.from(isTableType.map(isTable => (isTable ? 'table' : 'string'))),
+    columnNames: ListVector.from({
+      values: isTableType.map((isTable, idx) => (isTable ? [`a${idx}`, `b${idx}`, `c${idx}`] : null)),
+      type: new List(Field.new({ name: 0, type: new Utf8() })),
+      highWaterMark: 1 // NOTE: working around a stride serialisation bug in arrowjs
+    }),
+    columnTypes: ListVector.from({
+      values: isTableType.map(isTable => (isTable ? ['int', 'string', 'float'] : null)),
+      type: new List(Field.new({ name: 0, type: new Utf8() })),
+      highWaterMark: 1 // NOTE: working around a stride serialisation bug in arrowjs
+    })
+  })
 }
 
 interface IOValueStoreValue {
@@ -221,8 +244,12 @@ export class MockContext implements IBackEndContext {
   private _signals: Record<Target, Signal<MockContext, ME<unknown>>>
   private _callbacks = new WeakMap()
 
+  private _mockDataRepository: DataRepositoryItemsTable
+
   constructor(parameters: MockContextParameters) {
-    this._processData = parameters?.processData ?? mockDataProcessorFactory(viewProvider)
+    this._mockDataRepository = getMockDataRepositoryTable()
+    this._processData =
+      parameters?.processData ?? mockDataProcessorFactory(viewProvider, this._mockDataRepository)
     this._currentWorkflow = parameters?.currentWorkflow
 
     this._store = new IOValuesStore(this._currentWorkflow)
@@ -230,11 +257,13 @@ export class MockContext implements IBackEndContext {
     this._signals = {
       [Target.Activity]: new Signal<MockContext, ME<unknown>>(this),
       [Target.Workflow]: new Signal<MockContext, ME<unknown>>(this),
-      [Target.ModuleIO]: new Signal<MockContext, ME<unknown>>(this)
+      [Target.ModuleIO]: new Signal<MockContext, ME<unknown>>(this),
+      [Target.DataRepository]: new Signal<MockContext, ME<unknown>>(this)
     }
 
     this._signals[Target.Workflow].connect(this._handleWorkflow, this)
     this._signals[Target.ModuleIO].connect(this._handleModuleIO, this)
+    this._signals[Target.DataRepository].connect(this._handleDataRepository, this)
 
     setTimeout(() => {
       this._isReady = true
@@ -334,6 +363,35 @@ export class MockContext implements IBackEndContext {
     }
   }
 
+  private async _handleDataRepository(
+    _: MockContext,
+    msg: ME<unknown>
+  ): Promise<ME<unknown> | undefined | void> {
+    switch (msg.action) {
+      case Messages.DataRepository.codec.FindItems.action:
+        return adapter(Messages.DataRepository.codec.FindItems.decode, async ({ filter }) => {
+          const repositoryTable = this._mockDataRepository
+          const offset = filter.offset ?? 0
+          const pageSize = filter.pageSize ?? 5
+          const filteredRepositoryTable = repositoryTable.slice(offset, offset + pageSize)
+
+          const serializedTable = serialize(filteredRepositoryTable)
+          const stats: DataRepositoryItemsStats = {
+            rowsCount: repositoryTable.length
+          }
+
+          const message = Messages.DataRepository.codec.Items.encode({
+            filter,
+            items: serializedTable,
+            stats: (stats as unknown) as { [key: string]: unknown }
+          })
+          this._signals[Target.DataRepository].emit(message)
+        })(msg)
+      default:
+        break
+    }
+  }
+
   private async _processStepData(stepId: string): Promise<void> {
     if (this._processData == null) return
 
@@ -414,6 +472,8 @@ export class MockContext implements IBackEndContext {
           return this._handleModuleIO(undefined, msg).then(x => (x as unknown) as U)
         case Target.Workflow:
           return this._handleWorkflow(undefined, msg).then(x => (x as unknown) as U)
+        case Target.DataRepository:
+          return this._handleDataRepository(undefined, msg).then(x => (x as unknown) as U)
       }
     })()
     if (response != null) this._signals[target].emit((response as unknown) as ME<unknown>)

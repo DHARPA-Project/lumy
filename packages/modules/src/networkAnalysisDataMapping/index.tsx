@@ -1,15 +1,16 @@
 import React from 'react'
 
-import { ModuleProps, useStepInputValue, withMockProcessor } from '@dharpa-vre/client-core'
-import { Table, List, Utf8, Utf8Vector, Int32Vector } from 'apache-arrow'
+import {
+  DataRepositoryItemStructure,
+  ModuleProps,
+  useStepInputValue,
+  withMockProcessor
+} from '@dharpa-vre/client-core'
+import { Table, Utf8Vector, Int32Vector } from 'apache-arrow'
 import { MappingTableStructure, toObject, fromObject } from './mappingTable'
 import { EdgesStructure, NodesStructure } from '../networkAnalysisDataVis/structure'
 
-type CorpusStructure = {
-  uri: Utf8
-  label: Utf8
-  columns?: List<Utf8>
-}
+type CorpusStructure = DataRepositoryItemStructure
 
 type CorpusTable = Table<CorpusStructure>
 type MappingTable = Table<MappingTableStructure>
@@ -83,19 +84,19 @@ const NetworkAnalysisDataMapping = ({ step }: Props): JSX.Element => {
             return (
               <li key={idx}>
                 <dl style={{ display: 'flex', flexDirection: 'row' }}>
-                  <dd>{row.uri}</dd>
-                  <dd>{[...(row.columns ?? [])].join(', ')}</dd>
+                  <dd>{row.id}</dd>
+                  <dd>{[...(row.columnNames ?? [])].join(', ')}</dd>
                   <dd>
                     <span>use for nodes (first two columns)</span>
                     <input
                       type="checkbox"
-                      checked={isUsedInMappingTable(nodesMappingTable, ['id', 'label'])(row.uri)}
+                      checked={isUsedInMappingTable(nodesMappingTable, ['id', 'label'])(row.id)}
                       onChange={e =>
                         setUsedInMappingTable(nodesMappingTable, setNodesMappingTable)(
-                          row.uri,
+                          row.id,
                           {
-                            id: row.columns?.get(0),
-                            label: row.columns?.get(1)
+                            id: row.columnNames?.get(0),
+                            label: row.columnNames?.get(1)
                           },
                           e.target.checked
                         )
@@ -106,14 +107,14 @@ const NetworkAnalysisDataMapping = ({ step }: Props): JSX.Element => {
                     <span>use for edges (first three columns)</span>
                     <input
                       type="checkbox"
-                      checked={isUsedInMappingTable(edgesMappingTable, ['srcId', 'tgtId', 'weight'])(row.uri)}
+                      checked={isUsedInMappingTable(edgesMappingTable, ['srcId', 'tgtId', 'weight'])(row.id)}
                       onChange={e =>
                         setUsedInMappingTable(edgesMappingTable, setEdgesMappingTable)(
-                          row.uri,
+                          row.id,
                           {
-                            srcId: row.columns?.get(0),
-                            tgtId: row.columns?.get(1),
-                            weight: row.columns?.get(2)
+                            srcId: row.columnNames?.get(0),
+                            tgtId: row.columnNames?.get(1),
+                            weight: row.columnNames?.get(2)
                           },
                           e.target.checked
                         )

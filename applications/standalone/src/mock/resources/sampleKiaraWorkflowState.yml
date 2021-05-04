@@ -39,14 +39,14 @@ pipelineInputs:
         doc: Metadata field.
         subSchema: null
         type: any
-    m1__selectedItemsUris:
+    m1__selectedItemsIds:
       id: 13806c44-3935-4932-b9e5-11aac9b12f64
       isConstant: false
       isStreaming: false
       isValid: false
       lastUpdate: 2021-04-21 18:07:31.851705
       metadata: {}
-      origin: pipeline_input:mockWorkflow_0.selectedItemsUris
+      origin: pipeline_input:mockWorkflow_0.selectedItemsIds
       valueSchema:
         default: null
         doc: URIs of selected items.
@@ -307,14 +307,14 @@ stepInputs:
           doc: -- linked value --
           subSchema: null
           type: any
-      selectedItemsUris:
+      selectedItemsIds:
         id: 872ccdf1-d641-451e-9f69-c508f13c480d
         isConstant: false
         isStreaming: false
         isValid: false
         lastUpdate: 2021-04-21 18:07:31.851766
         metadata: {}
-        origin: step_input:mockWorkflow_0.m1.selectedItemsUris
+        origin: step_input:mockWorkflow_0.m1.selectedItemsIds
         valueSchema:
           default: null
           doc: -- linked value --
@@ -597,8 +597,8 @@ structure:
     - m0.metadataSets
     m1__metadataFields:
     - m1.metadataFields
-    m1__selectedItemsUris:
-    - m1.selectedItemsUris
+    m1__selectedItemsIds:
+    - m1.selectedItemsIds
     m2__edgesMappingTable:
     - m2.edgesMappingTable
     m2__nodesMappingTable:
@@ -654,8 +654,8 @@ structure:
         - __pipeline__.m1__metadataFields
         repositoryItems:
         - m0.repositoryItems
-        selectedItemsUris:
-        - __pipeline__.m1__selectedItemsUris
+        selectedItemsIds:
+        - __pipeline__.m1__selectedItemsIds
       outputConnections:
         selectedItems:
         - m2.corpus

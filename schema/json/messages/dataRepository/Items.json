@@ -3,19 +3,22 @@
   "type": "object",
   "additionalProperties": false,
   "title": "MsgDataRepositoryItems",
-  "description": "Items from data repository",
+  "description": "Items from data repository.",
   "properties": {
     "items": {
-      "type": "array",
-      "items": {
-        "$ref": "https://dharpa.org/schema/types/dataRepository/Item.json"
-      }
+      "description": "Serialized table with items as rows."
+    },
+    "stats": {
+      "type": "object",
+      "description": "Stats of the data repository."
     },
     "filter": {
       "$ref": "https://dharpa.org/schema/types/dataRepository/ItemsFilter.json"
     }
   },
   "required": [
-    "items"
+    "items",
+    "stats",
+    "filter"
   ]
 }

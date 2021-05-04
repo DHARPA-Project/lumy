@@ -2,50 +2,37 @@ import React from 'react'
 import {
   ModuleProps,
   useStepInputValue,
-  TabularDataFilter,
   withMockProcessor,
-  TableStats
+  DataRepositoryItemsFilter,
+  useDataRepository,
+  DataRepositoryItemStructure,
+  DataRepositoryItemsTable
 } from '@dharpa-vre/client-core'
-import { List, Table, Utf8 } from 'apache-arrow'
+import { Table } from 'apache-arrow'
 import { TableView } from '../components/TableView'
 
-/**
- * columns in the `corpus` table.
- */
-type CorpusStructure = {
-  // URI of the corpus item.
-  uri: Utf8
-  // Human readable label of the item.
-  label: Utf8
-  // If the corpus item is a tabular file - columns in the file.
-  columns?: List<Utf8>
-}
-type CorpusColumns = keyof CorpusStructure
-
 interface InputValues {
-  repositoryItems?: Table<CorpusStructure>
-  selectedItemsUris?: string[]
-  metadataFields?: CorpusColumns[]
+  repositoryItems?: Table<DataRepositoryItemStructure>
+  selectedItemsIds?: string[]
+  metadataFields?: string[]
 }
 
 interface OutputValues {
-  selectedItems?: Table<Partial<CorpusStructure>>
+  selectedItems?: Table<Partial<DataRepositoryItemStructure>>
 }
 
 type Props = ModuleProps<InputValues, OutputValues>
 
 const DataSelection = ({ step }: Props): JSX.Element => {
-  const [repositoryItemsFilter, setRepositoryItemsFilter] = React.useState<TabularDataFilter>({ pageSize: 5 })
-  const [selectedItemsUris = [], setSelectedItemsUris] = useStepInputValue<string[]>(
+  const [repositoryItemsFilter, setRepositoryItemsFilter] = React.useState<DataRepositoryItemsFilter>({
+    pageSize: 5
+  })
+  const [selectedItemsIds = [], setSelectedItemsIds] = useStepInputValue<string[]>(
     step.stepId,
-    'selectedItemsUris'
+    'selectedItemsIds'
   )
   const [metadataFields = [], setMetadataFields] = useStepInputValue<string[]>(step.stepId, 'metadataFields')
-  const [repositoryItemsBatch, , tableStats] = useStepInputValue<Table<CorpusStructure>, TableStats>(
-    step.stepId,
-    'repositoryItems',
-    repositoryItemsFilter
-  )
+  const [repositoryItemsBatch, repositoryStats] = useDataRepository(repositoryItemsFilter)
 
   const handleMetadataFieldSelection = (field: string, isSelected: boolean) => {
     if (isSelected) setMetadataFields(metadataFields.concat(field))
@@ -55,14 +42,14 @@ const DataSelection = ({ step }: Props): JSX.Element => {
   return (
     <div key={step.stepId}>
       <h3>Choose items for the corpus:</h3>
-      {repositoryItemsBatch == null || tableStats == null ? (
+      {repositoryItemsBatch == null || repositoryStats == null ? (
         ''
       ) : (
         <TableView
           table={repositoryItemsBatch}
-          tableStats={tableStats}
-          selections={selectedItemsUris}
-          onSelectionsChanged={setSelectedItemsUris}
+          tableStats={repositoryStats}
+          selections={selectedItemsIds}
+          onSelectionsChanged={setSelectedItemsIds}
           filter={repositoryItemsFilter}
           onFilterChanged={setRepositoryItemsFilter}
           usePagination
@@ -94,12 +81,13 @@ const DataSelection = ({ step }: Props): JSX.Element => {
   )
 }
 
-const mockProcessor = ({
-  repositoryItems,
-  selectedItemsUris = [],
-  metadataFields
-}: InputValues): OutputValues => {
-  if (repositoryItems == null) return
+type KnownMetadataFields = keyof DataRepositoryItemStructure
+
+const mockProcessor = (
+  { selectedItemsIds = [], metadataFields }: InputValues,
+  dataRepositoryTable?: DataRepositoryItemsTable
+): OutputValues => {
+  if (dataRepositoryTable == null) return
   /**
    * Because arrow was built to be zero copy,
    * converting tables to table while filtering by rows
@@ -109,22 +97,24 @@ const mockProcessor = ({
    * If it will, we may need to move the code below into a utility
    * file.
    */
-  const selectedItemsRowsIndices = selectedItemsUris
-    .map(uri => repositoryItems.getColumn('uri').indexOf(uri))
+  const selectedItemsRowsIndices = selectedItemsIds
+    .map(id => dataRepositoryTable.getColumn('id').indexOf(id))
     .filter(i => i >= 0)
+
+  const fields = (metadataFields ?? []) as KnownMetadataFields[]
 
   if (selectedItemsRowsIndices.length === 0) {
     return {
-      selectedItems: Table.empty(repositoryItems.schema).select('uri', ...(metadataFields ?? []))
+      selectedItems: Table.empty(dataRepositoryTable.schema).select('id', ...fields)
     }
   }
   const selectedItems = selectedItemsRowsIndices
     .reduce(
       (acc, i) =>
-        acc == null ? repositoryItems.slice(i, i + 1) : acc.concat(repositoryItems.slice(i, i + 1)),
-      undefined as typeof repositoryItems
+        acc == null ? dataRepositoryTable.slice(i, i + 1) : acc.concat(dataRepositoryTable.slice(i, i + 1)),
+      undefined as typeof dataRepositoryTable
     )
-    .select('uri', ...(metadataFields ?? []))
+    .select('id', ...fields)
 
   return {
     selectedItems
