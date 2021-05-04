@@ -12,7 +12,7 @@ yaml.add_representer(StepStatus, step_status_representer)
 
 kiara = Kiara.instance()
 
-wf = kiara.create_workflow("mockWorkflow")
+wf = kiara.create_workflow("networkAnalysisDev")
 state = wf.get_current_state()
 
 print(yaml.dump(to_dict(state), default_flow_style=False))

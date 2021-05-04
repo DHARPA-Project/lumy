@@ -1,169 +1,130 @@
 pipelineInputs:
   values:
-    m0__filenames:
-      id: 13f13f61-1729-4ae0-b3ce-7b432412048e
-      isConstant: false
-      isStreaming: false
-      isValid: false
-      lastUpdate: 2021-04-21 18:07:31.851385
-      metadata: {}
-      origin: pipeline_input:mockWorkflow_0.filenames
-      valueSchema:
-        default: null
-        doc: A list of files.
-        subSchema: null
-        type: any
-    m0__metadataSets:
-      id: 89caca51-22a7-49ad-ae2c-6179f7271e4d
-      isConstant: false
-      isStreaming: false
-      isValid: false
-      lastUpdate: 2021-04-21 18:07:31.851511
-      metadata: {}
-      origin: pipeline_input:mockWorkflow_0.metadataSets
-      valueSchema:
-        default: null
-        doc: A list of metadata.
-        subSchema: null
-        type: any
     m1__metadataFields:
-      id: 23ef8b00-6073-43e7-b830-4f0b892a8db0
+      id: 8d328613-ee4e-42d7-a569-27d58e9cde4b
       isConstant: false
       isStreaming: false
       isValid: false
-      lastUpdate: 2021-04-21 18:07:31.851828
+      lastUpdate: 2021-05-04 13:44:07.086619
       metadata: {}
-      origin: pipeline_input:mockWorkflow_0.metadataFields
+      origin: pipeline_input:networkAnalysisDev_0.metadataFields
       valueSchema:
-        default: null
+        default: []
         doc: Metadata field.
         subSchema: null
         type: any
     m1__selectedItemsIds:
-      id: 13806c44-3935-4932-b9e5-11aac9b12f64
+      id: 1dde36f5-ada5-4f8b-b5ee-a25127376166
       isConstant: false
       isStreaming: false
       isValid: false
-      lastUpdate: 2021-04-21 18:07:31.851705
+      lastUpdate: 2021-05-04 13:44:07.086490
       metadata: {}
-      origin: pipeline_input:mockWorkflow_0.selectedItemsIds
+      origin: pipeline_input:networkAnalysisDev_0.selectedItemsIds
       valueSchema:
-        default: null
+        default: []
         doc: URIs of selected items.
         subSchema: null
         type: any
     m2__edgesMappingTable:
-      id: 70c48880-be98-4963-bfc4-fbfad3348726
+      id: 01877c21-6600-43ad-b0dc-150cf196f8a8
       isConstant: false
       isStreaming: false
       isValid: false
-      lastUpdate: 2021-04-21 18:07:31.852142
+      lastUpdate: 2021-05-04 13:44:07.086922
       metadata: {}
-      origin: pipeline_input:mockWorkflow_0.edgesMappingTable
+      origin: pipeline_input:networkAnalysisDev_0.edgesMappingTable
       valueSchema:
-        default: null
+        default: []
         doc: Edges mapping table.
         subSchema: null
-        type: any
+        type: table
     m2__nodesMappingTable:
-      id: 4b62f90d-40eb-4999-b3e2-3053d61bd000
+      id: da0254bc-a89e-4506-b1d7-c8cf2d9a6417
       isConstant: false
       isStreaming: false
       isValid: false
-      lastUpdate: 2021-04-21 18:07:31.852021
+      lastUpdate: 2021-05-04 13:44:07.086804
       metadata: {}
-      origin: pipeline_input:mockWorkflow_0.nodesMappingTable
+      origin: pipeline_input:networkAnalysisDev_0.nodesMappingTable
       valueSchema:
-        default: null
+        default: []
         doc: Nodes mapping table.
         subSchema: null
-        type: any
+        type: table
     m4__a:
-      id: 2a0ed9f1-d8f8-400a-9ba4-2f35a7f91557
+      id: 62bd1627-07c1-4412-958d-9d3acc9dfb54
       isConstant: false
       isStreaming: false
       isValid: false
-      lastUpdate: 2021-04-21 18:07:31.852419
+      lastUpdate: 2021-05-04 13:44:07.087181
       metadata: {}
-      origin: pipeline_input:mockWorkflow_0.a
+      origin: pipeline_input:networkAnalysisDev_0.a
       valueSchema:
-        default: null
+        default: 1
         doc: a.
         subSchema: null
         type: any
     m4__b:
-      id: 69db41b7-c111-4c67-917d-63c1df124ca1
+      id: bfa059c1-b831-406a-bc97-448fea0cb199
       isConstant: false
       isStreaming: false
       isValid: false
-      lastUpdate: 2021-04-21 18:07:31.852541
+      lastUpdate: 2021-05-04 13:44:07.087305
       metadata: {}
-      origin: pipeline_input:mockWorkflow_0.b
+      origin: pipeline_input:networkAnalysisDev_0.b
       valueSchema:
-        default: null
+        default: 1
         doc: b.
         subSchema: null
         type: any
     m4__operator:
-      id: 07e829df-4409-4b42-8b5f-0a59df00cd90
+      id: 1786f73e-1e91-4c78-a537-cb0ee8ace726
       isConstant: false
       isStreaming: false
       isValid: false
-      lastUpdate: 2021-04-21 18:07:31.852662
+      lastUpdate: 2021-05-04 13:44:07.087422
       metadata: {}
-      origin: pipeline_input:mockWorkflow_0.operator
+      origin: pipeline_input:networkAnalysisDev_0.operator
       valueSchema:
-        default: null
+        default: add
         doc: operator.
         subSchema: null
         type: any
     m5__b:
-      id: c9cd8f6e-1afa-4bba-86c8-6ad50a7ae231
+      id: 0584f559-d0fe-4ef4-b5f7-7dc230f798c4
       isConstant: false
       isStreaming: false
       isValid: false
-      lastUpdate: 2021-04-21 18:07:31.852855
+      lastUpdate: 2021-05-04 13:44:07.087606
       metadata: {}
-      origin: pipeline_input:mockWorkflow_0.b
+      origin: pipeline_input:networkAnalysisDev_0.b
       valueSchema:
-        default: null
+        default: 1
         doc: b.
         subSchema: null
         type: any
     m5__operator:
-      id: cb3d388b-691f-4318-b43d-46c22035ac0a
+      id: 07b3f5f8-2335-4e34-bf22-196c4268155c
       isConstant: false
       isStreaming: false
       isValid: false
-      lastUpdate: 2021-04-21 18:07:31.852978
+      lastUpdate: 2021-05-04 13:44:07.087727
       metadata: {}
-      origin: pipeline_input:mockWorkflow_0.operator
+      origin: pipeline_input:networkAnalysisDev_0.operator
       valueSchema:
-        default: null
+        default: add
         doc: operator.
         subSchema: null
         type: any
 pipelineOutputs:
   values:
-    m0__repositoryItems:
-      id: 006b8691-4dd6-4c93-be6b-21c2c2edf6f9
-      isConstant: false
-      isStreaming: false
-      isValid: false
-      lastUpdate: 2021-04-21 18:07:31.850427
-      metadata: {}
-      origin: null
-      valueSchema:
-        default: null
-        doc: -- linked value --
-        subSchema: null
-        type: any
     m1__selectedItems:
-      id: d0bd7c09-cb6e-44ca-abad-758db1178127
+      id: c9198a29-9baf-4368-967a-fa6386ca2cc4
       isConstant: false
       isStreaming: false
       isValid: false
-      lastUpdate: 2021-04-21 18:07:31.850575
+      lastUpdate: 2021-05-04 13:44:07.085669
       metadata: {}
       origin: null
       valueSchema:
@@ -172,11 +133,11 @@ pipelineOutputs:
         subSchema: null
         type: any
     m2__edges:
-      id: 5466bdb6-8290-4d35-9528-6700f2ad7312
+      id: b7a09c95-30ce-4064-b158-4e9707b167d6
       isConstant: false
       isStreaming: false
       isValid: false
-      lastUpdate: 2021-04-21 18:07:31.850823
+      lastUpdate: 2021-05-04 13:44:07.085940
       metadata: {}
       origin: null
       valueSchema:
@@ -185,11 +146,11 @@ pipelineOutputs:
         subSchema: null
         type: any
     m2__nodes:
-      id: 3699c103-2cd0-4de8-b423-08ae4236a97d
+      id: 18279478-87a9-435c-8794-97b45a6bfc36
       isConstant: false
       isStreaming: false
       isValid: false
-      lastUpdate: 2021-04-21 18:07:31.850701
+      lastUpdate: 2021-05-04 13:44:07.085818
       metadata: {}
       origin: null
       valueSchema:
@@ -198,11 +159,11 @@ pipelineOutputs:
         subSchema: null
         type: any
     m3__graphData:
-      id: a4d8914f-f03d-4f65-9fb3-11a8f23f9d04
+      id: 135c9714-6f2e-4d27-a747-d996aaaeb856
       isConstant: false
       isStreaming: false
       isValid: false
-      lastUpdate: 2021-04-21 18:07:31.850947
+      lastUpdate: 2021-05-04 13:44:07.086061
       metadata: {}
       origin: null
       valueSchema:
@@ -211,11 +172,11 @@ pipelineOutputs:
         subSchema: null
         type: any
     m3__shortestPath:
-      id: 153db504-33f9-4e75-8c5a-47daf75b2cef
+      id: 045b6701-8483-46ed-a654-c6356cc3e952
       isConstant: false
       isStreaming: false
       isValid: false
-      lastUpdate: 2021-04-21 18:07:31.851067
+      lastUpdate: 2021-05-04 13:44:07.086186
       metadata: {}
       origin: null
       valueSchema:
@@ -224,11 +185,11 @@ pipelineOutputs:
         subSchema: null
         type: any
     m4__c:
-      id: 332f81a2-61b7-4f81-bfd2-c7b772d738ff
+      id: db0675b5-0e43-428b-9f22-247e2d7a072a
       isConstant: false
       isStreaming: false
       isValid: false
-      lastUpdate: 2021-04-21 18:07:31.851183
+      lastUpdate: 2021-05-04 13:44:07.086303
       metadata: {}
       origin: null
       valueSchema:
@@ -237,11 +198,11 @@ pipelineOutputs:
         subSchema: null
         type: any
     m5__c:
-      id: 62034b3d-0e9b-4058-b1ce-a83785d3f081
+      id: cbec1c17-2d1a-4dcc-bae9-62d8ce9e02e7
       isConstant: false
       isStreaming: false
       isValid: false
-      lastUpdate: 2021-04-21 18:07:31.851309
+      lastUpdate: 2021-05-04 13:44:07.086419
       metadata: {}
       origin: null
       valueSchema:
@@ -251,70 +212,29 @@ pipelineOutputs:
         type: any
 status: stale
 stepInputs:
-  m0:
-    values:
-      filenames:
-        id: 4b180e20-971d-41fa-afc2-dd1c2fb4f209
-        isConstant: false
-        isStreaming: false
-        isValid: false
-        lastUpdate: 2021-04-21 18:07:31.851450
-        metadata: {}
-        origin: step_input:mockWorkflow_0.m0.filenames
-        valueSchema:
-          default: null
-          doc: -- linked value --
-          subSchema: null
-          type: any
-      metadataSets:
-        id: 50141665-b8f7-4a33-88ef-0c02c6f4829c
-        isConstant: false
-        isStreaming: false
-        isValid: false
-        lastUpdate: 2021-04-21 18:07:31.851570
-        metadata: {}
-        origin: step_input:mockWorkflow_0.m0.metadataSets
-        valueSchema:
-          default: null
-          doc: -- linked value --
-          subSchema: null
-          type: any
   m1:
     values:
       metadataFields:
-        id: 27767272-67d4-4d55-98eb-26b10f8b60b7
+        id: ee6d8510-7308-4b68-a9c8-6f6a7cb4ddde
         isConstant: false
         isStreaming: false
         isValid: false
-        lastUpdate: 2021-04-21 18:07:31.851887
+        lastUpdate: 2021-05-04 13:44:07.086678
         metadata: {}
-        origin: step_input:mockWorkflow_0.m1.metadataFields
-        valueSchema:
-          default: null
-          doc: -- linked value --
-          subSchema: null
-          type: any
-      repositoryItems:
-        id: 3505d444-559e-42b3-8beb-4d5a67273d6c
-        isConstant: false
-        isStreaming: false
-        isValid: false
-        lastUpdate: 2021-04-21 18:07:31.851642
-        metadata: {}
-        origin: step_input:mockWorkflow_0.m1.repositoryItems
+        origin: step_input:networkAnalysisDev_0.m1.metadataFields
         valueSchema:
           default: null
           doc: -- linked value --
           subSchema: null
           type: any
       selectedItemsIds:
-        id: 872ccdf1-d641-451e-9f69-c508f13c480d
+        id: 727f1056-200e-4380-b5d1-0f706e5a496b
         isConstant: false
         isStreaming: false
         isValid: false
-        lastUpdate: 2021-04-21 18:07:31.851766
+        lastUpdate: 2021-05-04 13:44:07.086557
         metadata: {}
-        origin: step_input:mockWorkflow_0.m1.selectedItemsIds
+        origin: step_input:networkAnalysisDev_0.m1.selectedItemsIds
         valueSchema:
           default: null
           doc: -- linked value --
@@ -323,39 +243,39 @@ stepInputs:
   m2:
     values:
       corpus:
-        id: 66a95538-8775-4a4a-aa53-ab88f75099d3
+        id: 1c680ef5-8cc1-407b-8f78-7b50a0f4008d
         isConstant: false
         isStreaming: false
         isValid: false
-        lastUpdate: 2021-04-21 18:07:31.851957
+        lastUpdate: 2021-05-04 13:44:07.086746
         metadata: {}
-        origin: step_input:mockWorkflow_0.m2.corpus
+        origin: step_input:networkAnalysisDev_0.m2.corpus
         valueSchema:
           default: null
           doc: -- linked value --
           subSchema: null
           type: any
       edgesMappingTable:
-        id: af186060-7c8e-4e9b-9222-a1964ee99e93
+        id: 9575054d-8dc3-4be5-902b-f587c2211db0
         isConstant: false
         isStreaming: false
         isValid: false
-        lastUpdate: 2021-04-21 18:07:31.852203
+        lastUpdate: 2021-05-04 13:44:07.086986
         metadata: {}
-        origin: step_input:mockWorkflow_0.m2.edgesMappingTable
+        origin: step_input:networkAnalysisDev_0.m2.edgesMappingTable
         valueSchema:
           default: null
           doc: -- linked value --
           subSchema: null
           type: any
       nodesMappingTable:
-        id: 8484c9cd-9fbf-43d6-80c2-ce4714ff6dc9
+        id: 12c1bf1e-ca67-4a3a-8053-d5a43f287bdc
         isConstant: false
         isStreaming: false
         isValid: false
-        lastUpdate: 2021-04-21 18:07:31.852081
+        lastUpdate: 2021-05-04 13:44:07.086866
         metadata: {}
-        origin: step_input:mockWorkflow_0.m2.nodesMappingTable
+        origin: step_input:networkAnalysisDev_0.m2.nodesMappingTable
         valueSchema:
           default: null
           doc: -- linked value --
@@ -364,26 +284,26 @@ stepInputs:
   m3:
     values:
       edges:
-        id: a517a76c-07e8-4715-a90c-3df998c4e993
+        id: 6cf0d640-16c7-41ce-a754-3649de8f7a1f
         isConstant: false
         isStreaming: false
         isValid: false
-        lastUpdate: 2021-04-21 18:07:31.852345
+        lastUpdate: 2021-05-04 13:44:07.087122
         metadata: {}
-        origin: step_input:mockWorkflow_0.m3.edges
+        origin: step_input:networkAnalysisDev_0.m3.edges
         valueSchema:
           default: null
           doc: -- linked value --
           subSchema: null
           type: any
       nodes:
-        id: 22b2d871-0590-4af7-9e36-1dafddb5151f
+        id: b1affc73-1611-45b7-9c55-3235cc649891
         isConstant: false
         isStreaming: false
         isValid: false
-        lastUpdate: 2021-04-21 18:07:31.852276
+        lastUpdate: 2021-05-04 13:44:07.087053
         metadata: {}
-        origin: step_input:mockWorkflow_0.m3.nodes
+        origin: step_input:networkAnalysisDev_0.m3.nodes
         valueSchema:
           default: null
           doc: -- linked value --
@@ -392,39 +312,39 @@ stepInputs:
   m4:
     values:
       a:
-        id: 96c394b4-6718-431c-9adf-596e4674e228
+        id: 000ee2f2-c6b5-442e-a3fa-7226cc5a3ae4
         isConstant: false
         isStreaming: false
         isValid: false
-        lastUpdate: 2021-04-21 18:07:31.852480
+        lastUpdate: 2021-05-04 13:44:07.087242
         metadata: {}
-        origin: step_input:mockWorkflow_0.m4.a
+        origin: step_input:networkAnalysisDev_0.m4.a
         valueSchema:
           default: null
           doc: -- linked value --
           subSchema: null
           type: any
       b:
-        id: 46fa9ef6-c861-40d1-9741-bed6cb47a7e6
+        id: c3c4a13b-3c19-48a1-851e-5863dfde5d73
         isConstant: false
         isStreaming: false
         isValid: false
-        lastUpdate: 2021-04-21 18:07:31.852600
+        lastUpdate: 2021-05-04 13:44:07.087363
         metadata: {}
-        origin: step_input:mockWorkflow_0.m4.b
+        origin: step_input:networkAnalysisDev_0.m4.b
         valueSchema:
           default: null
           doc: -- linked value --
           subSchema: null
           type: any
       operator:
-        id: 5f68c3c9-7bfb-4974-abcc-509fd9a1016a
+        id: ba2e6887-a8ff-4706-a18c-3f94f28f5b5f
         isConstant: false
         isStreaming: false
         isValid: false
-        lastUpdate: 2021-04-21 18:07:31.852724
+        lastUpdate: 2021-05-04 13:44:07.087481
         metadata: {}
-        origin: step_input:mockWorkflow_0.m4.operator
+        origin: step_input:networkAnalysisDev_0.m4.operator
         valueSchema:
           default: null
           doc: -- linked value --
@@ -433,126 +353,111 @@ stepInputs:
   m5:
     values:
       a:
-        id: 5f7b9e01-4876-4e37-98e5-73232bedc8dd
+        id: 4127192a-d957-4feb-9668-4172508381ea
         isConstant: false
         isStreaming: false
         isValid: false
-        lastUpdate: 2021-04-21 18:07:31.852796
+        lastUpdate: 2021-05-04 13:44:07.087546
         metadata: {}
-        origin: step_input:mockWorkflow_0.m5.a
+        origin: step_input:networkAnalysisDev_0.m5.a
         valueSchema:
           default: null
           doc: -- linked value --
           subSchema: null
           type: any
       b:
-        id: 466824f3-0bad-4ff0-8649-7fd68fec3851
+        id: e7fe8743-72d6-4970-bb83-eb14b19f8709
         isConstant: false
         isStreaming: false
         isValid: false
-        lastUpdate: 2021-04-21 18:07:31.852917
+        lastUpdate: 2021-05-04 13:44:07.087666
         metadata: {}
-        origin: step_input:mockWorkflow_0.m5.b
+        origin: step_input:networkAnalysisDev_0.m5.b
         valueSchema:
           default: null
           doc: -- linked value --
           subSchema: null
           type: any
       operator:
-        id: 64a7738e-8cc7-451c-bf00-6505328753bc
+        id: 840f8d7e-0363-4ea8-a700-aee7488aee5c
         isConstant: false
         isStreaming: false
         isValid: false
-        lastUpdate: 2021-04-21 18:07:31.853040
+        lastUpdate: 2021-05-04 13:44:07.087788
         metadata: {}
-        origin: step_input:mockWorkflow_0.m5.operator
+        origin: step_input:networkAnalysisDev_0.m5.operator
         valueSchema:
           default: null
           doc: -- linked value --
           subSchema: null
           type: any
 stepOutputs:
-  m0:
-    values:
-      repositoryItems:
-        id: 661b5052-fac4-41dc-956f-8c491ae33e36
-        isConstant: false
-        isStreaming: false
-        isValid: false
-        lastUpdate: 2021-04-21 18:07:31.850303
-        metadata: {}
-        origin: step_output:mockWorkflow_0.m0.repositoryItems
-        valueSchema:
-          default: null
-          doc: Repository items.
-          subSchema: null
-          type: any
   m1:
     values:
       selectedItems:
-        id: 3df57e3d-7ef8-4bc8-9254-d549ea2ce6c2
+        id: fb14205c-59d4-4b03-a83e-ca2ef314fc71
         isConstant: false
         isStreaming: false
         isValid: false
-        lastUpdate: 2021-04-21 18:07:31.850505
+        lastUpdate: 2021-05-04 13:44:07.085537
         metadata: {}
-        origin: step_output:mockWorkflow_0.m1.selectedItems
+        origin: step_output:networkAnalysisDev_0.m1.selectedItems
         valueSchema:
           default: null
           doc: Selected corpus.
           subSchema: null
-          type: any
+          type: table
   m2:
     values:
       edges:
-        id: 757a1551-38dd-4890-8cbe-c24a7e81d002
+        id: 0555360a-1bed-40d2-a53b-bfd07280f13d
         isConstant: false
         isStreaming: false
         isValid: false
-        lastUpdate: 2021-04-21 18:07:31.850762
+        lastUpdate: 2021-05-04 13:44:07.085878
         metadata: {}
-        origin: step_output:mockWorkflow_0.m2.edges
+        origin: step_output:networkAnalysisDev_0.m2.edges
         valueSchema:
           default: null
           doc: Edges table.
           subSchema: null
-          type: any
+          type: table
       nodes:
-        id: c9ed494f-905c-4acc-9710-bb3448980bde
+        id: 07f11c04-d3a6-4ff2-9a45-85c66171abc4
         isConstant: false
         isStreaming: false
         isValid: false
-        lastUpdate: 2021-04-21 18:07:31.850637
+        lastUpdate: 2021-05-04 13:44:07.085750
         metadata: {}
-        origin: step_output:mockWorkflow_0.m2.nodes
+        origin: step_output:networkAnalysisDev_0.m2.nodes
         valueSchema:
           default: null
           doc: Nodes table.
           subSchema: null
-          type: any
+          type: table
   m3:
     values:
       graphData:
-        id: 1b983bf8-0135-4996-aa60-084e6ec4925b
+        id: a526f4c1-ceca-4ca0-bf7a-136cf3bb1172
         isConstant: false
         isStreaming: false
         isValid: false
-        lastUpdate: 2021-04-21 18:07:31.850881
+        lastUpdate: 2021-05-04 13:44:07.085998
         metadata: {}
-        origin: step_output:mockWorkflow_0.m3.graphData
+        origin: step_output:networkAnalysisDev_0.m3.graphData
         valueSchema:
           default: null
           doc: Nodes table.
           subSchema: null
-          type: any
+          type: table
       shortestPath:
-        id: d37c071b-5a77-4b60-86f1-f6e43dd9e66a
+        id: 1da64242-01ad-482b-9885-12e326477196
         isConstant: false
         isStreaming: false
         isValid: false
-        lastUpdate: 2021-04-21 18:07:31.851002
+        lastUpdate: 2021-05-04 13:44:07.086118
         metadata: {}
-        origin: step_output:mockWorkflow_0.m3.shortestPath
+        origin: step_output:networkAnalysisDev_0.m3.shortestPath
         valueSchema:
           default: null
           doc: Shortest path array.
@@ -561,13 +466,13 @@ stepOutputs:
   m4:
     values:
       c:
-        id: 4cda9a6d-8f6f-41ff-873d-6e563b972412
+        id: c4d12087-b582-4f63-9e02-acca1cbc5997
         isConstant: false
         isStreaming: false
         isValid: false
-        lastUpdate: 2021-04-21 18:07:31.851123
+        lastUpdate: 2021-05-04 13:44:07.086240
         metadata: {}
-        origin: step_output:mockWorkflow_0.m4.c
+        origin: step_output:networkAnalysisDev_0.m4.c
         valueSchema:
           default: null
           doc: c.
@@ -576,25 +481,21 @@ stepOutputs:
   m5:
     values:
       c:
-        id: fea43c52-a01c-484f-a1cc-52c89360de91
+        id: f20cf9d3-a13b-446a-a886-dd2444c5753d
         isConstant: false
         isStreaming: false
         isValid: false
-        lastUpdate: 2021-04-21 18:07:31.851241
+        lastUpdate: 2021-05-04 13:44:07.086360
         metadata: {}
-        origin: step_output:mockWorkflow_0.m5.c
+        origin: step_output:networkAnalysisDev_0.m5.c
         valueSchema:
           default: null
           doc: c.
           subSchema: null
           type: any
 structure:
-  pipelineId: mockWorkflow_0
+  pipelineId: networkAnalysisDev_0
   pipelineInputConnections:
-    m0__filenames:
-    - m0.filenames
-    m0__metadataSets:
-    - m0.metadataSets
     m1__metadataFields:
     - m1.metadataFields
     m1__selectedItemsIds:
@@ -614,7 +515,6 @@ structure:
     m5__operator:
     - m5.operator
   pipelineOutputConnections:
-    m0__repositoryItems: m0.repositoryItems
     m1__selectedItems: m1.selectedItems
     m2__edges: m2.edges
     m2__nodes: m2.nodes
@@ -623,54 +523,29 @@ structure:
     m4__c: m4.c
     m5__c: m5.c
   processingStages:
-  - - m0
-    - m4
   - - m1
-    - m5
+    - m4
   - - m2
+    - m5
   - - m3
   steps:
-    m0:
-      inputConnections:
-        filenames:
-        - __pipeline__.m0__filenames
-        metadataSets:
-        - __pipeline__.m0__metadataSets
-      outputConnections:
-        repositoryItems:
-        - m1.repositoryItems
-        - __pipeline__.m0__repositoryItems
-      processingStage: 1
-      step:
-        inputLinks: {}
-        moduleConfig: {}
-        moduleType: dataUpload
-        parentId: mockWorkflow_0
-        processingStage: 1
-        stepId: m0
     m1:
       inputConnections:
         metadataFields:
         - __pipeline__.m1__metadataFields
-        repositoryItems:
-        - m0.repositoryItems
         selectedItemsIds:
         - __pipeline__.m1__selectedItemsIds
       outputConnections:
         selectedItems:
         - m2.corpus
         - __pipeline__.m1__selectedItems
-      processingStage: 2
+      processingStage: 1
       step:
-        inputLinks:
-          repositoryItems:
-          - stepId: m0
-            subValue: null
-            valueName: repositoryItems
+        inputLinks: {}
         moduleConfig: {}
         moduleType: dataSelection
-        parentId: mockWorkflow_0
-        processingStage: 2
+        parentId: networkAnalysisDev_0
+        processingStage: 1
         stepId: m1
     m2:
       inputConnections:
@@ -687,7 +562,7 @@ structure:
         nodes:
         - m3.nodes
         - __pipeline__.m2__nodes
-      processingStage: 3
+      processingStage: 2
       step:
         inputLinks:
           corpus:
@@ -696,8 +571,8 @@ structure:
             valueName: selectedItems
         moduleConfig: {}
         moduleType: networkAnalysisDataMapping
-        parentId: mockWorkflow_0
-        processingStage: 3
+        parentId: networkAnalysisDev_0
+        processingStage: 2
         stepId: m2
     m3:
       inputConnections:
@@ -710,7 +585,7 @@ structure:
         - __pipeline__.m3__graphData
         shortestPath:
         - __pipeline__.m3__shortestPath
-      processingStage: 4
+      processingStage: 3
       step:
         inputLinks:
           edges:
@@ -723,8 +598,8 @@ structure:
             valueName: nodes
         moduleConfig: {}
         moduleType: networkAnalysisDataVis
-        parentId: mockWorkflow_0
-        processingStage: 4
+        parentId: networkAnalysisDev_0
+        processingStage: 3
         stepId: m3
     m4:
       inputConnections:
@@ -743,7 +618,7 @@ structure:
         inputLinks: {}
         moduleConfig: {}
         moduleType: twoArgsMathFunction
-        parentId: mockWorkflow_0
+        parentId: networkAnalysisDev_0
         processingStage: 1
         stepId: m4
     m5:
@@ -766,6 +641,6 @@ structure:
             valueName: c
         moduleConfig: {}
         moduleType: twoArgsMathFunction
-        parentId: mockWorkflow_0
+        parentId: networkAnalysisDev_0
         processingStage: 2
         stepId: m5
