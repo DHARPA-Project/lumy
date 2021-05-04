@@ -9,7 +9,7 @@
       "type": "integer",
       "description": "Number of items to return"
     },
-    "pageOffset": {
+    "offset": {
       "type": "integer",
       "description": "Start from item"
     }

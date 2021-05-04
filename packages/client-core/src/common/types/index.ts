@@ -6,7 +6,8 @@ export type {
   IOStateConnection,
   DataValueContainer,
   TableStats,
-  DataTabularDataFilter as TabularDataFilter
+  DataTabularDataFilter as TabularDataFilter,
+  DataRepositoryItemsFilter
 } from './generated'
 export { State, DataType } from './generated'
 export * as Messages from './messages'

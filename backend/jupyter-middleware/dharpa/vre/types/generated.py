@@ -65,7 +65,7 @@ class MsgDataRepositoryCreateSubset:
 class DataRepositoryItemsFilter:
     """Filter to apply to items"""
     """Start from item"""
-    page_offset: Optional[int] = None
+    offset: Optional[int] = None
     """Number of items to return"""
     page_size: Optional[int] = None
 
@@ -77,35 +77,7 @@ class MsgDataRepositoryFindItems:
     
     Request to find items in data repository
     """
-    filter: Optional[DataRepositoryItemsFilter] = None
-
-
-@dataclass
-class MsgDataRepositoryGetItemPreview:
-    """Target: "dataRepository"
-    Message type: "GetItemPreview"
-    
-    Item preview
-    """
-    """Item ID"""
-    id: str
-
-
-@dataclass
-class DataRepositoryItem:
-    """Item from data repository"""
-    """Unique ID of the item"""
-    id: str
-
-
-@dataclass
-class MsgDataRepositoryItemPreview:
-    """Target: "dataRepository"
-    Message type: "ItemPreview"
-    
-    Item preview
-    """
-    item: DataRepositoryItem
+    filter: DataRepositoryItemsFilter
 
 
 @dataclass
@@ -113,10 +85,13 @@ class MsgDataRepositoryItems:
     """Target: "dataRepository"
     Message type: "Items"
     
-    Items from data repository
+    Items from data repository.
     """
-    items: List[DataRepositoryItem]
-    filter: Optional[DataRepositoryItemsFilter] = None
+    filter: DataRepositoryItemsFilter
+    """Serialized table with items as rows."""
+    items: Any
+    """Stats of the data repository."""
+    stats: Dict[str, Any]
 
 
 @dataclass

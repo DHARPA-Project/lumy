@@ -9,5 +9,7 @@
       "$ref": "https://dharpa.org/schema/types/dataRepository/ItemsFilter.json"
     }
   },
-  "required": []
+  "required": [
+    "filter"
+  ]
 }

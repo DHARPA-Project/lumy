@@ -4,15 +4,8 @@
   "doc": "Network analysis development workflow. Mostly used to experiment with the VRE",
   "steps": [
     {
-      "module_type": "dataUpload",
-      "step_id": "m0"
-    },
-    {
       "module_type": "dataSelection",
-      "step_id": "m1",
-      "input_links": {
-        "repositoryItems": "m0.repositoryItems"
-      }
+      "step_id": "m1"
     },
     {
       "module_type": "networkAnalysisDataMapping",
