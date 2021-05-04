@@ -1,11 +1,12 @@
 import React from 'react'
 
 import Box from '@material-ui/core/Box'
+import Fade from '@material-ui/core/Fade'
 
 type TabPanelProps = {
-  index: number
-  value: number
   children: React.ReactNode
+  value: number
+  index: number
 }
 
 const TabPanel = ({ children, value, index, ...other }: TabPanelProps): JSX.Element => {
@@ -17,7 +18,11 @@ const TabPanel = ({ children, value, index, ...other }: TabPanelProps): JSX.Elem
       aria-labelledby={`scrollable-auto-tab-${index}`}
       {...other}
     >
-      {value === index && <Box p={3}>{children}</Box>}
+      {value === index && (
+        <Fade in={value === index} timeout={1000}>
+          <Box p={3}>{children}</Box>
+        </Fade>
+      )}
     </div>
   )
 }
