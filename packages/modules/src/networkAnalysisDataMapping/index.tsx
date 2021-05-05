@@ -144,7 +144,7 @@ const mockProcessor = ({}: InputValues): OutputValues => {
   }
 
   const getRandomNodeId = () => {
-    const idx = Math.floor(Math.random() * numNodes)
+    const idx = Math.floor(Math.random() * numNodes * 0.9)
     return String(nums[idx])
   }
 
