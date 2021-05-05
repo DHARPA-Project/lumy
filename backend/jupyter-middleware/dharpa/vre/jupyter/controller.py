@@ -4,6 +4,8 @@ import logging
 import sys
 from typing import Any, Dict, Optional
 from uuid import uuid4
+from dharpa.vre.utils.codec import serialize_table
+import pyarrow as pa
 
 from IPython import get_ipython
 from dharpa.vre.context.context import AppContext
@@ -35,6 +37,8 @@ def preprocess_dict(d):
     def val(v):
         if isinstance(v, dict):
             return preprocess_dict(v)
+        elif isinstance(v, pa.Table):
+            return serialize_table(v)
         else:
             if isinstance(v, Enum):
                 return v.value
