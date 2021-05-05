@@ -1,12 +1,16 @@
 import React, { useContext, useRef, useState } from 'react'
-
 import JoditEditor from 'jodit-react'
 
-import { Breadcrumbs, Button, makeStyles, Typography } from '@material-ui/core'
+import { makeStyles } from '@material-ui/core/styles'
+import Breadcrumbs from '@material-ui/core/Breadcrumbs'
+import Button from '@material-ui/core/Button'
+import Typography from '@material-ui/core/Typography'
 
 import SaveIcon from '@material-ui/icons/Save'
 
 import { PageLayoutContext } from '../../context/pageLayoutContext'
+
+const mockPath = ['workflows', 'workflow-type', 'step']
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -35,14 +39,11 @@ const NoteEditor = (): JSX.Element => {
 
   const [noteContent, setNoteContent] = useState('')
 
-  const mockPath = ['workflows', 'topic-modelling', 'text-processing']
-
   return (
     <div className={classes.root}>
       <Typography className={classes.headline} variant="h5" component="h1">
         Add Notes
       </Typography>
-
       <Breadcrumbs aria-label="breadcrumb" className={classes.breadcrumbs}>
         {mockPath.map((path, index) => (
           <Typography color="textPrimary" key={index}>
@@ -55,6 +56,8 @@ const NoteEditor = (): JSX.Element => {
         className={classes.textEditor}
         ref={editor}
         value={noteContent}
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         config={{
           readonly: false,
           style: {
@@ -63,11 +66,9 @@ const NoteEditor = (): JSX.Element => {
           }
         }}
         tabIndex={1}
-        // onBlur={value => setNoteContent(value)}
-        onBlur={(value: unknown) => console.log(value)}
+        onBlur={value => setNoteContent(value)}
         onChange={(value: unknown) => console.log(`${value} typed`)}
       />
-
       <Button
         variant="contained"
         color="primary"
