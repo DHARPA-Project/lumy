@@ -2,10 +2,11 @@ import React, { useState, createContext } from 'react'
 
 import CssBaseline from '@material-ui/core/CssBaseline'
 
-import teal from '@material-ui/core/colors/teal'
+// import teal from '@material-ui/core/colors/teal'
 import amber from '@material-ui/core/colors/amber'
 
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
+import { createMuiTheme, MuiThemeProvider, Theme } from '@material-ui/core/styles'
+import { PaletteType, ThemeOptions } from '@material-ui/core'
 
 declare module '@material-ui/core/styles/createMuiTheme' {
   interface Theme {
@@ -13,6 +14,9 @@ declare module '@material-ui/core/styles/createMuiTheme' {
       sideBarFullWidth: React.CSSProperties['width']
       sideBarCollapsedWidth: React.CSSProperties['width']
       navLinkTextWidth: React.CSSProperties['width']
+      toolBarWidth: React.CSSProperties['width']
+      navBarTop: React.CSSProperties['height']
+      navBarBottom: React.CSSProperties['height']
     }
   }
   // allow configuration using `createMuiTheme`
@@ -21,6 +25,9 @@ declare module '@material-ui/core/styles/createMuiTheme' {
       sideBarFullWidth?: React.CSSProperties['width']
       sideBarCollapsedWidth?: React.CSSProperties['width']
       navLinkTextWidth: React.CSSProperties['width']
+      toolBarWidth: React.CSSProperties['width']
+      navBarTop: React.CSSProperties['height']
+      navBarBottom: React.CSSProperties['height']
     }
   }
 }
@@ -28,6 +35,7 @@ declare module '@material-ui/core/styles/createMuiTheme' {
 export type ThemeContextType = {
   darkModeEnabled: boolean
   toggleDarkMode: () => void
+  sidebarTheme: Theme
 }
 
 type ThemeContextProviderProps = {
@@ -38,7 +46,7 @@ export const ThemeContext = createContext<ThemeContextType>(null)
 
 const getThemeFromLocalStorage = () => {
   const valueInLocalStorage = localStorage.getItem('darkModeEnabled')
-  return valueInLocalStorage ? JSON.parse(valueInLocalStorage) : true
+  return valueInLocalStorage ? JSON.parse(valueInLocalStorage) : false
 }
 
 const ThemeContextProvider = ({ children }: ThemeContextProviderProps): JSX.Element => {
@@ -51,41 +59,68 @@ const ThemeContextProvider = ({ children }: ThemeContextProviderProps): JSX.Elem
     })
   }
 
-  const theme = createMuiTheme({
+  /**
+   * Shallow-merge additional options on top of default options to create custom MUI themes
+   * @param extendedOptions object containing default Material UI theme options
+   * @returns extended Material UI theme object
+   */
+  const createCustomTheme = (extendedOptions?: ThemeOptions) =>
+    createMuiTheme({
+      palette: {
+        type: darkModeEnabled ? ('dark' as PaletteType) : ('light' as PaletteType),
+        // primary: {
+        //   main: teal[500]
+        // },
+        secondary: {
+          main: amber[500]
+        }
+      },
+      typography: {
+        body1: {
+          fontSize: '0.875rem',
+          lineHeight: 1.43
+        },
+        body2: {
+          fontSize: '0.75rem',
+          lineHeight: 1.35
+        }
+      },
+      props: {
+        MuiSvgIcon: {
+          fontSize: 'small'
+        }
+      },
+      layout: {
+        sideBarFullWidth: '200px',
+        sideBarCollapsedWidth: '52px',
+        navLinkTextWidth: 90,
+        toolBarWidth: '50px',
+        navBarTop: '20vh',
+        navBarBottom: '10vh'
+      },
+      ...extendedOptions
+    })
+
+  // Keep in mind that createCustomTheme() performs a shallow merge...
+  // ... of default option and extended option objects; deeply nested properties...
+  // ... of default theme may be lost if not copied over to extended option object
+  const globalTheme = createCustomTheme()
+  const sidebarTheme = createCustomTheme({
     palette: {
-      type: darkModeEnabled ? 'dark' : 'light',
-      primary: {
-        main: teal[500]
+      type: 'dark',
+      background: {
+        paper: '#222A45',
+        default: '#1a2038'
       },
       secondary: {
         main: amber[500]
       }
-    },
-    typography: {
-      body1: {
-        fontSize: '0.875rem',
-        lineHeight: 1.43
-      },
-      body2: {
-        fontSize: '0.75rem',
-        lineHeight: 1.35
-      }
-    },
-    props: {
-      MuiSvgIcon: {
-        fontSize: 'small'
-      }
-    },
-    layout: {
-      sideBarFullWidth: '200px',
-      sideBarCollapsedWidth: '52px',
-      navLinkTextWidth: 90
     }
   })
 
   return (
-    <ThemeContext.Provider value={{ darkModeEnabled, toggleDarkMode }}>
-      <MuiThemeProvider theme={theme}>
+    <ThemeContext.Provider value={{ darkModeEnabled, toggleDarkMode, sidebarTheme }}>
+      <MuiThemeProvider theme={globalTheme}>
         <CssBaseline />
         {children}
       </MuiThemeProvider>

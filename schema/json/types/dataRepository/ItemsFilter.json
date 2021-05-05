@@ -12,6 +12,13 @@
     "offset": {
       "type": "integer",
       "description": "Start from item"
+    },
+    "types": {
+      "type": "array",
+      "description": "Limit the result to these data types.",
+      "items": {
+        "type": "string"
+      }
     }
   },
   "required": []

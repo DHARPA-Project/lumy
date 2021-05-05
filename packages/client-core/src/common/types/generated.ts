@@ -93,6 +93,10 @@ export interface DataRepositoryItemsFilter {
    * Number of items to return
    */
   pageSize?: number
+  /**
+   * Limit the result to these data types.
+   */
+  types?: string[]
 }
 
 /**

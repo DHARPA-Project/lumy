@@ -22,7 +22,8 @@ import {
   deserialize,
   TableStats,
   DataRepositoryItemsTable,
-  DataRepositoryItemsStats
+  DataRepositoryItemsStats,
+  arrowUtils
 } from '@dharpa-vre/client-core'
 import { viewProvider } from '@dharpa-vre/modules'
 
@@ -64,7 +65,7 @@ const getFilteredValue = <T = unknown>(value: T, filter?: TabularDataFilter): T 
   return value
 }
 
-const getMockDataRepositoryTable = (numItems = 30): DataRepositoryItemsTable => {
+const newMockDataRepositoryTable = (numItems = 30): DataRepositoryItemsTable => {
   const rowNumbers = [...Array(numItems).keys()]
   const isTableType = rowNumbers.map(() => Math.random() >= 0.5)
 
@@ -82,7 +83,21 @@ const getMockDataRepositoryTable = (numItems = 30): DataRepositoryItemsTable => 
       type: new List(Field.new({ name: 0, type: new Utf8() })),
       highWaterMark: 1 // NOTE: working around a stride serialisation bug in arrowjs
     })
-  })
+  }) as DataRepositoryItemsTable
+}
+
+const getMockDataRepositoryTable = (): DataRepositoryItemsTable => {
+  const storeKey = '__dharpa_mock_data_repository'
+  const serializedTable = window.localStorage.getItem(storeKey)
+  if (serializedTable == null) {
+    const table = newMockDataRepositoryTable()
+    window.localStorage.setItem(storeKey, serialize(table) as string)
+  }
+  return deserialize<DataRepositoryItemsTable, unknown>(
+    window.localStorage.getItem(storeKey),
+    undefined,
+    DataType.Table
+  )[0]
 }
 
 interface IOValueStoreValue {
@@ -371,13 +386,19 @@ export class MockContext implements IBackEndContext {
       case Messages.DataRepository.codec.FindItems.action:
         return adapter(Messages.DataRepository.codec.FindItems.decode, async ({ filter }) => {
           const repositoryTable = this._mockDataRepository
+
+          const filteredTable =
+            filter.types == null
+              ? repositoryTable
+              : arrowUtils.filterTable(repositoryTable, row => filter.types?.includes(row.type))
+
           const offset = filter.offset ?? 0
           const pageSize = filter.pageSize ?? 5
-          const filteredRepositoryTable = repositoryTable.slice(offset, offset + pageSize)
+          const page = filteredTable.slice(offset, offset + pageSize)
 
-          const serializedTable = serialize(filteredRepositoryTable)
+          const serializedTable = serialize(page)
           const stats: DataRepositoryItemsStats = {
-            rowsCount: repositoryTable.length
+            rowsCount: filteredTable.count()
           }
 
           const message = Messages.DataRepository.codec.Items.encode({

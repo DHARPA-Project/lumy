@@ -6,7 +6,8 @@ import {
   DataRepositoryItemsFilter,
   useDataRepository,
   DataRepositoryItemStructure,
-  DataRepositoryItemsTable
+  DataRepositoryItemsTable,
+  arrowUtils
 } from '@dharpa-vre/client-core'
 import { Table } from 'apache-arrow'
 import { TableView } from '../components/TableView'
@@ -25,7 +26,8 @@ type Props = ModuleProps<InputValues, OutputValues>
 
 const DataSelection = ({ step }: Props): JSX.Element => {
   const [repositoryItemsFilter, setRepositoryItemsFilter] = React.useState<DataRepositoryItemsFilter>({
-    pageSize: 5
+    pageSize: 5,
+    types: ['table']
   })
   const [selectedItemsIds = [], setSelectedItemsIds] = useStepInputValue<string[]>(
     step.stepId,
@@ -39,6 +41,9 @@ const DataSelection = ({ step }: Props): JSX.Element => {
     else setMetadataFields(metadataFields.filter(f => f !== field))
   }
 
+  const updateRepositoryItemsFilter = (filter: DataRepositoryItemsFilter) =>
+    setRepositoryItemsFilter({ ...filter, pageSize: 5, types: ['table'] })
+
   return (
     <div key={step.stepId}>
       <h3>Choose items for the corpus:</h3>
@@ -51,7 +56,7 @@ const DataSelection = ({ step }: Props): JSX.Element => {
           selections={selectedItemsIds}
           onSelectionsChanged={setSelectedItemsIds}
           filter={repositoryItemsFilter}
-          onFilterChanged={setRepositoryItemsFilter}
+          onFilterChanged={updateRepositoryItemsFilter}
           usePagination
           useSelection
         />
@@ -62,7 +67,7 @@ const DataSelection = ({ step }: Props): JSX.Element => {
       ) : (
         <ul>
           {repositoryItemsBatch.schema.fields
-            .filter(f => f.name !== 'uri')
+            .filter(f => f.name !== 'id')
             .map((f, idx) => {
               return (
                 <li key={idx}>
@@ -88,34 +93,12 @@ const mockProcessor = (
   dataRepositoryTable?: DataRepositoryItemsTable
 ): OutputValues => {
   if (dataRepositoryTable == null) return
-  /**
-   * Because arrow was built to be zero copy,
-   * converting tables to table while filtering by rows
-   * is not easy. It can be done with a predicate, but there
-   * is no way to get a new table after filtering. It's ok
-   * for now because it is unlikely be needed on the frontend.
-   * If it will, we may need to move the code below into a utility
-   * file.
-   */
-  const selectedItemsRowsIndices = selectedItemsIds
-    .map(id => dataRepositoryTable.getColumn('id').indexOf(id))
-    .filter(i => i >= 0)
 
-  const fields = (metadataFields ?? []) as KnownMetadataFields[]
+  const fields = new Set(((metadataFields ?? []) as KnownMetadataFields[]).concat(['id']))
 
-  if (selectedItemsRowsIndices.length === 0) {
-    return {
-      selectedItems: Table.empty(dataRepositoryTable.schema).select('id', ...fields)
-    }
-  }
-  const selectedItems = selectedItemsRowsIndices
-    .reduce(
-      (acc, i) =>
-        acc == null ? dataRepositoryTable.slice(i, i + 1) : acc.concat(dataRepositoryTable.slice(i, i + 1)),
-      undefined as typeof dataRepositoryTable
-    )
-    .select('id', ...fields)
-
+  const selectedItems = arrowUtils.filterTable(dataRepositoryTable.select(...fields), row =>
+    selectedItemsIds.includes(row.id)
+  )
   return {
     selectedItems
   }

@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 import pyarrow as pa
 from random import random
 
@@ -40,8 +40,19 @@ class MockDataRegistry:
         items = self._data_items.to_pandas()
         return pa.Table.from_pandas(items[items['id'].isin(ids)])
 
-    def filter_items(self, offset: int, page_size: int) -> pa.Table:
-        return self._data_items.slice(offset, page_size)
+    def _get_filtered_table(self,
+                            types: Optional[List[str]] = None) -> pa.Table:
+        if types is None:
+            return self._data_items
+        items = self._data_items.to_pandas()
+        return pa.Table.from_pandas(items[items['type'].isin(types)])
 
-    def get_total_items(self) -> int:
-        return self._data_items.num_rows
+    def filter_items(self,
+                     offset: int,
+                     page_size: int,
+                     types: Optional[List[str]] = None) -> pa.Table:
+        return self._get_filtered_table(types).slice(offset, page_size)
+
+    def get_total_items(self,
+                        types: Optional[List[str]] = None) -> int:
+        return self._get_filtered_table(types).num_rows

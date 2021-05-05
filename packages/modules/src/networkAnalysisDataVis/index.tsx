@@ -5,7 +5,7 @@ import {
   useStepOutputValue,
   withMockProcessor
 } from '@dharpa-vre/client-core'
-import { Table, Bool, Float32Vector, Vector, Float32 } from 'apache-arrow'
+import { Table, Bool, Float32Vector, Vector, Float32, BoolVector } from 'apache-arrow'
 import { EdgesStructure, NodesStructure } from './structure'
 import {
   withStyles,
@@ -31,6 +31,7 @@ export type GraphDataStructure = {
   eigenvector: Float32
   betweenness: Float32
   isLarge: Bool
+  isIsolated: Bool
 }
 
 type GraphDataTable = Table<GraphDataStructure>
@@ -195,13 +196,21 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
 
     const scalerColumn = graphData.getColumn(nodesScalingMethod)
 
-    graphRef.current.nodes = [...nodes.toArray()].map((node, idx) => ({
+    const graphNodes = [...nodes.toArray()].map((node, idx) => ({
       id: node.id,
       group: node.group,
       label: node.label,
       scaler: scalerColumn?.get(idx) as number
     }))
-  }, [nodes, nodesScalingMethod, graphData, graphRef.current])
+
+    if (isDisplayIsolated) {
+      graphRef.current.nodes = graphNodes
+    } else {
+      // filter out isolated nodes
+      const isIsolated = [...graphData.getColumn('isIsolated')]
+      graphRef.current.nodes = graphNodes.filter((_, idx) => !isIsolated[idx])
+    }
+  }, [nodes, nodesScalingMethod, graphData, graphRef.current, isDisplayIsolated])
 
   React.useEffect(() => {
     if (graphRef.current == null || edges == null) return
@@ -225,7 +234,7 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
         </Grid>
         <Grid item xs={9} ref={graphContainerRef}>
           <network-force
-            displayIsolatedNodes={isDisplayIsolated ? true : undefined}
+            displayIsolatedNodes={isDisplayIsolated ? undefined : true}
             width={graphWidth}
             height={graphHeight}
             ref={graphRef}
@@ -236,9 +245,11 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
   )
 }
 
-const mockProcessor = ({ nodes }: InputValues): OutputValues => {
+const mockProcessor = ({ nodes, edges }: InputValues): OutputValues => {
   const numNodes = nodes?.length ?? 0
   const nums = [...new Array(numNodes).keys()]
+  const notIsolatedNodesIds = new Set([...edges.getColumn('srcId')].concat([...edges.getColumn('tgtId')]))
+  const isIsolated = [...nodes.getColumn('id')].map(id => !notIsolatedNodesIds.has(id))
 
   const graphData = Table.new<GraphDataStructure>(
     [
@@ -248,9 +259,10 @@ const mockProcessor = ({ nodes }: InputValues): OutputValues => {
       Vector.from({
         values: nums.map(() => (Math.random() > 0.5 ? true : null)),
         type: new Bool()
-      })
+      }),
+      BoolVector.from(isIsolated)
     ],
-    ['degree', 'eigenvector', 'betweenness', 'isLarge']
+    ['degree', 'eigenvector', 'betweenness', 'isLarge', 'isIsolated']
   )
 
   return {
