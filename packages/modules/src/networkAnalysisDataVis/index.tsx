@@ -103,13 +103,14 @@ const Navigation = ({
           onChange={(e, isExpanded) => setExpandedAccordionId(isExpanded ? 0 : null)}
         >
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography>Nodes size</Typography>
+            <Typography>Nodes appearance</Typography>
           </AccordionSummary>
           <AccordionDetails>
             <RadioGroup
               value={nodesScalingMethod ?? ''}
               onChange={e => onNodesScalingMethodUpdated?.(e.target.value as ScalingMethods)}
             >
+              <Typography>Size</Typography>
               <FormControlLabel value="" control={<Radio />} label="Equal" />
               <FormControlLabel value="degree" control={<Radio />} label="Degree" />
               <FormControlLabel value="betweenness" control={<Radio />} label="Betweenness Centrality" />
@@ -122,16 +123,43 @@ const Navigation = ({
           onChange={(e, isExpanded) => setExpandedAccordionId(isExpanded ? 1 : null)}
         >
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography>Nodes filtering</Typography>
+            <Typography>Edges appearance</Typography>
+          </AccordionSummary>
+          <AccordionDetails></AccordionDetails>
+        </StyledAccordion>
+        <StyledAccordion
+          expanded={expandedAccordionId === 2}
+          onChange={(e, isExpanded) => setExpandedAccordionId(isExpanded ? 2 : null)}
+        >
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography>Filter/Topology/Layout</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <RadioGroup value={''} onChange={() => onDisplayIsolatedUpdated?.(!isDisplayIsolated)}>
+              <FormControlLabel value="isolated" control={<Radio />} label="Hide isolated nodes" />
+            </RadioGroup>
+          </AccordionDetails>
+        </StyledAccordion>
+        <StyledAccordion
+          expanded={expandedAccordionId === 3}
+          onChange={(e, isExpanded) => setExpandedAccordionId(isExpanded ? 3 : null)}
+        >
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography>Shortest path</Typography>
+          </AccordionSummary>
+          <AccordionDetails></AccordionDetails>
+        </StyledAccordion>
+        <StyledAccordion
+          expanded={expandedAccordionId === 4}
+          onChange={(e, isExpanded) => setExpandedAccordionId(isExpanded ? 4 : null)}
+        >
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography>Communities</Typography>
           </AccordionSummary>
           <AccordionDetails></AccordionDetails>
         </StyledAccordion>
       </Grid>
-      <Grid item>
-        <Button onClick={() => onDisplayIsolatedUpdated?.(!isDisplayIsolated)}>
-          {isDisplayIsolated ? 'Hide isolated nodes' : 'Display isolated nodes'}
-        </Button>
-      </Grid>
+      <Grid item></Grid>
     </Grid>
   )
 }
