@@ -1,60 +1,64 @@
 import React, { useContext } from 'react'
 
-import IconButton from '@material-ui/core/IconButton'
 import List from '@material-ui/core/List'
 import Typography from '@material-ui/core/Typography'
 import Grow from '@material-ui/core/Grow'
+import Fab from '@material-ui/core/Fab'
 
 import DoubleArrowIcon from '@material-ui/icons/DoubleArrow'
 import ExploreIcon from '@material-ui/icons/Explore'
 import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew'
 
 import { ProjectContext } from '../../../context/projectContext'
+import { PageLayoutContext } from '../../../context/pageLayoutContext'
 import { pageRoutes, NavItemType } from '../../../const/routes'
-import useStyles from './SideBar.styles'
+import useStyles from './LeftSideBarContent.styles'
 
 import NavItem from './NavItem'
 
-type SideBarProps = {
-  isSideBarCollapsed: boolean
-  setIsSideBarCollapsed: React.Dispatch<React.SetStateAction<boolean>>
-}
-
-const SideBar = ({ isSideBarCollapsed, setIsSideBarCollapsed }: SideBarProps): JSX.Element => {
+const LeftSideBarContent = (): JSX.Element => {
   const classes = useStyles()
+
+  const { isLeftSideBarExpanded, setIsLeftSideBarExpanded } = useContext(PageLayoutContext)
 
   const { projectList } = useContext(ProjectContext)
 
   return (
-    <div className={`${classes.root}${isSideBarCollapsed ? ' collapsed' : ''}`}>
+    <>
       <div className={classes.sideBarTop}>
-        <div
-          onClick={() => setIsSideBarCollapsed(prevStatus => !prevStatus)}
-          className={classes.sideBarToggleButton}
+        <Fab
+          variant="extended"
+          size="small"
+          color="primary"
+          aria-label="toggle"
+          className={classes.sideBarToggleButton + (isLeftSideBarExpanded ? ' aside' : '')}
+          onClick={() => setIsLeftSideBarExpanded(prevStatus => !prevStatus)}
         >
-          <DoubleArrowIcon className={classes.sideBarExpandArrow + (isSideBarCollapsed ? '' : ' inward')} />
-        </div>
+          <DoubleArrowIcon
+            className={classes.sideBarExpandArrow + (isLeftSideBarExpanded ? ' inward' : '')}
+          />
+        </Fab>
 
         <Grow
-          in={!isSideBarCollapsed}
+          in={isLeftSideBarExpanded}
           style={{ transformOrigin: '0 0 0' }}
-          {...(isSideBarCollapsed ? { timeout: 0 } : { timeout: 1000 })}
+          {...(!isLeftSideBarExpanded ? { timeout: 0 } : { timeout: 1000 })}
         >
-          <Typography variant="h6" component="h2" color="primary" className={classes.logo}>
+          <Typography variant="h6" component="h2" color="secondary" className={classes.logo}>
             <ExploreIcon /> &nbsp;DHARPA
           </Typography>
         </Grow>
       </div>
 
-      <nav>
+      <nav className={classes.navList}>
         <List>
           {pageRoutes.map((route, index) => (
-            <NavItem key={index} isNavBarExpanded={!isSideBarCollapsed} nested={false} {...route} />
+            <NavItem key={index} isNavBarExpanded={isLeftSideBarExpanded} nested={false} {...route} />
           ))}
           {projectList.map(project => (
             <NavItem
               key={project.id}
-              isNavBarExpanded={!isSideBarCollapsed}
+              isNavBarExpanded={isLeftSideBarExpanded}
               nested={false}
               label={project.name}
               link={`/projects/${project.id}`}
@@ -67,12 +71,18 @@ const SideBar = ({ isSideBarCollapsed, setIsSideBarCollapsed }: SideBarProps): J
       </nav>
 
       <div className={classes.sideBarBottom}>
-        <IconButton onClick={() => alert('shutting the app down...')}>
+        <Fab
+          variant="extended"
+          size="small"
+          color="primary"
+          aria-label="quit"
+          onClick={() => alert('shutting the app down...')}
+        >
           <PowerSettingsNewIcon />
-        </IconButton>
+        </Fab>
       </div>
-    </div>
+    </>
   )
 }
 
-export default SideBar
+export default LeftSideBarContent
