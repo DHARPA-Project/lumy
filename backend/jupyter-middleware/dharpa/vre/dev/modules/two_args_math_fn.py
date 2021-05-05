@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import Optional, Mapping
-from kiara.data.values import ValueSchema, ValueType
+from kiara.data.values import ValueSchema
 from kiara.module import KiaraModule, StepInputs, StepOutputs
 
 
@@ -39,20 +39,20 @@ class TwoArgsMathFnModule(KiaraModule):
     def create_input_schema(self) -> Mapping[str, ValueSchema]:
         return {
             "a": ValueSchema(
-                type=ValueType.any, doc="a.", default=1
+                type="any", doc="a.", default=1
             ),
             "b": ValueSchema(
-                type=ValueType.any, doc="b.", default=1
+                type="any", doc="b.", default=1
             ),
             "operator": ValueSchema(
-                type=ValueType.any, doc="operator.", default='add'
+                type="any", doc="operator.", default='add'
             )
         }
 
     def create_output_schema(self) -> Mapping[str, ValueSchema]:
         return {
             "c": ValueSchema(
-                type=ValueType.any,
+                type="any",
                 doc="c.",
             )
         }
