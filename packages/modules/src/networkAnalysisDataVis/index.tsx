@@ -19,6 +19,7 @@ import {
   FormControlLabel,
   Radio
 } from '@material-ui/core'
+import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { useElement, NetworkForce } from '@dharpa-vre/datavis-components'
 import { useBbox } from '../hooks/useBbox'
@@ -110,7 +111,10 @@ const Navigation = ({
               value={nodesScalingMethod ?? ''}
               onChange={e => onNodesScalingMethodUpdated?.(e.target.value as ScalingMethods)}
             >
-              <Typography>Size</Typography>
+              <Grid container direction="row" alignItems="center">
+                Size <InfoOutlinedIcon color="primary" />
+              </Grid>
+
               <FormControlLabel value="" control={<Radio />} label="Equal" />
               <FormControlLabel value="degree" control={<Radio />} label="Degree" />
               <FormControlLabel value="betweenness" control={<Radio />} label="Betweenness Centrality" />
