@@ -1,5 +1,6 @@
-import React, { useContext, useRef, useState } from 'react'
-import JoditEditor from 'jodit-react'
+import React, { useContext, useState } from 'react'
+import ReactQuill from 'react-quill'
+import 'react-quill/dist/quill.snow.css'
 
 import { makeStyles } from '@material-ui/core/styles'
 import Breadcrumbs from '@material-ui/core/Breadcrumbs'
@@ -14,16 +15,19 @@ const mockPath = ['workflows', 'workflow-type', 'step']
 
 const useStyles = makeStyles(theme => ({
   root: {
-    padding: '0.5rem 1rem'
+    padding: theme.spacing(1, 2)
   },
   headline: {
-    margin: '1rem 0'
+    margin: theme.spacing(2, 0)
   },
   breadcrumbs: {
-    marginBottom: '1.5rem'
+    marginBottom: theme.spacing(3)
   },
   textEditor: {
-    margin: '1.5rem 0'
+    margin: theme.spacing(3, 0),
+    '& .ql-container': {
+      minHeight: theme.spacing(20)
+    }
   },
   button: {
     marginTop: theme.spacing(3)
@@ -32,8 +36,6 @@ const useStyles = makeStyles(theme => ({
 
 const NoteEditor = (): JSX.Element => {
   const classes = useStyles()
-
-  const editor = useRef(null)
 
   const { setIsSideDrawerOpen } = useContext(PageLayoutContext)
 
@@ -52,35 +54,86 @@ const NoteEditor = (): JSX.Element => {
         ))}
       </Breadcrumbs>
 
-      <JoditEditor
+      <ReactQuill
         className={classes.textEditor}
-        ref={editor}
+        theme="snow"
+        onChange={contentHTML => setNoteContent(contentHTML)}
         value={noteContent}
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        config={{
-          readonly: false,
-          style: {
-            height: '350px',
-            color: '#303030'
-          }
-        }}
-        tabIndex={1}
-        onBlur={value => setNoteContent(value)}
-        onChange={(value: unknown) => console.log(`${value} typed`)}
+        modules={NoteEditor.modules}
+        formats={NoteEditor.formats}
+        placeholder="type your notes here..."
       />
+
       <Button
         variant="contained"
         color="primary"
         size="medium"
         className={classes.button}
         startIcon={<SaveIcon />}
-        onClick={() => setIsSideDrawerOpen(false)}
+        onClick={() => {
+          console.log('saving notes')
+          setIsSideDrawerOpen(false)
+        }}
       >
         Save
       </Button>
     </div>
   )
 }
+
+/*
+ * React-Quill configuration modules
+ * See https://quilljs.com/docs/modules/ for complete options
+ */
+NoteEditor.modules = {
+  toolbar: [
+    [{ font: [] }],
+    [{ size: ['small', false, 'large', 'huge'] }],
+    ['bold', 'italic', 'underline', 'strike'],
+    [{ color: [] }, { background: [] }],
+    [{ script: 'super' }, { script: 'sub' }],
+    ['blockquote', 'code-block', 'link'],
+    [{ align: [] }],
+    ['image', 'video'],
+    [{ list: 'ordered' }, { list: 'bullet' }],
+    [{ indent: '-1' }, { indent: '+1' }],
+    [{ direction: 'rtl' }],
+    // [{ header: [1, 2, 3, 4, 5, 6, false] }],
+    ['clean']
+  ],
+  clipboard: {
+    // toggle to add extra line breaks when pasting HTML:
+    matchVisual: true
+  }
+}
+
+/*
+ * Quill editor formats
+ * See https://quilljs.com/docs/formats/
+ */
+NoteEditor.formats = [
+  'align',
+  'background',
+  'bold',
+  'blockquote',
+  'bullet',
+  'color',
+  'code',
+  'code-block',
+  'clean',
+  'direction',
+  'font',
+  'header',
+  'italic',
+  'indent',
+  'image',
+  'list',
+  'link',
+  'size',
+  'strike',
+  'script',
+  'underline',
+  'video'
+]
 
 export default NoteEditor
