@@ -13,7 +13,7 @@ export type DataRepositoryItemStructure = {
   columnTypes?: List<Utf8>
 }
 
-export type DataRepositoryItemsTable = Table
+export type DataRepositoryItemsTable = Table<DataRepositoryItemStructure>
 export type DataRepositoryItemsStats = TableStats
 
 export const useDataRepository = (

@@ -20,7 +20,7 @@
   "peerDependencies": {
     "react": "17",
     "@lumino/signaling": "1",
-    "apache-arrow": "3"
+    "apache-arrow": "4"
   },
   "devDependencies": {
     "@types/node": "14",

@@ -14,7 +14,9 @@ logger = logging.getLogger(__name__)
 class DataRepositoryHandler(MessageHandler):
     def _handle_FindItems(self, msg: MsgDataRepositoryFindItems):
         filtered_items = MockDataRegistry.get_instance().filter_items(
-            msg.filter.offset or 0, msg.filter.page_size or 5)
+            msg.filter.offset or 0,
+            msg.filter.page_size or 5,
+            msg.filter.types)
 
         serialized_filtered_items, _ = serialize(filtered_items)
         stats = TableStats(
