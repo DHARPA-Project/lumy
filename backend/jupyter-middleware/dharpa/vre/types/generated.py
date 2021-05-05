@@ -68,6 +68,8 @@ class DataRepositoryItemsFilter:
     offset: Optional[int] = None
     """Number of items to return"""
     page_size: Optional[int] = None
+    """Limit the result to these data types."""
+    types: Optional[List[str]] = None
 
 
 @dataclass

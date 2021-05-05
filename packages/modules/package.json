@@ -23,7 +23,7 @@
   "peerDependencies": {
     "react": "17",
     "@dharpa-vre/client-core": "*",
-    "apache-arrow": "3",
+    "apache-arrow": "4",
     "@material-ui/core": "*"
   },
   "devDependencies": {

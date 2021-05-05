@@ -8,3 +8,4 @@ export * from './hooks'
 export * from './common/codec'
 
 export * as workflowUtils from './common/utils/workflow'
+export * as arrowUtils from './common/utils/arrow'

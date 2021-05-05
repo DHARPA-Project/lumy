@@ -12,7 +12,6 @@ export type DataValueType =
 
 function serializeTable(table: Table): string {
   const wr = new RecordBatchWriter()
-
   const arr = wr.writeAll(table).finish().toUint8Array(true)
   return btoa(String.fromCharCode.apply(null, [...arr]))
 }

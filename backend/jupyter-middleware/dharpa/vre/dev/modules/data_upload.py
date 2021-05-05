@@ -3,7 +3,7 @@ from random import random
 from typing import List, Mapping
 
 import pyarrow as pa
-from kiara.data.values import ValueSchema, ValueType
+from kiara.data.values import ValueSchema
 from kiara.module import KiaraModule, StepInputs, StepOutputs
 
 from .registry import dharpa_module
@@ -41,17 +41,17 @@ class DataUploadModule(KiaraModule):
     def create_input_schema(self) -> Mapping[str, ValueSchema]:
         return {
             "filenames": ValueSchema(
-                type=ValueType.any, doc="A list of files.", default=[]
+                type="any", doc="A list of files.", default=[]
             ),
             "metadataSets": ValueSchema(
-                type=ValueType.any, doc="A list of metadata.", default=[]
+                type="any", doc="A list of metadata.", default=[]
             ),
         }
 
     def create_output_schema(self) -> Mapping[str, ValueSchema]:
         return {
             "repositoryItems": ValueSchema(
-                type=ValueType.table,
+                type="table",
                 doc="Repository items.",
             )
         }
