@@ -1,17 +1,13 @@
 import React, { useContext } from 'react'
-import { useHistory, useRouteMatch } from 'react-router-dom'
-
-import { ProjectContext, workflowCategories } from '../../context/projectContext'
+import { Redirect, useRouteMatch } from 'react-router-dom'
 
 import Button from '@material-ui/core/Button'
-
 import DeleteIcon from '@material-ui/icons/Delete'
 
-import NetworkAnalysisProject from '../NetworkAnalysisProject'
+import { ProjectContext } from '../../context/projectContext'
 
 const ProjectPage = (): JSX.Element => {
   const match = useRouteMatch()
-  const history = useHistory()
 
   const { projectList, removeProject } = useContext(ProjectContext)
 
@@ -20,32 +16,30 @@ const ProjectPage = (): JSX.Element => {
 
   const handleRemoveProject = () => {
     removeProject(currentProjectId)
-    history.push('/')
+    return <Redirect to="/" />
+  }
+
+  if (!currentProject?.name) {
+    return <Redirect to="/" />
   }
 
   return (
     <div className="project-page">
-      {currentProject.type === workflowCategories.networkAnalysis.name ? (
-        <NetworkAnalysisProject project={currentProject} />
-      ) : (
-        <>
-          <h1>{currentProject.name}</h1>
-          <p>ID: {currentProject.id}</p>
-          <p>category: {currentProject.type}</p>
-          <p>date: {new Date(currentProject.date).toUTCString()}</p>
+      <h1>{currentProject?.name}</h1>
+      <p>ID: {currentProject?.id}</p>
+      <p>category: {currentProject?.type}</p>
+      <p>date: {new Date(currentProject?.date).toUTCString()}</p>
 
-          <Button
-            type="submit"
-            variant="contained"
-            color="secondary"
-            startIcon={<DeleteIcon />}
-            onClick={handleRemoveProject}
-            size="small"
-          >
-            Remove Project
-          </Button>
-        </>
-      )}
+      <Button
+        type="submit"
+        variant="contained"
+        color="secondary"
+        startIcon={<DeleteIcon />}
+        onClick={handleRemoveProject}
+        size="small"
+      >
+        Remove Project
+      </Button>
     </div>
   )
 }
