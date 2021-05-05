@@ -9,8 +9,8 @@ import { Table, Bool, Float32Vector, Vector, Float32 } from 'apache-arrow'
 import { EdgesStructure, NodesStructure } from './structure'
 import {
   withStyles,
-  Button,
   Grid,
+  Checkbox,
   Accordion,
   AccordionSummary,
   AccordionDetails,
@@ -135,9 +135,16 @@ const Navigation = ({
             <Typography>Filter/Topology/Layout</Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <RadioGroup value={''} onChange={() => onDisplayIsolatedUpdated?.(!isDisplayIsolated)}>
-              <FormControlLabel value="isolated" control={<Radio />} label="Hide isolated nodes" />
-            </RadioGroup>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={isDisplayIsolated}
+                  onChange={() => onDisplayIsolatedUpdated?.(!isDisplayIsolated)}
+                  inputProps={{ 'aria-label': 'primary checkbox' }}
+                />
+              }
+              label="Hide isolated nodes"
+            />
           </AccordionDetails>
         </StyledAccordion>
         <StyledAccordion
