@@ -24,6 +24,12 @@ export type ParentId = string
  */
 export type ModuleType = string
 /**
+ * Whether this step is required within the workflow.
+ *
+ * In some cases, when none of the pipeline outputs have a required input that connects to a step, then it is not necessary for this step to have been executed, even if it is placed before a step in the execution hierarchy. This also means that the pipeline inputs that are connected to this step might not be required.
+ */
+export type Required = boolean
+/**
  * The stage number this step is executed within the pipeline.
  */
 export type ProcessingStage = number
@@ -44,13 +50,45 @@ export type SubValue = string
  */
 export type ProcessingStage1 = number
 /**
+ * Whether this step is always required, or potentially could be skipped in case some inputs are not available.
+ */
+export type Required1 = boolean
+/**
  * The order in which this pipeline has to be processed (basically the dependencies of each step on other steps, if any).
  */
 export type ProcessingStages = string[][]
+export type ValueName1 = string
+/**
+ * The type of the value.
+ */
+export type Type = string
+/**
+ * A default value.
+ */
+export type Default = string
+/**
+ * Whether this value is required (True), or whether 'None' value is allowed (False).
+ */
+export type Optional = boolean
+/**
+ * A description for the value of this input field.
+ */
+export type Doc = string
+export type PipelineId1 = string
+/**
+ * The step inputs that are connected to this pipeline input
+ */
+export type ConnectedInputs = StepValueAddress[]
+export type ValueName2 = string
+export type PipelineId2 = string
+/**
+ * Connected step outputs.
+ */
+export type ConnectedOutput = StepValueAddress
 /**
  * The current (externally facing) input values of this pipeline.
  */
-export type PipelineInputs = PipelineValues
+export type PipelineInputs1 = PipelineValues
 /**
  * A unique id for this value.
  */
@@ -60,27 +98,13 @@ export type Id = string
  */
 export type IsValid = boolean
 /**
+ * Whether the value is set.
+ */
+export type IsSet = boolean
+/**
  * The schema of this value.
  */
-export type ValueSchema = ValueSchema1
-/**
- * Supported value types.
- *
- * It's very early days, so this does not really do anything yet.
- */
-export type ValueType = 'any' | 'integer' | 'string' | 'dict' | 'boolean' | 'table' | 'value_items'
-/**
- * A description for the value of this input field.
- */
-export type Doc = string
-/**
- * In case this schemas type is a container type (list, dict, ...), this field specifies the schema of its content.
- */
-export type SubSchema =
-  | ValueSchema1
-  | {
-      [k: string]: ValueSchema1
-    }
+export type ValueSchema1 = ValueSchema
 /**
  * Whether this value is a constant.
  */
@@ -100,7 +124,7 @@ export type IsStreaming = boolean
 /**
  * The current (externally facing) output values of this pipeline.
  */
-export type PipelineOutputs = PipelineValues
+export type PipelineOutputs1 = PipelineValues
 /**
  * Enum to describe the state of a workflow.
  */
@@ -116,8 +140,14 @@ export type StepStatus = 'stale' | 'inputs_ready' | 'processing' | 'results_read
  */
 export interface PipelineState {
   structure: Structure
-  pipelineInputs: PipelineInputs
-  pipelineOutputs: PipelineOutputs
+  pipelineInputs: PipelineInputs1
+  pipelineOutputs: PipelineOutputs1
+  /**
+   * The status of each step.
+   */
+  stepStates: {
+    [k: string]: StepStatus
+  }
   stepInputs: StepInputs
   stepOutputs: StepOutputs
   /**
@@ -135,6 +165,8 @@ export interface PipelineStructureDesc {
   processingStages: ProcessingStages
   pipelineInputConnections: PipelineInputConnections
   pipelineOutputConnections: PipelineOutputConnections
+  pipelineInputs: PipelineInputs
+  pipelineOutputs: PipelineOutputs
 }
 /**
  * The steps contained in this pipeline, with the 'step_id' as key.
@@ -150,6 +182,7 @@ export interface StepDesc {
   processingStage: ProcessingStage1
   inputConnections: InputConnections
   outputConnections: OutputConnections
+  required: Required1
 }
 /**
  * A step within a pipeline-structure, includes information about it's connection(s) and other metadata.
@@ -159,6 +192,7 @@ export interface PipelineStep {
   parentId: ParentId
   moduleType: ModuleType
   moduleConfig?: ModuleConfig
+  required?: Required
   processingStage?: ProcessingStage
   inputLinks?: InputLinks
 }
@@ -183,7 +217,17 @@ export interface StepValueAddress {
   subValue?: SubValue
 }
 /**
- * A map that explains what elements connect to this steps inputs. A connection could either be a Pipeline input (indicated by the '__pipeline__' token), or another steps output.
+ * A map that explains what elements connect to this steps inputs. A connection could either be a Pipeline input (indicated by the ``__pipeline__`` token), or another steps output.
+ *
+ * Example:
+ * ``` json
+ * input_connections: {
+ *     "a": ["__pipeline__.a"],
+ *     "b": ["step_one.a"]
+ * }
+ *
+ * ```
+ *
  */
 export interface InputConnections {
   [k: string]: string[]
@@ -207,6 +251,58 @@ export interface PipelineOutputConnections {
   [k: string]: string
 }
 /**
+ * The pipeline inputs.
+ */
+export interface PipelineInputs {
+  [k: string]: PipelineInputField
+}
+/**
+ * An input to a pipeline.
+ */
+export interface PipelineInputField {
+  valueName: ValueName1
+  valueSchema: ValueSchema
+  pipelineId: PipelineId1
+  connectedInputs?: ConnectedInputs
+}
+/**
+ * The schema of a value.
+ *
+ * The schema contains the [ValueType][kiara.data.values.ValueType] of a value, as well as an optional default that
+ * will be used if no user input was given (yet) for a value.
+ *
+ * For more complex container types like arrays, tables, unions etc, types can also be configured with values from the ``type_config`` field.
+ */
+export interface ValueSchema {
+  type: Type
+  typeConfig?: TypeConfig
+  default?: Default
+  optional?: Optional
+  doc?: Doc
+  [k: string]: unknown
+}
+/**
+ * Configuration for the type, in case it's complex.
+ */
+export interface TypeConfig {
+  [k: string]: unknown
+}
+/**
+ * The pipeline outputs.
+ */
+export interface PipelineOutputs {
+  [k: string]: PipelineOutputField
+}
+/**
+ * An output to a pipeline.
+ */
+export interface PipelineOutputField {
+  valueName: ValueName2
+  valueSchema: ValueSchema
+  pipelineId: PipelineId2
+  connectedOutput: ConnectedOutput
+}
+/**
  * Convenience wrapper to make the [PipelineState][kiara.pipeline.pipeline.PipelineState] json/dict export prettier.
  *
  * This is basically just a simplified version of the [ValueSet][kiara.data.values.ValueSet] class that is using
@@ -228,34 +324,13 @@ export interface Values {
 export interface PipelineValue {
   id: Id
   isValid?: IsValid
-  valueSchema: ValueSchema
+  isSet: IsSet
+  valueSchema: ValueSchema1
   isConstant?: IsConstant
   origin?: Origin
   lastUpdate?: LastUpdate
   isStreaming?: IsStreaming
   metadata?: Metadata
-}
-/**
- * The schema of a value.
- *
- * The schema contains the [ValueType][kiara.data.values.ValueType] of a value, as well as an optional default that
- * will be used if no user input was given (yet) for a value.
- *
- * For more complex types like arrays and tables, a sub-schema will be available (e.g. columns of a table, type of
- * the array-items, ...). This bit is not implemented yet.
- */
-export interface ValueSchema1 {
-  type: ValueType
-  doc?: Doc
-  default?: Default
-  subSchema?: SubSchema
-  [k: string]: unknown
-}
-/**
- * A default value.
- */
-export interface Default {
-  [k: string]: unknown
 }
 /**
  * Metadata relating to the actual data (size, no. of rows, etc. -- depending on data type).

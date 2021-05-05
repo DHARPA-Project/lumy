@@ -337,6 +337,19 @@ class MsgNotesAdd:
 
 
 @dataclass
+class MsgNotesDelete:
+    """Target: "notes"
+    Message type: "Delete"
+    
+    Delete a note by Id.
+    """
+    """Note Id."""
+    note_id: str
+    """Workflow step Id."""
+    step_id: str
+
+
+@dataclass
 class MsgNotesGetNotes:
     """Target: "notes"
     Message type: "GetNotes"
@@ -355,6 +368,18 @@ class MsgNotesNotes:
     Contains list of notes for a workflow step.
     """
     notes: List[Note]
+    """Workflow step Id."""
+    step_id: str
+
+
+@dataclass
+class MsgNotesUpdate:
+    """Target: "notes"
+    Message type: "Update"
+    
+    Update a note for a workflow step.
+    """
+    note: Note
     """Workflow step Id."""
     step_id: str
 

@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "MsgNotesDelete",
+  "description": "Delete a note by Id.",
+  "properties": {
+    "stepId": {
+      "type": "string",
+      "description": "Workflow step Id."
+    },
+    "noteId": {
+      "type": "string",
+      "description": "Note Id."
+    }
+  },
+  "required": [
+    "stepId",
+    "noteId"
+  ]
+}
