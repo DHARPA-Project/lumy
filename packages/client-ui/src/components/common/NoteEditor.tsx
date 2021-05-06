@@ -10,6 +10,19 @@ import Typography from '@material-ui/core/Typography'
 import SaveIcon from '@material-ui/icons/Save'
 
 import { PageLayoutContext } from '../../context/pageLayoutContext'
+import { Note, useCurrentWorkflow, useStepNotes } from '@dharpa-vre/client-core'
+import {
+  List,
+  ListItem,
+  ListItemText,
+  ListItemSecondaryAction,
+  IconButton,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem
+} from '@material-ui/core'
+import DeleteIcon from '@material-ui/icons/Delete'
 
 const mockPath = ['workflows', 'workflow-type', 'step']
 
@@ -34,15 +47,87 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
+const NoteListItem = ({
+  note,
+  onDelete
+}: {
+  note: Note
+  onDelete?: (noteId: string) => void
+}): JSX.Element => {
+  return (
+    <ListItem divider>
+      <ListItemText
+        primary={
+          <div
+            dangerouslySetInnerHTML={{
+              __html: note.content
+            }}
+          />
+        }
+      />
+      <ListItemSecondaryAction>
+        <IconButton edge="end" aria-label="delete" onClick={() => onDelete?.(note.id)}>
+          <DeleteIcon />
+        </IconButton>
+      </ListItemSecondaryAction>
+    </ListItem>
+  )
+}
+
+interface StepSelectorProps {
+  stepId: string
+  stepIds: string[]
+  onStepIdSelected?: (stepId: string) => void
+}
+const StepSelector = ({ stepId, stepIds, onStepIdSelected }: StepSelectorProps): JSX.Element => {
+  const [labelId] = useState(window.crypto.getRandomValues(new Uint32Array(1))[0].toString(16))
+  const handleChange = (id: string) => onStepIdSelected?.(id === '' ? undefined : id)
+
+  return (
+    <FormControl variant="outlined">
+      <InputLabel id={`label-${labelId}`}>Step Id</InputLabel>
+      <Select
+        labelId={`label-${labelId}`}
+        value={stepId ?? ''}
+        onChange={e => handleChange(e.target.value as string)}
+        label="Step Id"
+      >
+        <MenuItem value="">
+          <em>None</em>
+        </MenuItem>
+        {stepIds.map(id => (
+          <MenuItem value={id} key={id}>
+            {id}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+  )
+}
+
 const NoteEditor = (): JSX.Element => {
   const classes = useStyles()
 
   const { setIsSideDrawerOpen } = useContext(PageLayoutContext)
+  const [workflow] = useCurrentWorkflow()
+  const [currentStepId, setCurrentStepId] = useState<string>(undefined)
+  const { notes, addNote, deleteNote } = useStepNotes(currentStepId)
 
   const [noteContent, setNoteContent] = useState('')
 
   return (
     <div className={classes.root}>
+      {/* TODO: remove step selector once we can get current step from the context. */}
+      <StepSelector
+        stepId={currentStepId}
+        stepIds={Object.keys(workflow?.steps ?? {})}
+        onStepIdSelected={setCurrentStepId}
+      />
+      <List>
+        {notes.map(note => (
+          <NoteListItem key={note.id} note={note} onDelete={deleteNote} />
+        ))}
+      </List>
       <Typography className={classes.headline} variant="h5" component="h1">
         Add Notes
       </Typography>
@@ -70,8 +155,12 @@ const NoteEditor = (): JSX.Element => {
         size="medium"
         className={classes.button}
         startIcon={<SaveIcon />}
+        disabled={noteContent.trim().length === 0}
         onClick={() => {
-          console.log('saving notes')
+          addNote({
+            content: noteContent
+          })
+          setNoteContent('')
           setIsSideDrawerOpen(false)
         }}
       >

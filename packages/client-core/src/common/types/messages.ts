@@ -112,7 +112,7 @@ export namespace Notes {
     export const GetNotes = Codec<GetNotes>('GetNotes')
     export const Notes = Codec<Notes>('Notes')
     export const Add = Codec<Add>('Add')
-    export const Update = Codec<Add>('Update')
-    export const Delete = Codec<Add>('Delete')
+    export const Update = Codec<Update>('Update')
+    export const Delete = Codec<Delete>('Delete')
   }
 }
