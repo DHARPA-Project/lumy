@@ -184,8 +184,11 @@ export class NetworkForce extends LitElement {
       .attr('fill', d => colorScale(d.metadata.group))
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .call((drag(simulation) as unknown) as any)
-      .on('click', (_e, node) => {
-        this.dispatchEvent(new CustomEvent('node-clicked', { detail: node }))
+      .on('mouseover', (_e, node) => {
+        this.dispatchEvent(new CustomEvent('node-hovered', { detail: node }))
+      })
+      .on('mouseout', (_e, node) => {
+        this.dispatchEvent(new CustomEvent('node-hovered-out'))
       })
 
     simulation.on('tick', () => {

@@ -63,6 +63,15 @@ interface OutputValues {
   shortestPath: string[]
 }
 
+interface TooltipInfo {
+  nodeId: number
+  nodeLabel: string
+  nodeGroup: string
+  nodeScaler: string
+  x: number
+  y: number
+}
+
 const StyledAccordion = withStyles({
   root: {
     border: '1px solid rgba(0, 0, 0, .125)',
@@ -148,7 +157,7 @@ const Navigation = ({
                   inputProps={{ 'aria-label': 'primary checkbox' }}
                 />
               }
-              label="Hide isolated nodes"
+              label="Display isolated nodes"
             />
           </AccordionDetails>
         </StyledAccordion>
@@ -182,20 +191,38 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
   const [nodes] = useStepInputValue<NodesTable>(step.stepId, 'nodes', { fullValue: true })
   const [edges] = useStepInputValue<EdgesTable>(step.stepId, 'edges', { fullValue: true })
   const [graphData] = useStepOutputValue<GraphDataTable>(step.stepId, 'graphData', { fullValue: true })
+  //nconst [shortestPath] = useStepOutputValue<string[]>(step.stepId, 'shortestPath')
   const [nodesScalingMethod, setNodesScalingMethod] = React.useState<ScalingMethods>()
   const [isDisplayIsolated, setIsDisplayIsolated] = React.useState(false)
+  const [isDisplayTooltip, setIsDisplayTooltip] = React.useState(false)
+  const [graphTooltipInfo, setGraphTooltipInfo] = React.useState<TooltipInfo>(null)
   const graphRef = React.useRef<NetworkForce>(null)
   const graphContainerRef = React.useRef()
   const graphBox = useBbox(graphContainerRef)
+
+  const handleGraphNodeHovered = (event: unknown) => {
+    setIsDisplayTooltip(true)
+    const tooltipInfo = {
+      nodeId: event.detail.index,
+      nodeGroup: event.detail.metadata.group,
+      nodeLabel: event.detail.metadata.label,
+      nodeScaler: event.detail.metadata.scaler,
+      x: event.detail.x + graphRef.current.offsetLeft,
+      y: event.detail.y
+    }
+    setGraphTooltipInfo(tooltipInfo)
+  }
+
+  const handleGraphNodeHoveredOut = () => {
+    setIsDisplayTooltip(false)
+  }
 
   const graphWidth = graphBox?.width ?? 0
   const graphHeight = (graphWidth * 2) / 3
 
   React.useEffect(() => {
     if (graphRef.current == null || nodes == null || graphData == null) return
-
     const scalerColumn = graphData.getColumn(nodesScalingMethod)
-
     const graphNodes = [...nodes.toArray()].map((node, idx) => ({
       id: node.id,
       group: node.group,
@@ -221,6 +248,16 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
     }))
   }, [edges, graphRef.current])
 
+  React.useEffect(() => {
+    if (graphRef.current == null) return
+    graphRef.current.addEventListener('node-hovered', handleGraphNodeHovered)
+    graphRef.current.addEventListener('node-hovered-out', handleGraphNodeHoveredOut)
+    return () => {
+      graphRef.current.removeEventListener('node-hovered', handleGraphNodeHovered)
+      graphRef.current.removeEventListener('node-hovered-out', handleGraphNodeHoveredOut)
+    }
+  }, [graphRef])
+
   return (
     <Grid container>
       <Grid container spacing={3}>
@@ -233,6 +270,28 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
           />
         </Grid>
         <Grid item xs={9} ref={graphContainerRef}>
+          {graphTooltipInfo !== null && (
+            <div
+              style={{
+                position: 'absolute',
+                left: graphTooltipInfo !== null ? graphTooltipInfo.x : 0,
+                top: graphTooltipInfo !== null ? graphTooltipInfo.y : 0,
+                visibility: isDisplayTooltip ? 'visible' : 'hidden',
+                background: 'rgba(69,77,93,.9)',
+                borderRadius: '.1rem',
+                color: '#fff',
+                display: 'block',
+                fontSize: '11px',
+                maxWidth: '320px',
+                padding: '.2rem .4rem',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'pre',
+                zIndex: 300
+              }}
+            >
+              {graphTooltipInfo.nodeId}
+            </div>
+          )}
           <network-force
             displayIsolatedNodes={isDisplayIsolated ? undefined : true}
             width={graphWidth}
