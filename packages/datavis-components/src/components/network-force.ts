@@ -117,8 +117,8 @@ export class NetworkForce extends LitElement {
         }
       </style>
       <svg>
-        <g class="nodes"></g>
         <g class="edges"></g>
+        <g class="nodes"></g>
       </svg>
     `
   }
@@ -131,8 +131,8 @@ export class NetworkForce extends LitElement {
     // Just make sure we are not trying to render edges without nodes
     if (this.nodes.length === 0 && this.edges.length > 0) return
 
-    this.currentGraphNodes = mergeNodes(this.currentGraphNodes, this.nodes)
     this.currentGraphLinks = mergeLinks(this.currentGraphLinks, this.edges)
+    this.currentGraphNodes = mergeNodes(this.currentGraphNodes, this.nodes)
 
     // nodes scaler
     const scaleNode = d3
@@ -154,9 +154,10 @@ export class NetworkForce extends LitElement {
       .force('x', this.displayIsolatedNodes ? null : d3.forceX())
       .force('y', this.displayIsolatedNodes ? null : d3.forceY())
 
-    const edgesGroup = svg.select('g.edges').attr('stroke', '#999').attr('stroke-opacity', 0.6)
-
     const shortestPathIsProvided = this.shortestPath?.length > 0
+
+    const edgesGroup = svg.select('g.edges').attr('stroke', '#999').attr('stroke-opacity', 0.6)
+    const nodesGroup = svg.select('g.nodes').attr('stroke', '#fff').attr('stroke-width', 1.5)
 
     const link = edgesGroup
       .selectAll('line')
@@ -176,8 +177,6 @@ export class NetworkForce extends LitElement {
         return 1
       })
 
-    const nodesGroup = svg.select('g.nodes').attr('stroke', '#fff').attr('stroke-width', 1.5)
-
     const node = nodesGroup
       .selectAll('circle')
       .data(this.currentGraphNodes)
@@ -193,13 +192,13 @@ export class NetworkForce extends LitElement {
       .attr('fill', d => colorScale(d.metadata.group))
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .call((drag(simulation) as unknown) as any)
-      .on('mouseover', (_e, node) => {
+      .on('mouseover', () => {
         this.dispatchEvent(new CustomEvent('node-hovered'))
       })
       .on('mousemove', (_e, node) => {
         this.dispatchEvent(new CustomEvent('node-mousemove', { detail: [node, _e] }))
       })
-      .on('mouseout', (_e, node) => {
+      .on('mouseout', () => {
         this.dispatchEvent(new CustomEvent('node-hovered-out'))
       })
 

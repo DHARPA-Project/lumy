@@ -67,7 +67,7 @@ interface TooltipInfo {
   nodeId: number
   nodeLabel: string
   nodeGroup: string
-  nodeScaler: string
+  nodeScaler: number
   x: number
   y: number
 }
@@ -192,7 +192,7 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
   const [edges] = useStepInputValue<EdgesTable>(step.stepId, 'edges', { fullValue: true })
   const [graphData] = useStepOutputValue<GraphDataTable>(step.stepId, 'graphData', { fullValue: true })
   //nconst [shortestPath] = useStepOutputValue<string[]>(step.stepId, 'shortestPath')
-  const [nodesScalingMethod, setNodesScalingMethod] = React.useState<ScalingMethods>()
+  const [nodesScalingMethod, setNodesScalingMethod] = React.useState<ScalingMethods>(null)
   const [isDisplayIsolated, setIsDisplayIsolated] = React.useState(false)
   const [isDisplayTooltip, setIsDisplayTooltip] = React.useState(false)
   const [graphTooltipInfo, setGraphTooltipInfo] = React.useState<TooltipInfo>(null)
@@ -205,11 +205,12 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
   }
 
   const handleGraphNodeMouseMove = (event: unknown) => {
+    // console.log(event.detail)
     const tooltipInfo = {
       nodeId: event.detail[0].index,
       nodeGroup: event.detail[0].metadata.group,
       nodeLabel: event.detail[0].metadata.label,
-      nodeScaler: event.detail[0].metadata.scaler,
+      nodeScaler: +event.detail[0].metadata.scaler,
       x: event.detail[1].pageX + 10,
       y: event.detail[1].pageY - 10
     }
@@ -294,10 +295,13 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
                 zIndex: 300
               }}
             >
-              Label: {graphTooltipInfo.nodeLabel}
-              {graphTooltipInfo.nodeScaler}
-              <br></br>
-              {graphTooltipInfo.nodeGroup}
+              <span style={{ display: 'block' }}>Label: {graphTooltipInfo.nodeLabel}</span>
+              {nodesScalingMethod !== null && (
+                <span
+                  style={{ display: 'block', textTransform: 'capitalize' }}
+                >{`${nodesScalingMethod}: ${graphTooltipInfo.nodeScaler.toFixed(2)}`}</span>
+              )}
+              <span style={{ display: 'block' }}>Group: {graphTooltipInfo.nodeGroup}</span>
             </div>
           )}
           <network-force
