@@ -111,6 +111,11 @@ export class NetworkForce extends LitElement {
 
   render(): unknown {
     return html`
+      <style>
+        .graph-node:hover {
+          cursor: pointer;
+        }
+      </style>
       <svg>
         <g class="nodes"></g>
         <g class="edges"></g>
@@ -119,7 +124,7 @@ export class NetworkForce extends LitElement {
   }
 
   updated(): void {
-    const svg = d3.select(this.shadowRoot.firstElementChild)
+    const svg = d3.select(this.shadowRoot.lastElementChild)
     const viewBox = [0, 0, this.width, this.height]
     svg.attr('viewBox', viewBox.join(' '))
 
@@ -129,6 +134,11 @@ export class NetworkForce extends LitElement {
     this.currentGraphNodes = mergeNodes(this.currentGraphNodes, this.nodes)
     this.currentGraphLinks = mergeLinks(this.currentGraphLinks, this.edges)
 
+    // nodes scaler
+    const scaleNode = d3
+      .scaleLinear(this.currentGraphNodes.map(node => node.metadata.scaler ?? 0))
+      .range([5, 20])
+
     const simulation = d3
       .forceSimulation(this.currentGraphNodes)
       .force(
@@ -137,6 +147,10 @@ export class NetworkForce extends LitElement {
       )
       .force('charge', d3.forceManyBody())
       .force('center', d3.forceCenter(this.width / 2, this.height / 2))
+      .force(
+        'collide',
+        d3.forceCollide<GraphNodeDatum>(d => scaleNode(d.metadata.scaler ?? 0) ?? 5)
+      )
       .force('x', this.displayIsolatedNodes ? null : d3.forceX())
       .force('y', this.displayIsolatedNodes ? null : d3.forceY())
 
@@ -164,11 +178,6 @@ export class NetworkForce extends LitElement {
 
     const nodesGroup = svg.select('g.nodes').attr('stroke', '#fff').attr('stroke-width', 1.5)
 
-    // nodes scaler
-    const scaleNode = d3
-      .scaleLinear(this.currentGraphNodes.map(node => node.metadata.scaler ?? 0))
-      .range([3, 20])
-
     const node = nodesGroup
       .selectAll('circle')
       .data(this.currentGraphNodes)
@@ -185,7 +194,10 @@ export class NetworkForce extends LitElement {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .call((drag(simulation) as unknown) as any)
       .on('mouseover', (_e, node) => {
-        this.dispatchEvent(new CustomEvent('node-hovered', { detail: node }))
+        this.dispatchEvent(new CustomEvent('node-hovered'))
+      })
+      .on('mousemove', (_e, node) => {
+        this.dispatchEvent(new CustomEvent('node-mousemove', { detail: [node, _e] }))
       })
       .on('mouseout', (_e, node) => {
         this.dispatchEvent(new CustomEvent('node-hovered-out'))

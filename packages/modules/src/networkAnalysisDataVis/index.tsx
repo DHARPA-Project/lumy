@@ -200,15 +200,18 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
   const graphContainerRef = React.useRef()
   const graphBox = useBbox(graphContainerRef)
 
-  const handleGraphNodeHovered = (event: unknown) => {
+  const handleGraphNodeHovered = () => {
     setIsDisplayTooltip(true)
+  }
+
+  const handleGraphNodeMouseMove = (event: unknown) => {
     const tooltipInfo = {
-      nodeId: event.detail.index,
-      nodeGroup: event.detail.metadata.group,
-      nodeLabel: event.detail.metadata.label,
-      nodeScaler: event.detail.metadata.scaler,
-      x: event.detail.x + graphRef.current.offsetLeft,
-      y: event.detail.y
+      nodeId: event.detail[0].index,
+      nodeGroup: event.detail[0].metadata.group,
+      nodeLabel: event.detail[0].metadata.label,
+      nodeScaler: event.detail[0].metadata.scaler,
+      x: event.detail[1].pageX + 10,
+      y: event.detail[1].pageY - 10
     }
     setGraphTooltipInfo(tooltipInfo)
   }
@@ -251,9 +254,11 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
   React.useEffect(() => {
     if (graphRef.current == null) return
     graphRef.current.addEventListener('node-hovered', handleGraphNodeHovered)
+    graphRef.current.addEventListener('node-mousemove', handleGraphNodeMouseMove)
     graphRef.current.addEventListener('node-hovered-out', handleGraphNodeHoveredOut)
     return () => {
       graphRef.current.removeEventListener('node-hovered', handleGraphNodeHovered)
+      graphRef.current.removeEventListener('node-mousemove', handleGraphNodeMouseMove)
       graphRef.current.removeEventListener('node-hovered-out', handleGraphNodeHoveredOut)
     }
   }, [graphRef])
@@ -289,7 +294,10 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
                 zIndex: 300
               }}
             >
-              {graphTooltipInfo.nodeId}
+              Label: {graphTooltipInfo.nodeLabel}
+              {graphTooltipInfo.nodeScaler}
+              <br></br>
+              {graphTooltipInfo.nodeGroup}
             </div>
           )}
           <network-force
