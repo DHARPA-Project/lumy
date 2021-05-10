@@ -5,6 +5,14 @@ import pyarrow as pa
 import numpy as np
 import math
 
+# Value of any column in the mapping table
+MappingItemStruct = pa.struct([
+    # ID of the tabular data item
+    pa.field(name='id', type=pa.utf8(), nullable=False),
+    # Column name from the data item
+    pa.field(name='column', type=pa.utf8(), nullable=False)
+])
+
 
 class NetworkAnalysisDataMappingModule(KiaraModule):
 

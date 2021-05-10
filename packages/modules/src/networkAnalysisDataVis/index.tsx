@@ -168,7 +168,7 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
       graphRef.current.nodes = graphNodes
     } else {
       // filter out isolated nodes
-      const isIsolated = [...graphData.getColumn('isIsolated')]
+      const isIsolated = [...(graphData.getColumn('isIsolated') ?? [])]
       graphRef.current.nodes = graphNodes.filter((_, idx) => !isIsolated[idx])
     }
   }, [nodes, nodesScalingMethod, graphData, graphRef.current, isDisplayIsolated])
