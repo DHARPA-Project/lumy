@@ -196,6 +196,7 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
         <Grid item xs={9} ref={graphContainerRef}>
           <network-force
             displayIsolatedNodes={isDisplayIsolated ? undefined : true}
+            reapplySimulationOnUpdate={true}
             width={graphWidth}
             height={graphHeight}
             ref={graphRef}
