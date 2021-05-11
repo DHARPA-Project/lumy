@@ -1,10 +1,10 @@
 import logging
-from typing import Dict, List, Optional, Union
-import pyarrow as pa
-# from random import random
 from pathlib import Path
+from typing import Dict, List, Optional, Union
 from uuid import uuid4
+
 import pandas as pd
+import pyarrow as pa
 
 DefaultFilesPath = Path.home() / '.dharpa' / 'mock-data-registry'
 
@@ -25,7 +25,7 @@ def to_item(f: Path):
         'alias': f.name,
         'type': 'table' if is_tabular else 'string',
         'columnNames': columns,
-        'columnTypes': ['sring' for _ in columns]
+        'columnTypes': ['string' for _ in columns]
         if is_tabular else None
     }
 
@@ -46,8 +46,6 @@ class MockDataRegistry:
             if f.is_file()
         ]
 
-        # row_numbers = list(range(20))
-        # table_flags = [random() > 0.5 for _ in row_numbers]
         self._file_lookup = {i['id']: p for i, p in items}
 
         self._data_items = pa.Table.from_pydict({
@@ -56,15 +54,6 @@ class MockDataRegistry:
             'type': [i['type'] for i, _ in items],
             'columnNames': [i['columnNames'] for i, _ in items],
             'columnTypes': [i['columnTypes'] for i, _ in items],
-
-            # 'id': [f'id-{i}' for i in row_numbers],
-            # 'alias': [f'Item #{i}' for i in row_numbers],
-            # 'type': ['table' if is_table else 'string'
-            #          for is_table in table_flags],
-            # 'columnNames': [['a', 'b', 'c'] if is_table else None
-            #                 for is_table in table_flags],
-            # 'columnTypes': [['int', 'sting', 'float'] if is_table else None
-            #                 for is_table in table_flags],
         }, pa.schema({
             'id': pa.utf8(),
             'alias': pa.utf8(),
@@ -82,14 +71,14 @@ class MockDataRegistry:
 
     def get_items_by_ids(self, ids: List[str]) -> pa.Table:
         items = self._data_items.to_pandas()
-        return pa.Table.from_pandas(items[items['id'].isin(ids)])
+        return pa.Table.from_pandas(items[items['id'].isin(ids)], preserve_index=False)
 
     def _get_filtered_table(self,
                             types: Optional[List[str]] = None) -> pa.Table:
         if types is None:
             return self._data_items
         items = self._data_items.to_pandas()
-        return pa.Table.from_pandas(items[items['type'].isin(types)])
+        return pa.Table.from_pandas(items[items['type'].isin(types)], preserve_index=False)
 
     def filter_items(self,
                      offset: int,
@@ -105,7 +94,7 @@ class MockDataRegistry:
         file_path = self._file_lookup[file_id]
         is_tabular = file_is_tabular(file_path)
         if is_tabular:
-            return pa.Table.from_pandas(pd.read_csv(file_path))
+            return pa.Table.from_pandas(pd.read_csv(file_path), preserve_index=False)
         else:
             with open(file_path, 'r') as f:
                 return str(f.read())

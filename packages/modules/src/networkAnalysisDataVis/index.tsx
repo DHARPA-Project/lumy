@@ -158,7 +158,7 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
     const scalerColumn = graphData.getColumn(nodesScalingMethod)
 
     const graphNodes = [...nodes.toArray()].map((node, idx) => ({
-      id: node.id,
+      id: String(node.id),
       group: node.group,
       label: node.label,
       scaler: scalerColumn?.get(idx) as number
@@ -177,8 +177,8 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
     if (graphRef.current == null || edges == null) return
 
     graphRef.current.edges = [...edges.toArray()].map(edge => ({
-      sourceId: edge.srcId,
-      targetId: edge.tgtId
+      sourceId: String(edge.srcId),
+      targetId: String(edge.tgtId)
     }))
   }, [edges, graphRef.current])
 

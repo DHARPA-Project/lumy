@@ -1,9 +1,14 @@
-from typing import Mapping
+import logging
+from typing import List, Mapping
+
+import numpy as np
+import pandas as pd
+import pyarrow as pa
+from dharpa.vre.dev.data_registry.mock import MockDataRegistry
 from kiara.data.values import ValueSchema
 from kiara.module import KiaraModule, StepInputs, StepOutputs
-import pyarrow as pa
-import numpy as np
-import math
+
+logger = logging.getLogger(__name__)
 
 # Value of any column in the mapping table
 MappingItemStruct = pa.struct([
@@ -12,6 +17,29 @@ MappingItemStruct = pa.struct([
     # Column name from the data item
     pa.field(name='column', type=pa.utf8(), nullable=False)
 ])
+
+
+def build_table_from_mapping(
+    mapping_table: pa.Table,
+    column_names: List[str]
+) -> pa.Table:
+    mapping = mapping_table.to_pydict()
+
+    table = pd.DataFrame()
+
+    for column_name in column_names:
+        column_mappings = mapping.get(column_name, [])
+        if len(column_mappings) > 0:
+            table[column_name] = pd.concat([
+                MockDataRegistry.get_instance().get_file_content(
+                    m['id']).to_pandas()[m['column']]
+                for m in column_mappings
+            ])
+
+    if len(table) == 0:
+        table = pd.DataFrame(columns=column_names)
+
+    return pa.Table.from_pandas(table, preserve_index=False)
 
 
 class NetworkAnalysisDataMappingModule(KiaraModule):
@@ -44,28 +72,14 @@ class NetworkAnalysisDataMappingModule(KiaraModule):
         }
 
     def process(self, inputs: StepInputs, outputs: StepOutputs) -> None:
-        num_nodes = 123
-        nums = np.arange(0, num_nodes)
-        num_groups = 5
-        groups = np.array(
-            list(map(lambda x: f'group_{x}', np.arange(0, num_groups))))
-        ids = np.array(list(map(str, nums)))
-
-        outputs.nodes = pa.Table.from_pydict({
-            'id': ids,
-            'label': np.array(list(map(lambda x: f'Item {x}', nums))),
-            'group': np.random.choice(groups, nums.shape)
-        })
-
-        num_edges = math.floor(num_nodes * 1.5)
-        enums = np.arange(0, num_edges, 1)
-
-        outputs.edges = pa.Table.from_pydict({
-            'srcId': np.array(list(map(
-                lambda _: np.random.choice(ids), enums))),
-            'tgtId': np.array(list(map(
-                lambda _: np.random.choice(ids), enums)))
-        })
+        outputs.nodes = build_table_from_mapping(
+            inputs.nodesMappingTable,
+            ['id', 'label']
+        )
+        outputs.edges = build_table_from_mapping(
+            inputs.edgesMappingTable,
+            ['srcId', 'tgtId', 'weight']
+        )
 
 
 class NetworkAnalysisDataVisModule(KiaraModule):
