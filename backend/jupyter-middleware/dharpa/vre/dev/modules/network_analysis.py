@@ -1,6 +1,7 @@
 import logging
 from typing import List, Mapping, cast
 
+import networkx as nx
 import numpy as np
 import pandas as pd
 import pyarrow as pa
@@ -110,13 +111,37 @@ class NetworkAnalysisDataVisModule(KiaraModule):
         }
 
     def process(self, inputs: StepInputs, outputs: StepOutputs) -> None:
+        graph: nx.Graph = nx.from_pandas_edgelist(
+            inputs.edges.to_pandas(),
+            "srcId", "tgtId",
+            edge_attr=True,
+            create_using=nx.DiGraph()
+        )
+
+        nodes = inputs.nodes.to_pandas()
+        graph.add_nodes_from(nodes.set_index('id').to_dict('index').items())
+
+        if len(nodes) > 0:
+            degree_dict = dict(graph.degree(graph.nodes()))
+            betweenness_dict = nx.betweenness_centrality(graph)
+            eigenvector_dict = nx.eigenvector_centrality(graph)
+        else:
+            degree_dict = {}
+            betweenness_dict = {}
+            eigenvector_dict = {}
+
+        isolated_nodes_ids = list(nx.isolates(graph))
+
         outputs.shortestPath = []
 
         ids = inputs.nodes['id'].to_numpy()
 
         outputs.graphData = pa.Table.from_pydict({
-            'degree': np.random.rand(*ids.shape),
-            'eigenvector': np.random.rand(*ids.shape),
-            'betweenness': np.random.rand(*ids.shape),
+            'degree': [degree_dict[i] for i in ids],
+            'eigenvector': [eigenvector_dict[i] for i in ids],
+            'betweenness': [betweenness_dict[i] for i in ids],
+            'isIsolated': [i in isolated_nodes_ids for i in ids],
+            # TODO: what was "isLarge" exactly? It is not
+            # currently used in the visualisation.
             'isLarge': np.random.rand(*ids.shape) > 0.5
         })
