@@ -5,7 +5,7 @@ import {
   useStepOutputValue,
   withMockProcessor
 } from '@dharpa-vre/client-core'
-import { Table, Bool, Float32Vector, Vector, Float32, BoolVector } from 'apache-arrow'
+import { Table, Bool, Float32Vector, Vector, Float32, BoolVector, Column } from 'apache-arrow'
 import { EdgesStructure, NodesStructure } from './structure'
 import {
   withStyles,
@@ -137,6 +137,13 @@ const Navigation = ({
   )
 }
 
+const normalizeColumn = (column: Column<Float32>): number[] => {
+  if (column == null) return undefined
+  const items = [...column]
+  const max = items.reduce((acc, v) => (v > acc ? v : acc), 0)
+  return items.map(v => v / max)
+}
+
 type Props = ModuleProps<InputValues, OutputValues>
 
 const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
@@ -156,19 +163,20 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
     if (graphRef.current == null || nodes == null || graphData == null) return
 
     const scalerColumn = graphData.getColumn(nodesScalingMethod)
+    const normalizedScalerColumn = normalizeColumn(scalerColumn as Column<Float32>)
 
     const graphNodes = [...nodes.toArray()].map((node, idx) => ({
-      id: node.id,
+      id: String(node.id),
       group: node.group,
       label: node.label,
-      scaler: scalerColumn?.get(idx) as number
+      scaler: normalizedScalerColumn?.[idx]
     }))
 
     if (isDisplayIsolated) {
       graphRef.current.nodes = graphNodes
     } else {
       // filter out isolated nodes
-      const isIsolated = [...graphData.getColumn('isIsolated')]
+      const isIsolated = [...(graphData.getColumn('isIsolated') ?? [])]
       graphRef.current.nodes = graphNodes.filter((_, idx) => !isIsolated[idx])
     }
   }, [nodes, nodesScalingMethod, graphData, graphRef.current, isDisplayIsolated])
@@ -177,8 +185,8 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
     if (graphRef.current == null || edges == null) return
 
     graphRef.current.edges = [...edges.toArray()].map(edge => ({
-      sourceId: edge.srcId,
-      targetId: edge.tgtId
+      sourceId: String(edge.srcId),
+      targetId: String(edge.tgtId)
     }))
   }, [edges, graphRef.current])
 

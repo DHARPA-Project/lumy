@@ -6,7 +6,8 @@ from dharpa.vre.context.context import AppContext, UpdatedIO
 from dharpa.vre.types.generated import DataTabularDataFilter, State, TableStats
 from pyarrow import Table
 
-from kiara import Kiara, PipelineController
+from kiara import Kiara
+from kiara.pipeline.controller import BatchController
 from kiara.data.values import DataValue, Value
 from kiara.pipeline.structure import PipelineStructureDesc
 from kiara.workflow import KiaraWorkflow
@@ -51,7 +52,7 @@ def get_pipeline_input_id(ids: List[str]) -> Optional[str]:
             return parts[1]
 
 
-class KiaraAppContext(AppContext, PipelineController):
+class KiaraAppContext(AppContext, BatchController):
     _current_workflow: KiaraWorkflow
 
     def load_workflow(self, workflow_file_or_name: Union[Path, str]) -> None:
@@ -163,6 +164,7 @@ class KiaraAppContext(AppContext, PipelineController):
         '''
         PipelineController
         '''
+        super().step_inputs_changed(event)
         for step_id, input_ids in event.updated_step_inputs.items():
             msg = UpdatedIO(step_id=step_id, io_ids=input_ids)
             self.step_input_values_updated.publish(msg)
