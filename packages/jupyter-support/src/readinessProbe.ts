@@ -125,6 +125,9 @@ export class ReadinessProbe {
       .done.then(response => {
         // TODO: handle errors like this
         console.log('Start backend response: ', response.content)
+
+        const { traceback } = response.content as { traceback: string[] }
+        console.error(traceback?.join('')?.replaceAll(/\[\d;/g, '\x1b['))
       })
   }
 

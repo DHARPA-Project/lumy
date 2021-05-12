@@ -95,6 +95,18 @@ class NetworkAnalysisDataVisModule(KiaraModule):
             "edges": ValueSchema(
                 type="table",
                 doc="Edges table.",
+            ),
+            "shortestPathSource": ValueSchema(
+                type="any",
+                doc="ID of the start node for the shortest path calculations",
+                optional=True,
+                default=None
+            ),
+            "shortestPathTarget": ValueSchema(
+                type="any",
+                doc="ID of the end node for the shortest path calculations",
+                optional=True,
+                default=None
             )
         }
 
@@ -132,8 +144,6 @@ class NetworkAnalysisDataVisModule(KiaraModule):
 
         isolated_nodes_ids = list(nx.isolates(graph))
 
-        outputs.shortestPath = []
-
         ids = inputs.nodes['id'].to_numpy()
 
         outputs.graphData = pa.Table.from_pydict({
@@ -145,3 +155,15 @@ class NetworkAnalysisDataVisModule(KiaraModule):
             # currently used in the visualisation.
             'isLarge': np.random.rand(*ids.shape) > 0.5
         })
+
+        # shortest path
+
+        if inputs.shortestPathSource in ids \
+                and inputs.shortestPathTarget in ids:
+            outputs.shortestPath = nx.shortest_path(
+                graph,
+                source=inputs.shortestPathSource,
+                target=inputs.shortestPathTarget
+            )
+        else:
+            outputs.shortestPath = []
