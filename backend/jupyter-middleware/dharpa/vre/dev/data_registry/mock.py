@@ -71,14 +71,16 @@ class MockDataRegistry:
 
     def get_items_by_ids(self, ids: List[str]) -> pa.Table:
         items = self._data_items.to_pandas()
-        return pa.Table.from_pandas(items[items['id'].isin(ids)], preserve_index=False)
+        return pa.Table.from_pandas(items[items['id'].isin(ids)],
+                                    preserve_index=False)
 
     def _get_filtered_table(self,
                             types: Optional[List[str]] = None) -> pa.Table:
         if types is None:
             return self._data_items
         items = self._data_items.to_pandas()
-        return pa.Table.from_pandas(items[items['type'].isin(types)], preserve_index=False)
+        return pa.Table.from_pandas(items[items['type'].isin(types)],
+                                    preserve_index=False)
 
     def filter_items(self,
                      offset: int,
@@ -94,7 +96,8 @@ class MockDataRegistry:
         file_path = self._file_lookup[file_id]
         is_tabular = file_is_tabular(file_path)
         if is_tabular:
-            return pa.Table.from_pandas(pd.read_csv(file_path), preserve_index=False)
+            return pa.Table.from_pandas(pd.read_csv(file_path),
+                                        preserve_index=False)
         else:
             with open(file_path, 'r') as f:
                 return str(f.read())

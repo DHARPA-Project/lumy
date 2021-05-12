@@ -1,5 +1,5 @@
 import logging
-from typing import List, Mapping
+from typing import List, Mapping, cast
 
 import numpy as np
 import pandas as pd
@@ -31,8 +31,9 @@ def build_table_from_mapping(
         column_mappings = mapping.get(column_name, [])
         if len(column_mappings) > 0:
             table[column_name] = pd.concat([
-                MockDataRegistry.get_instance().get_file_content(
-                    m['id']).to_pandas()[m['column']]
+                cast(pa.Table, MockDataRegistry
+                     .get_instance().get_file_content(m['id']))
+                .to_pandas()[m['column']]
                 for m in column_mappings
             ])
 
