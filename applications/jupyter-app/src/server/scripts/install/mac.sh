@@ -26,7 +26,7 @@ miniconda_installer_file_location="${tmp_dir}/${miniconda_installer_file}"
 
 default_conda_env_name="default"
 
-vre_backend_git_url="git+https://github.com/DHARPA-Project/codename-vre@feature/miniconda_installer#egg=dharpa-vre-jupyter-middleware&subdirectory=backend/jupyter-middleware"
+vre_backend_git_url="git+https://github.com/DHARPA-Project/codename-vre@master#egg=dharpa-vre-jupyter-middleware&subdirectory=backend/jupyter-middleware"
 
 function download_miniconda {
   echo "Downloading miniconda..."
