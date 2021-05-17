@@ -296,7 +296,7 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
               }}
             >
               <span style={{ display: 'block' }}>Label: {graphTooltipInfo.nodeLabel}</span>
-              {nodesScalingMethod !== null && (
+              {!isNaN(graphTooltipInfo.nodeScaler) && (
                 <span
                   style={{ display: 'block', textTransform: 'capitalize' }}
                 >{`${nodesScalingMethod}: ${graphTooltipInfo.nodeScaler.toFixed(2)}`}</span>
