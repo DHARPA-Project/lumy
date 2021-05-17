@@ -23,8 +23,9 @@ setup_args = dict(
     description=description,
     long_description=long_description,
     long_description_content_type="text/markdown",
-    packages=setuptools.find_packages(
-    ) + ['dharpa.vre.dev.resources.pipelines'],
+    packages=setuptools.find_packages(),
+    package_data={'dharpa.vre.dev.resources': [
+        'dharpa/vre/dev/resources/**/*']},
     install_requires=[
         'ipython',
         'ipykernel',
