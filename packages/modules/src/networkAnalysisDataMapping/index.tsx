@@ -48,28 +48,28 @@ const NetworkAnalysisDataMapping = ({ step }: Props): JSX.Element => {
     { fullValue: true }
   )
 
-  const isUsedInMappingTable = (table: MappingTable, fields: string[]) => (uri: string): boolean => {
+  const isUsedInMappingTable = (table: MappingTable, fields: string[]) => (id: string): boolean => {
     if (table == null) return false
     return (
       fields
-        .map(field => (toObject(table)[field] ?? []).find(i => i.uri.toString() === uri) != null)
+        .map(field => (toObject(table)[field] ?? []).find(i => i.id.toString() === id) != null)
         .filter(v => v === true).length > 0
     )
   }
 
   const setUsedInMappingTable = (table: MappingTable, update: (t: MappingTable) => void) => (
-    uri: string,
+    id: string,
     mapping: { [key: string]: string },
     doUse: boolean
   ): void => {
     const s = table == null ? {} : toObject(table)
     if (doUse) {
       Object.entries(mapping).forEach(([field, column]) => {
-        s[field] = (s[field] ?? []).concat([{ uri, column }])
+        s[field] = (s[field] ?? []).concat([{ id, column }])
       })
     } else {
       Object.entries(mapping).forEach(([field]) => {
-        s[field] = (s[field] ?? []).filter(i => i.uri !== uri)
+        s[field] = (s[field] ?? []).filter(i => i.id !== id)
       })
     }
     update(fromObject(s))

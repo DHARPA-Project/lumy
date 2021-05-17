@@ -29,8 +29,9 @@ from dharpa.vre.utils.json import object_as_json
 from ipykernel.comm import Comm
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-logger.addHandler(logging.StreamHandler(sys.stdout))
+
+logging.getLogger().setLevel(logging.DEBUG)
+logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
 
 
 def preprocess_dict(d):

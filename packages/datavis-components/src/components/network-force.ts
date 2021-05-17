@@ -54,12 +54,18 @@ const mergeNodes = (
 ): GraphNodeDatum[] => {
   return updatedNodesMetadata.map(metadata => {
     const node = currentNodes.find(n => n.metadata.id === metadata.id)
+    // update existing node metadata
     if (node != null) {
       node.metadata = metadata
       return node
     }
+    // create new node
     return { metadata }
   })
+}
+
+const asGraphNodes = (nodes: NodeMetadata[]): GraphNodeDatum[] => {
+  return nodes?.map(node => ({ metadata: node })) ?? []
 }
 
 const mergeLinks = (
@@ -70,12 +76,18 @@ const mergeLinks = (
     const link = currentLinks.find(
       n => n.metadata.sourceId === metadata.sourceId && n.metadata.targetId === metadata.targetId
     )
+    // update existing link metadata
     if (link != null) {
       link.metadata = metadata
       return link
     }
+    // create new link
     return { metadata, source: metadata.sourceId, target: metadata.targetId }
   })
+}
+
+const asGraphLinks = (edges: EdgeMetadata[]): GraphLinkDatum[] => {
+  return edges?.map(edge => ({ metadata: edge, source: edge.sourceId, target: edge.targetId })) ?? []
 }
 
 /**
@@ -87,8 +99,12 @@ export class NetworkForce extends LitElement {
   @property({ type: Number }) width = 600
   /** Height of the SVG element */
   @property({ type: Number }) height = 400
-  /** Height of the SVG element */
+  /** Whether to hide or display isolated nodes. */
   @property({ type: Boolean }) displayIsolatedNodes = false
+  /** If `true`, force simulation will be reapplied on update
+   * even if some or all of the nodes are the same.
+   */
+  @property({ type: Boolean }) reapplySimulationOnUpdate = false
 
   /** Nodes of the graph */
   @property({ attribute: false }) nodes: NodeMetadata[] = []
@@ -138,6 +154,13 @@ export class NetworkForce extends LitElement {
     const scaleNode = d3
       .scaleLinear(this.currentGraphNodes.map(node => node.metadata.scaler ?? 0))
       .range([5, 20])
+    if (this.reapplySimulationOnUpdate) {
+      this.currentGraphNodes = asGraphNodes(this.nodes)
+      this.currentGraphLinks = asGraphLinks(this.edges)
+    } else {
+      this.currentGraphNodes = mergeNodes(this.currentGraphNodes, this.nodes)
+      this.currentGraphLinks = mergeLinks(this.currentGraphLinks, this.edges)
+    }
 
     const simulation = d3
       .forceSimulation(this.currentGraphNodes)

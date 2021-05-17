@@ -2,8 +2,7 @@ import React, { useState, createContext } from 'react'
 
 import CssBaseline from '@material-ui/core/CssBaseline'
 
-// import teal from '@material-ui/core/colors/teal'
-import amber from '@material-ui/core/colors/amber'
+// import amber from '@material-ui/core/colors/amber'
 
 import { createMuiTheme, MuiThemeProvider, Theme } from '@material-ui/core/styles'
 import { PaletteType, ThemeOptions } from '@material-ui/core'
@@ -67,13 +66,10 @@ const ThemeContextProvider = ({ children }: ThemeContextProviderProps): JSX.Elem
   const createCustomTheme = (extendedOptions?: ThemeOptions) =>
     createMuiTheme({
       palette: {
-        type: darkModeEnabled ? ('dark' as PaletteType) : ('light' as PaletteType),
-        // primary: {
-        //   main: teal[500]
-        // },
-        secondary: {
-          main: amber[500]
-        }
+        type: darkModeEnabled ? ('dark' as PaletteType) : ('light' as PaletteType)
+        // secondary: {
+        //   main: amber[500]
+        // }
       },
       typography: {
         body1: {
@@ -111,10 +107,10 @@ const ThemeContextProvider = ({ children }: ThemeContextProviderProps): JSX.Elem
       background: {
         paper: '#222A45',
         default: '#1a2038'
-      },
-      secondary: {
-        main: amber[500]
       }
+      // secondary: {
+      //   main: amber[500]
+      // }
     }
   })
 

@@ -3,6 +3,7 @@ import React from 'react'
 import InfoOutlineIcon from '@material-ui/icons/InfoOutlined'
 import AccountTreeIcon from '@material-ui/icons/AccountTree'
 import ToysIcon from '@material-ui/icons/Toys'
+import BubbleChartIcon from '@material-ui/icons/BubbleChart'
 
 export enum NavItemType {
   'heading',
@@ -13,9 +14,9 @@ export enum NavItemType {
 }
 
 export const pageRoutes = [
-  {
-    type: NavItemType.divider
-  },
+  // {
+  //   type: NavItemType.divider
+  // },
   {
     type: NavItemType.heading,
     label: 'pages'
@@ -32,6 +33,13 @@ export const pageRoutes = [
     label: 'toy VRE',
     link: '/toy',
     icon: <ToysIcon />,
+    nested: false
+  },
+  {
+    type: NavItemType.pageLink,
+    label: 'lab',
+    link: '/lab',
+    icon: <BubbleChartIcon />,
     nested: false
   },
   {
@@ -60,9 +68,9 @@ export const pageRoutes = [
       }
     ]
   },
-  {
-    type: NavItemType.divider
-  },
+  // {
+  //   type: NavItemType.divider
+  // },
   {
     type: NavItemType.heading,
     label: 'projects'
