@@ -25,4 +25,4 @@ else
   echo "Skipped activating conda environment"
 fi
 
-python ${script_dir}/../../main.py
+python "${script_dir}/../../main.py"
