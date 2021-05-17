@@ -24,6 +24,7 @@ setup_args = dict(
     long_description=long_description,
     long_description_content_type="text/markdown",
     packages=setuptools.find_packages(),
+    include_package_data=True,
     install_requires=[
         'ipython',
         'ipykernel',
