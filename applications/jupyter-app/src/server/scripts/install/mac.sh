@@ -1,4 +1,4 @@
-#! /usr/bin/env bash
+#!/usr/bin/env bash
 
 app_name="DHARPA VRE"
 
@@ -26,7 +26,7 @@ miniconda_installer_file_location="${tmp_dir}/${miniconda_installer_file}"
 
 default_conda_env_name="default"
 
-vre_backend_git_url="git+https://github.com/DHARPA-Project/codename-vre@master#egg=dharpa-vre-jupyter-middleware&subdirectory=backend/jupyter-middleware"
+vre_backend_git_url="git+https://github.com/DHARPA-Project/codename-vre@feature/miniconda_installer#egg=dharpa-vre-jupyter-middleware&subdirectory=backend/jupyter-middleware"
 
 function download_miniconda {
   echo "Downloading miniconda..."
@@ -79,6 +79,10 @@ function activate_default_env {
   echo "Activating miniconda default environment... DONE"
 }
 
+function install_python_dependencies {
+  pip install "jupyterlab-server>=2.5.2"
+}
+
 function install_or_update_vre_backend {
   pip install "${vre_backend_git_url}"
 }
@@ -91,4 +95,5 @@ source "${miniconda_app_dir}/etc/profile.d/conda.sh"
 
 create_default_env
 activate_default_env
+install_python_dependencies
 install_or_update_vre_backend

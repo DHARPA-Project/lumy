@@ -59,12 +59,10 @@ class KiaraAppContext(AppContext, BatchController):
         '''
         AppContext
         '''
-        assert not isinstance(workflow_file_or_name, Path), \
-            'Path is not supported yet'
         kiara: Kiara = Kiara.instance()
 
         self._current_workflow = kiara.create_workflow(
-            workflow_file_or_name, controller=self)
+            str(workflow_file_or_name), controller=self)
 
         # TODO: access the pipeline here because it is lazily created
         # in the getter. If not done, any code later accessing pipeline in

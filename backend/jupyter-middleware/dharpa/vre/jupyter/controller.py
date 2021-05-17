@@ -27,6 +27,8 @@ from dharpa.vre.types.generated import MsgError
 from dharpa.vre.utils.dataclasses import to_dict
 from dharpa.vre.utils.json import object_as_json
 from ipykernel.comm import Comm
+from dharpa.vre import dev as dev_pkg
+import pathlib
 
 logger = logging.getLogger(__name__)
 
@@ -49,6 +51,11 @@ def preprocess_dict(d):
         k: val(v)
         for k, v in d.items()
     }
+
+
+def get_dev_workflow_path():
+    return pathlib.Path(dev_pkg.__file__).parent / "resources" / \
+        "pipelines" / "networkAnalysisDev.json"
 
 
 class IpythonKernelController(TargetPublisher):
@@ -74,7 +81,7 @@ class IpythonKernelController(TargetPublisher):
     def __init__(self):
         super().__init__()
         context = KiaraAppContext()
-        context.load_workflow('networkAnalysisDev')
+        context.load_workflow(get_dev_workflow_path())
         self._context = context
 
         self._handlers = {
