@@ -34,16 +34,16 @@ export const useStyles = makeStyles((theme: Theme) => ({
       marginTop: theme.spacing(7)
     },
     '& .MuiDataGrid-viewport': {
-      maxHeight: 'fit-content! important'
+      maxHeight: 'fit-content !important'
     },
     '& .MuiDataGrid-renderingZone': {
-      maxHeight: 'fit-content! important'
+      maxHeight: 'fit-content !important'
     },
     '& .MuiDataGrid-row': {
-      maxHeight: 'fit-content! important'
+      maxHeight: 'fit-content !important'
     },
     '& .MuiDataGrid-cell': {
-      maxHeight: 'fit-content! important',
+      maxHeight: 'fit-content !important',
       lineHeight: 'inherit !important'
     },
     '& .MuiDataGrid-cell:focus': {
