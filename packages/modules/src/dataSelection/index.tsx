@@ -11,6 +11,7 @@ import {
 } from '@dharpa-vre/client-core'
 import { Table } from 'apache-arrow'
 import { TableView } from '../components/TableView'
+import { DataGrid } from '@dharpa-vre/arrow-data-grid'
 
 interface InputValues {
   repositoryItems?: Table<DataRepositoryItemStructure>
@@ -42,7 +43,7 @@ const DataSelection = ({ step }: Props): JSX.Element => {
   }
 
   const updateRepositoryItemsFilter = (filter: DataRepositoryItemsFilter) =>
-    setRepositoryItemsFilter({ ...filter, pageSize: 5, types: ['table'] })
+    setRepositoryItemsFilter({ pageSize: 5, ...filter, types: ['table'] })
 
   return (
     <div key={step.stepId}>
@@ -82,6 +83,13 @@ const DataSelection = ({ step }: Props): JSX.Element => {
             })}
         </ul>
       )}
+      <DataGrid
+        data={repositoryItemsBatch?.select('id', 'alias', 'columnNames')}
+        stats={repositoryStats}
+        filter={repositoryItemsFilter}
+        onFiltering={updateRepositoryItemsFilter}
+        condensed
+      />
     </div>
   )
 }
