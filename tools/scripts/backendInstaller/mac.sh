@@ -3,9 +3,18 @@
 app_name="DHARPA VRE"
 
 # https://pypi.org/project/appdirs/
-app_data_dir="~/Library/Application Support/${app_name}"
-# app_data_dir="~/.dharpa"
+app_data_dir="${HOME}/Library/Application Support/${app_name}"
 miniconda_app_dir="${app_data_dir}/miniconda"
+# miniconda_app_dir=$(printf %q "$miniconda_app_dir_unescaped")
+
+# As of 17/05/2021 miniconda does not support spaces in the prefix path.
+# https://github.com/ContinuumIO/anaconda-issues/issues/716
+# There is a PR waiting to be accepted that will fix this issue:
+# https://github.com/conda/constructor/pull/449
+# Meanwhile we use an alternative installation prefix and then
+# create a symbolic link to it in the app dir.
+miniconda_install_path="${HOME}/.local/share/dharpa/miniconda"
+
 
 # https://docs.conda.io/projects/continuumio-conda/en/latest/user-guide/install/macos.html
 miniconda_installer_url="https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh"
@@ -15,26 +24,71 @@ tmp_dir=${TMPDIR}
 
 miniconda_installer_file_location="${tmp_dir}/${miniconda_installer_file}"
 
+default_conda_env_name="default"
 
-# 1. Check if already installed
-miniconda_python_executable="${miniconda_app_dir}/python" # XXX
-if [ -f "${miniconda_python_executable}" ]; then
-  echo "Miniconda is already installed in ${miniconda_app_dir}. Exiting."
-  exit 0
-fi
+vre_backend_git_url="git+https://github.com/DHARPA-Project/codename-vre@master#egg=dharpa-vre-jupyter-middleware&subdirectory=backend/jupyter-middleware"
 
-# 2. Download installer if needed
-if [ ! -f "${miniconda_installer_file_location}" ]; then
-  echo "Miniconda installer file ${miniconda_installer_file_location} does not exist. Downloading it."
-  wget "${miniconda_installer_url}" -O "${miniconda_installer_file_location}"
-fi
+function download_miniconda {
+  echo "Downloading miniconda..."
+  if [ ! -f "${miniconda_installer_file_location}" ]; then
+    echo "Miniconda installer file ${miniconda_installer_file_location} does not exist. Downloading it."
+    wget "${miniconda_installer_url}" -O "${miniconda_installer_file_location}"
+  fi
+  chmod u+x "${miniconda_installer_file_location}"
+  echo "Downloading miniconda... DONE"
+}
 
-# 3. Run installer
-echo "Installing miniconda"
-mkdir -p "${miniconda_app_dir}"
-chmod u+x "${miniconda_installer_file_location}"
-installation_path=$(printf %q "$miniconda_app_dir") # escape spaces
-${miniconda_installer_file_location} -u -b -p ${installation_path}
+function run_installer {
+  echo "Installing miniconda..."
+  miniconda_python_executable="${miniconda_install_path}/bin/python"
+  if [ -f "${miniconda_python_executable}" ]; then
+    echo "Miniconda is already installed in ${miniconda_install_path}."
+  else
+    mkdir -p "${miniconda_install_path}"
+    ${miniconda_installer_file_location} -b -p ${miniconda_install_path}
+    echo "Miniconda has been installed in ${miniconda_install_path}."
+  fi
+  echo "Installing miniconda... DONE"
+}
 
-# echo "hello ${app_data_dir} ${tmp_dir}"
-# sed -i -e '353d' "$TMPDIR/miniconda.sh"
+function create_link {
+  echo "Creating miniconda link..."
+  if [ ! -L "${miniconda_app_dir}" ]; then
+    mkdir -p "${app_data_dir}"
+    ln -s ${miniconda_install_path} "${miniconda_app_dir}"
+    echo "Created link from ${miniconda_install_path} to '${miniconda_app_dir}'"
+  fi
+  echo "Creating miniconda link... DONE"
+}
+
+function create_default_env {
+  echo "Creating miniconda default environment..."
+  env_exists=$(conda env list | grep "^default\s" | wc -l)
+  if [ ${env_exists} -gt 0 ]; then
+    echo "Environment '${default_conda_env_name}' already exists."
+  else
+    conda create -y --name ${default_conda_env_name} python=3.7
+  fi
+  echo "Creating miniconda default environment... DONE"
+}
+
+function activate_default_env {
+  echo "Activating miniconda default environment..."
+
+  conda activate "${default_conda_env_name}"
+  echo "Activating miniconda default environment... DONE"
+}
+
+function install_or_update_vre_backend {
+  pip install "${vre_backend_git_url}"
+}
+
+download_miniconda
+run_installer
+create_link
+
+source "${miniconda_app_dir}/etc/profile.d/conda.sh"
+
+create_default_env
+activate_default_env
+install_or_update_vre_backend
