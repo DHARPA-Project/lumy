@@ -23,6 +23,7 @@ import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { useElement, NetworkForce } from '@dharpa-vre/datavis-components'
 import { useBbox } from '../hooks/useBbox'
+import { DataGrid } from '@dharpa-vre/arrow-data-grid'
 
 useElement('network-force')
 
@@ -320,6 +321,11 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
             height={graphHeight}
             ref={graphRef}
           />
+        </Grid>
+      </Grid>
+      <Grid container>
+        <Grid item style={{ flexGrow: 1 }}>
+          <DataGrid data={nodes} condensed />
         </Grid>
       </Grid>
     </Grid>
