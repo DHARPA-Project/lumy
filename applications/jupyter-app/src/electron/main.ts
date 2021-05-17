@@ -145,7 +145,8 @@ async function main() {
 
   await installBackend(
     data => console.log(`Installer: ${data}`),
-    data => console.error(`Installer: ${data}`)
+    data => console.error(`Installer: ${data}`),
+    String(process.env.FORCE_INSTALL) === '1'
   )
 
   const serverProcess = await startJupyterServerProcess(port, token, serverExitedHandler)
