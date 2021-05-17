@@ -9,6 +9,7 @@ import {
 import { Table, Utf8Vector, Int32Vector } from 'apache-arrow'
 import { MappingTableStructure, toObject, fromObject } from './mappingTable'
 import { EdgesStructure, NodesStructure } from '../networkAnalysisDataVis/structure'
+import { DataGrid } from '@dharpa-vre/arrow-data-grid'
 
 type CorpusStructure = DataRepositoryItemStructure
 
@@ -127,6 +128,7 @@ const NetworkAnalysisDataMapping = ({ step }: Props): JSX.Element => {
           })}
         </ul>
       </div>
+      <DataGrid data={edgesMappingTable} />
     </div>
   )
 }
