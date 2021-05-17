@@ -17,7 +17,8 @@
     "electron:serve": "electron dist/electron/main.js",
     "clean": "rimraf build",
     "prepublishOnly": "yarn build",
-    "electron:package": "electron-builder -c electron-builder.yml"
+    "electron:package": "electron-builder -c electron-builder.yml",
+    "build-all": "yarn webapp:build && yarn electron:build"
   },
   "dependencies": {
     "@dharpa-vre/jupyter-support": "*",
