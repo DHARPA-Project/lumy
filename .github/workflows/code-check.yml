@@ -29,7 +29,7 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies using Node.js ${{ matrix.node-version }}
-      if: steps.yarn-cache.outputs.cache-hit != 'true'
+      # if: steps.yarn-cache.outputs.cache-hit != 'true'
       run: yarn install
     - name: Check using Node.js ${{ matrix.node-version }}
       run: yarn compile-and-lint
