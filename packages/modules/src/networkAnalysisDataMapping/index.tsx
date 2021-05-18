@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import {
   DataRepositoryItemStructure,
@@ -9,127 +9,175 @@ import {
 import { Table, Utf8Vector, Int32Vector } from 'apache-arrow'
 import { MappingTableStructure, toObject, fromObject } from './mappingTable'
 import { EdgesStructure, NodesStructure } from '../networkAnalysisDataVis/structure'
-import { DataGrid } from '@dharpa-vre/arrow-data-grid'
+import TabularDataMappingForm from './TabularDataMappingForm'
 
 type CorpusStructure = DataRepositoryItemStructure
 
-type CorpusTable = Table<CorpusStructure>
+export type CorpusTableType = Table<CorpusStructure>
 type MappingTable = Table<MappingTableStructure>
 
-type NodesTable = Table<NodesStructure>
-type EdgesTable = Table<EdgesStructure>
+type NodeTable = Table<NodesStructure>
+type EdgeTable = Table<EdgesStructure>
 
 interface InputValues {
-  corpus: CorpusTable
+  corpus: CorpusTableType
   nodesMappingTable: MappingTable
   edgesMappingTable: MappingTable
 }
 
 interface OutputValues {
-  nodes: NodesTable
-  edges: EdgesTable
+  nodes: NodeTable
+  edges: EdgeTable
 }
-
-const DefaultPreviewPageSize = 5
 
 type Props = ModuleProps<InputValues, OutputValues>
 
+const DefaultPreviewPageSize = 5
+
+const nodeFields = ['id', 'label']
+const edgeFields = ['srcId', 'tgtId', 'weight']
+
+const networkAnalysisDataSets = [
+  {
+    name: 'nodes',
+    requiredFields: nodeFields
+  },
+  {
+    name: 'edges',
+    requiredFields: edgeFields
+  }
+]
+
 const NetworkAnalysisDataMapping = ({ step }: Props): JSX.Element => {
-  const [corpusPage] = useStepInputValue<CorpusTable>(step.stepId, 'corpus', {
-    pageSize: DefaultPreviewPageSize
-  })
-  const [nodesMappingTable, setNodesMappingTable] = useStepInputValue<MappingTable>(
+  const [numberCorpusRowsPerPage, setNumberCorpusRowsPerPage] = useState(DefaultPreviewPageSize)
+  const [corpusPage] = useStepInputValue<CorpusTableType>(
+    step.stepId,
+    'corpus',
+    { pageSize: numberCorpusRowsPerPage }
+  ) // prettier-ignore
+  const [nodeMappingTable, setNodeMappingTable] = useStepInputValue<MappingTable>(
     step.stepId,
     'nodesMappingTable',
     { fullValue: true }
   )
-  const [edgesMappingTable, setEdgesMappingTable] = useStepInputValue<MappingTable>(
+  const [edgeMappingTable, setEdgeMappingTable] = useStepInputValue<MappingTable>(
     step.stepId,
     'edgesMappingTable',
     { fullValue: true }
   )
 
-  const isUsedInMappingTable = (table: MappingTable, fields: string[]) => (id: string): boolean => {
-    if (table == null) return false
-    return (
-      fields
-        .map(field => (toObject(table)[field] ?? []).find(i => i.id.toString() === id) != null)
-        .filter(v => v === true).length > 0
+  const isDataSetMappedInDataSource = (dataSourceId: string, dataSetName: string): boolean => {
+    const mappingTable =
+      dataSetName === 'nodes' ? nodeMappingTable : dataSetName === 'edges' ? edgeMappingTable : null
+
+    const tableObject = mappingTable == null ? {} : toObject(mappingTable)
+
+    return Object.entries(tableObject).some(([fieldName, mappingList]) =>
+      (mappingList ?? []).some(mapping => mapping.id === dataSourceId)
     )
   }
 
-  const setUsedInMappingTable = (table: MappingTable, update: (t: MappingTable) => void) => (
-    id: string,
-    mapping: { [key: string]: string },
-    doUse: boolean
-  ): void => {
-    const s = table == null ? {} : toObject(table)
-    if (doUse) {
-      Object.entries(mapping).forEach(([field, column]) => {
-        s[field] = (s[field] ?? []).concat([{ id, column }])
-      })
-    } else {
-      Object.entries(mapping).forEach(([field]) => {
-        s[field] = (s[field] ?? []).filter(i => i.id !== id)
-      })
+  const getFieldMappedToColumn = (dataSourceId: string, selectedColumn: string): string => {
+    const correspondingNodeMappingField = Object.entries(
+      toObject(nodeMappingTable) ?? {}
+    ).find(([fieldName, mappingList]) => mappingList.some(mapping => mapping.column === selectedColumn))?.[0]
+
+    const correspondingEdgeMappingField = Object.entries(
+      toObject(edgeMappingTable) ?? {}
+    ).find(([fieldName, mappingList]) => mappingList.some(mapping => mapping.column === selectedColumn))?.[0]
+
+    return correspondingNodeMappingField || correspondingEdgeMappingField
+  }
+
+  const getColumnMappedToField = (dataSourceId: string, fieldName: string): string => {
+    const fieldMap =
+      ((toObject(nodeMappingTable) ?? {})?.[fieldName] ?? []).find(
+        fieldToSourceMap => String(fieldToSourceMap?.id) === dataSourceId
+      ) ||
+      ((toObject(edgeMappingTable) ?? {})?.[fieldName] ?? []).find(
+        fieldToSourceMap => String(fieldToSourceMap?.id) === dataSourceId
+      )
+
+    return fieldMap?.column
+  }
+
+  const clearMappingsForDataSet = (dataSourceId: string, dataSetName: string): void => {
+    let mappingTable: MappingTable
+    let setMappingTable: (table: MappingTable) => void
+
+    if (dataSetName === 'nodes') {
+      mappingTable = nodeMappingTable
+      setMappingTable = setNodeMappingTable
+    } else if (dataSetName === 'edges') {
+      mappingTable = edgeMappingTable
+      setMappingTable = setEdgeMappingTable
     }
-    update(fromObject(s))
+
+    if (!setMappingTable) return
+
+    const tableObject = mappingTable == null ? {} : toObject(mappingTable)
+
+    Object.entries(tableObject).forEach(([fieldName, mappingList]) => {
+      tableObject[fieldName] = mappingList.filter(mapping => mapping.id !== dataSourceId)
+    })
+
+    setMappingTable(fromObject(tableObject))
+  }
+
+  const setColumnMappedToField = (dataSourceId: string, fieldName: string, columnName: string): void => {
+    let fields: string[] = []
+    let mappingTable: MappingTable
+    let setMappingTable: (table: MappingTable) => void
+
+    if (nodeFields.includes(fieldName)) {
+      fields = nodeFields
+      mappingTable = nodeMappingTable
+      setMappingTable = setNodeMappingTable
+    } else if (edgeFields.includes(fieldName)) {
+      fields = edgeFields
+      mappingTable = edgeMappingTable
+      setMappingTable = setEdgeMappingTable
+    }
+
+    if (!setMappingTable) return
+
+    const tableObject = mappingTable == null ? {} : toObject(mappingTable)
+    if (tableObject[fieldName] == null) tableObject[fieldName] = []
+
+    // if a relevant mapping already exists, update it
+    if (tableObject[fieldName].some(entry => entry.id === dataSourceId)) {
+      tableObject[fieldName] = (tableObject[fieldName] ?? []).map(mapping =>
+        mapping.id === dataSourceId
+          ? {
+              id: dataSourceId,
+              column: columnName
+            }
+          : mapping
+      )
+    } else {
+      // otherwise, create mappings for all the required fields in the current data set
+      fields.forEach(
+        field =>
+          (tableObject[field] = [
+            ...(tableObject[field] ?? []),
+            { id: dataSourceId, column: field === fieldName ? columnName : '' }
+          ])
+      )
+    }
+
+    setMappingTable(fromObject(tableObject))
   }
 
   return (
-    <div style={{ border: '1px dashed #777' }}>
-      <div>
-        <em>corpus items:</em>
-        <ul>
-          {[...(corpusPage ?? [])].map((row, idx) => {
-            return (
-              <li key={idx}>
-                <dl style={{ display: 'flex', flexDirection: 'row' }}>
-                  <dd>{row.id}</dd>
-                  <dd>{[...(row.columnNames ?? [])].join(', ')}</dd>
-                  <dd>
-                    <span>use for nodes (first two columns)</span>
-                    <input
-                      type="checkbox"
-                      checked={isUsedInMappingTable(nodesMappingTable, ['id', 'label'])(row.id)}
-                      onChange={e =>
-                        setUsedInMappingTable(nodesMappingTable, setNodesMappingTable)(
-                          row.id,
-                          {
-                            id: row.columnNames?.get(0),
-                            label: row.columnNames?.get(1)
-                          },
-                          e.target.checked
-                        )
-                      }
-                    />
-                  </dd>
-                  <dd>
-                    <span>use for edges (first three columns)</span>
-                    <input
-                      type="checkbox"
-                      checked={isUsedInMappingTable(edgesMappingTable, ['srcId', 'tgtId', 'weight'])(row.id)}
-                      onChange={e =>
-                        setUsedInMappingTable(edgesMappingTable, setEdgesMappingTable)(
-                          row.id,
-                          {
-                            srcId: row.columnNames?.get(0),
-                            tgtId: row.columnNames?.get(1),
-                            weight: row.columnNames?.get(2)
-                          },
-                          e.target.checked
-                        )
-                      }
-                    />
-                  </dd>
-                </dl>
-              </li>
-            )
-          })}
-        </ul>
-      </div>
-      <DataGrid data={edgesMappingTable} />
-    </div>
+    <TabularDataMappingForm
+      corpusPage={corpusPage}
+      requiredDataSets={networkAnalysisDataSets}
+      isDataSetMappedInDataSource={isDataSetMappedInDataSource}
+      getFieldMappedToColumn={getFieldMappedToColumn}
+      getColumnMappedToField={getColumnMappedToField}
+      clearMappingsForDataSet={clearMappingsForDataSet}
+      setColumnMappedToField={setColumnMappedToField}
+    />
   )
 }
 
