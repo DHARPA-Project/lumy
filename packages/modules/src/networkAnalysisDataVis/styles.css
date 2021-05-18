@@ -1,0 +1,21 @@
+.MuiRadio-colorSecondary.Mui-checked {
+  color: grey;
+}
+
+.MuiIconButton-colorSecondary:hover,
+.MuiRadio-colorSecondary.Mui-checked:hover {
+  background-color: rgba(133, 57, 57, 0);
+}
+
+.MuiIconButton-label .MuiSvgIcon-root {
+  width: 0.7em;
+}
+
+.MuiRadio-root {
+  padding-top: 1px;
+  padding-bottom: 1px;
+}
+
+.vizIconRight {
+  margin-left: 0.2em;
+}

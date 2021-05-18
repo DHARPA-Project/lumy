@@ -24,6 +24,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import { useElement, NetworkForce } from '@dharpa-vre/datavis-components'
 import { useBbox } from '../hooks/useBbox'
 import { DataGrid } from '@dharpa-vre/arrow-data-grid'
+import './styles.css'
 
 useElement('network-force')
 
@@ -122,8 +123,9 @@ const Navigation = ({
               value={nodesScalingMethod ?? ''}
               onChange={e => onNodesScalingMethodUpdated?.(e.target.value as ScalingMethods)}
             >
-              <Grid container direction="row" alignItems="center">
-                Size <InfoOutlinedIcon color="primary" />
+              <Grid container direction="row" alignItems="center" style={{ paddingBottom: '.5em' }}>
+                <Typography>Size</Typography>
+                <InfoOutlinedIcon color="inherit" className="vizIconRight" />
               </Grid>
 
               <FormControlLabel value="" control={<Radio />} label="Equal" />
