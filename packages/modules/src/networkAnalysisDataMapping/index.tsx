@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Table, Utf8Vector, Int32Vector } from 'apache-arrow'
 
 import {
   DataRepositoryItemStructure,
@@ -6,10 +7,10 @@ import {
   useStepInputValue,
   withMockProcessor
 } from '@dharpa-vre/client-core'
-import { Table, Utf8Vector, Int32Vector } from 'apache-arrow'
+import { TabularDataMappingForm } from '@dharpa-vre/data-mapping-table'
+
 import { MappingTableStructure, toObject, fromObject } from './mappingTable'
 import { EdgesStructure, NodesStructure } from '../networkAnalysisDataVis/structure'
-import TabularDataMappingForm from './TabularDataMappingForm'
 
 type CorpusStructure = DataRepositoryItemStructure
 
