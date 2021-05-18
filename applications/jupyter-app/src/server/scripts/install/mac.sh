@@ -45,7 +45,7 @@ function run_installer {
     echo "Miniconda is already installed in ${miniconda_install_path}."
   else
     mkdir -p "${miniconda_install_path}"
-    ${miniconda_installer_file_location} -b -p ${miniconda_install_path}
+    ${miniconda_installer_file_location} -u -b -p ${miniconda_install_path}
     echo "Miniconda has been installed in ${miniconda_install_path}."
   fi
   echo "Installing miniconda... DONE"

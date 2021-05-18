@@ -9,6 +9,9 @@
   "main": "src/webapp/index.ts",
   "license": "AGPL-3.0-only",
   "author": "roman@kalyakin.com",
+  "repository": {
+    "url": "https://github.com/DHARPA-Project/codename-vre.git"
+  },
   "scripts": {
     "webapp:watch": "webpack -c webpack.config.webapp.js --watch --progress",
     "webapp:serve": "webpack serve -c webpack.config.webapp.js",
@@ -17,7 +20,8 @@
     "electron:serve": "electron dist/electron/main.js",
     "clean": "rimraf build",
     "prepublishOnly": "yarn build",
-    "electron:package": "electron-builder -c electron-builder.yml"
+    "electron:package": "electron-builder -c electron-builder.yml",
+    "build-all": "yarn webapp:build && yarn electron:build"
   },
   "dependencies": {
     "@dharpa-vre/jupyter-support": "*",
