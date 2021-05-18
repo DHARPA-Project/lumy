@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Table, Utf8Vector, Int32Vector } from 'apache-arrow'
 
 import {
@@ -33,8 +33,6 @@ interface OutputValues {
 
 type Props = ModuleProps<InputValues, OutputValues>
 
-const DefaultPreviewPageSize = 5
-
 const nodeFields = ['id', 'label']
 const edgeFields = ['srcId', 'tgtId', 'weight']
 
@@ -50,12 +48,7 @@ const networkAnalysisDataSets = [
 ]
 
 const NetworkAnalysisDataMapping = ({ step }: Props): JSX.Element => {
-  const [numberCorpusRowsPerPage, setNumberCorpusRowsPerPage] = useState(DefaultPreviewPageSize)
-  const [corpusPage] = useStepInputValue<CorpusTableType>(
-    step.stepId,
-    'corpus',
-    { pageSize: numberCorpusRowsPerPage }
-  ) // prettier-ignore
+  const [corpusPage] = useStepInputValue<CorpusTableType>(step.stepId, 'corpus', { fullValue: true }) // prettier-ignore
   const [nodeMappingTable, setNodeMappingTable] = useStepInputValue<MappingTable>(
     step.stepId,
     'nodesMappingTable',

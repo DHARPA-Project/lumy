@@ -3,7 +3,10 @@ import { lighten, makeStyles } from '@material-ui/core/styles'
 export default makeStyles(theme => ({
   root: {
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
+    '& caption': {
+      captionSide: 'top'
+    }
   },
   tableContainer: {
     maxHeight: `calc(100vh - ${theme.spacing(36)}px)`
