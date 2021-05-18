@@ -66,7 +66,7 @@ const NetworkAnalysisDataMapping = ({ step }: Props): JSX.Element => {
 
     const tableObject = mappingTable == null ? {} : toObject(mappingTable)
 
-    return Object.entries(tableObject).some(([fieldName, mappingList]) =>
+    return Object.entries(tableObject).some(([, mappingList]) =>
       (mappingList ?? []).some(mapping => mapping.id === dataSourceId)
     )
   }
@@ -74,11 +74,11 @@ const NetworkAnalysisDataMapping = ({ step }: Props): JSX.Element => {
   const getFieldMappedToColumn = (dataSourceId: string, selectedColumn: string): string => {
     const correspondingNodeMappingField = Object.entries(
       toObject(nodeMappingTable) ?? {}
-    ).find(([fieldName, mappingList]) => mappingList.some(mapping => mapping.column === selectedColumn))?.[0]
+    ).find(([, mappingList]) => mappingList.some(mapping => mapping.column === selectedColumn))?.[0]
 
     const correspondingEdgeMappingField = Object.entries(
       toObject(edgeMappingTable) ?? {}
-    ).find(([fieldName, mappingList]) => mappingList.some(mapping => mapping.column === selectedColumn))?.[0]
+    ).find(([, mappingList]) => mappingList.some(mapping => mapping.column === selectedColumn))?.[0]
 
     return correspondingNodeMappingField || correspondingEdgeMappingField
   }
