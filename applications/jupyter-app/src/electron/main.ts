@@ -2,9 +2,38 @@ import path from 'path'
 import crypto from 'crypto'
 import { app, BrowserWindow } from 'electron'
 import { spawn, ChildProcess } from 'child_process'
+import treeKill from 'tree-kill'
 import { waitForPort, getFreePort } from './networkUtils'
 
 const AppMainHtmlFile = path.resolve(__dirname, '../webapp/index.html')
+
+const DefaultStdoutHandler = (data: unknown) => console.log(`Jupyter: ${data}`)
+const DefaultStderrHandler = (data: unknown) => console.error(`Jupyter: ${data}`)
+
+const getRunScript = (): string => {
+  const getPath = (filename: string) => path.resolve(__dirname, `../../src/server/scripts/run/${filename}`)
+  switch (process.platform) {
+    case 'darwin':
+      return getPath('mac.sh')
+    case 'win32':
+      throw new Error('No start script for windows yet.')
+    default:
+      throw new Error('No start script for *nix yet.')
+  }
+}
+
+const getInstallScript = (): string => {
+  const getPath = (filename: string) =>
+    path.resolve(__dirname, `../../src/server/scripts/install/${filename}`)
+  switch (process.platform) {
+    case 'darwin':
+      return getPath('mac.sh')
+    case 'win32':
+      throw new Error('No start script for windows yet.')
+    default:
+      throw new Error('No start script for *nix yet.')
+  }
+}
 
 function generateToken(length: number): string {
   return crypto
@@ -26,16 +55,48 @@ function createWindow(port: number, token: string) {
   return win.loadFile(AppMainHtmlFile)
 }
 
+function execute(
+  app: string,
+  args: string[],
+  stdoutHandler: (data: unknown) => void,
+  stderrHandler: (data: unknown) => void
+): Promise<number> {
+  return new Promise((res, rej) => {
+    const p = spawn(app, args)
+    p.on('error', rej)
+
+    p.stdout.on('data', stdoutHandler)
+    p.stderr.on('data', stderrHandler)
+    p.on('close', res)
+  })
+}
+
+async function installBackend(
+  stdoutHandler: (data: unknown) => void,
+  stderrHandler: (data: unknown) => void,
+  forceInstall = false
+): Promise<void> {
+  const installedCheckExitCode = await execute(getRunScript(), ['--check-env'], stdoutHandler, stderrHandler)
+  if (installedCheckExitCode !== 0 || forceInstall) {
+    const installerExitCode = await execute(getInstallScript(), [], stdoutHandler, stderrHandler)
+    if (installerExitCode !== 0)
+      throw new Error(`Installer returned a nonzero exit code: ${installerExitCode}`)
+  }
+}
+
 function startJupyterServerProcess(
   port: number,
   token: string,
-  closeHandler: (code: number) => void
+  closeHandler: (code: number) => void,
+  stdoutHandler?: (data: unknown) => void,
+  stderrHandler?: (data: unknown) => void
 ): Promise<ChildProcess> {
-  const mainFile = path.resolve(__dirname, '../../src/server/main.py')
+  const mainFile = getRunScript()
   const cwd = path.resolve(__dirname, '../..')
+  const args = String(process.env.SKIP_CONDA) === '1' ? ['--skip-conda'] : []
 
   return new Promise((res, rej) => {
-    const p = spawn('python', [mainFile], {
+    const p = spawn(mainFile, args, {
       cwd,
       env: {
         ...process.env,
@@ -46,8 +107,8 @@ function startJupyterServerProcess(
     })
     p.on('error', rej)
 
-    p.stdout.on('data', data => console.log(`Jupyter: ${data}`))
-    p.stderr.on('data', data => console.error(`Jupyter: ${data}`))
+    p.stdout.on('data', stdoutHandler ?? DefaultStdoutHandler)
+    p.stderr.on('data', stderrHandler ?? DefaultStderrHandler)
     p.on('close', closeHandler)
 
     waitForPort({
@@ -77,9 +138,16 @@ async function main() {
           `We need to inform the user and shutdown the app or restart the server`
       )
     } else {
+      console.info('Exiting for real.')
       app.quit()
     }
   }
+
+  await installBackend(
+    data => console.log(`Installer: ${data}`),
+    data => console.error(`Installer: ${data}`),
+    String(process.env.FORCE_INSTALL) === '1'
+  )
 
   const serverProcess = await startJupyterServerProcess(port, token, serverExitedHandler)
   await createWindow(port, token)
@@ -93,14 +161,18 @@ async function main() {
     }
   })
   app.on('before-quit', event => {
-    if (serverProcess.exitCode == null) {
+    if (serverProcess.signalCode == null) {
       // the server process is still running - we need to exit first.
       event.preventDefault()
       console.log('Stopping server process...')
       isReadyToExit = true
-      serverProcess.kill('SIGTERM')
+
+      treeKill(serverProcess.pid, err => {
+        if (err != null) console.error(`Could not kill backend process: ${err}`)
+      })
     } else {
       console.log('Exiting...')
+      process.exit(0)
     }
   })
 }
