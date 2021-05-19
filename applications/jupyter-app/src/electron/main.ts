@@ -91,17 +91,22 @@ function execute(
   })
 }
 
+async function shouldRunInstaller(): Promise<boolean> {
+  const installedCheckExitCode = await execute(
+    getRunScript(),
+    ['--dry-run'],
+    (msg: unknown) => console.log(`[Install check]: ${msg}`),
+    (msg: unknown) => console.log(`[Install check] (ERROR): ${msg}`)
+  )
+  return installedCheckExitCode !== 0
+}
+
 async function installBackend(
   stdoutHandler: (data: unknown) => void,
-  stderrHandler: (data: unknown) => void,
-  forceInstall = false
+  stderrHandler: (data: unknown) => void
 ): Promise<void> {
-  const installedCheckExitCode = await execute(getRunScript(), ['--check-env'], stdoutHandler, stderrHandler)
-  if (installedCheckExitCode !== 0 || forceInstall) {
-    const installerExitCode = await execute(getInstallScript(), [], stdoutHandler, stderrHandler)
-    if (installerExitCode !== 0)
-      throw new Error(`Installer returned a nonzero exit code: ${installerExitCode}`)
-  }
+  const installerExitCode = await execute(getInstallScript(), [], stdoutHandler, stderrHandler)
+  if (installerExitCode !== 0) throw new Error(`Installer returned a nonzero exit code: ${installerExitCode}`)
 }
 
 function startJupyterServerProcess(
@@ -150,22 +155,27 @@ function startJupyterServerProcess(
  *  - `true` if installation was successful. `false` otherwise.
  */
 async function maybeRunInstaller(): Promise<[BrowserWindow | undefined, boolean]> {
+  const forceInstall = String(process.env.FORCE_INSTALL) === '1'
+  if (forceInstall) return [undefined, true]
+
+  try {
+    const shouldInstall = await shouldRunInstaller()
+    if (!shouldInstall) return [undefined, true]
+  } catch (e) {
+    console.error(`Errors occurred while checking whether installation is needed: ${e}`)
+    return [undefined, false]
+  }
+
   const installerWindow = await createInstallerWindow()
   const installerComm = new InstallerComm(installerWindow.webContents)
 
   try {
     await installBackend(
       installerComm.onStdout.bind(installerComm),
-      installerComm.onStderr.bind(installerComm),
-      String(process.env.FORCE_INSTALL) === '1'
+      installerComm.onStderr.bind(installerComm)
     )
-    if (installerComm.hasError) {
-      installerComm.finish('error', 'Installation was not successfull.')
-      return [installerWindow, false]
-    } else {
-      installerComm.finish('ok', 'Installation successfull')
-      return [installerWindow, true]
-    }
+    installerComm.finish('ok', 'Installation successfull')
+    return [installerWindow, true]
   } catch (e) {
     installerComm.finish('error', String(e))
     return [installerWindow, false]

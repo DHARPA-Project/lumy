@@ -32,10 +32,14 @@ export class ElectronContext implements ISplashScreenContext {
     const channelId = ChannelMap[type]
     if (channelId == null) throw new Error(`Unknown type: ${type}`)
 
-    const items = type === 'error' ? this._errorItems : this._defaultItems
     const handler = (_: Event, message: Message) => {
-      items.push(message.message)
-      callback(items)
+      if (type === 'error') {
+        this._errorItems = this._errorItems.concat([message.message])
+        callback(this._errorItems)
+      } else {
+        this._defaultItems = this._defaultItems.concat([message.message])
+        callback(this._defaultItems)
+      }
     }
     comm.on(channelId, handler)
     return () => comm.off(channelId, handler)

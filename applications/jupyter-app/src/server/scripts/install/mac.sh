@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+set -e
+
+trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
+trap 'echo "\"${last_command}\" command returned exit code $?."' EXIT
+
 app_name="DHARPA VRE"
 
 # https://pypi.org/project/appdirs/
@@ -32,7 +37,7 @@ function download_miniconda {
   echo "Downloading miniconda..."
   if [ ! -f "${miniconda_installer_file_location}" ]; then
     echo "Miniconda installer file ${miniconda_installer_file_location} does not exist. Downloading it."
-    wget "${miniconda_installer_url}" -O "${miniconda_installer_file_location}"
+    curl -o "${miniconda_installer_file_location}" "${miniconda_installer_url}"
   fi
   chmod u+x "${miniconda_installer_file_location}"
   echo "Downloading miniconda... DONE"
@@ -45,6 +50,8 @@ function run_installer {
     echo "Miniconda is already installed in ${miniconda_install_path}."
   else
     mkdir -p "${miniconda_install_path}"
+    download_miniconda
+
     ${miniconda_installer_file_location} -u -b -p ${miniconda_install_path}
     echo "Miniconda has been installed in ${miniconda_install_path}."
   fi
@@ -87,7 +94,6 @@ function install_or_update_vre_backend {
   pip install "${vre_backend_git_url}"
 }
 
-download_miniconda
 run_installer
 create_link
 
