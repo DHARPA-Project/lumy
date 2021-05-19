@@ -44,17 +44,19 @@ function generateToken(length: number): string {
     .slice(0, length)
 }
 
-function createWindow(port: number, token: string) {
+async function createWindow(port: number, token: string) {
   const win = new BrowserWindow({
     width: 800,
     height: 600,
+    show: false,
     webPreferences: {
       additionalArguments: [`--jupyter-baseUrl=http://localhost:${port}/`, `--jupyter-token=${token}`],
       preload: path.join(__dirname, 'preload.js')
     }
   })
 
-  return win.loadFile(AppMainHtmlFile)
+  await win.loadFile(AppMainHtmlFile)
+  return win
 }
 
 async function createInstallerWindow() {
@@ -62,6 +64,8 @@ async function createInstallerWindow() {
     width: 600,
     height: 400,
     frame: false,
+    transparent: true,
+    alwaysOnTop: true,
     webPreferences: {
       preload: path.join(__dirname, 'installerPreload.js')
     }
@@ -139,6 +143,35 @@ function startJupyterServerProcess(
   })
 }
 
+/**
+ * Run installer if needed.
+ * @return a tuple of:
+ *  - browser window if installer did run. Otherwise `undefined`.
+ *  - `true` if installation was successful. `false` otherwise.
+ */
+async function maybeRunInstaller(): Promise<[BrowserWindow | undefined, boolean]> {
+  const installerWindow = await createInstallerWindow()
+  const installerComm = new InstallerComm(installerWindow.webContents)
+
+  try {
+    await installBackend(
+      installerComm.onStdout.bind(installerComm),
+      installerComm.onStderr.bind(installerComm),
+      String(process.env.FORCE_INSTALL) === '1'
+    )
+    if (installerComm.hasError) {
+      installerComm.finish('error', 'Installation was not successfull.')
+      return [installerWindow, false]
+    } else {
+      installerComm.finish('ok', 'Installation successfull')
+      return [installerWindow, true]
+    }
+  } catch (e) {
+    installerComm.finish('error', String(e))
+    return [installerWindow, false]
+  }
+}
+
 async function main() {
   await app.whenReady()
 
@@ -160,23 +193,16 @@ async function main() {
   }
 
   let serverProcess: ChildProcess = undefined
-  const installerWindow = await createInstallerWindow()
-  const installerComm = new InstallerComm()
-  try {
-    await installBackend(
-      installerComm.onStdout,
-      installerComm.onStderr,
-      String(process.env.FORCE_INSTALL) === '1'
-    )
-    installerComm.finish('ok', 'Installation successfull')
-    await new Promise(res => setTimeout(res, 100000))
-    installerWindow.close()
-    console.log('XXX')
+
+  const [installerWindow, installationIsSuccessfull] = await maybeRunInstaller()
+  if (installationIsSuccessfull) {
+    // wait a second to let the user read the message.
+    await new Promise(res => setTimeout(res, 1000))
 
     serverProcess = await startJupyterServerProcess(port, token, serverExitedHandler)
-    await createWindow(port, token)
-  } catch (e) {
-    installerComm.finish('error', String(e))
+    const mainWindow = await createWindow(port, token)
+    mainWindow.show()
+    installerWindow?.destroy()
   }
 
   app.on('window-all-closed', () => {

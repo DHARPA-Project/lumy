@@ -11,6 +11,9 @@ interface IComm {
   on<T>(channel: string, cb: Listener<T>): void
   off<T>(channel: string, cb: Listener<T>): void
 }
+interface Message {
+  message: string
+}
 
 declare global {
   interface Window {
@@ -30,9 +33,8 @@ export class ElectronContext implements ISplashScreenContext {
     if (channelId == null) throw new Error(`Unknown type: ${type}`)
 
     const items = type === 'error' ? this._errorItems : this._defaultItems
-    const handler = (_: Event, message: string) => {
-      console.log('A', message)
-      items.push(message)
+    const handler = (_: Event, message: Message) => {
+      items.push(message.message)
       callback(items)
     }
     comm.on(channelId, handler)
@@ -40,7 +42,6 @@ export class ElectronContext implements ISplashScreenContext {
   }
   onFinishMessageAvailable(callback: (value: FinishMessage) => void): () => void {
     const handler = (_: Event, message: FinishMessage) => {
-      console.log('B', message)
       this._finishMessage = message
       callback(this._finishMessage)
     }
