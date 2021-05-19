@@ -22,7 +22,7 @@ type MappingTableObject = {
 }
 
 export const toObject = (table: Table<Table.MappingTable>): MappingTableObject =>
-  table.schema.fields.reduce<MappingTableObject>(
+  (table?.schema?.fields ?? []).reduce<MappingTableObject>(
     (acc, field) => ({
       ...acc,
       [field.name]: [...table.getColumn(field.name)]
