@@ -5,7 +5,8 @@ const webpack = require('webpack')
 module.exports = {
   entry: {
     main: './src/electron/main.ts',
-    preload: './src/electron/preload.ts'
+    preload: './src/electron/preload.ts',
+    installerPreload: './src/electron/installerPreload.ts'
   },
   output: {
     filename: '[name].js',

@@ -4,8 +4,10 @@ import { app, BrowserWindow } from 'electron'
 import { spawn, ChildProcess } from 'child_process'
 import treeKill from 'tree-kill'
 import { waitForPort, getFreePort } from './networkUtils'
+import { InstallerComm } from './installer'
 
 const AppMainHtmlFile = path.resolve(__dirname, '../webapp/index.html')
+const InstallerHtmlFile = path.resolve(__dirname, '../webapp/installer.html')
 
 const DefaultStdoutHandler = (data: unknown) => console.log(`Jupyter: ${data}`)
 const DefaultStderrHandler = (data: unknown) => console.error(`Jupyter: ${data}`)
@@ -53,6 +55,20 @@ function createWindow(port: number, token: string) {
   })
 
   return win.loadFile(AppMainHtmlFile)
+}
+
+async function createInstallerWindow() {
+  const win = new BrowserWindow({
+    width: 600,
+    height: 400,
+    frame: false,
+    webPreferences: {
+      preload: path.join(__dirname, 'installerPreload.js')
+    }
+  })
+
+  await win.loadFile(InstallerHtmlFile)
+  return win
 }
 
 function execute(
@@ -143,14 +159,25 @@ async function main() {
     }
   }
 
-  await installBackend(
-    data => console.log(`Installer: ${data}`),
-    data => console.error(`Installer: ${data}`),
-    String(process.env.FORCE_INSTALL) === '1'
-  )
+  let serverProcess: ChildProcess = undefined
+  const installerWindow = await createInstallerWindow()
+  const installerComm = new InstallerComm()
+  try {
+    await installBackend(
+      installerComm.onStdout,
+      installerComm.onStderr,
+      String(process.env.FORCE_INSTALL) === '1'
+    )
+    installerComm.finish('ok', 'Installation successfull')
+    await new Promise(res => setTimeout(res, 100000))
+    installerWindow.close()
+    console.log('XXX')
 
-  const serverProcess = await startJupyterServerProcess(port, token, serverExitedHandler)
-  await createWindow(port, token)
+    serverProcess = await startJupyterServerProcess(port, token, serverExitedHandler)
+    await createWindow(port, token)
+  } catch (e) {
+    installerComm.finish('error', String(e))
+  }
 
   app.on('window-all-closed', () => {
     app.quit()
@@ -161,13 +188,13 @@ async function main() {
     }
   })
   app.on('before-quit', event => {
-    if (serverProcess.signalCode == null) {
+    if (serverProcess != null && serverProcess?.signalCode == null) {
       // the server process is still running - we need to exit first.
       event.preventDefault()
       console.log('Stopping server process...')
       isReadyToExit = true
 
-      treeKill(serverProcess.pid, err => {
+      treeKill(serverProcess?.pid, err => {
         if (err != null) console.error(`Could not kill backend process: ${err}`)
       })
     } else {
