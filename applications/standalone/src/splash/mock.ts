@@ -1,5 +1,6 @@
 import { Signal } from '@lumino/signaling'
 import { FinishMessage, ISplashScreenContext } from '@dharpa-vre/splash-screen'
+import { StreamMessage } from '../../../../packages/splash-screen/src/context'
 
 const lipsum = `Lorem, ipsum dolor sit amet consectetur
 adipisicing elit. Alias hic consequuntur commodi possimus
@@ -9,22 +10,30 @@ facere consequatur aliquam, id impedit cupiditate tempore sit?
 const getTestMessage = () => `${new Date()}: ${lipsum}`
 
 export class MockContext implements ISplashScreenContext {
-  _defaultStreamItems: string[] = []
-  _errorStreamItems: string[] = []
+  _streamItems: StreamMessage[] = []
   _finishMessage?: FinishMessage
 
-  _defaultStreamItemsUpdated = new Signal<MockContext, string[]>(this)
-  _errorStreamItemsUpdated = new Signal<MockContext, string[]>(this)
+  _streamItemsUpdated = new Signal<MockContext, StreamMessage[]>(this)
   _finishMessageAvailable = new Signal<MockContext, FinishMessage>(this)
 
   constructor() {
     const defaultInterval = setInterval(() => {
-      this._defaultStreamItems = this._defaultStreamItems.concat([getTestMessage()])
-      this._defaultStreamItemsUpdated.emit(this._defaultStreamItems)
+      this._streamItems = this._streamItems.concat([
+        {
+          type: 'info',
+          text: getTestMessage()
+        }
+      ])
+      this._streamItemsUpdated.emit(this._streamItems)
     }, 1000)
     const errorInterval = setInterval(() => {
-      this._errorStreamItems = this._errorStreamItems.concat([getTestMessage()])
-      this._errorStreamItemsUpdated.emit(this._errorStreamItems)
+      this._streamItems = this._streamItems.concat([
+        {
+          type: 'error',
+          text: getTestMessage()
+        }
+      ])
+      this._streamItemsUpdated.emit(this._streamItems)
     }, 3000)
     setTimeout(() => {
       clearInterval(defaultInterval)
@@ -36,12 +45,11 @@ export class MockContext implements ISplashScreenContext {
       this._finishMessageAvailable.emit(this._finishMessage)
     }, 7000)
   }
-  onStreamItemsUpdated(type: 'error' | 'default', callback: (value: string[]) => void): () => void {
-    callback(type === 'error' ? this._errorStreamItems : this._defaultStreamItems)
-    const signal = type === 'error' ? this._errorStreamItemsUpdated : this._defaultStreamItemsUpdated
-    const handler = (_: unknown, items: string[]) => callback(items)
-    signal.connect(handler)
-    return () => signal.disconnect(handler)
+  onStreamItemsUpdated(callback: (value: StreamMessage[]) => void): () => void {
+    callback(this._streamItems)
+    const handler = (_: unknown, items: StreamMessage[]) => callback(items)
+    this._streamItemsUpdated.connect(handler)
+    return () => this._streamItemsUpdated.disconnect(handler)
   }
   onFinishMessageAvailable(callback: (value: FinishMessage) => void): () => void {
     if (this._finishMessage != null) callback(this._finishMessage)

@@ -5,11 +5,16 @@ export interface FinishMessage {
   type: 'ok' | 'error'
 }
 
+export interface StreamMessage {
+  type: 'info' | 'error' | 'warn'
+  text: string
+}
+
 type Listener<T> = (value: T) => void
 type UnsubscribeFn = () => void
 
 export interface ISplashScreenContext {
-  onStreamItemsUpdated: (type: 'default' | 'error', callback: Listener<string[]>) => UnsubscribeFn
+  onStreamItemsUpdated: (callback: Listener<StreamMessage[]>) => UnsubscribeFn
   onFinishMessageAvailable: (callback: Listener<FinishMessage>) => UnsubscribeFn
 }
 
@@ -26,10 +31,10 @@ export const useFinishMessage = (): FinishMessage | undefined => {
   return msg
 }
 
-export const useStream = (type: 'default' | 'error'): string[] => {
-  const [items, setItems] = React.useState([])
+export const useStream = (): StreamMessage[] => {
+  const [items, setItems] = React.useState<StreamMessage[]>([])
   const context = React.useContext(SplashScreenContext)
 
-  React.useEffect(() => context.onStreamItemsUpdated(type, setItems), [])
+  React.useEffect(() => context.onStreamItemsUpdated(setItems), [])
   return items
 }

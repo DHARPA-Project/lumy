@@ -17,5 +17,8 @@ export default makeStyles(theme => ({
   },
   styleError: {
     color: theme.palette.error.light
+  },
+  styleWarn: {
+    color: theme.palette.warning.light
   }
 }))

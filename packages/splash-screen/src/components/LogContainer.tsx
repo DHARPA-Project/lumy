@@ -1,7 +1,7 @@
 import React from 'react'
 import clsx from 'clsx'
 import useStyles from './LogContainer.styles'
-import { useStream } from '../context'
+import { StreamMessage, useStream } from '../context'
 
 const AlwaysScrollToBottom = (): JSX.Element => {
   const elementRef = React.useRef(null)
@@ -10,28 +10,37 @@ const AlwaysScrollToBottom = (): JSX.Element => {
 }
 
 export interface LogContainerProps {
-  streamType: 'default' | 'error'
   hideWhenEmpty?: boolean
 }
 
 export const LogContainer = ({
-  streamType,
   hideWhenEmpty = false,
   className,
   ...props
 }: LogContainerProps &
   React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>): JSX.Element => {
   const classes = useStyles()
-  const stream = useStream(streamType)
+  const stream = useStream()
 
   if (hideWhenEmpty && stream?.length < 1) return <></>
 
-  const styleClass = streamType === 'error' ? classes.styleError : classes.styleDefault
+  const getStyleClass = (type: StreamMessage['type']) => {
+    switch (type) {
+      case 'error':
+        return classes.styleError
+      case 'warn':
+        return classes.styleWarn
+      default:
+        return classes.styleDefault
+    }
+  }
 
   return (
-    <div className={clsx(classes.root, styleClass, className)} {...props}>
-      {stream.map((text, idx) => (
-        <p key={idx}>{text}</p>
+    <div className={clsx(classes.root, className)} {...props}>
+      {stream.map((message, idx) => (
+        <p key={idx} className={getStyleClass(message.type)}>
+          {message.text}
+        </p>
       ))}
       <AlwaysScrollToBottom />
     </div>

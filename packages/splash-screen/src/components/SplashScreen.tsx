@@ -59,12 +59,9 @@ export const SplashScreen = ({ title }: SplashScreenProps): JSX.Element => {
               <Typography>{isLogExpanded ? 'Hide log' : 'Show log'}</Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <LogContainer streamType="default" className={classes.logContainer} />
+              <LogContainer className={classes.logContainer} hideWhenEmpty />
             </AccordionDetails>
           </Accordion>
-        </Grid>
-        <Grid item className={classes.logContainerWrapper}>
-          <LogContainer streamType="error" hideWhenEmpty className={classes.logContainer} />
         </Grid>
       </Grid>
     </div>

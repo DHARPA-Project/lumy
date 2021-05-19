@@ -65,7 +65,7 @@ async function createInstallerWindow() {
     height: 400,
     frame: false,
     transparent: true,
-    alwaysOnTop: true,
+    // alwaysOnTop: true,
     webPreferences: {
       preload: path.join(__dirname, 'installerPreload.js')
     }
