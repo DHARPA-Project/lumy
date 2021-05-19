@@ -136,6 +136,7 @@ export class NetworkForce extends LitElement {
       <svg>
         <g class="edges"></g>
         <g class="nodes"></g>
+        <g class="texts"></g>
       </svg>
     `
   }
@@ -182,6 +183,7 @@ export class NetworkForce extends LitElement {
 
     const edgesGroup = svg.select('g.edges').attr('stroke', '#999').attr('stroke-opacity', 0.6)
     const nodesGroup = svg.select('g.nodes').attr('stroke', '#fff').attr('stroke-width', 1.5)
+    const textsGroup = svg.select('g.texts')
 
     const link = edgesGroup
       .selectAll('line')
@@ -226,15 +228,16 @@ export class NetworkForce extends LitElement {
         this.dispatchEvent(new CustomEvent('node-hovered-out'))
       })
 
-    const texts = svg
-      .selectAll('texts')
+    // console.log(this.currentGraphNodes)
+
+    const texts = textsGroup
+      .selectAll('.node-labels')
       .data(this.currentGraphNodes)
-      .enter()
-      .append('text')
+      .join('text')
+      .attr('dx', 9)
+      .attr('dy', '0.35em')
+      .attr('class', 'node-labels')
       .attr('font-family', 'sans-serif')
-      .attr('dx', 12)
-      .attr('dy', '.35em')
-      .text(d => d.metadata.label)
 
     simulation.on('tick', () => {
       link
@@ -245,7 +248,10 @@ export class NetworkForce extends LitElement {
 
       node.attr('cx', d => d.x ?? 0).attr('cy', d => d.y ?? 0)
 
-      texts.attr('x', d => d.x).attr('y', d => d.y)
+      texts
+        .attr('x', d => d.x)
+        .attr('y', d => d.y)
+        .text(d => d.metadata.label)
     })
   }
 
