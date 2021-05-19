@@ -8,6 +8,7 @@ export interface NodeMetadata {
   id: MetadataId
   group: string
   scaler?: number
+  label: string
   [key: string]: unknown
 }
 
@@ -225,6 +226,16 @@ export class NetworkForce extends LitElement {
         this.dispatchEvent(new CustomEvent('node-hovered-out'))
       })
 
+    const texts = svg
+      .selectAll('texts')
+      .data(this.currentGraphNodes)
+      .enter()
+      .append('text')
+      .attr('font-family', 'sans-serif')
+      .attr('dx', 12)
+      .attr('dy', '.35em')
+      .text(d => d.metadata.label)
+
     simulation.on('tick', () => {
       link
         .attr('x1', d => (d.source as GraphNodeDatum).x)
@@ -233,6 +244,8 @@ export class NetworkForce extends LitElement {
         .attr('y2', d => (d.target as GraphNodeDatum).y)
 
       node.attr('cx', d => d.x ?? 0).attr('cy', d => d.y ?? 0)
+
+      texts.attr('x', d => d.x).attr('y', d => d.y)
     })
   }
 
