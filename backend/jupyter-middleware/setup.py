@@ -32,7 +32,8 @@ setup_args = dict(
         'dataclasses-json>=0.5.2',
         'pyyaml',
         'kiara@git+https://github.com/DHARPA-Project/kiara.git@main#egg=kiara',
-        'pandas>=1.2.4'
+        'pandas>=1.2.4',
+        'appdirs>=1.4.4'
     ],
     zip_safe=False,
     include_package_data=True,

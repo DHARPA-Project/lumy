@@ -4,7 +4,10 @@ const webpack = require('webpack')
 const HTMLWebPackPlugin = require('html-webpack-plugin')
 
 module.exports = {
-  entry: { index: './src/webapp/index.ts' },
+  entry: {
+    index: './src/webapp/index.ts',
+    installer: './src/webapp/installer/index.tsx'
+  },
   output: {
     filename: '[name].bundle.js',
     path: path.resolve(__dirname, 'dist/webapp')
@@ -127,7 +130,13 @@ module.exports = {
   plugins: [
     new HTMLWebPackPlugin({
       filename: 'index.html',
-      template: path.join(__dirname, 'src', 'webapp', 'index.html')
+      template: path.join(__dirname, 'src', 'webapp', 'index.html'),
+      chunks: ['index']
+    }),
+    new HTMLWebPackPlugin({
+      filename: 'installer.html',
+      template: path.join(__dirname, 'src', 'webapp', 'installer', 'index.html'),
+      chunks: ['installer']
     }),
     new webpack.DefinePlugin({
       'process.env.USE_JUPYTER_LAB': JSON.stringify(false)

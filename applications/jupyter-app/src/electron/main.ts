@@ -4,8 +4,10 @@ import { app, BrowserWindow } from 'electron'
 import { spawn, ChildProcess } from 'child_process'
 import treeKill from 'tree-kill'
 import { waitForPort, getFreePort } from './networkUtils'
+import { InstallerComm } from './installer'
 
 const AppMainHtmlFile = path.resolve(__dirname, '../webapp/index.html')
+const InstallerHtmlFile = path.resolve(__dirname, '../webapp/installer.html')
 
 const DefaultStdoutHandler = (data: unknown) => console.log(`Jupyter: ${data}`)
 const DefaultStderrHandler = (data: unknown) => console.error(`Jupyter: ${data}`)
@@ -42,17 +44,36 @@ function generateToken(length: number): string {
     .slice(0, length)
 }
 
-function createWindow(port: number, token: string) {
+async function createWindow(port: number, token: string) {
   const win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 960,
+    height: 800,
+    show: false,
     webPreferences: {
       additionalArguments: [`--jupyter-baseUrl=http://localhost:${port}/`, `--jupyter-token=${token}`],
       preload: path.join(__dirname, 'preload.js')
     }
   })
 
-  return win.loadFile(AppMainHtmlFile)
+  await win.loadFile(AppMainHtmlFile)
+  return win
+}
+
+async function createInstallerWindow() {
+  const win = new BrowserWindow({
+    width: 700,
+    height: 300,
+    frame: false,
+    transparent: true,
+    titleBarStyle: 'customButtonsOnHover',
+    // alwaysOnTop: true,
+    webPreferences: {
+      preload: path.join(__dirname, 'installerPreload.js')
+    }
+  })
+
+  await win.loadFile(InstallerHtmlFile)
+  return win
 }
 
 function execute(
@@ -71,17 +92,22 @@ function execute(
   })
 }
 
+async function shouldRunInstaller(): Promise<boolean> {
+  const installedCheckExitCode = await execute(
+    getRunScript(),
+    ['--dry-run'],
+    (msg: unknown) => console.log(`[Install check]: ${msg}`),
+    (msg: unknown) => console.log(`[Install check] (ERROR): ${msg}`)
+  )
+  return installedCheckExitCode !== 0
+}
+
 async function installBackend(
   stdoutHandler: (data: unknown) => void,
-  stderrHandler: (data: unknown) => void,
-  forceInstall = false
+  stderrHandler: (data: unknown) => void
 ): Promise<void> {
-  const installedCheckExitCode = await execute(getRunScript(), ['--check-env'], stdoutHandler, stderrHandler)
-  if (installedCheckExitCode !== 0 || forceInstall) {
-    const installerExitCode = await execute(getInstallScript(), [], stdoutHandler, stderrHandler)
-    if (installerExitCode !== 0)
-      throw new Error(`Installer returned a nonzero exit code: ${installerExitCode}`)
-  }
+  const installerExitCode = await execute(getInstallScript(), [], stdoutHandler, stderrHandler)
+  if (installerExitCode !== 0) throw new Error(`Installer returned a nonzero exit code: ${installerExitCode}`)
 }
 
 function startJupyterServerProcess(
@@ -123,6 +149,41 @@ function startJupyterServerProcess(
   })
 }
 
+/**
+ * Run installer if needed.
+ * @return a tuple of:
+ *  - browser window if installer did run. Otherwise `undefined`.
+ *  - `true` if installation was successful. `false` otherwise.
+ */
+async function maybeRunInstaller(): Promise<[BrowserWindow | undefined, boolean]> {
+  const forceInstall = String(process.env.FORCE_INSTALL) === '1'
+
+  if (!forceInstall) {
+    try {
+      const shouldInstall = await shouldRunInstaller()
+      if (!shouldInstall) return [undefined, true]
+    } catch (e) {
+      console.error(`Errors occurred while checking whether installation is needed: ${e}`)
+      return [undefined, false]
+    }
+  }
+
+  const installerWindow = await createInstallerWindow()
+  const installerComm = new InstallerComm(installerWindow.webContents)
+
+  try {
+    await installBackend(
+      installerComm.onStdout.bind(installerComm),
+      installerComm.onStderr.bind(installerComm)
+    )
+    installerComm.finish('ok', 'Installation successfull!')
+    return [installerWindow, true]
+  } catch (e) {
+    installerComm.finish('error', String(e))
+    return [installerWindow, false]
+  }
+}
+
 async function main() {
   await app.whenReady()
 
@@ -143,31 +204,19 @@ async function main() {
     }
   }
 
-  await installBackend(
-    data => console.log(`Installer: ${data}`),
-    data => console.error(`Installer: ${data}`),
-    String(process.env.FORCE_INSTALL) === '1'
-  )
-
-  const serverProcess = await startJupyterServerProcess(port, token, serverExitedHandler)
-  await createWindow(port, token)
+  let serverProcess: ChildProcess = undefined
 
   app.on('window-all-closed', () => {
     app.quit()
   })
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow(port, token)
-    }
-  })
   app.on('before-quit', event => {
-    if (serverProcess.signalCode == null) {
+    if (serverProcess != null && serverProcess?.signalCode == null) {
       // the server process is still running - we need to exit first.
       event.preventDefault()
       console.log('Stopping server process...')
       isReadyToExit = true
 
-      treeKill(serverProcess.pid, err => {
+      treeKill(serverProcess?.pid, err => {
         if (err != null) console.error(`Could not kill backend process: ${err}`)
       })
     } else {
@@ -175,6 +224,20 @@ async function main() {
       process.exit(0)
     }
   })
+
+  const [installerWindow, installationIsSuccessfull] = await maybeRunInstaller()
+  if (installationIsSuccessfull) {
+    // wait a second to let the user read the message.
+    await new Promise(res => setTimeout(res, 1000))
+
+    console.log('Starting main process')
+    serverProcess = await startJupyterServerProcess(port, token, serverExitedHandler)
+    console.log('Creating main window')
+    const mainWindow = await createWindow(port, token)
+    mainWindow.show()
+    installerWindow?.destroy()
+    console.log('Platform is ready')
+  }
 }
 
 main()

@@ -5,8 +5,11 @@ from uuid import uuid4
 
 import pandas as pd
 import pyarrow as pa
+from appdirs import user_data_dir
 
-DefaultFilesPath = Path.home() / '.dharpa' / 'mock-data-registry'
+APP_NAME = 'Lumy'
+
+DefaultFilesPath = Path(user_data_dir(appname=APP_NAME)) / 'mock-data-registry'
 
 logger = logging.getLogger(__name__)
 

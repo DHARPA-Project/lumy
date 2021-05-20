@@ -1,5 +1,5 @@
-appId: "org.dharpa.vre"
-productName: "DHARPA VRE"
+appId: "org.dharpa.lumy"
+productName: "Lumy"
 directories:
   # buildResources: dist
   output: electron_dist
