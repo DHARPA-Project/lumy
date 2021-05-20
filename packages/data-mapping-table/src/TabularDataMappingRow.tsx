@@ -89,7 +89,7 @@ const TabularDataMappingRow = ({
             <div className={classes.cellContainer}>
               <Checkbox
                 className={classes.checkbox}
-                color="default"
+                color="primary"
                 checked={isDataSetMappedInDataSource(rowId, dataSet.name)}
                 onChange={() => handleToggleIsSourceOfDataSet(dataSet.name)}
               />
