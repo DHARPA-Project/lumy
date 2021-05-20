@@ -7,7 +7,7 @@ const SplashScreenApp = (): JSX.Element => {
   const context = React.useRef(new MockContext())
   return (
     <SplashScreenContextProvider value={context.current}>
-      <SplashScreen title="Test splash screen" />
+      <SplashScreen title="Lumy" subtitle="Test splash screen" />
     </SplashScreenContextProvider>
   )
 }

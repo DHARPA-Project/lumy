@@ -46,8 +46,8 @@ function generateToken(length: number): string {
 
 async function createWindow(port: number, token: string) {
   const win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 960,
+    height: 800,
     show: false,
     webPreferences: {
       additionalArguments: [`--jupyter-baseUrl=http://localhost:${port}/`, `--jupyter-token=${token}`],
@@ -61,10 +61,11 @@ async function createWindow(port: number, token: string) {
 
 async function createInstallerWindow() {
   const win = new BrowserWindow({
-    width: 600,
-    height: 400,
+    width: 700,
+    height: 300,
     frame: false,
     transparent: true,
+    titleBarStyle: 'customButtonsOnHover',
     // alwaysOnTop: true,
     webPreferences: {
       preload: path.join(__dirname, 'installerPreload.js')
@@ -156,14 +157,15 @@ function startJupyterServerProcess(
  */
 async function maybeRunInstaller(): Promise<[BrowserWindow | undefined, boolean]> {
   const forceInstall = String(process.env.FORCE_INSTALL) === '1'
-  if (forceInstall) return [undefined, true]
 
-  try {
-    const shouldInstall = await shouldRunInstaller()
-    if (!shouldInstall) return [undefined, true]
-  } catch (e) {
-    console.error(`Errors occurred while checking whether installation is needed: ${e}`)
-    return [undefined, false]
+  if (!forceInstall) {
+    try {
+      const shouldInstall = await shouldRunInstaller()
+      if (!shouldInstall) return [undefined, true]
+    } catch (e) {
+      console.error(`Errors occurred while checking whether installation is needed: ${e}`)
+      return [undefined, false]
+    }
   }
 
   const installerWindow = await createInstallerWindow()
@@ -174,7 +176,7 @@ async function maybeRunInstaller(): Promise<[BrowserWindow | undefined, boolean]
       installerComm.onStdout.bind(installerComm),
       installerComm.onStderr.bind(installerComm)
     )
-    installerComm.finish('ok', 'Installation successfull')
+    installerComm.finish('ok', 'Installation successfull!')
     return [installerWindow, true]
   } catch (e) {
     installerComm.finish('error', String(e))
@@ -204,24 +206,8 @@ async function main() {
 
   let serverProcess: ChildProcess = undefined
 
-  const [installerWindow, installationIsSuccessfull] = await maybeRunInstaller()
-  if (installationIsSuccessfull) {
-    // wait a second to let the user read the message.
-    await new Promise(res => setTimeout(res, 1000))
-
-    serverProcess = await startJupyterServerProcess(port, token, serverExitedHandler)
-    const mainWindow = await createWindow(port, token)
-    mainWindow.show()
-    installerWindow?.destroy()
-  }
-
   app.on('window-all-closed', () => {
     app.quit()
-  })
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow(port, token)
-    }
   })
   app.on('before-quit', event => {
     if (serverProcess != null && serverProcess?.signalCode == null) {
@@ -238,6 +224,20 @@ async function main() {
       process.exit(0)
     }
   })
+
+  const [installerWindow, installationIsSuccessfull] = await maybeRunInstaller()
+  if (installationIsSuccessfull) {
+    // wait a second to let the user read the message.
+    await new Promise(res => setTimeout(res, 1000))
+
+    console.log('Starting main process')
+    serverProcess = await startJupyterServerProcess(port, token, serverExitedHandler)
+    console.log('Creating main window')
+    const mainWindow = await createWindow(port, token)
+    mainWindow.show()
+    installerWindow?.destroy()
+    console.log('Platform is ready')
+  }
 }
 
 main()

@@ -10,7 +10,10 @@ export default makeStyles(theme => ({
     backgroundColor: theme.palette.grey[bgIntensity],
     padding: theme.spacing(1, 2),
     fontFamily: 'Roboto Mono',
-    fontSize: theme.typography.fontSize * 0.8
+    fontSize: theme.typography.fontSize * 0.8,
+    '& p': {
+      overflowWrap: 'anywhere'
+    }
   },
   styleDefault: {
     color: theme.palette.getContrastText(theme.palette.grey[bgIntensity])

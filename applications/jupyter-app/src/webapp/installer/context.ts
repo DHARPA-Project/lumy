@@ -1,18 +1,12 @@
-import { FinishMessage, ISplashScreenContext } from '@dharpa-vre/splash-screen'
+import { FinishMessage, ISplashScreenContext, StreamMessage } from '@dharpa-vre/splash-screen'
 
-const ChannelMap = {
-  default: 'stdoutMessage',
-  error: 'stderrMessage'
-}
+const StreamMessageChannel = 'streamMessage'
 const FinishMessageChannel = 'installationComplete'
 
 type Listener<T> = (event: Event, msg: T) => void
 interface IComm {
   on<T>(channel: string, cb: Listener<T>): void
   off<T>(channel: string, cb: Listener<T>): void
-}
-interface Message {
-  message: string
 }
 
 declare global {
@@ -24,25 +18,16 @@ declare global {
 const { comm } = window
 
 export class ElectronContext implements ISplashScreenContext {
-  _defaultItems: string[] = []
-  _errorItems: string[] = []
+  _items: StreamMessage[] = []
   _finishMessage: FinishMessage
 
-  onStreamItemsUpdated(type: 'default' | 'error', callback: (value: string[]) => void): () => void {
-    const channelId = ChannelMap[type]
-    if (channelId == null) throw new Error(`Unknown type: ${type}`)
-
-    const handler = (_: Event, message: Message) => {
-      if (type === 'error') {
-        this._errorItems = this._errorItems.concat([message.message])
-        callback(this._errorItems)
-      } else {
-        this._defaultItems = this._defaultItems.concat([message.message])
-        callback(this._defaultItems)
-      }
+  onStreamItemsUpdated(callback: (value: StreamMessage[]) => void): () => void {
+    const handler = (_: Event, message: StreamMessage) => {
+      this._items = this._items.concat([message])
+      callback(this._items)
     }
-    comm.on(channelId, handler)
-    return () => comm.off(channelId, handler)
+    comm.on(StreamMessageChannel, handler)
+    return () => comm.off(StreamMessageChannel, handler)
   }
   onFinishMessageAvailable(callback: (value: FinishMessage) => void): () => void {
     const handler = (_: Event, message: FinishMessage) => {

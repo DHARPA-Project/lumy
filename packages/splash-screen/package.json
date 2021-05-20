@@ -17,7 +17,8 @@
     "build:lib": "tsc"
   },
   "dependencies": {
-    "@fontsource/roboto-mono": "4"
+    "@fontsource/roboto-mono": "4",
+    "@fontsource/roboto": "4"
   },
   "peerDependencies": {
     "react": "17",
