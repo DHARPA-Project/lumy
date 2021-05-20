@@ -76,7 +76,7 @@ class NetworkAnalysisDataMappingModule(KiaraModule):
     def process(self, inputs: StepInputs, outputs: StepOutputs) -> None:
         outputs.nodes = build_table_from_mapping(
             inputs.nodesMappingTable,
-            ['id', 'label']
+            ['id', 'label', 'group']
         )
         outputs.edges = build_table_from_mapping(
             inputs.edgesMappingTable,

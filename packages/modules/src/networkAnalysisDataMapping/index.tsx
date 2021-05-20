@@ -33,7 +33,7 @@ interface OutputValues {
 
 type Props = ModuleProps<InputValues, OutputValues>
 
-const nodeFields = ['id', 'label']
+const nodeFields = ['id', 'label', 'group']
 const edgeFields = ['srcId', 'tgtId', 'weight']
 
 const networkAnalysisDataSets = [
