@@ -5,7 +5,7 @@ set -e
 trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
 trap 'echo "\"${last_command}\" command returned exit code $?."' EXIT
 
-app_name="DHARPA VRE"
+app_name="Lumy"
 
 # https://pypi.org/project/appdirs/
 app_data_dir="${HOME}/Library/Application Support/${app_name}"
@@ -18,7 +18,7 @@ miniconda_app_dir="${app_data_dir}/miniconda"
 # https://github.com/conda/constructor/pull/449
 # Meanwhile we use an alternative installation prefix and then
 # create a symbolic link to it in the app dir.
-miniconda_install_path="${HOME}/.local/share/dharpa/miniconda"
+miniconda_install_path="${HOME}/.local/share/${app_name}/miniconda"
 
 
 # https://docs.conda.io/projects/continuumio-conda/en/latest/user-guide/install/macos.html
