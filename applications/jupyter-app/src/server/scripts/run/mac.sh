@@ -30,4 +30,6 @@ fi
 
 if [ "$1" != "--dry-run" ]; then
   python "${script_dir}/../../main.py"
+else
+  echo "Dry run. Not starting the app."
 fi
