@@ -14,15 +14,12 @@ import { DataRepositoryItemStructure } from '@dharpa-vre/client-core'
 
 import useStyles from './TabularDataMappingForm.styles'
 
-import TabularDataMappingRow from './TabularDataMappingRow'
+import TabularDataMappingRow, { IRequiredDataSet } from './TabularDataMappingRow'
 
 type CorpusStructure = DataRepositoryItemStructure
 type CorpusTableType = ArrowTable<CorpusStructure>
 
-export interface IRequiredDataSetProp {
-  name: string
-  requiredFields: string[]
-}
+export type IRequiredDataSetProp = IRequiredDataSet
 
 type TabularDataMappingFormProps = {
   corpusPage: CorpusTableType

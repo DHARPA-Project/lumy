@@ -58,8 +58,9 @@ const TabularDataMappingRow = ({
       clearMappingsForDataSet(rowId, toggledDataSetName)
     } else {
       // ... otherwise, give the underlying fields a blank string value to make them visible
-      const fields = requiredDataSets.find(dataSet => dataSet.name === toggledDataSetName).requiredFields
-      fields.forEach(fieldName => setColumnMappedToField(rowId, fieldName, ''))
+      const dataSet = requiredDataSets.find(dataSet => dataSet.name === toggledDataSetName)
+      const requiredFields = dataSet?.requiredFields ?? []
+      requiredFields.forEach(fieldName => setColumnMappedToField(rowId, fieldName, undefined))
     }
   }
 
@@ -70,7 +71,7 @@ const TabularDataMappingRow = ({
     // if chosen column already mapped to another field, set error message, clear value, and return
     if (fieldCorrespondingToColumn) {
       setErrorMessage(`column ${selectedColumn} already mapped to field "${fieldCorrespondingToColumn}"`)
-      setColumnMappedToField(rowId, fieldName, '')
+      setColumnMappedToField(rowId, fieldName, undefined)
       return
     }
 
