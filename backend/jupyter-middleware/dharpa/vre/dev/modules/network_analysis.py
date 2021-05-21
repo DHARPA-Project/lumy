@@ -60,7 +60,7 @@ def build_table_from_mapping(
     # Converting mixed type columns to string.
     # Otherwise pyarrow will throw an exception
     for column in table:
-        if table[column].dtype == np.dtype('O'):
+        if table[column].dtype == np.dtype(np.object):
             table[column] = table[column].astype('str')
 
     return pa.Table.from_pandas(table, preserve_index=False)
