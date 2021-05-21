@@ -28,18 +28,40 @@ def build_table_from_mapping(
 
     table = pd.DataFrame()
 
+    def get_data_item_for_column_mapping(column_mapping):
+        data_item = cast(pa.Table, MockDataRegistry
+                         .get_instance()
+                         .get_file_content(column_mapping['id']))
+        data_item_df = data_item.to_pandas()
+        if column_mapping['column'] not in data_item_df:
+            return None
+        else:
+            return data_item_df[column_mapping['column']]
+
     for column_name in column_names:
         column_mappings = mapping.get(column_name, [])
         if len(column_mappings) > 0:
-            table[column_name] = pd.concat([
-                cast(pa.Table, MockDataRegistry
-                     .get_instance().get_file_content(m['id']))
-                .to_pandas()[m['column']]
+            items = [
+                get_data_item_for_column_mapping(m)
                 for m in column_mappings
-            ])
+            ]
+            non_null_items = [
+                item
+                for item in items
+                if item is not None
+            ]
+            if len(non_null_items) > 0:
+                table[column_name] = pd.concat(non_null_items)
 
     if len(table) == 0:
         table = pd.DataFrame(columns=column_names)
+
+    # NOTE: this is probably not right, but ok to start with
+    # Converting mixed type columns to string.
+    # Otherwise pyarrow will throw an exception
+    for column in table:
+        if table[column].dtype.name == 'object':
+            table[column] = table[column].astype('str')
 
     return pa.Table.from_pandas(table, preserve_index=False)
 
@@ -131,7 +153,8 @@ class NetworkAnalysisDataVisModule(KiaraModule):
         )
 
         nodes = inputs.nodes.to_pandas()
-        graph.add_nodes_from(nodes.set_index('id').to_dict('index').items())
+        graph.add_nodes_from(nodes.set_index(
+            'id').to_dict('index').items())
 
         if len(nodes) > 0:
             degree_dict = dict(graph.degree(graph.nodes()))
