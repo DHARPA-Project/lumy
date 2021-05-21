@@ -10,7 +10,6 @@ app_name="Lumy"
 # https://pypi.org/project/appdirs/
 app_data_dir="${HOME}/Library/Application Support/${app_name}"
 miniconda_app_dir="${app_data_dir}/miniconda"
-# miniconda_app_dir=$(printf %q "$miniconda_app_dir_unescaped")
 
 # As of 17/05/2021 miniconda does not support spaces in the prefix path.
 # https://github.com/ContinuumIO/anaconda-issues/issues/716
