@@ -12,3 +12,7 @@ extraMetadata:
   main: dist/electron/main.js
 mac:
   target: default
+linux:
+  target: tar.gz
+win:
+  target: nsis
