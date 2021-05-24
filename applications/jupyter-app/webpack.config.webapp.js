@@ -14,7 +14,7 @@ module.exports = {
   },
   // a flag disabling source map. It seems that there are problems
   // when building this on Windows.
-  devtool: String(process.env.NO_SOURCE_MAP) === '1' ? undefined : 'source-map',
+  devtool: String(process.env.NO_SOURCE_MAP) === 'true' ? undefined : 'source-map',
   // stats: 'detailed',
   mode: 'development',
   // watch: true,
