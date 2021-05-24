@@ -72,6 +72,9 @@ function execute(
 }
 
 async function shouldRunInstaller(): Promise<boolean> {
+  // if conda is being skipped, do not attempt to run the installer
+  if (SkipCondaRun) return false
+
   const [exe, args] = getRunAppAndArgs('dry-run', ForcePowerShell)
   const installedCheckExitCode = await execute(
     exe,
