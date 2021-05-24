@@ -12,7 +12,9 @@ module.exports = {
     filename: '[name].bundle.js',
     path: path.resolve(__dirname, 'dist/webapp')
   },
-  devtool: 'source-map',
+  // a flag disabling source map. It seems that there are problems
+  // when building this on Windows.
+  devtool: process.env.NO_SOURCE_MAP ? undefined : 'source-map',
   // stats: 'detailed',
   mode: 'development',
   // watch: true,
