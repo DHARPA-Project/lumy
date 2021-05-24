@@ -75,7 +75,7 @@ Same as above, but with the `--skip-conda` argument.
 
 ## Starting the web app
 
-Build the VRE web app entry point.
+Build the Lumy web app entry point.
 
 ```
 yarn webapp:build
