@@ -73,7 +73,6 @@ function execute(
 
 async function shouldRunInstaller(): Promise<boolean> {
   const [exe, args] = getRunAppAndArgs('dry-run', ForcePowerShell)
-  console.log('***', exe, args)
   const installedCheckExitCode = await execute(
     exe,
     args,

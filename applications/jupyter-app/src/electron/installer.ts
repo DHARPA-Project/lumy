@@ -35,11 +35,11 @@ const getRunScript = (forcePowerShell = false): string => {
   const getPath = (filename: string) => path.resolve(__dirname, `../../src/server/scripts/run/${filename}`)
   switch (process.platform) {
     case 'darwin':
-      return forcePowerShell ? getPath('win.ps1') : getPath('mac.sh')
+      return forcePowerShell ? getPath('win.ps1') : getPath('macnix.sh')
     case 'win32':
       return getPath('win.ps1')
     default:
-      throw new Error('No start script for *nix yet.')
+      return getPath('macnix.sh')
   }
 }
 
@@ -48,11 +48,11 @@ const getInstallScript = (forcePowerShell = false): string => {
     path.resolve(__dirname, `../../src/server/scripts/install/${filename}`)
   switch (process.platform) {
     case 'darwin':
-      return forcePowerShell ? getPath('win.ps1') : getPath('mac.sh')
+      return forcePowerShell ? getPath('win.ps1') : getPath('macnix.sh')
     case 'win32':
       return getPath('win.ps1')
     default:
-      throw new Error('No start script for *nix yet.')
+      return getPath('macnix.sh')
   }
 }
 

@@ -7,21 +7,29 @@ trap 'echo "\"${last_command}\" command returned exit code $?."' EXIT
 
 app_name="Lumy"
 
-# https://pypi.org/project/appdirs/
-app_data_dir="${HOME}/Library/Application Support/${app_name}"
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  # https://pypi.org/project/appdirs/
+  app_data_dir="${HOME}/Library/Application Support/${app_name}"
+
+  # As of 17/05/2021 miniconda does not support spaces in the prefix path.
+  # https://github.com/ContinuumIO/anaconda-issues/issues/716
+  # There is a PR waiting to be accepted that will fix this issue:
+  # https://github.com/conda/constructor/pull/449
+  # Meanwhile we use an alternative installation prefix and then
+  # create a symbolic link to it in the app dir.
+  miniconda_install_path="${HOME}/.local/share/${app_name}/miniconda"
+
+  # https://docs.conda.io/projects/continuumio-conda/en/latest/user-guide/install/macos.html
+  miniconda_installer_url="https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh"
+else
+  app_data_dir="${HOME}/.local/share/${app_name}"
+  miniconda_install_path="${app_data_dir}/miniconda"
+
+  miniconda_installer_url="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
+fi
+
 miniconda_app_dir="${app_data_dir}/miniconda"
 
-# As of 17/05/2021 miniconda does not support spaces in the prefix path.
-# https://github.com/ContinuumIO/anaconda-issues/issues/716
-# There is a PR waiting to be accepted that will fix this issue:
-# https://github.com/conda/constructor/pull/449
-# Meanwhile we use an alternative installation prefix and then
-# create a symbolic link to it in the app dir.
-miniconda_install_path="${HOME}/.local/share/${app_name}/miniconda"
-
-
-# https://docs.conda.io/projects/continuumio-conda/en/latest/user-guide/install/macos.html
-miniconda_installer_url="https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh"
 miniconda_installer_file="miniconda.sh"
 
 tmp_dir=${TMPDIR}
@@ -59,7 +67,9 @@ function run_installer {
 
 function create_link {
   echo "Creating miniconda link..."
-  if [ ! -L "${miniconda_app_dir}" ]; then
+  if [ "${miniconda_install_path}" == "${miniconda_app_dir}" ]; then
+    echo "Not creating symlink because it is the same directory."
+  elif [ ! -L "${miniconda_app_dir}" ]; then
     mkdir -p "${app_data_dir}"
     ln -s ${miniconda_install_path} "${miniconda_app_dir}"
     echo "Created link from ${miniconda_install_path} to '${miniconda_app_dir}'"
