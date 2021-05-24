@@ -4,7 +4,7 @@ import { app, BrowserWindow } from 'electron'
 import { spawn, ChildProcess } from 'child_process'
 import treeKill from 'tree-kill'
 import { waitForPort, getFreePort } from './networkUtils'
-import { InstallerComm } from './installer'
+import { InstallerComm, getRunAppAndArgs, getInstallAppAndArgs } from './installer'
 
 const AppMainHtmlFile = path.resolve(__dirname, '../webapp/index.html')
 const InstallerHtmlFile = path.resolve(__dirname, '../webapp/installer.html')
@@ -12,30 +12,9 @@ const InstallerHtmlFile = path.resolve(__dirname, '../webapp/installer.html')
 const DefaultStdoutHandler = (data: unknown) => console.log(`Jupyter: ${data}`)
 const DefaultStderrHandler = (data: unknown) => console.error(`Jupyter: ${data}`)
 
-const getRunScript = (): string => {
-  const getPath = (filename: string) => path.resolve(__dirname, `../../src/server/scripts/run/${filename}`)
-  switch (process.platform) {
-    case 'darwin':
-      return getPath('mac.sh')
-    case 'win32':
-      throw new Error('No start script for windows yet.')
-    default:
-      throw new Error('No start script for *nix yet.')
-  }
-}
-
-const getInstallScript = (): string => {
-  const getPath = (filename: string) =>
-    path.resolve(__dirname, `../../src/server/scripts/install/${filename}`)
-  switch (process.platform) {
-    case 'darwin':
-      return getPath('mac.sh')
-    case 'win32':
-      throw new Error('No start script for windows yet.')
-    default:
-      throw new Error('No start script for *nix yet.')
-  }
-}
+const ForcePowerShell = String(process.env.FORCE_POWERSHELL) === '1'
+const SkipCondaRun = String(process.env.SKIP_CONDA) === '1'
+const ForceInstall = String(process.env.FORCE_INSTALL) === '1'
 
 function generateToken(length: number): string {
   return crypto
@@ -93,9 +72,13 @@ function execute(
 }
 
 async function shouldRunInstaller(): Promise<boolean> {
+  // if conda is being skipped, do not attempt to run the installer
+  if (SkipCondaRun) return false
+
+  const [exe, args] = getRunAppAndArgs('dry-run', ForcePowerShell)
   const installedCheckExitCode = await execute(
-    getRunScript(),
-    ['--dry-run'],
+    exe,
+    args,
     (msg: unknown) => console.log(`[Install check]: ${msg}`),
     (msg: unknown) => console.log(`[Install check] (ERROR): ${msg}`)
   )
@@ -106,7 +89,8 @@ async function installBackend(
   stdoutHandler: (data: unknown) => void,
   stderrHandler: (data: unknown) => void
 ): Promise<void> {
-  const installerExitCode = await execute(getInstallScript(), [], stdoutHandler, stderrHandler)
+  const [exe, args] = getInstallAppAndArgs(ForcePowerShell)
+  const installerExitCode = await execute(exe, args, stdoutHandler, stderrHandler)
   if (installerExitCode !== 0) throw new Error(`Installer returned a nonzero exit code: ${installerExitCode}`)
 }
 
@@ -117,12 +101,12 @@ function startJupyterServerProcess(
   stdoutHandler?: (data: unknown) => void,
   stderrHandler?: (data: unknown) => void
 ): Promise<ChildProcess> {
-  const mainFile = getRunScript()
+  const method = SkipCondaRun ? 'skip-conda' : 'default'
+  const [exe, args] = getRunAppAndArgs(method, ForcePowerShell)
   const cwd = path.resolve(__dirname, '../..')
-  const args = String(process.env.SKIP_CONDA) === '1' ? ['--skip-conda'] : []
 
   return new Promise((res, rej) => {
-    const p = spawn(mainFile, args, {
+    const p = spawn(exe, args, {
       cwd,
       env: {
         ...process.env,
@@ -156,9 +140,7 @@ function startJupyterServerProcess(
  *  - `true` if installation was successful. `false` otherwise.
  */
 async function maybeRunInstaller(): Promise<[BrowserWindow | undefined, boolean]> {
-  const forceInstall = String(process.env.FORCE_INSTALL) === '1'
-
-  if (!forceInstall) {
+  if (!ForceInstall) {
     try {
       const shouldInstall = await shouldRunInstaller()
       if (!shouldInstall) return [undefined, true]
@@ -210,7 +192,7 @@ async function main() {
     app.quit()
   })
   app.on('before-quit', event => {
-    if (serverProcess != null && serverProcess?.signalCode == null) {
+    if (serverProcess != null && serverProcess?.signalCode == null && serverProcess?.exitCode == null) {
       // the server process is still running - we need to exit first.
       event.preventDefault()
       console.log('Stopping server process...')

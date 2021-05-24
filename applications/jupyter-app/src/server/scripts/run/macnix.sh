@@ -6,6 +6,13 @@ trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
 trap 'echo "\"${last_command}\" command returned exit code $?."' EXIT
 
 app_name="Lumy"
+
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  app_data_dir="${HOME}/Library/Application Support/${app_name}"
+else
+  app_data_dir="${HOME}/.local/share/${app_name}"
+fi
+
 app_data_dir="${HOME}/Library/Application Support/${app_name}"
 miniconda_app_dir="${app_data_dir}/miniconda"
 default_conda_env_name="default"
@@ -30,4 +37,6 @@ fi
 
 if [ "$1" != "--dry-run" ]; then
   python "${script_dir}/../../main.py"
+else
+  echo "Dry run. Not starting the app."
 fi
