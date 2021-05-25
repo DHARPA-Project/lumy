@@ -83,10 +83,10 @@ const TabularDataMappingRow = ({
   return (
     <>
       <TableRow className={classes.row}>
-        <TableCell className={classes.borderless}>{rowName}</TableCell>
+        <TableCell className={classes.tableCell}>{rowName}</TableCell>
 
         {requiredDataSets.map(dataSet => (
-          <TableCell className={classes.borderless} key={dataSet.name}>
+          <TableCell className={classes.tableCell} key={dataSet.name}>
             <div className={classes.cellContainer}>
               <Checkbox
                 className={classes.checkbox}
