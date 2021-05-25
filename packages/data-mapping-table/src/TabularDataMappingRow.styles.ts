@@ -17,9 +17,10 @@ export default makeStyles(theme => ({
     flexGrow: 1
   },
   formControl: {
-    minWidth: theme.spacing(15),
+    minWidth: theme.spacing(10),
     '&:not(:last-child)': {
-      marginRight: theme.spacing(2)
+      marginRight: theme.spacing(2),
+      marginBottom: theme.spacing(2)
     }
   },
   errorCell: {
