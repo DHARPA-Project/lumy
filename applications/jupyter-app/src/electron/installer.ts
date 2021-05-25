@@ -56,12 +56,12 @@ const getInstallScript = (forcePowerShell = false): string => {
   }
 }
 
-const getExecutable = (forcePowerShell = false): string => {
+const getExecutable = (forcePowerShell = false): [string, string[]] => {
   switch (process.platform) {
     case 'darwin':
-      return forcePowerShell ? 'pwsh' : 'bash'
+      return forcePowerShell ? ['pwsh', []] : ['bash', []]
     case 'win32':
-      return 'powershell.exe'
+      return ['powershell.exe', ['-ExecutionPolicy Bypass']]
     default:
       throw new Error('No start script for *nix yet.')
   }
@@ -83,10 +83,12 @@ export const getRunAppAndArgs = (
     default:
       args = []
   }
-  return [getExecutable(forcePowerShell), [runScript].concat(args)]
+  const [executable, executableArgs] = getExecutable(forcePowerShell)
+  return [executable, executableArgs.concat([runScript].concat(args))]
 }
 
 export const getInstallAppAndArgs = (forcePowerShell = false): [string, string[]] => {
   const runScript = getInstallScript(forcePowerShell)
-  return [getExecutable(forcePowerShell), [runScript]]
+  const [executable, executableArgs] = getExecutable(forcePowerShell)
+  return [executable, executableArgs.concat([runScript])]
 }

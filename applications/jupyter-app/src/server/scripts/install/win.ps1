@@ -2,6 +2,8 @@
 
 $ErrorActionPreference = "Stop"
 
+$is_windows = [environment]::OSVersion.Platform.ToString().ToLower().StartsWith("win")
+
 $app_name = "Lumy"
 
 # https://pypi.org/project/appdirs/
@@ -13,17 +15,11 @@ $app_name = "Lumy"
 # Meanwhile we use an alternative installation prefix and then
 # create a symbolic link to it in the app dir.
 
-if ($IsMacOS) {
-  $app_data_dir = "${HOME}/Library/Application Support/${app_name}"
-  $miniconda_app_dir = "${app_data_dir}/miniconda"
-  $miniconda_install_path = "${HOME}/.local/share/${app_name}/miniconda"
-  # https://docs.conda.io/projects/continuumio-conda/en/latest/user-guide/install/macos.html
-  $miniconda_installer_url = "https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh"
-  $miniconda_python_executable = "${miniconda_install_path}/bin/python"
-}
-elseif ($IsWindows) {
+if ($is_windows) {
   $app_data_dir = "$HOME\Application Data\Local Settings\${app_name}\${app_name}"
-  $miniconda_install_path = "{$pwd.drive.name}\apps\${app_name}\miniconda"
+  $drive_name = $pwd.drive.name
+
+  $miniconda_install_path = "${drive_name}:\apps\${app_name}\miniconda"
   # $miniconda_app_dir = "${app_data_dir}\miniconda"
 
   # NOTE: On Windows only adminstrator can create links.
@@ -33,15 +29,32 @@ elseif ($IsWindows) {
 
   # https://docs.conda.io/projects/continuumio-conda/en/latest/user-guide/install/windows.html
   $miniconda_installer_url = "https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe"
-  $miniconda_python_executable = "${miniconda_install_path}\bin\python.exe"
+  $miniconda_python_executable = "${miniconda_install_path}\python.exe"
+}
+else {
+  # Assuming mac
+  $app_data_dir = "${HOME}/Library/Application Support/${app_name}"
+  $miniconda_app_dir = "${app_data_dir}/miniconda"
+  $miniconda_install_path = "${HOME}/.local/share/${app_name}/miniconda"
+  # https://docs.conda.io/projects/continuumio-conda/en/latest/user-guide/install/macos.html
+  $miniconda_installer_url = "https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh"
+  $miniconda_python_executable = "${miniconda_install_path}/bin/python"
 }
 
 
 $tmp_dir = [System.IO.Path]::GetTempPath()
 
-$miniconda_installer_file = "miniconda.sh"
-$miniconda_installer_file_location = Join-Path -Path $tmp_dir -ChildPath $miniconda_installer_file
-$miniconda_hooks = Join-Path $miniconda_app_dir "shell" "condabin" "conda-hook.ps1"
+if ($is_windows) {
+  $miniconda_installer_file = "miniconda.exe"
+  $miniconda_installer_file_location = "${tmp_dir}\${miniconda_installer_file}"
+  $miniconda_hooks = "${miniconda_app_dir}\shell\condabin\conda-hook.ps1"
+}
+else {
+  $miniconda_installer_file = "miniconda.sh"
+  $miniconda_installer_file_location = "${tmp_dir}/${miniconda_installer_file}"
+  $miniconda_hooks = "${miniconda_app_dir}/shell/condabin/conda-hook.ps1"
+}
+
 
 $default_conda_env_name = "default"
 
@@ -55,7 +68,7 @@ function Start-DownloadMiniconda {
     Write-Host "Miniconda installer file ${miniconda_installer_file_location} does not exist. Downloading it."
     Invoke-WebRequest -Uri $miniconda_installer_url -OutFile "${miniconda_installer_file_location}"
   }
-  if (!$IsWindows) {
+  if (!$is_windows) {
     chmod u+x "${miniconda_installer_file_location}"
     $code = $LastExitCode
     if ($code -ne 0) {
@@ -73,10 +86,10 @@ function Start-RunInstaller {
     Write-Host "Miniconda is already installed in ${miniconda_install_path}."
   }
   else {
-    New-Item -Path $miniconda_install_path -ItemType "directory"
+    New-Item -Path $miniconda_install_path -ItemType "directory" -Force
     Start-DownloadMiniconda
 
-    if (!$isWindows) {
+    if (!$is_windows) {
       $install_process = Start-Process -FilePath "${miniconda_installer_file_location}" -ArgumentList "-u -b -p ${miniconda_install_path}" -PassThru -Wait
       if ($install_process.ExitCode -ne 0) {
         $code = $install_process.ExitCode
@@ -84,8 +97,10 @@ function Start-RunInstaller {
       }
     }
     else {
+      $installer_args = "/InstallationType=JustMe /S /RegisterPython=0 /AddToPath=0 /D=${miniconda_install_path}"
+      Write-Host "Running conda installer ${miniconda_installer_file_location} with ${installer_args}"
       # https://docs.conda.io/projects/conda/en/latest/user-guide/install/windows.html
-      $install_process = Start-Process -FilePath "${miniconda_installer_file_location}" -ArgumentList "/InstallationType=JustMe /RegisterPython=0 /D=${miniconda_install_path}" -PassThru -Wait
+      $install_process = Start-Process -FilePath "${miniconda_installer_file_location}" -ArgumentList $installer_args -PassThru -Wait
       if ($install_process.ExitCode -ne 0) {
         $code = $install_process.ExitCode
         throw "Install script exited with code ${code}"
@@ -98,7 +113,7 @@ function Start-RunInstaller {
 
 function Start-CreateLink {
   Write-Host "Creating miniconda link..."
-  if ($IsWindows) {
+  if ($is_windows) {
     Write-Host "Not creating links on Windows"
     return
   }
@@ -185,3 +200,5 @@ Start-CreateDefaultEnv
 Start-ActivateDefaultEnv
 Start-InstallPythonDependencies
 Start-InstallOrUpdateVreBackend
+
+exit 0
