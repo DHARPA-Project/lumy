@@ -2,23 +2,33 @@
 
 $ErrorActionPreference = "Stop"
 
+$is_windows = [environment]::OSVersion.Platform.ToString().ToLower().StartsWith("win")
+
 $app_name = "Lumy"
 
-if ($IsWindows) {
+$script_dir = $PSScriptRoot
+
+if ($is_windows) {
   $app_data_dir = "$HOME\Application Data\Local Settings\${app_name}\${app_name}"
-  $miniconda_install_path = "{$pwd.drive.name}\apps\${app_name}\miniconda"
+  $drive_name = $pwd.drive.name
+
+  $miniconda_install_path = "${drive_name}:\apps\${app_name}\miniconda"
   # NOTE: On Windows only adminstrator can create links.
   # Therefore we use the cuistom "apps" installation path without creating
   # a symlink in the $app_data_dir
   $miniconda_app_dir = $miniconda_install_path
+
+  $main_file_path = "${script_dir}\..\..\main.py"
+  $miniconda_hooks = "${miniconda_app_dir}\shell\condabin\conda-hook.ps1"
 }
-elseif ($IsMacOS) {
+else {
   $app_data_dir = "${HOME}/Library/Application Support/${app_name}"
   $miniconda_app_dir = "${app_data_dir}/miniconda"
+
+  $main_file_path = "${script_dir}/../../main.py"
+  $miniconda_hooks = "${miniconda_app_dir}/shell/condabin/conda-hook.ps1"
 }
 
-$script_dir = $PSScriptRoot
-$miniconda_hooks = Join-Path $miniconda_app_dir "shell" "condabin" "conda-hook.ps1"
 $default_conda_env_name = "default"
 
 if ($args[0] -ne "--skip-conda") {
@@ -45,7 +55,6 @@ else {
 }
 
 if ($args[0] -ne "--dry-run") {
-  $main_file_path = Join-Path $script_dir ".." ".." "main.py"
   python $main_file_path
   $code = $LastExitCode
   if ($code -ne 0) {
@@ -55,3 +64,5 @@ if ($args[0] -ne "--dry-run") {
 else {
   Write-Host "Dry run. Not starting the app."
 }
+
+exit 0
