@@ -59,9 +59,9 @@ const getInstallScript = (forcePowerShell = false): string => {
 const getExecutable = (forcePowerShell = false): [string, string[]] => {
   switch (process.platform) {
     case 'darwin':
-      return forcePowerShell ? ['pwsh', []] : ['bash', []]
+      return forcePowerShell ? ['pwsh', ['-ExecutionPolicy', 'Bypass']] : ['bash', []]
     case 'win32':
-      return ['powershell.exe', ['-ExecutionPolicy Bypass']]
+      return ['powershell.exe', ['-ExecutionPolicy', 'Bypass']]
     default:
       throw new Error('No start script for *nix yet.')
   }
