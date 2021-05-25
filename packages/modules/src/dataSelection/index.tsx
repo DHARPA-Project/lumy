@@ -1,11 +1,6 @@
 import React from 'react'
 import { Table } from 'apache-arrow'
 
-import List from '@material-ui/core/List'
-import ListItem from '@material-ui/core/ListItem'
-import ListItemIcon from '@material-ui/core/ListItemIcon'
-import Switch from '@material-ui/core/Switch'
-import ListItemText from '@material-ui/core/ListItemText'
 import Typography from '@material-ui/core/Typography'
 
 import {
@@ -23,6 +18,7 @@ import useStyles from './DataSelection.styles'
 
 // import { DataGrid } from '@dharpa-vre/arrow-data-grid'
 import { TableView } from '../components/TableView'
+import CustomSwitch from './CustomSwitch'
 
 interface InputValues {
   repositoryItems?: Table<DataRepositoryItemStructure>
@@ -87,33 +83,19 @@ const DataSelection = ({ step }: Props): JSX.Element => {
           Select applicable metadata fields for the corpus
         </Typography>
         {repositoryItemsBatch != null && (
-          <List className={classes.list}>
+          <ul className={classes.list}>
             {repositoryItemsBatch.schema.fields
               .filter(field => field.name !== 'id')
               .map((field, index) => (
-                <ListItem
-                  key={index}
-                  role={undefined}
-                  dense
-                  button
-                  disableRipple
-                  className={classes.listItem}
-                >
-                  <ListItemIcon>
-                    <Switch
-                      checked={metadataFields.includes(field.name)}
-                      onChange={event => handleMetadataFieldSelection(field.name, event.target.checked)}
-                      className={classes.switch}
-                      edge="start"
-                      color="primary"
-                      tabIndex={-1}
-                      inputProps={{ 'aria-labelledby': 'switch-list-label-wifi' }}
-                    />
-                  </ListItemIcon>
-                  <ListItemText id={`checkbox-list-label-${index}`} primary={field.name} />
-                </ListItem>
+                <li key={index} className={classes.listItem}>
+                  <CustomSwitch
+                    checked={metadataFields.includes(field.name)}
+                    handleChange={event => handleMetadataFieldSelection(field.name, event.target.checked)}
+                  />
+                  <p className={classes.listItemText}>{field.name}</p>
+                </li>
               ))}
-          </List>
+          </ul>
         )}
       </section>
       {/* <DataGrid
