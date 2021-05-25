@@ -130,7 +130,8 @@ class KiaraAppContext(AppContext, BatchController):
             pipeline_input_id = get_pipeline_input_id(
                 input_connections[input_id])
             if pipeline_input_id is not None and value is not None:
-                self._current_workflow.inputs[pipeline_input_id] = value
+                self._current_workflow.inputs.set_value(
+                    pipeline_input_id, value)
                 updated_values[input_id] = value
 
     def run_processing(self, step_id: Optional[str] = None):

@@ -26,5 +26,7 @@ class DataSelectionModule(KiaraModule):
         }
 
     def process(self, inputs: StepInputs, outputs: StepOutputs) -> None:
-        outputs.selectedItems = MockDataRegistry \
-            .get_instance().get_items_by_ids(inputs.selectedItemsIds or [])
+        selected_items_ids = inputs.get_value_data('selectedItemsIds') or []
+        selected_items = MockDataRegistry.get_instance() \
+            .get_items_by_ids(selected_items_ids)
+        outputs.set_value('selectedItems', selected_items)
