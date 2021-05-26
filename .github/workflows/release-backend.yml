@@ -31,7 +31,7 @@ jobs:
       run: curl -F package=@$(ls dist/lumy-jupyter-middleware-*.tar.gz) https://${GEMFURY_PUSH_TOKEN}@dharpa.fury.land:443/pypi/
     - name: upload wheel
       working-directory: backend/jupyter-middleware
-      run: curl -F package=@$(ls dist/lumy-jupyter-middleware-*.whl) https://${GEMFURY_PUSH_TOKEN}@dharpa.fury.land:443/pypi/
+      run: curl -F package=@$(ls dist/lumy_jupyter_middleware-*.whl) https://${GEMFURY_PUSH_TOKEN}@dharpa.fury.land:443/pypi/
 
 
 
