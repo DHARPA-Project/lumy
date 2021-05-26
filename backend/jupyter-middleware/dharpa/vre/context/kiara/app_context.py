@@ -8,14 +8,20 @@ from pyarrow import Table
 
 from kiara import Kiara
 from kiara.pipeline.controller import BatchController
-from kiara.data.values import DataValue, Value
+from kiara.data.values import DataValue, PipelineValue, Value
 from kiara.pipeline.structure import PipelineStructureDesc
 from kiara.workflow import KiaraWorkflow
+from kiara.defaults import SpecialValue
 
 if TYPE_CHECKING:
     from kiara.events import StepInputEvent, StepOutputEvent
 
 logger = logging.getLogger(__name__)
+
+
+def is_default_value_acceptable(value: PipelineValue) -> bool:
+    return value.value_schema.default is not None and \
+        value.value_schema.default != SpecialValue.NOT_SET
 
 
 def get_value_data(
@@ -69,9 +75,6 @@ class KiaraAppContext(AppContext, BatchController):
         # a different way will fail.
         self._current_workflow.pipeline
 
-        # TODO: kiara does not set default values yet. Temporarily doing it
-        # here for all the modules
-        self.set_default_values()
         # TODO: executing workflow right away for dev purposes only
         self.execute_all_steps()
 
@@ -130,7 +133,8 @@ class KiaraAppContext(AppContext, BatchController):
             pipeline_input_id = get_pipeline_input_id(
                 input_connections[input_id])
             if pipeline_input_id is not None and value is not None:
-                self._current_workflow.inputs[pipeline_input_id] = value
+                self._current_workflow.inputs.set_value(
+                    pipeline_input_id, value)
                 updated_values[input_id] = value
 
     def run_processing(self, step_id: Optional[str] = None):
@@ -154,7 +158,7 @@ class KiaraAppContext(AppContext, BatchController):
         default_pipeline_inputs = {
             key: pipeline_value.value_schema.default
             for key, pipeline_value in inputs
-            if pipeline_value.value_schema.default is not None
+            if is_default_value_acceptable(pipeline_value)
         }
         self.pipeline_inputs = default_pipeline_inputs
 

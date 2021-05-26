@@ -75,11 +75,11 @@ class NetworkAnalysisDataMappingModule(KiaraModule):
             ),
             "nodesMappingTable": ValueSchema(
                 type="table", doc="Nodes mapping table.",
-                default=pa.Table.from_pydict({})
+                optional=True
             ),
             "edgesMappingTable": ValueSchema(
                 type="table", doc="Edges mapping table.",
-                default=pa.Table.from_pydict({})
+                optional=True
             )
         }
 
@@ -96,14 +96,21 @@ class NetworkAnalysisDataMappingModule(KiaraModule):
         }
 
     def process(self, inputs: StepInputs, outputs: StepOutputs) -> None:
-        outputs.nodes = build_table_from_mapping(
-            inputs.nodesMappingTable,
+        nodes_mapping_table = inputs.get_value_data(
+            'nodesMappingTable') or pa.Table.from_pydict({})
+        nodes = build_table_from_mapping(
+            nodes_mapping_table,
             ['id', 'label', 'group']
         )
-        outputs.edges = build_table_from_mapping(
-            inputs.edgesMappingTable,
+        outputs.set_value('nodes', nodes)
+
+        edges_mapping_table = inputs.get_value_data(
+            'edgesMappingTable') or pa.Table.from_pydict({})
+        edges = build_table_from_mapping(
+            edges_mapping_table,
             ['srcId', 'tgtId', 'weight']
         )
+        outputs.set_value('edges', edges)
 
 
 class NetworkAnalysisDataVisModule(KiaraModule):
@@ -145,14 +152,16 @@ class NetworkAnalysisDataVisModule(KiaraModule):
         }
 
     def process(self, inputs: StepInputs, outputs: StepOutputs) -> None:
+        edges = inputs.get_value_data('edges').to_pandas()
+
         graph: nx.Graph = nx.from_pandas_edgelist(
-            inputs.edges.to_pandas(),
+            edges,
             "srcId", "tgtId",
             edge_attr=True,
             create_using=nx.DiGraph()
         )
 
-        nodes = inputs.nodes.to_pandas()
+        nodes = inputs.get_value_data('nodes').to_pandas()
         graph.add_nodes_from(nodes.set_index(
             'id').to_dict('index').items())
 
@@ -167,9 +176,9 @@ class NetworkAnalysisDataVisModule(KiaraModule):
 
         isolated_nodes_ids = list(nx.isolates(graph))
 
-        ids = inputs.nodes['id'].to_numpy()
+        ids = inputs.get_value_data('nodes')['id'].to_numpy()
 
-        outputs.graphData = pa.Table.from_pydict({
+        graph_data = pa.Table.from_pydict({
             'degree': [degree_dict[i] for i in ids],
             'eigenvector': [eigenvector_dict[i] for i in ids],
             'betweenness': [betweenness_dict[i] for i in ids],
@@ -178,15 +187,19 @@ class NetworkAnalysisDataVisModule(KiaraModule):
             # currently used in the visualisation.
             'isLarge': np.random.rand(*ids.shape) > 0.5
         })
+        outputs.set_value('graphData', graph_data)
 
         # shortest path
+        shortest_path_source = inputs.get_value_data('shortestPathSource')
+        shortest_path_target = inputs.get_value_data('shortestPathTarget')
 
-        if inputs.shortestPathSource in ids \
-                and inputs.shortestPathTarget in ids:
-            outputs.shortestPath = nx.shortest_path(
+        if shortest_path_source in ids \
+                and shortest_path_target in ids:
+            shortest_path = nx.shortest_path(
                 graph,
-                source=inputs.shortestPathSource,
-                target=inputs.shortestPathTarget
+                source=shortest_path_source,
+                target=shortest_path_target
             )
+            outputs.set_value('shortestPath', shortest_path)
         else:
-            outputs.shortestPath = []
+            outputs.set_value('shortestPath', [])

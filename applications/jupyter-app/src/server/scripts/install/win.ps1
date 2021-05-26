@@ -58,8 +58,6 @@ else {
 
 $default_conda_env_name = "default"
 
-$vre_backend_git_url = "git+https://github.com/DHARPA-Project/codename-vre@master#egg=dharpa-vre-jupyter-middleware&subdirectory=backend/jupyter-middleware"
-
 function Start-DownloadMiniconda {
   Write-Host "Downloading miniconda..."
   $installer_file_exists = Test-Path -Path $miniconda_installer_file_location -PathType Leaf
@@ -183,7 +181,7 @@ function Start-InstallPythonDependencies {
 }
 
 function Start-InstallOrUpdateVreBackend {
-  pip install "${vre_backend_git_url}"
+  pip install -U --extra-index-url https://pypi.fury.io/dharpa/ lumy-jupyter-middleware
   $code = $LastExitCode
   if ($code -ne 0) {
     throw "'pip install' exited with code: ${code}"
