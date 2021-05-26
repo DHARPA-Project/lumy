@@ -75,11 +75,13 @@ class NetworkAnalysisDataMappingModule(KiaraModule):
             ),
             "nodesMappingTable": ValueSchema(
                 type="table", doc="Nodes mapping table.",
-                default=pa.Table.from_pydict({})
+                optional=True
+                # default=None  # not setting default table here because kiara cannot process it yet
             ),
             "edgesMappingTable": ValueSchema(
                 type="table", doc="Edges mapping table.",
-                default=pa.Table.from_pydict({})
+                optional=True
+                # default=None  # not setting default table here because kiara cannot process it yet
             )
         }
 
@@ -96,14 +98,16 @@ class NetworkAnalysisDataMappingModule(KiaraModule):
         }
 
     def process(self, inputs: StepInputs, outputs: StepOutputs) -> None:
-        nodes_mapping_table = inputs.get_value_data('nodesMappingTable')
+        nodes_mapping_table = inputs.get_value_data(
+            'nodesMappingTable') or pa.Table.from_pydict({})
         nodes = build_table_from_mapping(
             nodes_mapping_table,
             ['id', 'label', 'group']
         )
         outputs.set_value('nodes', nodes)
 
-        edges_mapping_table = inputs.get_value_data('edgesMappingTable')
+        edges_mapping_table = inputs.get_value_data(
+            'edgesMappingTable') or pa.Table.from_pydict({})
         edges = build_table_from_mapping(
             edges_mapping_table,
             ['srcId', 'tgtId', 'weight']

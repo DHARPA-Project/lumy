@@ -8,14 +8,20 @@ from pyarrow import Table
 
 from kiara import Kiara
 from kiara.pipeline.controller import BatchController
-from kiara.data.values import DataValue, Value
+from kiara.data.values import DataValue, PipelineValue, Value
 from kiara.pipeline.structure import PipelineStructureDesc
 from kiara.workflow import KiaraWorkflow
+from kiara.defaults import SpecialValue
 
 if TYPE_CHECKING:
     from kiara.events import StepInputEvent, StepOutputEvent
 
 logger = logging.getLogger(__name__)
+
+
+def is_default_value_acceptable(value: PipelineValue) -> bool:
+    return value.value_schema.default is not None and \
+        value.value_schema.default != SpecialValue.NOT_SET
 
 
 def get_value_data(
@@ -155,7 +161,7 @@ class KiaraAppContext(AppContext, BatchController):
         default_pipeline_inputs = {
             key: pipeline_value.value_schema.default
             for key, pipeline_value in inputs
-            if pipeline_value.value_schema.default is not None
+            if is_default_value_acceptable(pipeline_value)
         }
         self.pipeline_inputs = default_pipeline_inputs
 
