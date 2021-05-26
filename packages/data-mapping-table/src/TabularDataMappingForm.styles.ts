@@ -12,7 +12,6 @@ export default makeStyles(theme => ({
     maxHeight: `calc(100vh - ${theme.spacing(36)}px)`
   },
   table: {
-    minWidth: theme.spacing(100),
     '& thead th': {
       fontWeight: '600',
       color: theme.palette.text.primary,
