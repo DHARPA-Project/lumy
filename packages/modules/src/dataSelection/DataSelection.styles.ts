@@ -8,12 +8,20 @@ export default makeStyles(theme => ({
     marginBottom: theme.spacing(2)
   },
   list: {
-    display: 'flex'
+    padding: 0,
+    display: 'flex',
+    listStyleType: 'none'
   },
   listItem: {
-    pointerEvents: 'none'
+    flexGrow: 1,
+    display: 'flex',
+    justifyContent: 'center'
   },
   switch: {
     pointerEvents: 'auto'
+  },
+  listItemText: {
+    margin: theme.spacing(0, 1),
+    padding: 0
   }
 }))

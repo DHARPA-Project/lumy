@@ -63,7 +63,7 @@ const getExecutable = (forcePowerShell = false): [string, string[]] => {
     case 'win32':
       return ['powershell.exe', ['-ExecutionPolicy', 'Bypass']]
     default:
-      throw new Error('No start script for *nix yet.')
+      return ['bash', []]
   }
 }
 

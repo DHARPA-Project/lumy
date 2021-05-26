@@ -38,6 +38,6 @@ jobs:
     - name: Install python tools
       run: pip install flake8 && npm install -g pyright
     - name: Preapre Python code
-      run: pip install -e backend/jupyter-middleware
+      run: pip install --extra-index-url https://pypi.fury.io/dharpa/ -e backend/jupyter-middleware 
     - name: Check Python code
       run: flake8 backend && pyright backend

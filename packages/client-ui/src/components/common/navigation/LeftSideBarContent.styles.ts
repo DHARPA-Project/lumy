@@ -18,7 +18,7 @@ export default makeStyles(theme => ({
   sideBarToggleButton: {
     position: 'absolute',
     top: theme.spacing(2),
-    right: theme.spacing(1),
+    right: theme.spacing(0.5),
     transition: theme.transitions.create('right', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.standard

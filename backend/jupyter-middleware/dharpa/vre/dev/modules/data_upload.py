@@ -57,4 +57,4 @@ class DataUploadModule(KiaraModule):
         }
 
     def process(self, inputs: StepInputs, outputs: StepOutputs) -> None:
-        outputs.repositoryItems = repository_items
+        outputs.set_value('repositoryItems', repository_items)

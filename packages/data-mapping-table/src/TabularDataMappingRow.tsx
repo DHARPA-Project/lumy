@@ -83,10 +83,10 @@ const TabularDataMappingRow = ({
   return (
     <>
       <TableRow className={classes.row}>
-        <TableCell className={classes.borderless}>{rowName}</TableCell>
+        <TableCell className={classes.tableCell}>{rowName}</TableCell>
 
         {requiredDataSets.map(dataSet => (
-          <TableCell className={classes.borderless} key={dataSet.name}>
+          <TableCell className={classes.tableCell} key={dataSet.name}>
             <div className={classes.cellContainer}>
               <Checkbox
                 className={classes.checkbox}
@@ -106,6 +106,7 @@ const TabularDataMappingRow = ({
                       className={classes.formControl}
                       variant="outlined"
                       size="small"
+                      margin="dense"
                       key={requiredFieldName}
                     >
                       <InputLabel>{requiredFieldName}</InputLabel>
@@ -116,11 +117,8 @@ const TabularDataMappingRow = ({
                         onChange={event =>
                           handleFieldSelection(requiredFieldName, event.target.value as string)
                         }
-                        autoWidth={true}
+                        autoWidth
                       >
-                        <MenuItem key={-1} value="">
-                          none
-                        </MenuItem>
                         {columnNames.map((columnName, index) => (
                           <MenuItem key={index} value={columnName}>
                             {columnName}
