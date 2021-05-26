@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles'
 export default makeStyles(theme => ({
   link: {
     textDecoration: 'none',
+    padding: theme.spacing(1.25),
     '&:hover, &:focus, &.active': {
       backgroundColor: theme.palette.action.selected
     },

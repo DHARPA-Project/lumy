@@ -17,20 +17,18 @@ export default makeStyles(theme => ({
     flexGrow: 1
   },
   formControl: {
-    minWidth: theme.spacing(15),
-    '&:not(:last-child)': {
-      marginRight: theme.spacing(2)
-    }
+    minWidth: theme.spacing(10),
+    margin: theme.spacing(1)
   },
   errorCell: {
-    paddingTop: 0
+    padding: 0
   },
   errorMessage: {
     color: theme.palette.error.main,
     textAlign: 'center'
   },
-  borderless: {
+  tableCell: {
     border: 'none',
-    paddingBottom: 0
+    padding: theme.spacing(0.5, 1)
   }
 }))
