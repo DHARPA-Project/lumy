@@ -75,9 +75,6 @@ class KiaraAppContext(AppContext, BatchController):
         # a different way will fail.
         self._current_workflow.pipeline
 
-        # TODO: kiara does not set default values yet. Temporarily doing it
-        # here for all the modules
-        self.set_default_values()
         # TODO: executing workflow right away for dev purposes only
         self.execute_all_steps()
 
