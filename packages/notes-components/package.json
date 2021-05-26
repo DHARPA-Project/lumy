@@ -19,12 +19,15 @@
     "eslint:check": "eslint src --ext .ts,.tsx,.js,.jsx",
     "build:lib": "tsc"
   },
-  "dependencies": {},
+  "dependencies": {
+    "date-fns": "2",
+    "micromark": "2"
+  },
   "peerDependencies": {
-    "react": "17",
     "@dharpa-vre/client-core": "*",
     "@material-ui/core": "4",
-    "@material-ui/icons": "4"
+    "@material-ui/icons": "4",
+    "react": "17"
   },
   "devDependencies": {
     "@types/node": "14",

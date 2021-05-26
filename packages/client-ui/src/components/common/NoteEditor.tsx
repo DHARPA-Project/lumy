@@ -158,7 +158,8 @@ const NoteEditor = (): JSX.Element => {
         disabled={noteContent.trim().length === 0}
         onClick={() => {
           addNote({
-            content: noteContent
+            content: noteContent,
+            createdAt: new Date()
           })
           setNoteContent('')
           setIsSideDrawerOpen(false)

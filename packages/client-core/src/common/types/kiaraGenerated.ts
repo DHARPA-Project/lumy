@@ -42,10 +42,6 @@ export type StepId1 = string
  */
 export type ValueName = string
 /**
- * A reference to a subitem of a value (e.g. column, list item)
- */
-export type SubValue = string
-/**
  * The processing stage of this step within a Pipeline.
  */
 export type ProcessingStage1 = number
@@ -117,6 +113,14 @@ export type Origin = string
  * The time the last update to this value happened.
  */
 export type LastUpdate = string
+/**
+ * The hash of the current value.
+ */
+export type ValueHash = ValueHashMarker | number
+/**
+ * An enumeration.
+ */
+export type ValueHashMarker = '-- no_value --' | '-- deferred --' | '-- no_hash --'
 /**
  * Whether the value is currently streamed into this object.
  */
@@ -215,6 +219,12 @@ export interface StepValueAddress {
   stepId: StepId1
   valueName: ValueName
   subValue?: SubValue
+}
+/**
+ * A reference to a subitem of a value (e.g. column, list item)
+ */
+export interface SubValue {
+  [k: string]: unknown
 }
 /**
  * A map that explains what elements connect to this steps inputs. A connection could either be a Pipeline input (indicated by the ``__pipeline__`` token), or another steps output.
@@ -329,6 +339,7 @@ export interface PipelineValue {
   isConstant?: IsConstant
   origin?: Origin
   lastUpdate?: LastUpdate
+  valueHash: ValueHash
   isStreaming?: IsStreaming
   metadata?: Metadata
 }

@@ -12,10 +12,20 @@
     "content": {
       "type": "string",
       "description": "Textual content of the note."
+    },
+    "title": {
+      "type": "string",
+      "description": "Optional title of the note"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the note was created"
     }
   },
   "required": [
     "id",
-    "content"
+    "content",
+    "createdAt"
   ]
 }

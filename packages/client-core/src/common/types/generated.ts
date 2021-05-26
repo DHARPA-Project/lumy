@@ -427,9 +427,17 @@ export interface Note {
    */
   content: string
   /**
+   * When the note was created
+   */
+  createdAt: Date
+  /**
    * Unique ID of the note.
    */
   id: string
+  /**
+   * Optional title of the note
+   */
+  title?: string
 }
 
 /**
