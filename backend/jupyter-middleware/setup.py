@@ -14,10 +14,10 @@ description = 'Lumy Jupyter middleware'
 with open('README.md', 'r') as fh:
     long_description = fh.read()
 
-
 setup_args = dict(
     name='lumy-jupyter-middleware',
     version=__version__,
+    use_scm_version={'root': '../..'},
     url=repo_data.get('homepage'),
     author=repo_data.get('author'),
     description=description,
@@ -34,6 +34,9 @@ setup_args = dict(
         'kiara[all,all_modules]',
         'pandas>=1.2.4',
         'appdirs>=1.4.4'
+    ],
+    setup_requires=[
+        'setuptools_scm'
     ],
     zip_safe=False,
     include_package_data=True,
