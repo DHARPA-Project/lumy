@@ -76,12 +76,10 @@ class NetworkAnalysisDataMappingModule(KiaraModule):
             "nodesMappingTable": ValueSchema(
                 type="table", doc="Nodes mapping table.",
                 optional=True
-                # default=None  # not setting default table here because kiara cannot process it yet
             ),
             "edgesMappingTable": ValueSchema(
                 type="table", doc="Edges mapping table.",
                 optional=True
-                # default=None  # not setting default table here because kiara cannot process it yet
             )
         }
 
