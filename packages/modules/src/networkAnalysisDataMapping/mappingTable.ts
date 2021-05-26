@@ -2,7 +2,7 @@ import { Field, Struct, Utf8, Table, Vector } from 'apache-arrow'
 
 namespace Table {
   export type MappingItem = {
-    uri: Utf8
+    id: Utf8
     column: Utf8
   }
 
@@ -12,7 +12,7 @@ namespace Table {
 }
 
 const MappingItemStruct = new Struct<Table.MappingItem>([
-  Field.new({ name: 'uri', type: new Utf8(), nullable: false }),
+  Field.new({ name: 'id', type: new Utf8(), nullable: false }),
   Field.new({ name: 'column', type: new Utf8(), nullable: false })
 ])
 
@@ -22,7 +22,7 @@ type MappingTableObject = {
 }
 
 export const toObject = (table: Table<Table.MappingTable>): MappingTableObject =>
-  table.schema.fields.reduce<MappingTableObject>(
+  (table?.schema?.fields ?? []).reduce<MappingTableObject>(
     (acc, field) => ({
       ...acc,
       [field.name]: [...table.getColumn(field.name)]

@@ -4,12 +4,17 @@ const webpack = require('webpack')
 const HTMLWebPackPlugin = require('html-webpack-plugin')
 
 module.exports = {
-  entry: { index: './src/webapp/index.ts' },
+  entry: {
+    index: './src/webapp/index.ts',
+    installer: './src/webapp/installer/index.tsx'
+  },
   output: {
     filename: '[name].bundle.js',
     path: path.resolve(__dirname, 'dist/webapp')
   },
-  devtool: 'source-map',
+  // a flag disabling source map. It seems that there are problems
+  // when building this on Windows.
+  devtool: String(process.env.NO_SOURCE_MAP) === 'true' ? undefined : 'source-map',
   // stats: 'detailed',
   mode: 'development',
   // watch: true,
@@ -60,6 +65,10 @@ module.exports = {
           }
         ],
         enforce: 'pre'
+      },
+      {
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader']
       },
       {
         test: /\.s[ac]ss$/i,
@@ -123,7 +132,13 @@ module.exports = {
   plugins: [
     new HTMLWebPackPlugin({
       filename: 'index.html',
-      template: path.join(__dirname, 'src', 'webapp', 'index.html')
+      template: path.join(__dirname, 'src', 'webapp', 'index.html'),
+      chunks: ['index']
+    }),
+    new HTMLWebPackPlugin({
+      filename: 'installer.html',
+      template: path.join(__dirname, 'src', 'webapp', 'installer', 'index.html'),
+      chunks: ['installer']
     }),
     new webpack.DefinePlugin({
       'process.env.USE_JUPYTER_LAB': JSON.stringify(false)

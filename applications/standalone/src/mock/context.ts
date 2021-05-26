@@ -80,12 +80,16 @@ const newMockDataRepositoryTable = (numItems = 30): DataRepositoryItemsTable => 
     alias: Utf8Vector.from(rowNumbers.map(n => `Item #${n}`)),
     type: Utf8Vector.from(isTableType.map(isTable => (isTable ? 'table' : 'string'))),
     columnNames: ListVector.from({
-      values: isTableType.map((isTable, idx) => (isTable ? [`a${idx}`, `b${idx}`, `c${idx}`] : null)),
+      values: isTableType.map((isTable, idx) =>
+        isTable ? [`a${idx}`, `b${idx}`, `c${idx}`, `d${idx}`, `e${idx}`, `f${idx}`] : null
+      ),
       type: new List(Field.new({ name: 0, type: new Utf8() })),
       highWaterMark: 1 // NOTE: working around a stride serialisation bug in arrowjs
     }),
     columnTypes: ListVector.from({
-      values: isTableType.map(isTable => (isTable ? ['int', 'string', 'float'] : null)),
+      values: isTableType.map(isTable =>
+        isTable ? ['int', 'string', 'float', 'string', 'string', 'string'] : null
+      ),
       type: new List(Field.new({ name: 0, type: new Utf8() })),
       highWaterMark: 1 // NOTE: working around a stride serialisation bug in arrowjs
     })

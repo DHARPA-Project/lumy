@@ -1,9 +1,69 @@
-from typing import Mapping
+import logging
+from typing import List, Mapping, cast
+
+import networkx as nx
+import numpy as np
+import pandas as pd
+import pyarrow as pa
+from dharpa.vre.dev.data_registry.mock import MockDataRegistry
 from kiara.data.values import ValueSchema
 from kiara.module import KiaraModule, StepInputs, StepOutputs
-import pyarrow as pa
-import numpy as np
-import math
+
+logger = logging.getLogger(__name__)
+
+# Value of any column in the mapping table
+MappingItemStruct = pa.struct([
+    # ID of the tabular data item
+    pa.field(name='id', type=pa.utf8(), nullable=False),
+    # Column name from the data item
+    pa.field(name='column', type=pa.utf8(), nullable=False)
+])
+
+
+def build_table_from_mapping(
+    mapping_table: pa.Table,
+    column_names: List[str]
+) -> pa.Table:
+    mapping = mapping_table.to_pydict()
+
+    table = pd.DataFrame()
+
+    def get_data_item_for_column_mapping(column_mapping):
+        data_item = cast(pa.Table, MockDataRegistry
+                         .get_instance()
+                         .get_file_content(column_mapping['id']))
+        data_item_df = data_item.to_pandas()
+        if column_mapping['column'] not in data_item_df:
+            return None
+        else:
+            return data_item_df[column_mapping['column']]
+
+    for column_name in column_names:
+        column_mappings = mapping.get(column_name, [])
+        if len(column_mappings) > 0:
+            items = [
+                get_data_item_for_column_mapping(m)
+                for m in column_mappings
+            ]
+            non_null_items = [
+                item
+                for item in items
+                if item is not None
+            ]
+            if len(non_null_items) > 0:
+                table[column_name] = pd.concat(non_null_items)
+
+    if len(table) == 0:
+        table = pd.DataFrame(columns=column_names)
+
+    # NOTE: this is probably not right, but ok to start with
+    # Converting mixed type columns to string.
+    # Otherwise pyarrow will throw an exception
+    for column in table:
+        if table[column].dtype.name == 'object':
+            table[column] = table[column].astype('str')
+
+    return pa.Table.from_pandas(table, preserve_index=False)
 
 
 class NetworkAnalysisDataMappingModule(KiaraModule):
@@ -36,28 +96,14 @@ class NetworkAnalysisDataMappingModule(KiaraModule):
         }
 
     def process(self, inputs: StepInputs, outputs: StepOutputs) -> None:
-        num_nodes = 123
-        nums = np.arange(0, num_nodes)
-        num_groups = 5
-        groups = np.array(
-            list(map(lambda x: f'group_{x}', np.arange(0, num_groups))))
-        ids = np.array(list(map(str, nums)))
-
-        outputs.nodes = pa.Table.from_pydict({
-            'id': ids,
-            'label': np.array(list(map(lambda x: f'Item {x}', nums))),
-            'group': np.random.choice(groups, nums.shape)
-        })
-
-        num_edges = math.floor(num_nodes * 1.5)
-        enums = np.arange(0, num_edges, 1)
-
-        outputs.edges = pa.Table.from_pydict({
-            'srcId': np.array(list(map(
-                lambda _: np.random.choice(ids), enums))),
-            'tgtId': np.array(list(map(
-                lambda _: np.random.choice(ids), enums)))
-        })
+        outputs.nodes = build_table_from_mapping(
+            inputs.nodesMappingTable,
+            ['id', 'label', 'group']
+        )
+        outputs.edges = build_table_from_mapping(
+            inputs.edgesMappingTable,
+            ['srcId', 'tgtId', 'weight']
+        )
 
 
 class NetworkAnalysisDataVisModule(KiaraModule):
@@ -71,6 +117,18 @@ class NetworkAnalysisDataVisModule(KiaraModule):
             "edges": ValueSchema(
                 type="table",
                 doc="Edges table.",
+            ),
+            "shortestPathSource": ValueSchema(
+                type="any",
+                doc="ID of the start node for the shortest path calculations",
+                optional=True,
+                default=None
+            ),
+            "shortestPathTarget": ValueSchema(
+                type="any",
+                doc="ID of the end node for the shortest path calculations",
+                optional=True,
+                default=None
             )
         }
 
@@ -87,13 +145,48 @@ class NetworkAnalysisDataVisModule(KiaraModule):
         }
 
     def process(self, inputs: StepInputs, outputs: StepOutputs) -> None:
-        outputs.shortestPath = []
+        graph: nx.Graph = nx.from_pandas_edgelist(
+            inputs.edges.to_pandas(),
+            "srcId", "tgtId",
+            edge_attr=True,
+            create_using=nx.DiGraph()
+        )
+
+        nodes = inputs.nodes.to_pandas()
+        graph.add_nodes_from(nodes.set_index(
+            'id').to_dict('index').items())
+
+        if len(nodes) > 0:
+            degree_dict = dict(graph.degree(graph.nodes()))
+            betweenness_dict = nx.betweenness_centrality(graph)
+            eigenvector_dict = nx.eigenvector_centrality(graph)
+        else:
+            degree_dict = {}
+            betweenness_dict = {}
+            eigenvector_dict = {}
+
+        isolated_nodes_ids = list(nx.isolates(graph))
 
         ids = inputs.nodes['id'].to_numpy()
 
         outputs.graphData = pa.Table.from_pydict({
-            'degree': np.random.rand(*ids.shape),
-            'eigenvector': np.random.rand(*ids.shape),
-            'betweenness': np.random.rand(*ids.shape),
+            'degree': [degree_dict[i] for i in ids],
+            'eigenvector': [eigenvector_dict[i] for i in ids],
+            'betweenness': [betweenness_dict[i] for i in ids],
+            'isIsolated': [i in isolated_nodes_ids for i in ids],
+            # TODO: what was "isLarge" exactly? It is not
+            # currently used in the visualisation.
             'isLarge': np.random.rand(*ids.shape) > 0.5
         })
+
+        # shortest path
+
+        if inputs.shortestPathSource in ids \
+                and inputs.shortestPathTarget in ids:
+            outputs.shortestPath = nx.shortest_path(
+                graph,
+                source=inputs.shortestPathSource,
+                target=inputs.shortestPathTarget
+            )
+        else:
+            outputs.shortestPath = []

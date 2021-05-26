@@ -4,7 +4,10 @@ const webpack = require('webpack')
 const HTMLWebPackPlugin = require('html-webpack-plugin')
 
 module.exports = {
-  entry: { index: './src/index.tsx' },
+  entry: {
+    index: './src/index.tsx',
+    splash: './src/splash/index.tsx'
+  },
   devtool: 'source-map',
   // stats: 'detailed',
   mode: 'development',
@@ -77,7 +80,13 @@ module.exports = {
   plugins: [
     new HTMLWebPackPlugin({
       filename: 'index.html',
-      template: path.join(__dirname, 'src', 'index.html')
+      template: path.join(__dirname, 'src', 'index.html'),
+      chunks: ['index']
+    }),
+    new HTMLWebPackPlugin({
+      filename: 'splash.html',
+      template: path.join(__dirname, 'src', 'splash', 'index.html'),
+      chunks: ['splash']
     }),
     new webpack.DefinePlugin({
       'process.env.USE_JUPYTER_LAB': JSON.stringify(false)
