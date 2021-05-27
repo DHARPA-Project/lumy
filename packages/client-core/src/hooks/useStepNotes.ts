@@ -6,6 +6,11 @@ const deserializeNote = (note: Note): Note => {
   if (typeof note?.createdAt === 'string') note.createdAt = new Date(note.createdAt)
   return note
 }
+const serializeNote = (note: Note): Note => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if (typeof note?.createdAt !== 'string') (note as any).createdAt = note.createdAt.toUTCString()
+  return note
+}
 
 type NewNote = Omit<Note, 'id' | 'createdAt'>
 
@@ -44,7 +49,7 @@ export function useStepNotes(stepId: string): StepNoteHookResult {
     context.sendMessage(
       Target.Notes,
       Messages.Notes.codec.Add.encode({
-        note: { ...note, id: '', createdAt: new Date() },
+        note: serializeNote({ ...note, id: '', createdAt: new Date() }),
         stepId
       })
     )
@@ -69,7 +74,7 @@ export function useStepNotes(stepId: string): StepNoteHookResult {
       Target.Notes,
       Messages.Notes.codec.Update.encode({
         stepId,
-        note
+        note: serializeNote(note)
       })
     )
   }
