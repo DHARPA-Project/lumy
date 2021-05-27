@@ -20,5 +20,11 @@ export default makeStyles(theme => ({
     '& input': {
       fontSize: theme.typography.fontSize * 2
     }
+  },
+  noteActionButtonsContainer: {
+    marginTop: theme.spacing(2),
+    '& > *': {
+      margin: theme.spacing(1, 0)
+    }
   }
 }))
