@@ -3,6 +3,7 @@ from collections import defaultdict
 from typing import Dict, List
 from uuid import uuid4
 from dharpa.vre.types.generated import Note
+from datetime import datetime
 
 
 def generate_id() -> str:
@@ -25,7 +26,8 @@ class MockNotesStore:
 
     def add_note(self, step_id: str, note: Note):
         notes = self.notes[step_id]
-        notes.append(Note(content=note.content, id=generate_id()))
+        notes.append(Note(content=note.content, id=generate_id(),
+                          created_at=datetime.now()))
         self.notes[step_id] = notes
 
     def update_note(self, step_id: str, note: Note):
