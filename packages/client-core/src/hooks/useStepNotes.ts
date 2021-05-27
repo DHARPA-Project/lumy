@@ -8,7 +8,7 @@ const deserializeNote = (note: Note): Note => {
 }
 const serializeNote = (note: Note): Note => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if (typeof note?.createdAt !== 'string') (note as any).createdAt = note.createdAt.toUTCString()
+  if (typeof note?.createdAt !== 'string') (note as any).createdAt = note?.createdAt?.toUTCString()
   return note
 }
 
