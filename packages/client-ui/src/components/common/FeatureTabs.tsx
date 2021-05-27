@@ -7,7 +7,7 @@ import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
 
 import { featureList } from '../../const/features'
-import { PageLayoutContext } from '../../context/pageLayoutContext'
+import { WorkflowContext } from '../../context/workflowContext'
 
 import TabPanel from './TabPanel'
 
@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
 const FeatureTabs = (): JSX.Element => {
   const classes = useStyles()
 
-  const { sideDrawerTabIndex, setSideDrawerTabIndex } = useContext(PageLayoutContext)
+  const { sideDrawerTabIndex, setSideDrawerTabIndex } = useContext(WorkflowContext)
 
   return (
     <div className={classes.tabList}>

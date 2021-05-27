@@ -36,8 +36,6 @@ const variants = {
 const WorkflowStep = ({ projectSteps, activeStep, direction }: WorkflowStepProps): JSX.Element => {
   const classes = useStyles()
 
-  console.log('current step: ', projectSteps[activeStep]?.step)
-
   return (
     <AnimatePresence
       custom={direction} // will ensure that leaving components animate using the latest data

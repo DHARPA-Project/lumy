@@ -1,12 +1,9 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext } from 'react'
 
 import { ThemeProvider } from '@material-ui/core/styles'
 
-import { useCurrentWorkflow } from '@dharpa-vre/client-core'
-import { StepDesc } from '@dharpa-vre/client-core/src/common/types/kiaraGenerated'
-
 import { ThemeContext } from '../../context/themeContext'
-import { PageLayoutContext } from '../../context/pageLayoutContext'
+import { WorkflowContext } from '../../context/workflowContext'
 import useStyles from './WorkflowContainer.styles'
 
 import RightSideBarContainer from './toolbar/RightSideBarContainer'
@@ -21,19 +18,20 @@ const WorkflowContainer = (): JSX.Element => {
   const classes = useStyles()
 
   const { sidebarTheme } = useContext(ThemeContext)
-  const { isRightSideBarVisible, isSideDrawerOpen } = useContext(PageLayoutContext)
+  const {
+    isRightSideBarVisible,
+    isSideDrawerOpen,
+    projectSteps,
+    activeStep,
+    direction,
+    setActiveStep
+  } = useContext(WorkflowContext) //prettier-ignore
 
   /**
    * TODO: add condition to determine when tool bar should be rendered
    * (e.g. only on workflow project routes or certain workflow steps)
    */
   const toolBarRenderCondition = true
-
-  const [currentWorkflow] = useCurrentWorkflow()
-
-  const [[activeStep, direction], setActiveStep] = useState([0, 0])
-
-  const projectSteps: StepDesc[] = Object.values(currentWorkflow?.steps || {}) || []
 
   const handleNext = () => {
     setActiveStep(([prevActiveStep, prevDirection]) => {
@@ -51,7 +49,7 @@ const WorkflowContainer = (): JSX.Element => {
     })
   }
 
-  if (currentWorkflow?.steps == null) return <LoadingIndicator />
+  if (!projectSteps?.length) return <LoadingIndicator />
 
   return (
     <div className={classes.workflowContainer}>

@@ -8,7 +8,7 @@ import { makeStyles } from '@material-ui/core/styles'
 
 import SaveIcon from '@material-ui/icons/Save'
 
-import { PageLayoutContext } from '../../context/pageLayoutContext'
+import { WorkflowContext } from '../../context/workflowContext'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -43,7 +43,7 @@ const CodeView = (): JSX.Element => {
 
   const mockPath = ['workflows', 'current-workflow', 'current-step']
 
-  const { setIsSideDrawerOpen } = useContext(PageLayoutContext)
+  const { setIsSideDrawerOpen } = useContext(WorkflowContext)
 
   return (
     <div className={classes.root}>

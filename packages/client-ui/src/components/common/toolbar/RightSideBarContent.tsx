@@ -5,13 +5,13 @@ import Tooltip from '@material-ui/core/Tooltip'
 import IconButton from '@material-ui/core/IconButton'
 
 import useStyles from './RightSideBarContent.styles'
-import { PageLayoutContext } from '../../../context/pageLayoutContext'
+import { WorkflowContext } from '../../../context/workflowContext'
 import { featureList } from '../../../const/features'
 
 const RightSideBarContent = (): JSX.Element => {
   const classes = useStyles()
 
-  const { isRightSideBarVisible, setSideDrawerTabIndex, setIsSideDrawerOpen } = useContext(PageLayoutContext)
+  const { isRightSideBarVisible, setSideDrawerTabIndex, setIsSideDrawerOpen } = useContext(WorkflowContext)
 
   return (
     <>
