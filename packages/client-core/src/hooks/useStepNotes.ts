@@ -2,7 +2,12 @@ import { useContext, useEffect, useState } from 'react'
 import { BackEndContext, handlerAdapter, Target } from '../common/context'
 import { Messages, Note } from '../common/types'
 
-type NewNote = Omit<Note, 'id'>
+const deserializeNote = (note: Note): Note => {
+  if (typeof note?.createdAt === 'string') note.createdAt = new Date(note.createdAt)
+  return note
+}
+
+type NewNote = Omit<Note, 'id' | 'createdAt'>
 
 export interface StepNoteHookResult {
   notes: Note[]
@@ -25,7 +30,7 @@ export function useStepNotes(stepId: string): StepNoteHookResult {
 
     const handler = handlerAdapter(Messages.Notes.codec.Notes.decode, content => {
       if (content.stepId === stepId) {
-        setNotes(content.notes)
+        setNotes(content.notes?.map(deserializeNote))
       }
     })
     context.subscribe(Target.Notes, handler)
@@ -39,7 +44,7 @@ export function useStepNotes(stepId: string): StepNoteHookResult {
     context.sendMessage(
       Target.Notes,
       Messages.Notes.codec.Add.encode({
-        note: { ...note, id: '' },
+        note: { ...note, id: '', createdAt: new Date() },
         stepId
       })
     )

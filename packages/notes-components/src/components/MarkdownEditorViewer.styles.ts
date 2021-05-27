@@ -19,5 +19,8 @@ export default makeStyles(theme => ({
       marginBottom: 0,
       marginRight: theme.spacing(1)
     }
+  },
+  mainSectionContainer: {
+    minHeight: theme.breakpoints.values['sm'] / 3
   }
 }))

@@ -16,6 +16,7 @@ const editorOptions: Parameters<typeof SimpleMde>[0]['options'] = {
 export interface Props {
   text: string
   onChanged?: (text: string) => void
+  defaultTab?: 'view' | 'edit'
 }
 
 interface TabPanelProps {
@@ -28,8 +29,8 @@ const TabPanel = ({ value, index, children }: TabPanelProps): JSX.Element => {
   return <></>
 }
 
-export const MarkdownEditorViewer = ({ text, onChanged }: Props): JSX.Element => {
-  const [tabId, setTabId] = React.useState(1)
+export const MarkdownEditorViewer = ({ text, onChanged, defaultTab = 'view' }: Props): JSX.Element => {
+  const [tabId, setTabId] = React.useState(defaultTab == 'view' ? 1 : 0)
   const classes = useStyles()
 
   return (
@@ -48,7 +49,7 @@ export const MarkdownEditorViewer = ({ text, onChanged }: Props): JSX.Element =>
           <Tab label="View" icon={<ViewIcon />} />
         </Tabs>
       </Grid>
-      <Grid item>
+      <Grid item className={classes.mainSectionContainer}>
         <TabPanel value={tabId} index={0}>
           <SimpleMde value={text} onChange={onChanged} options={editorOptions} />
         </TabPanel>

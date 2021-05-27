@@ -13,7 +13,7 @@ export type EditedNote = Omit<Note, 'createdAt' | 'id'> & { id?: Note['id'] }
 const isNoteValid = (note: EditedNote): boolean => {
   return (note?.content ?? '').length > 0
 }
-const notesAreEqual = (note: EditedNote, originalNote: Note): boolean => {
+const notesAreEqual = (note: EditedNote, originalNote: Note | EditedNote): boolean => {
   return (
     (note?.id ?? null) === (originalNote?.id ?? null) &&
     note?.content === originalNote?.content &&
@@ -22,7 +22,7 @@ const notesAreEqual = (note: EditedNote, originalNote: Note): boolean => {
 }
 
 export interface Props {
-  note?: Note
+  note?: Note | EditedNote
   onSave?: (note: EditedNote) => void
   onDelete?: (noteId: string) => void
   onClose?: () => void
@@ -69,16 +69,20 @@ export const NoteViewerEditor = ({
         </Grid>
       </Grid>
       <Grid item>
-        {note?.createdAt != null ? (
+        {(note as Note)?.createdAt != null ? (
           <Typography variant="caption" color="textSecondary">
-            {asTimeAgo(note.createdAt)}
+            {asTimeAgo((note as Note).createdAt)}
           </Typography>
         ) : (
           ''
         )}
       </Grid>
       <Grid item>
-        <MarkdownEditorViewer text={content} onChanged={setContent} />
+        <MarkdownEditorViewer
+          text={content}
+          onChanged={setContent}
+          defaultTab={note?.id != null ? 'view' : 'edit'}
+        />
       </Grid>
       <Grid item>
         <Grid container direction="column" wrap="nowrap" className={classes.noteActionButtonsContainer}>
