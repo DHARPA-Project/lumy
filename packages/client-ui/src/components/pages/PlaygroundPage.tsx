@@ -1,6 +1,6 @@
 import React from 'react'
-import { Box } from '@material-ui/core'
-import { NoteItem, NoteItemsList } from '@dharpa-vre/notes-components'
+import { Box, Grid } from '@material-ui/core'
+import { NoteItem, NoteItemsList, NoteViewerEditor } from '@dharpa-vre/notes-components'
 
 const PlaygroundPage = (): JSX.Element => {
   const testNotes = [
@@ -20,13 +20,20 @@ const PlaygroundPage = (): JSX.Element => {
   ]
   return (
     <div>
-      <Box width="30rem">
-        <NoteItemsList>
-          {testNotes.map(note => (
-            <NoteItem key={note.id} note={note} />
-          ))}
-        </NoteItemsList>
-      </Box>
+      <Grid container spacing={2} wrap="nowrap">
+        <Grid item>
+          <Box width="30rem">
+            <NoteItemsList>
+              {testNotes.map(note => (
+                <NoteItem key={note.id} note={note} />
+              ))}
+            </NoteItemsList>
+          </Box>
+        </Grid>
+        <Grid item style={{ width: '100%' }}>
+          <NoteViewerEditor note={testNotes[0]} />
+        </Grid>
+      </Grid>
     </div>
   )
 }

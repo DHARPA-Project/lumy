@@ -21,7 +21,9 @@
   },
   "dependencies": {
     "date-fns": "2",
-    "micromark": "2"
+    "easymde": "2",
+    "micromark": "2",
+    "react-simplemde-editor": "5"
   },
   "peerDependencies": {
     "@dharpa-vre/client-core": "*",
