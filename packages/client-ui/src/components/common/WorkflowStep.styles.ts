@@ -4,6 +4,7 @@ export default makeStyles(theme => ({
   stepContent: {
     // height: `calc(100vh - 2 * ${theme.layout.pagePadding})`,
     height: '100vh',
+    width: '100%',
     // display: 'flex',
     // flexDirection: 'column',
     // justifyContent: 'center',
