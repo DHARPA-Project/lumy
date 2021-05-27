@@ -2,8 +2,8 @@ import React from 'react'
 import { Grid, Tabs, Tab } from '@material-ui/core'
 import EditIcon from '@material-ui/icons/Edit'
 import ViewIcon from '@material-ui/icons/Visibility'
-import micromark from 'micromark'
 import SimpleMde from 'react-simplemde-editor'
+import { MarkdownRender } from './MarkdownRender'
 import useStyles from './MarkdownEditorViewer.styles'
 
 // https://github.com/Ionaru/easy-markdown-editor#configuration
@@ -28,8 +28,6 @@ const TabPanel = ({ value, index, children }: TabPanelProps): JSX.Element => {
   return <></>
 }
 
-const asHtml = (markdown: string): string => micromark(markdown)
-
 export const MarkdownEditorViewer = ({ text, onChanged }: Props): JSX.Element => {
   const [tabId, setTabId] = React.useState(1)
   const classes = useStyles()
@@ -43,6 +41,8 @@ export const MarkdownEditorViewer = ({ text, onChanged }: Props): JSX.Element =>
           classes={{
             flexContainer: classes.tabBarContainer
           }}
+          indicatorColor="primary"
+          scrollButtons="off"
         >
           <Tab label="Edit" icon={<EditIcon />} />
           <Tab label="View" icon={<ViewIcon />} />
@@ -53,7 +53,7 @@ export const MarkdownEditorViewer = ({ text, onChanged }: Props): JSX.Element =>
           <SimpleMde value={text} onChange={onChanged} options={editorOptions} />
         </TabPanel>
         <TabPanel value={tabId} index={1}>
-          <div dangerouslySetInnerHTML={{ __html: asHtml(text) }} />
+          <MarkdownRender content={text} />
         </TabPanel>
       </Grid>
     </Grid>

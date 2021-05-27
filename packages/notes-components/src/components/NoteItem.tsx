@@ -1,22 +1,25 @@
 import React from 'react'
 import { Note } from '@dharpa-vre/client-core'
 import { Box, Typography, ListItem, ListItemText } from '@material-ui/core'
-import { formatDistance } from 'date-fns'
 import useStyles from './NoteItem.styles'
-import micromark from 'micromark'
-
-const asTimeAgo = (date: Date): string => formatDistance(date, new Date(), { addSuffix: true })
-const asHtml = (markdown: string): string => micromark(markdown)
+import { asTimeAgo } from '../util/render'
+import { MarkdownRender } from './MarkdownRender'
 
 export interface NoteItemProps {
   note: Note
+  onClick?: (note: Note) => void
 }
 
-export const NoteItem = ({ note }: NoteItemProps): JSX.Element => {
+export const NoteItem = ({ note, onClick }: NoteItemProps): JSX.Element => {
   const classes = useStyles()
   if (note == null) return <></>
   return (
-    <ListItem className={classes.root} button classes={{ button: classes.buttonItem }}>
+    <ListItem
+      className={classes.root}
+      button={onClick != null ? true : undefined}
+      classes={{ button: classes.buttonItem }}
+      onClick={() => onClick?.(note)}
+    >
       <Box className={classes.noteContentContainer}>
         <Box flexDirection="row" className={classes.noteItemContainer}>
           <div className={classes.fadeOverlay}></div>
@@ -27,12 +30,9 @@ export const NoteItem = ({ note }: NoteItemProps): JSX.Element => {
           ) : (
             ''
           )}
-          <ListItemText
-            disableTypography
-            primary={<div dangerouslySetInnerHTML={{ __html: asHtml(note.content) }} />}
-          />
+          <ListItemText disableTypography primary={<MarkdownRender content={note.content} />} />
         </Box>
-        <Typography variant="caption" className={classes.timestamp}>
+        <Typography variant="caption" className={classes.timestamp} color="textSecondary">
           {asTimeAgo(note.createdAt)}
         </Typography>
       </Box>

@@ -6,9 +6,7 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import SaveIcon from '@material-ui/icons/Save'
 import { MarkdownEditorViewer } from './MarkdownEditorViewer'
 import useStyles from './NoteViewerEditor.styles'
-import { formatDistance } from 'date-fns'
-
-const asTimeAgo = (date: Date): string => formatDistance(date, new Date(), { addSuffix: true })
+import { asTimeAgo } from '../util/render'
 
 export type EditedNote = Omit<Note, 'createdAt' | 'id'> & { id?: Note['id'] }
 
@@ -28,7 +26,7 @@ export interface Props {
   onSave?: (note: EditedNote) => void
   onDelete?: (noteId: string) => void
   onClose?: () => void
-  showCloseButton: boolean
+  showCloseButton?: boolean
 }
 
 export const NoteViewerEditor = ({

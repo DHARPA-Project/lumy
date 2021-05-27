@@ -25,13 +25,18 @@ const PlaygroundPage = (): JSX.Element => {
           <Box width="30rem">
             <NoteItemsList>
               {testNotes.map(note => (
-                <NoteItem key={note.id} note={note} />
+                <NoteItem key={note.id} note={note} onClick={note => console.log('Note selected:', note)} />
               ))}
             </NoteItemsList>
           </Box>
         </Grid>
         <Grid item style={{ width: '100%' }}>
-          <NoteViewerEditor note={testNotes[0]} />
+          <NoteViewerEditor
+            note={testNotes[0]}
+            onSave={note => console.log('Saving note:', note)}
+            onDelete={noteId => console.log('Deleting note', noteId)}
+            onClose={() => console.log('Closing without saving')}
+          />
         </Grid>
       </Grid>
     </div>
