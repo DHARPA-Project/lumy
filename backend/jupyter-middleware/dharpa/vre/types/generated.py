@@ -2,6 +2,7 @@
 from dataclasses import dataclass
 from typing import Optional, List, Any, Dict, Union
 from enum import Enum
+from datetime import datetime
 
 
 @dataclass
@@ -320,8 +321,12 @@ class Note:
     """Represents a step note."""
     """Textual content of the note."""
     content: str
+    """When the note was created"""
+    created_at: datetime
     """Unique ID of the note."""
     id: str
+    """Optional title of the note"""
+    title: Optional[str] = None
 
 
 @dataclass
@@ -332,6 +337,19 @@ class MsgNotesAdd:
     Add a note for a workflow step.
     """
     note: Note
+    """Workflow step Id."""
+    step_id: str
+
+
+@dataclass
+class MsgNotesDelete:
+    """Target: "notes"
+    Message type: "Delete"
+    
+    Delete a note by Id.
+    """
+    """Note Id."""
+    note_id: str
     """Workflow step Id."""
     step_id: str
 
@@ -355,6 +373,18 @@ class MsgNotesNotes:
     Contains list of notes for a workflow step.
     """
     notes: List[Note]
+    """Workflow step Id."""
+    step_id: str
+
+
+@dataclass
+class MsgNotesUpdate:
+    """Target: "notes"
+    Message type: "Update"
+    
+    Update a note for a workflow step.
+    """
+    note: Note
     """Workflow step Id."""
     step_id: str
 

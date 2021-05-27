@@ -427,9 +427,34 @@ export interface Note {
    */
   content: string
   /**
+   * When the note was created
+   */
+  createdAt: Date
+  /**
    * Unique ID of the note.
    */
   id: string
+  /**
+   * Optional title of the note
+   */
+  title?: string
+}
+
+/**
+ * Target: "notes"
+ * Message type: "Delete"
+ *
+ * Delete a note by Id.
+ */
+export interface MsgNotesDelete {
+  /**
+   * Note Id.
+   */
+  noteId: string
+  /**
+   * Workflow step Id.
+   */
+  stepId: string
 }
 
 /**
@@ -453,6 +478,20 @@ export interface MsgNotesGetNotes {
  */
 export interface MsgNotesNotes {
   notes: Note[]
+  /**
+   * Workflow step Id.
+   */
+  stepId: string
+}
+
+/**
+ * Target: "notes"
+ * Message type: "Update"
+ *
+ * Update a note for a workflow step.
+ */
+export interface MsgNotesUpdate {
+  note: Note
   /**
    * Workflow step Id.
    */

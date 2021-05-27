@@ -11,6 +11,7 @@ import ToyVrePage from './pages/ToyVrePage'
 import NetworkAnalysisIntroPage from './pages/NetworkAnalysisIntroPage'
 import ProjectPage from './pages/ProjectPage'
 import LabPage from './pages/LabPage'
+import PlaygroundPage from './pages/PlaygroundPage'
 
 export const App = (): JSX.Element => {
   return (
@@ -26,6 +27,7 @@ export const App = (): JSX.Element => {
                 <Route path="/lab" exact component={LabPage} />
                 <Route path="/workflows/network-analysis" exact component={NetworkAnalysisIntroPage} />
                 <Route path="/projects/:id" exact component={ProjectPage} />
+                <Route path="/playground" exact component={PlaygroundPage} />
               </Switch>
             </TopPageLayout>
           </Router>
