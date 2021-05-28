@@ -14,6 +14,7 @@ export type WorkflowType = {
   activeStep: number
   direction: number
   setActiveStep: Dispatch<SetStateAction<[number, number]>>
+  idCurrentStep: string
 }
 
 type WorkflowProviderProps = {
@@ -31,6 +32,7 @@ const WorkflowContextProvider = ({ children }: WorkflowProviderProps): JSX.Eleme
   const [[activeStep, direction], setActiveStep] = useState([0, 0])
 
   const projectSteps: StepDesc[] = Object.values(currentWorkflow?.steps || {}) || []
+  const idCurrentStep = projectSteps?.[activeStep]?.step?.stepId
 
   return (
     <WorkflowContext.Provider
@@ -44,7 +46,8 @@ const WorkflowContextProvider = ({ children }: WorkflowProviderProps): JSX.Eleme
         projectSteps,
         activeStep,
         direction,
-        setActiveStep
+        setActiveStep,
+        idCurrentStep
       }}
     >
       {children}
