@@ -1,5 +1,5 @@
-appId: "org.dharpa.vre"
-productName: "DHARPA VRE"
+appId: "org.dharpa.lumy"
+productName: "Lumy"
 directories:
   # buildResources: dist
   output: electron_dist
@@ -12,3 +12,7 @@ extraMetadata:
   main: dist/electron/main.js
 mac:
   target: default
+linux:
+  target: tar.gz
+win:
+  target: nsis

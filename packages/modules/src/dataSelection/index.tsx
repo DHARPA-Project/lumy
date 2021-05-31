@@ -1,4 +1,8 @@
 import React from 'react'
+import { Table } from 'apache-arrow'
+
+import Typography from '@material-ui/core/Typography'
+
 import {
   ModuleProps,
   useStepInputValue,
@@ -9,9 +13,12 @@ import {
   DataRepositoryItemsTable,
   arrowUtils
 } from '@dharpa-vre/client-core'
-import { Table } from 'apache-arrow'
+
+import useStyles from './DataSelection.styles'
+
+// import { DataGrid } from '@dharpa-vre/arrow-data-grid'
 import { TableView } from '../components/TableView'
-import { DataGrid } from '@dharpa-vre/arrow-data-grid'
+import CustomSwitch from './CustomSwitch'
 
 interface InputValues {
   repositoryItems?: Table<DataRepositoryItemStructure>
@@ -26,6 +33,8 @@ interface OutputValues {
 type Props = ModuleProps<InputValues, OutputValues>
 
 const DataSelection = ({ step }: Props): JSX.Element => {
+  const classes = useStyles()
+
   const [repositoryItemsFilter, setRepositoryItemsFilter] = React.useState<DataRepositoryItemsFilter>({
     pageSize: 5,
     types: ['table']
@@ -47,49 +56,55 @@ const DataSelection = ({ step }: Props): JSX.Element => {
 
   return (
     <div key={step.stepId}>
-      <h3>Choose items for the corpus:</h3>
-      {repositoryItemsBatch == null || repositoryStats == null ? (
-        ''
-      ) : (
-        <TableView
-          table={repositoryItemsBatch}
-          tableStats={repositoryStats}
-          selections={selectedItemsIds}
-          onSelectionsChanged={setSelectedItemsIds}
-          filter={repositoryItemsFilter}
-          onFilterChanged={updateRepositoryItemsFilter}
-          usePagination
-          useSelection
-        />
-      )}{' '}
-      <h3>Choose metadata fields for the corpus:</h3>
-      {repositoryItemsBatch == null ? (
-        ''
-      ) : (
-        <ul>
-          {repositoryItemsBatch.schema.fields
-            .filter(f => f.name !== 'id')
-            .map((f, idx) => {
-              return (
-                <li key={idx}>
-                  <input
-                    type="checkbox"
-                    checked={metadataFields.includes(f.name)}
-                    onChange={e => handleMetadataFieldSelection(f.name, e.target.checked)}
+      <Typography className={classes.headline} component="h1" variant="h6" align="center" gutterBottom>
+        Data source selection
+      </Typography>
+
+      <section className={classes.section}>
+        <Typography variant="subtitle1" gutterBottom>
+          Select the repository items that contain data about the nodes and edges
+        </Typography>
+        {repositoryItemsBatch != null && repositoryStats != null && (
+          <TableView
+            table={repositoryItemsBatch}
+            tableStats={repositoryStats}
+            selections={selectedItemsIds}
+            onSelectionsChanged={setSelectedItemsIds}
+            filter={repositoryItemsFilter}
+            onFilterChanged={updateRepositoryItemsFilter}
+            usePagination
+            useSelection
+          />
+        )}
+      </section>
+
+      <section className={classes.section}>
+        <Typography variant="subtitle1" gutterBottom>
+          Select applicable metadata fields for the corpus
+        </Typography>
+        {repositoryItemsBatch != null && (
+          <ul className={classes.list}>
+            {repositoryItemsBatch.schema.fields
+              .filter(field => field.name !== 'id')
+              .map((field, index) => (
+                <li key={index} className={classes.listItem}>
+                  <CustomSwitch
+                    checked={metadataFields.includes(field.name)}
+                    handleChange={event => handleMetadataFieldSelection(field.name, event.target.checked)}
                   />
-                  {f.name}
+                  <p className={classes.listItemText}>{field.name}</p>
                 </li>
-              )
-            })}
-        </ul>
-      )}
-      <DataGrid
+              ))}
+          </ul>
+        )}
+      </section>
+      {/* <DataGrid
         data={repositoryItemsBatch?.select('id', 'alias', 'columnNames')}
         stats={repositoryStats}
         filter={repositoryItemsFilter}
         onFiltering={updateRepositoryItemsFilter}
         condensed
-      />
+      /> */}
     </div>
   )
 }

@@ -58,5 +58,9 @@ class TwoArgsMathFnModule(KiaraModule):
         }
 
     def process(self, inputs: StepInputs, outputs: StepOutputs) -> None:
-        fn = FUNCTIONS.get(inputs.operator or 'add')
-        outputs.c = fn(inputs.a or 0, inputs.b or 0)
+        operator = inputs.get_value_data('operator') or 'add'
+        a = inputs.get_value_data('a')
+        b = inputs.get_value_data('b')
+        fn = FUNCTIONS.get(operator)
+        c = fn(a or 0, b or 0)
+        outputs.set_value('c', c)

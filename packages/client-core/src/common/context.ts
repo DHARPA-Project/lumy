@@ -23,7 +23,11 @@ export enum Target {
   /**
    * Data repository related messages.
    */
-  DataRepository = 'data_repository'
+  DataRepository = 'data_repository',
+  /**
+   * Steps/data notes
+   */
+  Notes = 'notes'
 }
 
 /**

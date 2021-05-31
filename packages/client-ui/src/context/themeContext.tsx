@@ -2,8 +2,6 @@ import React, { useState, createContext } from 'react'
 
 import CssBaseline from '@material-ui/core/CssBaseline'
 
-// import amber from '@material-ui/core/colors/amber'
-
 import { createMuiTheme, MuiThemeProvider, Theme } from '@material-ui/core/styles'
 import { PaletteType, ThemeOptions } from '@material-ui/core'
 
@@ -16,6 +14,7 @@ declare module '@material-ui/core/styles/createMuiTheme' {
       toolBarWidth: React.CSSProperties['width']
       navBarTop: React.CSSProperties['height']
       navBarBottom: React.CSSProperties['height']
+      pagePadding: React.CSSProperties['padding']
     }
   }
   // allow configuration using `createMuiTheme`
@@ -27,6 +26,7 @@ declare module '@material-ui/core/styles/createMuiTheme' {
       toolBarWidth: React.CSSProperties['width']
       navBarTop: React.CSSProperties['height']
       navBarBottom: React.CSSProperties['height']
+      pagePadding: React.CSSProperties['padding']
     }
   }
 }
@@ -42,6 +42,8 @@ type ThemeContextProviderProps = {
 }
 
 export const ThemeContext = createContext<ThemeContextType>(null)
+
+const defaultTheme = createMuiTheme()
 
 const getThemeFromLocalStorage = () => {
   const valueInLocalStorage = localStorage.getItem('darkModeEnabled')
@@ -67,14 +69,11 @@ const ThemeContextProvider = ({ children }: ThemeContextProviderProps): JSX.Elem
     createMuiTheme({
       palette: {
         type: darkModeEnabled ? ('dark' as PaletteType) : ('light' as PaletteType)
-        // secondary: {
-        //   main: amber[500]
-        // }
       },
       typography: {
         body1: {
-          fontSize: '0.875rem',
-          lineHeight: 1.43
+          fontSize: '0.75rem',
+          lineHeight: 1.35
         },
         body2: {
           fontSize: '0.75rem',
@@ -88,11 +87,24 @@ const ThemeContextProvider = ({ children }: ThemeContextProviderProps): JSX.Elem
       },
       layout: {
         sideBarFullWidth: '200px',
-        sideBarCollapsedWidth: '52px',
+        sideBarCollapsedWidth: '40px',
         navLinkTextWidth: 90,
         toolBarWidth: '50px',
         navBarTop: '20vh',
-        navBarBottom: '10vh'
+        navBarBottom: '10vh',
+        pagePadding: '1.5rem'
+      },
+      overrides: {
+        MuiTableCell: {
+          root: {
+            padding: defaultTheme.spacing(1)
+          }
+        },
+        MuiTablePagination: {
+          root: {
+            fontSize: '0.75rem'
+          }
+        }
       },
       ...extendedOptions
     })
@@ -108,9 +120,6 @@ const ThemeContextProvider = ({ children }: ThemeContextProviderProps): JSX.Elem
         paper: '#222A45',
         default: '#1a2038'
       }
-      // secondary: {
-      //   main: amber[500]
-      // }
     }
   })
 

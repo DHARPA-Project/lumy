@@ -21,7 +21,9 @@ import {
   MsgModuleIOGetOutputValue,
   MsgModuleIOOutputValue,
   MsgDataRepositoryItems,
-  MsgDataRepositoryFindItems
+  MsgDataRepositoryFindItems,
+  MsgNotesUpdate,
+  MsgNotesDelete
 } from './generated'
 
 /**
@@ -103,10 +105,14 @@ export namespace Notes {
   export type GetNotes = MsgNotesGetNotes
   export type Notes = MsgNotesNotes
   export type Add = MsgNotesAdd
+  export type Update = MsgNotesUpdate
+  export type Delete = MsgNotesDelete
 
   export namespace codec {
     export const GetNotes = Codec<GetNotes>('GetNotes')
     export const Notes = Codec<Notes>('Notes')
     export const Add = Codec<Add>('Add')
+    export const Update = Codec<Update>('Update')
+    export const Delete = Codec<Delete>('Delete')
   }
 }

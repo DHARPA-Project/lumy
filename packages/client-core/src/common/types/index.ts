@@ -7,7 +7,8 @@ export type {
   DataValueContainer,
   TableStats,
   DataTabularDataFilter as TabularDataFilter,
-  DataRepositoryItemsFilter
+  DataRepositoryItemsFilter,
+  Note
 } from './generated'
 export { State, DataType } from './generated'
 export * as Messages from './messages'

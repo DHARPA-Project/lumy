@@ -1,21 +1,16 @@
-import React, { useContext, useState } from 'react'
-import ReactQuill from 'react-quill'
-import 'react-quill/dist/quill.snow.css'
+import React, { useState } from 'react'
 
 import { makeStyles } from '@material-ui/core/styles'
-import Breadcrumbs from '@material-ui/core/Breadcrumbs'
-import Button from '@material-ui/core/Button'
-import Typography from '@material-ui/core/Typography'
+import { NoteViewerEditor, NoteItemsList, NoteItem, EditedNote } from '@dharpa-vre/notes-components'
+import AddIcon from '@material-ui/icons/Add'
 
-import SaveIcon from '@material-ui/icons/Save'
-
-import { PageLayoutContext } from '../../context/pageLayoutContext'
-
-const mockPath = ['workflows', 'workflow-type', 'step']
+import { Note, useCurrentWorkflow, useStepNotes } from '@dharpa-vre/client-core'
+import { FormControl, InputLabel, Select, MenuItem, Button } from '@material-ui/core'
 
 const useStyles = makeStyles(theme => ({
   root: {
-    padding: theme.spacing(1, 2)
+    padding: theme.spacing(1, 2),
+    backgroundColor: theme.palette.background.default
   },
   headline: {
     margin: theme.spacing(2, 0)
@@ -34,106 +29,86 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-const NoteEditor = (): JSX.Element => {
-  const classes = useStyles()
-
-  const { setIsSideDrawerOpen } = useContext(PageLayoutContext)
-
-  const [noteContent, setNoteContent] = useState('')
+interface StepSelectorProps {
+  stepId: string
+  stepIds: string[]
+  onStepIdSelected?: (stepId: string) => void
+}
+const StepSelector = ({ stepId, stepIds, onStepIdSelected }: StepSelectorProps): JSX.Element => {
+  const [labelId] = useState(window.crypto.getRandomValues(new Uint32Array(1))[0].toString(16))
+  const handleChange = (id: string) => onStepIdSelected?.(id === '' ? undefined : id)
 
   return (
-    <div className={classes.root}>
-      <Typography className={classes.headline} variant="h5" component="h1">
-        Add Notes
-      </Typography>
-      <Breadcrumbs aria-label="breadcrumb" className={classes.breadcrumbs}>
-        {mockPath.map((path, index) => (
-          <Typography color="textPrimary" key={index}>
-            {path}
-          </Typography>
-        ))}
-      </Breadcrumbs>
-
-      <ReactQuill
-        className={classes.textEditor}
-        theme="snow"
-        onChange={contentHTML => setNoteContent(contentHTML)}
-        value={noteContent}
-        modules={NoteEditor.modules}
-        formats={NoteEditor.formats}
-        placeholder="type your notes here..."
-      />
-
-      <Button
-        variant="contained"
-        color="primary"
-        size="medium"
-        className={classes.button}
-        startIcon={<SaveIcon />}
-        onClick={() => {
-          console.log('saving notes')
-          setIsSideDrawerOpen(false)
-        }}
+    <FormControl variant="outlined">
+      <InputLabel id={`label-${labelId}`}>Step Id</InputLabel>
+      <Select
+        labelId={`label-${labelId}`}
+        value={stepId ?? ''}
+        onChange={e => handleChange(e.target.value as string)}
+        label="Step Id"
       >
-        Save
-      </Button>
-    </div>
+        <MenuItem value="">
+          <em>None</em>
+        </MenuItem>
+        {stepIds.map(id => (
+          <MenuItem value={id} key={id}>
+            {id}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
   )
 }
 
-/*
- * React-Quill configuration modules
- * See https://quilljs.com/docs/modules/ for complete options
- */
-NoteEditor.modules = {
-  toolbar: [
-    [{ font: [] }],
-    [{ size: ['small', false, 'large', 'huge'] }],
-    ['bold', 'italic', 'underline', 'strike'],
-    [{ color: [] }, { background: [] }],
-    [{ script: 'super' }, { script: 'sub' }],
-    ['blockquote', 'code-block', 'link'],
-    [{ align: [] }],
-    ['image', 'video'],
-    [{ list: 'ordered' }, { list: 'bullet' }],
-    [{ indent: '-1' }, { indent: '+1' }],
-    [{ direction: 'rtl' }],
-    // [{ header: [1, 2, 3, 4, 5, 6, false] }],
-    ['clean']
-  ],
-  clipboard: {
-    // toggle to add extra line breaks when pasting HTML:
-    matchVisual: true
-  }
-}
+const NoteEditor = (): JSX.Element => {
+  const classes = useStyles()
+  const [selectedNote, setSelectedNote] = React.useState<Note | EditedNote>()
 
-/*
- * Quill editor formats
- * See https://quilljs.com/docs/formats/
- */
-NoteEditor.formats = [
-  'align',
-  'background',
-  'bold',
-  'blockquote',
-  'bullet',
-  'color',
-  'code',
-  'code-block',
-  'clean',
-  'direction',
-  'font',
-  'header',
-  'italic',
-  'indent',
-  'image',
-  'list',
-  'link',
-  'size',
-  'strike',
-  'script',
-  'underline',
-  'video'
-]
+  const [workflow] = useCurrentWorkflow()
+  const [currentStepId, setCurrentStepId] = useState<string>(undefined)
+  const { notes, addNote, deleteNote, updateNote } = useStepNotes(currentStepId)
+
+  return (
+    <div className={classes.root}>
+      {/* TODO: remove step selector once we can get current step from the context. */}
+      <StepSelector
+        stepId={currentStepId}
+        stepIds={Object.keys(workflow?.steps ?? {})}
+        onStepIdSelected={setCurrentStepId}
+      />
+      {selectedNote != null ? (
+        <NoteViewerEditor
+          note={selectedNote}
+          onSave={note => {
+            note?.id == null ? addNote(note) : updateNote(note as Note)
+            setSelectedNote(undefined)
+          }}
+          onDelete={noteId => {
+            deleteNote(noteId)
+            setSelectedNote(undefined)
+          }}
+          onClose={() => setSelectedNote(undefined)}
+        />
+      ) : (
+        <>
+          <NoteItemsList>
+            {notes?.map(note => (
+              <NoteItem key={note.id} note={note} onClick={setSelectedNote} />
+            ))}
+          </NoteItemsList>
+          <Button
+            variant="outlined"
+            startIcon={<AddIcon />}
+            onClick={() => setSelectedNote({ content: '' })}
+            style={{ width: '100%' }}
+            disabled={currentStepId == null}
+          >
+            Add new note
+          </Button>
+        </>
+      )}
+    </div>
+  )
+}
 
 export default NoteEditor

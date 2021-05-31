@@ -58,8 +58,9 @@ const TabularDataMappingRow = ({
       clearMappingsForDataSet(rowId, toggledDataSetName)
     } else {
       // ... otherwise, give the underlying fields a blank string value to make them visible
-      const fields = requiredDataSets.find(dataSet => dataSet.name === toggledDataSetName).requiredFields
-      fields.forEach(fieldName => setColumnMappedToField(rowId, fieldName, ''))
+      const dataSet = requiredDataSets.find(dataSet => dataSet.name === toggledDataSetName)
+      const requiredFields = dataSet?.requiredFields ?? []
+      requiredFields.forEach(fieldName => setColumnMappedToField(rowId, fieldName, undefined))
     }
   }
 
@@ -70,7 +71,7 @@ const TabularDataMappingRow = ({
     // if chosen column already mapped to another field, set error message, clear value, and return
     if (fieldCorrespondingToColumn) {
       setErrorMessage(`column ${selectedColumn} already mapped to field "${fieldCorrespondingToColumn}"`)
-      setColumnMappedToField(rowId, fieldName, '')
+      setColumnMappedToField(rowId, fieldName, undefined)
       return
     }
 
@@ -82,14 +83,14 @@ const TabularDataMappingRow = ({
   return (
     <>
       <TableRow className={classes.row}>
-        <TableCell className={classes.borderless}>{rowName}</TableCell>
+        <TableCell className={classes.tableCell}>{rowName}</TableCell>
 
         {requiredDataSets.map(dataSet => (
-          <TableCell className={classes.borderless} key={dataSet.name}>
+          <TableCell className={classes.tableCell} key={dataSet.name}>
             <div className={classes.cellContainer}>
               <Checkbox
                 className={classes.checkbox}
-                color="default"
+                color="primary"
                 checked={isDataSetMappedInDataSource(rowId, dataSet.name)}
                 onChange={() => handleToggleIsSourceOfDataSet(dataSet.name)}
               />
@@ -105,6 +106,7 @@ const TabularDataMappingRow = ({
                       className={classes.formControl}
                       variant="outlined"
                       size="small"
+                      margin="dense"
                       key={requiredFieldName}
                     >
                       <InputLabel>{requiredFieldName}</InputLabel>
@@ -115,11 +117,8 @@ const TabularDataMappingRow = ({
                         onChange={event =>
                           handleFieldSelection(requiredFieldName, event.target.value as string)
                         }
-                        autoWidth={true}
+                        autoWidth
                       >
-                        <MenuItem key={-1} value="">
-                          none
-                        </MenuItem>
                         {columnNames.map((columnName, index) => (
                           <MenuItem key={index} value={columnName}>
                             {columnName}

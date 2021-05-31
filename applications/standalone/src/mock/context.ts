@@ -23,9 +23,15 @@ import {
   TableStats,
   DataRepositoryItemsTable,
   DataRepositoryItemsStats,
-  arrowUtils
+  arrowUtils,
+  Note
 } from '@dharpa-vre/client-core'
 import { viewProvider } from '@dharpa-vre/modules'
+
+function getRandomId(): string {
+  const uint32 = window.crypto.getRandomValues(new Uint32Array(1))[0]
+  return uint32.toString(16)
+}
 
 const adapter = <T>(decoder: IDecode<T>, handler: (msg: T) => Promise<ME<unknown> | undefined | void>) => {
   return (msg: ME<unknown>): Promise<ME<unknown> | undefined | void> => {
@@ -244,6 +250,77 @@ class IOValuesStore {
   }
 }
 
+interface NotesStoreWorkflow {
+  steps: { [stepId: string]: Note[] }
+}
+interface NotesStoreWorkflows {
+  [workflowId: string]: NotesStoreWorkflow
+}
+
+class NotesStore {
+  private _store: Storage
+  private _storeKey: string
+
+  private _workflows: NotesStoreWorkflows
+
+  constructor(storeKey = '__dharpa_workflows_notes') {
+    this._store = window.localStorage
+    this._storeKey = storeKey
+  }
+
+  private restore() {
+    try {
+      this._workflows = JSON.parse(this._store.getItem(this._storeKey))
+    } catch (e) {
+    } finally {
+      if (this._workflows == null) this._workflows = {}
+    }
+  }
+
+  private persist() {
+    this._store.setItem(this._storeKey, JSON.stringify(this._workflows))
+  }
+
+  get workflows() {
+    if (this._workflows == null) this.restore()
+    return this._workflows
+  }
+
+  getNotes(workflowId: string, stepId: string) {
+    const workflow: NotesStoreWorkflow = this.workflows[workflowId] ?? { steps: {} }
+    const stepNotes = workflow.steps[stepId] ?? []
+    return stepNotes
+  }
+
+  addOrUpdateNote(workflowId: string, stepId: string, note: Note) {
+    const workflow: NotesStoreWorkflow = this.workflows[workflowId] ?? { steps: {} }
+    const stepNotes = workflow.steps[stepId] ?? []
+    const noteIdx = stepNotes.findIndex(n => n.id === note.id)
+    if (noteIdx >= 0) {
+      stepNotes[noteIdx] = note
+    } else {
+      stepNotes.push({ ...note, id: getRandomId() })
+    }
+
+    workflow.steps[stepId] = stepNotes
+    this.workflows[workflowId] = workflow
+    this.persist()
+  }
+
+  deleteNote(workflowId: string, stepId: string, noteId: string) {
+    const workflow: NotesStoreWorkflow = this.workflows[workflowId] ?? { steps: {} }
+    const stepNotes = workflow.steps[stepId] ?? []
+    const noteIdx = stepNotes.findIndex(n => n.id === noteId)
+    if (noteIdx >= 0) {
+      const updatedNotes = [...stepNotes]
+      updatedNotes.splice(noteIdx, 1)
+      workflow.steps[stepId] = updatedNotes
+      this.workflows[workflowId] = workflow
+      this.persist()
+    }
+  }
+}
+
 export interface MockContextParameters {
   processData?: DataProcessor
   currentWorkflow: PipelineState
@@ -264,6 +341,7 @@ export class MockContext implements IBackEndContext {
   private _callbacks = new WeakMap()
 
   private _mockDataRepository: DataRepositoryItemsTable
+  private _mockNotesStore: NotesStore
 
   constructor(parameters: MockContextParameters) {
     this._mockDataRepository = getMockDataRepositoryTable()
@@ -272,17 +350,20 @@ export class MockContext implements IBackEndContext {
     this._currentWorkflow = parameters?.currentWorkflow
 
     this._store = new IOValuesStore(this._currentWorkflow)
+    this._mockNotesStore = new NotesStore()
 
     this._signals = {
       [Target.Activity]: new Signal<MockContext, ME<unknown>>(this),
       [Target.Workflow]: new Signal<MockContext, ME<unknown>>(this),
       [Target.ModuleIO]: new Signal<MockContext, ME<unknown>>(this),
-      [Target.DataRepository]: new Signal<MockContext, ME<unknown>>(this)
+      [Target.DataRepository]: new Signal<MockContext, ME<unknown>>(this),
+      [Target.Notes]: new Signal<MockContext, ME<unknown>>(this)
     }
 
     this._signals[Target.Workflow].connect(this._handleWorkflow, this)
     this._signals[Target.ModuleIO].connect(this._handleModuleIO, this)
     this._signals[Target.DataRepository].connect(this._handleDataRepository, this)
+    this._signals[Target.Notes].connect(this._handleNotes, this)
 
     setTimeout(() => {
       this._isReady = true
@@ -417,6 +498,48 @@ export class MockContext implements IBackEndContext {
     }
   }
 
+  private async _handleNotes(_: MockContext, msg: ME<unknown>): Promise<ME<unknown> | undefined | void> {
+    switch (msg.action) {
+      case Messages.Notes.codec.GetNotes.action:
+        return adapter(Messages.Notes.codec.GetNotes.decode, async ({ stepId }) => {
+          const notes = this._mockNotesStore.getNotes(this._currentWorkflow.structure.pipelineId, stepId)
+          return Messages.Notes.codec.Notes.encode({
+            stepId,
+            notes
+          })
+        })(msg)
+      case Messages.Notes.codec.Add.action:
+        return adapter(Messages.Notes.codec.Add.decode, async ({ stepId, note }) => {
+          this._mockNotesStore.addOrUpdateNote(this._currentWorkflow.structure.pipelineId, stepId, note)
+          const notes = this._mockNotesStore.getNotes(this._currentWorkflow.structure.pipelineId, stepId)
+          return Messages.Notes.codec.Notes.encode({
+            stepId,
+            notes
+          })
+        })(msg)
+      case Messages.Notes.codec.Update.action:
+        return adapter(Messages.Notes.codec.Update.decode, async ({ stepId, note }) => {
+          this._mockNotesStore.addOrUpdateNote(this._currentWorkflow.structure.pipelineId, stepId, note)
+          const notes = this._mockNotesStore.getNotes(this._currentWorkflow.structure.pipelineId, stepId)
+          return Messages.Notes.codec.Notes.encode({
+            stepId,
+            notes
+          })
+        })(msg)
+      case Messages.Notes.codec.Delete.action:
+        return adapter(Messages.Notes.codec.Delete.decode, async ({ stepId, noteId }) => {
+          this._mockNotesStore.deleteNote(this._currentWorkflow.structure.pipelineId, stepId, noteId)
+          const notes = this._mockNotesStore.getNotes(this._currentWorkflow.structure.pipelineId, stepId)
+          return Messages.Notes.codec.Notes.encode({
+            stepId,
+            notes
+          })
+        })(msg)
+      default:
+        break
+    }
+  }
+
   private async _processStepData(stepId: string): Promise<void> {
     if (this._processData == null) return
 
@@ -499,6 +622,8 @@ export class MockContext implements IBackEndContext {
           return this._handleWorkflow(undefined, msg).then(x => (x as unknown) as U)
         case Target.DataRepository:
           return this._handleDataRepository(undefined, msg).then(x => (x as unknown) as U)
+        case Target.Notes:
+          return this._handleNotes(undefined, msg).then(x => (x as unknown) as U)
       }
     })()
     if (response != null) this._signals[target].emit((response as unknown) as ME<unknown>)

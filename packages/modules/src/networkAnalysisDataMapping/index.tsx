@@ -7,7 +7,7 @@ import {
   useStepInputValue,
   withMockProcessor
 } from '@dharpa-vre/client-core'
-import { TabularDataMappingForm } from '@dharpa-vre/data-mapping-table'
+import { IRequiredDataSetProp, TabularDataMappingForm } from '@dharpa-vre/data-mapping-table'
 
 import { MappingTableStructure, toObject, fromObject } from './mappingTable'
 import { EdgesStructure, NodesStructure } from '../networkAnalysisDataVis/structure'
@@ -33,10 +33,10 @@ interface OutputValues {
 
 type Props = ModuleProps<InputValues, OutputValues>
 
-const nodeFields = ['id', 'label']
+const nodeFields = ['id', 'label', 'group']
 const edgeFields = ['srcId', 'tgtId', 'weight']
 
-const networkAnalysisDataSets = [
+const networkAnalysisDataSets: IRequiredDataSetProp[] = [
   {
     name: 'nodes',
     requiredFields: nodeFields
