@@ -12,10 +12,23 @@ import { WorkflowContext } from '../../context/workflowContext'
 import TabPanel from './TabPanel'
 
 const useStyles = makeStyles(theme => ({
-  tabList: {
-    flexGrow: 1,
+  featureContainer: {
+    minHeight: '100vh',
     width: '100%',
+    flexGrow: 1,
     backgroundColor: theme.palette.background.paper
+  },
+  tabList: {
+    '& .MuiTab-labelIcon': {
+      minHeight: theme.spacing(6)
+    },
+    '& .MuiTab-wrapper': {
+      flexDirection: 'row',
+      '& .MuiSvgIcon-root': {
+        marginBottom: 0,
+        marginRight: theme.spacing(1)
+      }
+    }
   },
   tabItem: {
     minWidth: 100,
@@ -26,17 +39,19 @@ const useStyles = makeStyles(theme => ({
 const FeatureTabs = (): JSX.Element => {
   const classes = useStyles()
 
-  const { sideDrawerTabIndex, setSideDrawerTabIndex } = useContext(WorkflowContext)
+  const { featureTabIndex, setFeatureTabIndex } = useContext(WorkflowContext)
 
   return (
-    <div className={classes.tabList}>
-      <AppBar position="static" color="default">
+    <div className={classes.featureContainer}>
+      <AppBar position="static" color="default" elevation={0}>
         <Tabs
-          value={sideDrawerTabIndex}
-          onChange={(event, newTabIndex) => setSideDrawerTabIndex(newTabIndex)}
+          className={classes.tabList}
+          value={featureTabIndex}
+          onChange={(event, newTabIndex) => setFeatureTabIndex(newTabIndex)}
           indicatorColor="primary"
-          variant="scrollable"
-          scrollButtons="auto"
+          textColor="primary"
+          variant="standard"
+          scrollButtons="off"
           aria-label="scrollable auto icon tabs"
         >
           {featureList.map(({ id, label, icon }) => (
@@ -53,7 +68,7 @@ const FeatureTabs = (): JSX.Element => {
       </AppBar>
 
       {featureList.map(({ id, content }, index) => (
-        <TabPanel value={sideDrawerTabIndex} index={index} key={id}>
+        <TabPanel value={featureTabIndex} index={index} key={id}>
           {content}
         </TabPanel>
       ))}
