@@ -11,7 +11,7 @@ import { featureList } from '../../../const/features'
 const RightSideBarContent = (): JSX.Element => {
   const classes = useStyles()
 
-  const { isRightSideBarVisible, setSideDrawerTabIndex, setIsSideDrawerOpen } = useContext(WorkflowContext)
+  const { isRightSideBarVisible, setFeatureTabIndex, setIsSideDrawerOpen } = useContext(WorkflowContext)
 
   return (
     <>
@@ -25,7 +25,7 @@ const RightSideBarContent = (): JSX.Element => {
             <IconButton
               className={classes.toolBarIcon}
               onClick={() => {
-                setSideDrawerTabIndex(index)
+                setFeatureTabIndex(index)
                 setIsSideDrawerOpen(true)
               }}
               size="small"
