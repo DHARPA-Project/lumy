@@ -14,10 +14,10 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  FormControl,
+  NativeSelect,
   Typography,
-  RadioGroup,
-  FormControlLabel,
-  Radio
+  FormControlLabel
 } from '@material-ui/core'
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
@@ -118,21 +118,41 @@ const Navigation = ({
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Typography>Nodes appearance</Typography>
           </AccordionSummary>
-          <AccordionDetails>
-            <RadioGroup
-              value={nodesScalingMethod ?? ''}
-              onChange={e => onNodesScalingMethodUpdated?.(e.target.value as ScalingMethods)}
-            >
-              <Grid container direction="row" alignItems="center" style={{ paddingBottom: '.5em' }}>
-                <Typography>Size</Typography>
-                <InfoOutlinedIcon color="inherit" className="vizIconRight" />
-              </Grid>
 
-              <FormControlLabel value="" control={<Radio />} label="Equal" />
-              <FormControlLabel value="degree" control={<Radio />} label="Degree" />
-              <FormControlLabel value="betweenness" control={<Radio />} label="Betweenness Centrality" />
-              <FormControlLabel value="eigenvector" control={<Radio />} label="Eigenvector Centrality" />
-            </RadioGroup>
+          <AccordionDetails style={{ display: 'block' }}>
+            <Grid container direction="row" alignItems="center" style={{ paddingBottom: '.5em' }}>
+              <Typography className="accordion-sub">Size</Typography>
+              <InfoOutlinedIcon color="inherit" className="vizIconRight" />
+            </Grid>
+
+            <FormControl>
+              <NativeSelect
+                style={{
+                  borderBottom: '0px',
+                  borderRadius: 1,
+                  paddingLeft: '.5em',
+                  border: '1px solid #ced4da'
+                }}
+                value={nodesScalingMethod ?? ''}
+                onChange={e => onNodesScalingMethodUpdated?.(e.target.value as ScalingMethods)}
+              >
+                <option value="equal">Equal</option>
+                <option value="degree">Most connections to other nodes (hubs)</option>
+                <option value="betweenness">Bridges between groups of nodes (brokers)</option>
+                <option value="eigenvector">Best connected to hubs</option>
+                <option value="closeness">Closer to other nodes</option>
+                <option value="eccentricity">Outliers</option>
+              </NativeSelect>
+            </FormControl>
+            <Grid
+              container
+              direction="row"
+              alignItems="center"
+              style={{ paddingBottom: '.5em', marginTop: '1.5em' }}
+            >
+              <Typography className="accordion-sub">Label</Typography>
+              <InfoOutlinedIcon color="inherit" className="vizIconRight" />
+            </Grid>
           </AccordionDetails>
         </StyledAccordion>
         <StyledAccordion

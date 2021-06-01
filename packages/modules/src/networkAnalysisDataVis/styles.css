@@ -18,4 +18,20 @@
 
 .vizIconRight {
   margin-left: 0.2em;
+  color: rgba(0, 0, 0, 0.2);
+}
+
+.accordion-sub {
+  font-weight: bold;
+}
+
+.MuiNativeSelect-select:focus {
+  background-color: rgba(0, 0, 0, 0);
+}
+
+.MuiInput-underline:before,
+.MuiInput-underline:after,
+.MuiInput-underline:hover,
+.MuiInput-underline:hover:not(.Mui-disabled):before {
+  border-bottom: none;
 }
