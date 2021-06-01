@@ -153,6 +153,22 @@ const Navigation = ({
               <Typography className="accordion-sub">Label</Typography>
               <InfoOutlinedIcon color="inherit" className="vizIconRight" />
             </Grid>
+            <FormControl style={{ width: '100%' }}>
+              <NativeSelect
+                style={{
+                  width: '100%',
+                  borderBottom: '0px',
+                  borderRadius: 1,
+                  paddingLeft: '.5em',
+                  border: '1px solid #ced4da'
+                }}
+                value=""
+              >
+                <option value="">Column 1</option>
+                <option value="">Column 2</option>
+                <option value="">Column 3</option>
+              </NativeSelect>
+            </FormControl>
           </AccordionDetails>
         </StyledAccordion>
         <StyledAccordion
