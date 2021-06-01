@@ -75,6 +75,9 @@ export type PipelineId1 = string
  * The step inputs that are connected to this pipeline input
  */
 export type ConnectedInputs = StepValueAddress[]
+export type IsConstant = IsConstant1 & IsConstant2
+export type IsConstant1 = boolean
+export type IsConstant2 = string
 export type ValueName2 = string
 export type PipelineId2 = string
 /**
@@ -104,7 +107,7 @@ export type ValueSchema1 = ValueSchema
 /**
  * Whether this value is a constant.
  */
-export type IsConstant = boolean
+export type IsConstant3 = boolean
 /**
  * Description of how/where the value was set.
  */
@@ -274,6 +277,7 @@ export interface PipelineInputField {
   valueSchema: ValueSchema
   pipelineId: PipelineId1
   connectedInputs?: ConnectedInputs
+  isConstant?: IsConstant
 }
 /**
  * The schema of a value.
@@ -336,7 +340,7 @@ export interface PipelineValue {
   isValid?: IsValid
   isSet: IsSet
   valueSchema: ValueSchema1
-  isConstant?: IsConstant
+  isConstant?: IsConstant3
   origin?: Origin
   lastUpdate?: LastUpdate
   valueHash: ValueHash

@@ -98,11 +98,14 @@ export const DataGrid = ({
       autoHeight
       rowCount={gridIsInServerMode ? stats?.rowsCount : data?.length}
       sortingMode="server"
+      filterMode="server"
       loading={isLoading}
       disableColumnSelector
       disableSelectionOnClick
       rowHeight={heights.row}
       headerHeight={heights.header}
+      // onFilterModelChange={handleFilterModelChange}
+      // filterModel={{}}
     ></MuiDataGrid>
   )
 }
@@ -131,9 +134,9 @@ function toColDef(field: Field): GridColDef {
     headerName: field.metadata.get('title') ?? field.name,
     description: field.metadata.get('description'),
     flex: 1,
-    sortable: false, // we do not support sorting yet
-    filterable: false, // we do not support filtering yet
-    editable: false, // we do not support editing
+    sortable: true, // we do not support sorting yet
+    filterable: true, // we do not support filtering yet
+    editable: true, // we do not support editing
     renderCell: getCellRenderer(field.type),
     renderHeader: getHeaderRenderer(field.type)
   }

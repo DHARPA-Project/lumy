@@ -16,6 +16,12 @@
     "fullValue": {
       "type": "boolean",
       "description": "Whether to ignore other filter items and return full value."
+    },
+    "condition": {
+      "$ref": "https://dharpa.org/schema/types/data/TabularDataFilterCondition.json"
+    },
+    "sorting": {
+      "$ref": "https://dharpa.org/schema/types/data/TabularDataSortingMethod.json"
     }
   },
   "required": []

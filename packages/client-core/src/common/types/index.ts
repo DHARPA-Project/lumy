@@ -7,6 +7,8 @@ export type {
   DataValueContainer,
   TableStats,
   DataTabularDataFilter as TabularDataFilter,
+  DataTabularDataFilterCondition as DataFilterCondtion,
+  DataTabularDataFilterItem as DataFilterItem,
   DataRepositoryItemsFilter,
   Note
 } from './generated'
