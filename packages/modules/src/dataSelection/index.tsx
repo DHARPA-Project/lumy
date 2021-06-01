@@ -56,12 +56,8 @@ const DataSelection = ({ step }: Props): JSX.Element => {
 
   return (
     <div key={step.stepId}>
-      <Typography className={classes.headline} component="h1" variant="h6" align="center" gutterBottom>
-        Data source selection
-      </Typography>
-
       <section className={classes.section}>
-        <Typography variant="subtitle1" gutterBottom>
+        <Typography className={classes.sectionHeading} variant="subtitle1" gutterBottom>
           Select the repository items that contain data about the nodes and edges
         </Typography>
         {repositoryItemsBatch != null && repositoryStats != null && (
@@ -79,7 +75,7 @@ const DataSelection = ({ step }: Props): JSX.Element => {
       </section>
 
       <section className={classes.section}>
-        <Typography variant="subtitle1" gutterBottom>
+        <Typography className={classes.sectionHeading} variant="subtitle1" gutterBottom>
           Select applicable metadata fields for the corpus
         </Typography>
         {repositoryItemsBatch != null && (
