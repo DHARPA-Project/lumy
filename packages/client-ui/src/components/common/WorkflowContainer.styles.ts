@@ -5,7 +5,9 @@ export default makeStyles(theme => ({
     minHeight: '100vh',
     width: '100%',
     display: 'grid',
-    gridTemplateColumns: `fit-content(5%) auto`
+    gridTemplateColumns: `fit-content(5%) auto`,
+    userSelect: 'none',
+    touchCallout: 'none'
   },
   stepContainer: {
     height: '100vh',
@@ -14,7 +16,13 @@ export default makeStyles(theme => ({
     marginLeft: 0,
     padding: 0,
     display: 'flex',
-    overflow: 'hidden'
+    overflow: 'hidden',
+    '&.horizontal': {
+      flexDirection: 'row'
+    },
+    '&.vertical': {
+      flexDirection: 'column'
+    }
   },
   toolAreaToggle: {
     position: 'absolute',
@@ -37,11 +45,18 @@ export default makeStyles(theme => ({
     transition: 'all 0.3s ease'
   },
   additionalPane: {
+    height: '100%',
     flex: 1,
     overflow: 'hidden'
   },
-  verticalPaneDivider: {
-    border: `1px solid ${theme.palette.divider}`,
-    cursor: 'col-resize'
+  paneDivider: {
+    '&.horizontal': {
+      borderRight: `2px solid ${theme.palette.divider}`,
+      cursor: 'col-resize'
+    },
+    '&.vertical': {
+      borderBottom: `2px solid ${theme.palette.divider}`,
+      cursor: 'row-resize'
+    }
   }
 }))
