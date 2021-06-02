@@ -1,5 +1,7 @@
 import React from 'react'
 
+import { makeStyles, Theme } from '@material-ui/core/styles'
+
 import Box from '@material-ui/core/Box'
 import Fade from '@material-ui/core/Fade'
 
@@ -9,9 +11,20 @@ type TabPanelProps = {
   index: number
 }
 
+const useStyles = makeStyles((theme: Theme) => ({
+  tabPanel: {
+    marginTop: theme.spacing(6),
+    height: `calc(100% - ${theme.spacing(6)}px)`,
+    overflow: 'scroll'
+  }
+}))
+
 const TabPanel = ({ children, value, index, ...other }: TabPanelProps): JSX.Element => {
+  const classes = useStyles()
+
   return (
     <div
+      className={classes.tabPanel}
       role="tabpanel"
       hidden={value !== index}
       id={`scrollable-auto-tabpanel-${index}`}
@@ -20,7 +33,7 @@ const TabPanel = ({ children, value, index, ...other }: TabPanelProps): JSX.Elem
     >
       {value === index && (
         <Fade in={value === index} timeout={1000}>
-          <Box p={3}>{children}</Box>
+          <Box>{children}</Box>
         </Fade>
       )}
     </div>

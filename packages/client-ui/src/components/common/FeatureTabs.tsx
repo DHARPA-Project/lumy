@@ -14,7 +14,7 @@ import TabPanel from './TabPanel'
 
 const useStyles = makeStyles(theme => ({
   featureContainer: {
-    minHeight: '100%',
+    height: '100%',
     width: '100%',
     flexGrow: 1,
     backgroundColor: theme.palette.background.paper
@@ -65,7 +65,7 @@ const FeatureTabs = (): JSX.Element => {
       transition={{ delay: 0.3, duration: 0.3 }}
       ref={containerRef}
     >
-      <AppBar position="static" color="default" elevation={0}>
+      <AppBar position="fixed" color="default" elevation={0}>
         <Tabs
           className={classes.tabList}
           value={featureTabIndex}
