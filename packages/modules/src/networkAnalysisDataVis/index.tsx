@@ -96,17 +96,22 @@ type ScalingMethods = keyof Omit<GraphDataStructure, 'isLarge'>
 interface NavigationProps {
   nodesScalingMethod: ScalingMethods
   isDisplayIsolated: boolean
+  isDisplayLabels: boolean
   onNodesScalingMethodUpdated?: (m: ScalingMethods) => void
   onDisplayIsolatedUpdated?: (isIsolated: boolean) => void
+  onDisplayLabelsUpdated?: (arg0: boolean) => void
 }
 
 const Navigation = ({
   nodesScalingMethod,
+  isDisplayLabels,
   isDisplayIsolated,
   onNodesScalingMethodUpdated,
-  onDisplayIsolatedUpdated
+  onDisplayIsolatedUpdated,
+  onDisplayLabelsUpdated
 }: NavigationProps): JSX.Element => {
   const [expandedAccordionId, setExpandedAccordionId] = React.useState<number>(null)
+  const [labelValue, setLabelValue] = React.useState(null)
 
   return (
     <Grid container spacing={1} direction="column">
@@ -150,9 +155,10 @@ const Navigation = ({
               alignItems="center"
               style={{ paddingBottom: '.5em', marginTop: '1.5em' }}
             >
-              <Typography className="accordion-sub">Label</Typography>
+              <Typography className="accordion-sub">Labels</Typography>
               <InfoOutlinedIcon color="inherit" className="vizIconRight" />
             </Grid>
+
             <FormControl style={{ width: '100%' }}>
               <NativeSelect
                 style={{
@@ -162,13 +168,28 @@ const Navigation = ({
                   paddingLeft: '.5em',
                   border: '1px solid #ced4da'
                 }}
-                value=""
+                value={labelValue ?? undefined}
+                onChange={e => {
+                  e.target.value == 'none' ? onDisplayLabelsUpdated?.(false) : onDisplayLabelsUpdated?.(true)
+                  setLabelValue(e.target.value)
+                }}
               >
-                <option value="">Column 1</option>
-                <option value="">Column 2</option>
-                <option value="">Column 3</option>
+                <option value="none">None</option>
+                <option value="label">Label</option>
               </NativeSelect>
             </FormControl>
+            {isDisplayLabels == true && (
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={isDisplayIsolated}
+                    onChange={() => onDisplayIsolatedUpdated?.(!isDisplayIsolated)}
+                    inputProps={{ 'aria-label': 'primary checkbox' }}
+                  />
+                }
+                label="Remove labels on smaller nodes"
+              />
+            )}
           </AccordionDetails>
         </StyledAccordion>
         <StyledAccordion
@@ -191,12 +212,12 @@ const Navigation = ({
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={isDisplayIsolated}
+                  checked={!isDisplayIsolated}
                   onChange={() => onDisplayIsolatedUpdated?.(!isDisplayIsolated)}
                   inputProps={{ 'aria-label': 'primary checkbox' }}
                 />
               }
-              label="Display isolated nodes"
+              label="Remove isolated nodes"
             />
           </AccordionDetails>
         </StyledAccordion>
@@ -237,18 +258,15 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
   const [nodes] = useStepInputValue<NodesTable>(step.stepId, 'nodes', { fullValue: true })
   const [edges] = useStepInputValue<EdgesTable>(step.stepId, 'edges', { fullValue: true })
   const [graphData] = useStepOutputValue<GraphDataTable>(step.stepId, 'graphData', { fullValue: true })
-  //nconst [shortestPath] = useStepOutputValue<string[]>(step.stepId, 'shortestPath')
+  //const [shortestPath] = useStepOutputValue<string[]>(step.stepId, 'shortestPath')
   const [nodesScalingMethod, setNodesScalingMethod] = React.useState<ScalingMethods>(null)
-  const [isDisplayIsolated, setIsDisplayIsolated] = React.useState(false)
+  const [isDisplayLabels, setIsDisplayLabels] = React.useState(false)
+  const [isDisplayIsolated, setIsDisplayIsolated] = React.useState(true)
   const [isDisplayTooltip, setIsDisplayTooltip] = React.useState(false)
   const [graphTooltipInfo, setGraphTooltipInfo] = React.useState<TooltipInfo>(null)
   const graphRef = React.useRef<NetworkForce>(null)
   const graphContainerRef = React.useRef()
   const graphBox = useBbox(graphContainerRef)
-
-  const handleGraphNodeHovered = () => {
-    setIsDisplayTooltip(true)
-  }
 
   const handleGraphNodeMouseMove = (event: unknown) => {
     // console.log(event.detail)
@@ -263,6 +281,10 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
     setGraphTooltipInfo(tooltipInfo)
   }
 
+  const handleGraphNodeHovered = () => {
+    setIsDisplayTooltip(true)
+  }
+
   const handleGraphNodeHoveredOut = () => {
     setIsDisplayTooltip(false)
   }
@@ -272,7 +294,9 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
 
   React.useEffect(() => {
     if (graphRef.current == null || nodes == null || graphData == null) return
+
     const scalerColumn = graphData.getColumn(nodesScalingMethod)
+
     const normalizedScalerColumn = normalizeColumn(scalerColumn as Column<Float32>)
 
     const graphNodes = [...nodes.toArray()].map((node, idx) => ({
@@ -305,6 +329,7 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
     graphRef.current.addEventListener('node-hovered', handleGraphNodeHovered)
     graphRef.current.addEventListener('node-mousemove', handleGraphNodeMouseMove)
     graphRef.current.addEventListener('node-hovered-out', handleGraphNodeHoveredOut)
+
     return () => {
       graphRef.current.removeEventListener('node-hovered', handleGraphNodeHovered)
       graphRef.current.removeEventListener('node-mousemove', handleGraphNodeMouseMove)
@@ -321,6 +346,7 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
             isDisplayIsolated={isDisplayIsolated}
             onNodesScalingMethodUpdated={setNodesScalingMethod}
             onDisplayIsolatedUpdated={setIsDisplayIsolated}
+            onDisplayLabelsUpdated={setIsDisplayLabels}
           />
         </Grid>
         <Grid item xs={9} ref={graphContainerRef}>
@@ -354,6 +380,7 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
           )}
           <network-force
             displayIsolatedNodes={isDisplayIsolated ? undefined : true}
+            displayLabels={isDisplayLabels}
             reapplySimulationOnUpdate={true}
             width={graphWidth}
             height={graphHeight}

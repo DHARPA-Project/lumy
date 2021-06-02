@@ -1,5 +1,10 @@
-.MuiRadio-colorSecondary.Mui-checked {
+.MuiRadio-colorSecondary.Mui-checked,
+.MuiCheckbox-colorSecondary.Mui-checked {
   color: grey;
+}
+
+.MuiIconButton-colorSecondary:hover {
+  background-color: none;
 }
 
 .MuiIconButton-colorSecondary:hover,

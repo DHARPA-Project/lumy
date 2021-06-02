@@ -105,6 +105,7 @@ export class NetworkForce extends LitElement {
   /** If `true`, force simulation will be reapplied on update
    * even if some or all of the nodes are the same.
    */
+  @property({}) displayLabels: string
   @property({ type: Boolean }) reapplySimulationOnUpdate = false
 
   /** Nodes of the graph */
@@ -228,8 +229,6 @@ export class NetworkForce extends LitElement {
         this.dispatchEvent(new CustomEvent('node-hovered-out'))
       })
 
-    // console.log(this.currentGraphNodes)
-
     const texts = textsGroup
       .selectAll('.node-labels')
       .data(this.currentGraphNodes)
@@ -238,6 +237,7 @@ export class NetworkForce extends LitElement {
       .attr('dy', '0.35em')
       .attr('class', 'node-labels')
       .attr('font-family', 'sans-serif')
+      .style('opacity', this.displayLabels == 'true' ? 1 : 0)
 
     simulation.on('tick', () => {
       link
