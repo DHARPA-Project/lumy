@@ -13,7 +13,12 @@ export type {
   DataRepositoryItemsFilter,
   Note
 } from './generated'
-export { State, DataType, Operator as DataFilterCondtionOperator } from './generated'
+export {
+  State,
+  DataType,
+  Operator as DataFilterCondtionOperator,
+  Direction as DataSortingDirection
+} from './generated'
 export * as Messages from './messages'
 export * from './base'
 export type { PipelineState, Structure as PipelineStructure, StepDesc } from './kiaraGenerated'

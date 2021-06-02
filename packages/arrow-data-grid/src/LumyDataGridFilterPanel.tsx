@@ -11,43 +11,16 @@ import {
   GridApiContext,
   useGridState
 } from '@material-ui/data-grid'
-import { DataFilterCondtion, DataFilterItem, DataFilterCondtionOperator } from '@dharpa-vre/client-core'
-
-const asGridFilterItem = (item: DataFilterItem, index: number): GridFilterItem => ({
-  id: index,
-  columnField: item.column,
-  value: item.value == null ? '' : String(item.value),
-  operatorValue: item.operator
-})
-
-const asDataFilterItem = (item: GridFilterItem): DataFilterItem => {
-  return {
-    column: item.columnField,
-    operator: item.operatorValue,
-    value: item.value == '' ? undefined : item.value
-  }
-}
-
-const asGridLinkOperator = (operator: DataFilterItem['operator']): GridLinkOperator => {
-  switch (operator) {
-    case 'or':
-      return GridLinkOperator.Or
-    default:
-      return GridLinkOperator.And
-  }
-}
-
-const asDataFilterCondtionOperator = (operator: GridLinkOperator): DataFilterCondtionOperator => {
-  switch (operator) {
-    case GridLinkOperator.Or:
-      return DataFilterCondtionOperator.Or
-    default:
-      return DataFilterCondtionOperator.And
-  }
-}
+import { DataFilterCondtion, DataFilterCondtionOperator } from '@dharpa-vre/client-core'
+import {
+  asDataFilterItem,
+  asDataFilterCondtionOperator,
+  asGridFilterItem,
+  asGridLinkOperator
+} from './util/converters'
 
 export interface FilterPanelProps {
-  condition: DataFilterCondtion
+  condition?: DataFilterCondtion
   onConditionUpdated?: (condition: DataFilterCondtion) => void
 }
 
@@ -59,32 +32,32 @@ export const LumyDataGridFilterPanel = ({ condition, onConditionUpdated }: Filte
   const { columns } = gridState
 
   const handleApplyFilterChanges = (item: GridFilterItem) => {
-    const updatedCondition = {
-      ...condition,
-      items: [...condition.items]
+    const updatedCondition: DataFilterCondtion = {
+      operator: condition?.operator ?? DataFilterCondtionOperator.And,
+      items: [...(condition?.items ?? [])]
     }
     updatedCondition.items[item.id] = asDataFilterItem(item)
     onConditionUpdated?.(updatedCondition)
   }
   const handleDeleteFilter = (item: GridFilterItem) => {
-    const updatedCondition = {
-      ...condition,
-      items: [...condition.items]
+    const updatedCondition: DataFilterCondtion = {
+      operator: condition?.operator ?? DataFilterCondtionOperator.And,
+      items: [...(condition?.items ?? [])]
     }
     updatedCondition.items.splice(item.id, 1)
     onConditionUpdated?.(updatedCondition)
   }
   const handleOperatorChanged = (operator: GridLinkOperator) => {
-    const updatedCondition = {
-      ...condition,
+    const updatedCondition: DataFilterCondtion = {
+      items: condition?.items ?? [],
       operator: asDataFilterCondtionOperator(operator)
     }
     onConditionUpdated?.(updatedCondition)
   }
   const handleAddNewFilter = () => {
-    const updatedCondition = {
-      ...condition,
-      items: condition.items.concat({
+    const updatedCondition: DataFilterCondtion = {
+      operator: condition?.operator ?? DataFilterCondtionOperator.And,
+      items: (condition?.items ?? []).concat({
         column: columns.all[0],
         operator: 'equals',
         value: undefined
@@ -96,15 +69,15 @@ export const LumyDataGridFilterPanel = ({ condition, onConditionUpdated }: Filte
   return (
     <GridPanelWrapper>
       <GridPanelContent>
-        {condition.items.map((item, index) => (
+        {condition?.items?.map((item, index) => (
           <GridFilterForm
             key={index}
             item={asGridFilterItem(item, index)}
             applyFilterChanges={handleApplyFilterChanges}
             deleteFilter={handleDeleteFilter}
-            hasMultipleFilters={condition.items.length > 1}
+            hasMultipleFilters={condition?.items?.length > 1}
             showMultiFilterOperators={index > 0}
-            multiFilterOperator={asGridLinkOperator(condition.operator)}
+            multiFilterOperator={asGridLinkOperator(condition?.operator)}
             disableMultiFilterOperator={index !== 1}
             applyMultiFilterOperatorChanges={handleOperatorChanged}
           />
@@ -122,7 +95,7 @@ export const LumyDataGridFilterPanel = ({ condition, onConditionUpdated }: Filte
 /**
  * Enable multiple columns filter icon.
  */
-export const FilterEnabler = (): JSX.Element => {
+export const MultiFilterIconEnabler = (): JSX.Element => {
   const apiRef = React.useContext(GridApiContext)
   apiRef.current.state.options.disableMultipleColumnsFiltering = false
   return <></>
