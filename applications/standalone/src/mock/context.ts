@@ -27,6 +27,7 @@ import {
   Note
 } from '@dharpa-vre/client-core'
 import { viewProvider } from '@dharpa-vre/modules'
+import { filterTable } from '../../../../packages/client-core/src/common/utils/arrow'
 
 function getRandomId(): string {
   const uint32 = window.crypto.getRandomValues(new Uint32Array(1))[0]
@@ -63,10 +64,27 @@ const getFilteredValue = <T = unknown>(value: T, filter?: TabularDataFilter): T 
     if (filter?.fullValue) return table
     if (filter == null) return undefined
 
+    // TODO: move to another function
+    const sortingColumn = filter?.sorting?.column
+    const sortingDirection = filter?.sorting?.direction
+    const sortedTable =
+      filter?.sorting == null
+        ? table
+        : arrowUtils.sortTable(table, (rowA, rowB) => {
+            if (sortingDirection == null || sortingDirection == 'default') return 0
+
+            if (rowA[sortingColumn] < rowB[sortingColumn]) return sortingDirection == 'asc' ? -1 : 1
+            if (rowA[sortingColumn] > rowB[sortingColumn]) return sortingDirection == 'asc' ? 1 : -1
+            return 0
+          })
+
     const offset = filter?.offset ?? 0
     const pageSize = filter?.pageSize ?? 5
-    const filteredTable = table.slice(offset, offset + pageSize)
-    return (filteredTable as unknown) as T
+    const tablePage = sortedTable.slice(offset, offset + pageSize)
+
+    // TODO: add filtering (one filter type only for testing is enough)
+
+    return (tablePage as unknown) as T
   }
   return value
 }

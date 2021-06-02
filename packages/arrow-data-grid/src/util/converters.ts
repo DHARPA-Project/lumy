@@ -124,7 +124,7 @@ export function toColDef(field: Field, options: ColDefOptions): GridColDef {
     flex: 1,
     sortable: options?.sortingEnabled,
     filterable: options?.filteringEnabled,
-    editable: true, // we do not support editing (yet)
+    editable: false, // we do not support editing (yet)
     renderCell: getCellRenderer(field.type),
     renderHeader: getHeaderRenderer(field.type),
     filterOperators: getFilterOperators(field.type)

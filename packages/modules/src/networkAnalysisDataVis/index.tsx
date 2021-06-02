@@ -154,6 +154,7 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
   const [edges] = useStepInputValue<EdgesTable>(step.stepId, 'edges', { fullValue: true })
   const [graphData] = useStepOutputValue<GraphDataTable>(step.stepId, 'graphData', { fullValue: true })
 
+  // nodes page + filter for table view
   const [nodesFilter, setNodesFilter] = React.useState<TabularDataFilter>({ pageSize: 10 })
   const [nodesPage, , nodesStats] = useStepInputValue<NodesTable, TableStats>(
     step.stepId,
@@ -230,6 +231,7 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
             filter={nodesFilter}
             onFiltering={setNodesFilter}
             condensed
+            sortingEnabled={true}
           />
         </Grid>
       </Grid>
