@@ -1,28 +1,49 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
-import Fab from '@material-ui/core/fab'
 import SpeedDial from '@material-ui/lab/SpeedDial'
 import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon'
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction'
-
-import CloseIcon from '@material-ui/icons/Close'
+import VerticalSplitIcon from '@material-ui/icons/VerticalSplit'
+import HorizontalSplitIcon from '@material-ui/icons/HorizontalSplit'
 
 import { WorkflowContext } from '../../context/workflowContext'
-import useStyles from './WorkflowContainer.styles'
 import { featureList } from '../../const/features'
+import useStyles from './WorkflowContainer.styles'
 
 import FeatureTabs from './FeatureTabs'
 import VerticalStepIndicator from './VerticalStepIndicator'
 import WorkflowStep from './WorkflowStep'
 import LoadingIndicator from './LoadingIndicator'
 
+type screenSplitDirection = 'horizontal' | 'vertical'
+type screenSplitOption = {
+  name: screenSplitDirection
+  icon: JSX.Element
+  tooltipText: string
+  direction: string
+}
+
+const screenSplitOptions: screenSplitOption[] = [
+  {
+    name: 'horizontal',
+    icon: <HorizontalSplitIcon />,
+    tooltipText: 'split: top / bottom',
+    direction: 'vertical'
+  },
+  {
+    name: 'vertical',
+    icon: <VerticalSplitIcon />,
+    tooltipText: 'split: left / right',
+    direction: 'horizontal'
+  }
+]
+
 const WorkflowContainer = (): JSX.Element => {
   const stepContainerRef = useRef<HTMLDivElement>(null)
   const mainPaneRef = useRef<HTMLDivElement>(null)
   const additionalPaneRef = useRef<HTMLDivElement>(null)
-  const yDividerPos = useRef(0)
-  const xDividerPos = useRef(0)
+  const dividerPosition = useRef<{ x?: number; y?: number }>(null)
 
   const {
     setFeatureTabIndex,
@@ -38,9 +59,10 @@ const WorkflowContainer = (): JSX.Element => {
     setIsAdditionalPaneVisible
   } = useContext(WorkflowContext) //prettier-ignore
 
-  const classes = useStyles()
-
   const [isSpeedDialOpen, setIsSpeedDialOpen] = useState(false)
+  const [splitDirection, setSplitDirection] = useState<screenSplitDirection>('horizontal')
+
+  const classes = useStyles()
 
   useEffect(() => {
     document.addEventListener('mouseup', onMouseUp)
@@ -50,7 +72,19 @@ const WorkflowContainer = (): JSX.Element => {
       document.removeEventListener('mouseup', onMouseUp)
       document.removeEventListener('mousemove', onMouseMove)
     }
-  }, [])
+  }, [splitDirection])
+
+  useEffect(() => {
+    if (!isAdditionalPaneVisible) return
+
+    if (splitDirection === 'horizontal') {
+      setMainPaneWidth(getStepContainerWidth() / 2)
+      setMainPaneHeight(getStepContainerHeight())
+    } else if (splitDirection === 'vertical') {
+      setMainPaneWidth(getStepContainerWidth())
+      setMainPaneHeight(getStepContainerHeight() / 2)
+    }
+  }, [splitDirection])
 
   useEffect(() => {
     if (!mainPaneWidth) return
@@ -59,42 +93,61 @@ const WorkflowContainer = (): JSX.Element => {
     mainPaneRef.current.style.maxWidth = mainPaneWidth + 'px'
   }, [mainPaneWidth])
 
+  useEffect(() => {
+    if (!mainPaneHeight) return
+
+    mainPaneRef.current.style.minHeight = mainPaneHeight + 'px'
+    mainPaneRef.current.style.maxHeight = mainPaneHeight + 'px'
+  }, [mainPaneHeight])
+
   const getStepContainerWidth = () => stepContainerRef.current?.getBoundingClientRect()?.width
+  const getStepContainerHeight = () => stepContainerRef.current?.getBoundingClientRect()?.height
 
   const onMouseDown = (event: React.MouseEvent): void => {
-    yDividerPos.current = event.clientY
-    xDividerPos.current = event.clientX
+    dividerPosition.current = { x: event.clientX, y: event.clientY }
   }
 
   const onMouseUp = (): void => {
-    yDividerPos.current = null
-    xDividerPos.current = null
+    dividerPosition.current = null
   }
 
   const onMouseMove = (event: React.MouseEvent): void => {
-    if (!yDividerPos.current && !xDividerPos.current) return
+    if (!dividerPosition.current) return
 
-    setMainPaneHeight(mainPaneHeight + event.clientY - yDividerPos.current)
-    setMainPaneWidth(prevWidth => {
-      const newWidth = prevWidth + event.clientX - xDividerPos.current
-      const stepContainerWidth = getStepContainerWidth()
-      return newWidth <= 0.65 * stepContainerWidth && newWidth >= 0.35 * stepContainerWidth
-        ? newWidth
-        : prevWidth
-    })
-
-    yDividerPos.current = event.clientY
-    xDividerPos.current = event.clientX
+    if (splitDirection === 'horizontal') {
+      setMainPaneWidth(prevWidth => {
+        const newWidth = prevWidth + event.clientX - dividerPosition.current.x
+        const stepContainerWidth = getStepContainerWidth()
+        return newWidth <= 0.65 * stepContainerWidth && newWidth >= 0.35 * stepContainerWidth
+          ? newWidth
+          : prevWidth
+      })
+      dividerPosition.current = { x: event.clientX }
+    } else if (splitDirection === 'vertical') {
+      setMainPaneHeight(prevHeight => {
+        const newHeight = prevHeight + event.clientY - dividerPosition.current.y
+        const stepContainerHeight = getStepContainerHeight()
+        return newHeight <= 0.65 * stepContainerHeight && newHeight >= 0.35 * stepContainerHeight
+          ? newHeight
+          : prevHeight
+      })
+      dividerPosition.current = { y: event.clientY }
+    }
   }
 
   const handleOpenAdditionalPane = () => {
-    setMainPaneWidth(getStepContainerWidth() / 2)
+    if (splitDirection === 'vertical') {
+      setMainPaneHeight(getStepContainerHeight() / 2)
+    } else {
+      setMainPaneWidth(getStepContainerWidth() / 2)
+    }
     setIsAdditionalPaneVisible(true)
   }
 
   const handleCloseAdditionalPane = () => {
     setIsAdditionalPaneVisible(false)
     setMainPaneWidth(getStepContainerWidth())
+    setMainPaneHeight(getStepContainerHeight())
   }
 
   const handleNextStepClick = () => {
@@ -127,14 +180,14 @@ const WorkflowContainer = (): JSX.Element => {
           handleBack={handlePreviousStepClick}
         />
 
-        <div className={classes.stepContainer} ref={stepContainerRef}>
+        <div className={classes.stepContainer + ` ${splitDirection}`} ref={stepContainerRef}>
           <section className={classes.mainPane} ref={mainPaneRef}>
             <WorkflowStep projectSteps={projectSteps} activeStep={activeStep} direction={direction} />
           </section>
 
           {isAdditionalPaneVisible && (
             <>
-              <div className={classes.verticalPaneDivider} onMouseDown={onMouseDown} />
+              <div className={classes.paneDivider + ` ${splitDirection}`} onMouseDown={onMouseDown} />
 
               <AnimatePresence>
                 <motion.section
@@ -156,15 +209,28 @@ const WorkflowContainer = (): JSX.Element => {
         </div>
       </div>
       {isAdditionalPaneVisible ? (
-        <Fab
+        <SpeedDial
+          ariaLabel="screen-split-options"
           className={classes.toolAreaToggle}
-          onClick={handleCloseAdditionalPane}
-          size="small"
-          color="primary"
-          aria-label="toggle"
+          icon={<SpeedDialIcon />}
+          onClose={(_, reason: string) => {
+            if (reason === 'toggle') handleCloseAdditionalPane()
+            setIsSpeedDialOpen(false)
+          }}
+          onOpen={() => setIsSpeedDialOpen(true)}
+          open={isSpeedDialOpen}
+          direction="up"
+          FabProps={{ size: 'small' }}
         >
-          <CloseIcon />
-        </Fab>
+          {screenSplitOptions.map((option, index) => (
+            <SpeedDialAction
+              key={index}
+              icon={option.icon}
+              tooltipTitle={option.tooltipText}
+              onClick={() => setSplitDirection(option.direction as screenSplitDirection)}
+            />
+          ))}
+        </SpeedDial>
       ) : (
         <SpeedDial
           ariaLabel="tools"
