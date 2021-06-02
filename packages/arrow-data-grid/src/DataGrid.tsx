@@ -5,14 +5,37 @@ import {
   GridColumns,
   GridRowsProp,
   GridColDef,
-  GridRowData
+  GridRowData,
+  GridFooter,
+  GridFilterModelState
 } from '@material-ui/data-grid'
-import { TableStats, TabularDataFilter } from '@dharpa-vre/client-core'
+import {
+  TableStats,
+  TabularDataFilter,
+  DataFilterCondtion,
+  DataFilterCondtionOperator
+} from '@dharpa-vre/client-core'
 import { getCellRenderer } from './cellRenderers'
 import { getHeaderRenderer } from './headerRenderer'
 import { useStyles, useHeights } from './DataGrid.styles'
+import { LumyDataGridFilterPanel, FilterEnabler } from './LumyDataGridFilterPanel'
+import { getFilterOperators } from './filterOperators'
 
 const DefaultPageSize = 10
+
+/**
+ * We do not use filtering mechanism provided by `data-grid` but we still want the grid
+ * to display an icon in the header of a column when there is a filter applied to it.
+ * Internally, `data-grid` uses GridFilterModelState to figure out if a column has
+ * a filter applied. So we provide some fake filters here.
+ */
+const toGridFilterModelState = (condition: DataFilterCondtion): GridFilterModelState => ({
+  items: condition.items.map(item => ({
+    columnField: item.column,
+    operatorValue: 'equals',
+    value: 'placeholder'
+  }))
+})
 
 export interface DataGridProps {
   data: Table
@@ -34,6 +57,10 @@ export const DataGrid = ({
   const [isLoading, setIsLoading] = React.useState(false)
   const classes = useStyles()
   const heights = useHeights({ rowCondensed: condensed })
+  const [filterCondition, setFilterCondition] = React.useState<DataFilterCondtion>({
+    items: [],
+    operator: DataFilterCondtionOperator.And
+  })
 
   /**
    * When the grid is in "server" mode it means that the "data" property
@@ -104,8 +131,20 @@ export const DataGrid = ({
       disableSelectionOnClick
       rowHeight={heights.row}
       headerHeight={heights.header}
-      // onFilterModelChange={handleFilterModelChange}
-      // filterModel={{}}
+      components={{
+        // eslint-disable-next-line react/display-name
+        FilterPanel: () => (
+          <LumyDataGridFilterPanel condition={filterCondition} onConditionUpdated={setFilterCondition} />
+        ),
+        // eslint-disable-next-line react/display-name
+        Footer: () => (
+          <>
+            <FilterEnabler />
+            <GridFooter />
+          </>
+        )
+      }}
+      filterModel={toGridFilterModelState(filterCondition)}
     ></MuiDataGrid>
   )
 }
@@ -134,11 +173,12 @@ function toColDef(field: Field): GridColDef {
     headerName: field.metadata.get('title') ?? field.name,
     description: field.metadata.get('description'),
     flex: 1,
-    sortable: true, // we do not support sorting yet
-    filterable: true, // we do not support filtering yet
+    sortable: false, // we do not support sorting yet
+    filterable: true,
     editable: true, // we do not support editing
     renderCell: getCellRenderer(field.type),
-    renderHeader: getHeaderRenderer(field.type)
+    renderHeader: getHeaderRenderer(field.type),
+    filterOperators: getFilterOperators(field.type)
   }
 }
 function toRow(row: ReturnType<Table['get']>, columns: string[], index: number): GridRowData {
