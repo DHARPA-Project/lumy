@@ -1,6 +1,7 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useRef } from 'react'
+import { motion } from 'framer-motion'
 
-import { makeStyles } from '@material-ui/core/styles'
+import { makeStyles, useTheme } from '@material-ui/core/styles'
 
 import AppBar from '@material-ui/core/AppBar'
 import Tabs from '@material-ui/core/Tabs'
@@ -13,7 +14,7 @@ import TabPanel from './TabPanel'
 
 const useStyles = makeStyles(theme => ({
   featureContainer: {
-    minHeight: '100vh',
+    minHeight: '100%',
     width: '100%',
     flexGrow: 1,
     backgroundColor: theme.palette.background.paper
@@ -38,16 +39,38 @@ const useStyles = makeStyles(theme => ({
 
 const FeatureTabs = (): JSX.Element => {
   const classes = useStyles()
+  const theme = useTheme()
+
+  const containerRef = useRef(null)
+  const tabActionRef = useRef(null)
 
   const { featureTabIndex, setFeatureTabIndex } = useContext(WorkflowContext)
 
+  // update MUI tab indicator to correct its misplacement after tab width change
+  useEffect(() => {
+    const indicatorUpdateTimeout = setTimeout(() => {
+      tabActionRef.current.updateIndicator()
+    }, theme.transitions.duration.standard)
+
+    return () => {
+      clearTimeout(indicatorUpdateTimeout)
+    }
+  }, [containerRef.current?.getBoundingClientRect()?.width, theme])
+
   return (
-    <div className={classes.featureContainer}>
+    <motion.div
+      className={classes.featureContainer}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ delay: 0.3, duration: 0.3 }}
+      ref={containerRef}
+    >
       <AppBar position="static" color="default" elevation={0}>
         <Tabs
           className={classes.tabList}
           value={featureTabIndex}
           onChange={(event, newTabIndex) => setFeatureTabIndex(newTabIndex)}
+          action={tabActionRef}
           indicatorColor="primary"
           textColor="primary"
           variant="standard"
@@ -72,7 +95,7 @@ const FeatureTabs = (): JSX.Element => {
           {content}
         </TabPanel>
       ))}
-    </div>
+    </motion.div>
   )
 }
 
