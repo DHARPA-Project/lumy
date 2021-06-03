@@ -1,9 +1,11 @@
 import { List, Table, Utf8 } from 'apache-arrow'
 import { useContext, useEffect, useState } from 'react'
+import objectHash from 'object-hash'
 import { deserialize } from '../common/codec'
 import { BackEndContext, handlerAdapter, Target } from '../common/context'
 import { DataRepositoryItemsFilter, TableStats, Messages, DataType } from '../common/types'
-import { getDataRepositoryItemsFilterHash as getHash } from '../common/utils/hash'
+
+const getHash = (filter?: DataRepositoryItemsFilter): string => (filter == null ? '' : objectHash(filter))
 
 export type DataRepositoryItemStructure = {
   id: Utf8
