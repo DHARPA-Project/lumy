@@ -34,7 +34,7 @@ def filter_table(
     filter_items = [
         item
         for item in condition.items
-        if item.condition == 'contains'
+        if item.operator == 'contains'
     ]
 
     if len(filter_items) == 0:
