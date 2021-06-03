@@ -16,9 +16,7 @@ import {
 
 import useStyles from './DataSelection.styles'
 
-// import { DataGrid } from '@dharpa-vre/arrow-data-grid'
 import { TableView } from '../components/TableView'
-import CustomSwitch from './CustomSwitch'
 
 interface InputValues {
   repositoryItems?: Table<DataRepositoryItemStructure>
@@ -43,13 +41,7 @@ const DataSelection = ({ step }: Props): JSX.Element => {
     step.stepId,
     'selectedItemsIds'
   )
-  const [metadataFields = [], setMetadataFields] = useStepInputValue<string[]>(step.stepId, 'metadataFields')
   const [repositoryItemsBatch, repositoryStats] = useDataRepository(repositoryItemsFilter)
-
-  const handleMetadataFieldSelection = (field: string, isSelected: boolean) => {
-    if (isSelected) setMetadataFields(metadataFields.concat(field))
-    else setMetadataFields(metadataFields.filter(f => f !== field))
-  }
 
   const updateRepositoryItemsFilter = (filter: DataRepositoryItemsFilter) =>
     setRepositoryItemsFilter({ pageSize: 5, ...filter, types: ['table'] })
@@ -73,34 +65,6 @@ const DataSelection = ({ step }: Props): JSX.Element => {
           />
         )}
       </section>
-
-      <section className={classes.section}>
-        <Typography className={classes.sectionHeading} variant="subtitle1" gutterBottom>
-          Select applicable metadata fields for the corpus
-        </Typography>
-        {repositoryItemsBatch != null && (
-          <ul className={classes.list}>
-            {repositoryItemsBatch.schema.fields
-              .filter(field => field.name !== 'id')
-              .map((field, index) => (
-                <li key={index} className={classes.listItem}>
-                  <CustomSwitch
-                    checked={metadataFields.includes(field.name)}
-                    handleChange={event => handleMetadataFieldSelection(field.name, event.target.checked)}
-                  />
-                  <p className={classes.listItemText}>{field.name}</p>
-                </li>
-              ))}
-          </ul>
-        )}
-      </section>
-      {/* <DataGrid
-        data={repositoryItemsBatch?.select('id', 'alias', 'columnNames')}
-        stats={repositoryStats}
-        filter={repositoryItemsFilter}
-        onFiltering={updateRepositoryItemsFilter}
-        condensed
-      /> */}
     </div>
   )
 }
