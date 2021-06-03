@@ -1,9 +1,6 @@
 import React from 'react'
 
-import Fab from '@material-ui/core/Fab'
-
-import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp'
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
+import NavigationIcon from '@material-ui/icons/Navigation'
 
 import useStyles from './VerticalStepIndicator.styles'
 import StepDetailTooltip from './StepDetailTooltip'
@@ -25,54 +22,55 @@ const VerticalStepIndicator = ({
   handleNext,
   handleBack
 }: VerticalStepIndicatorProps): JSX.Element => {
-  const classes = useStyles()
+  const classes = useStyles(activeStep)
 
   return (
-    <div className={classes.container}>
-      <Fab
-        variant="extended"
-        size="small"
-        color="primary"
-        aria-label="toggle"
-        className={classes.previous}
-        onClick={handleBack}
-        disabled={activeStep === 0}
-      >
-        <KeyboardArrowUpIcon />
-      </Fab>
+    <div className={classes.stepBarContainer}>
+      <div className={classes.stepBarContent}>
+        <NavigationIcon
+          onClick={handleBack}
+          className={
+            classes.workflowNavArrow + ' ' + classes.previous + (activeStep === 0 ? ' disabled' : '')
+          }
+          color="primary"
+          aria-label="previous-step"
+        />
 
-      <ul className={classes.indicators}>
-        {steps.map((step, index) => {
-          const isActiveStep = index === activeStep
-          const isCompleted = index < activeStep
+        <ul className={classes.indicators}>
+          {steps.map((step, index) => {
+            const isActiveStep = index === activeStep
+            const isCompleted = index < activeStep
 
-          return (
-            <StepDetailTooltip
-              key={index}
-              step={step}
-              status={isActiveStep ? 'ongoing' : isCompleted ? 'completed' : 'coming up'}
-            >
-              <li
-                className={
-                  classes.stepIndicator + (isActiveStep ? ' active' : '') + (isCompleted ? ' completed' : '')
-                }
-              />
-            </StepDetailTooltip>
-          )
-        })}
-      </ul>
+            return (
+              <StepDetailTooltip
+                key={index}
+                step={step}
+                status={isActiveStep ? 'current' : isCompleted ? 'completed' : 'coming up'}
+              >
+                <li
+                  className={
+                    classes.stepIndicator +
+                    (isActiveStep ? ' active' : '') +
+                    (isCompleted ? ' completed' : '')
+                  }
+                />
+              </StepDetailTooltip>
+            )
+          })}
+        </ul>
 
-      <Fab
-        variant="extended"
-        size="small"
-        color="primary"
-        aria-label="toggle"
-        className={classes.next}
-        onClick={handleNext}
-        disabled={activeStep === steps.length - 1}
-      >
-        <KeyboardArrowDownIcon />
-      </Fab>
+        <NavigationIcon
+          onClick={handleNext}
+          className={
+            classes.workflowNavArrow +
+            ' ' +
+            classes.next +
+            (activeStep === steps.length - 1 ? ' disabled' : '')
+          }
+          color="primary"
+          aria-label="previous-step"
+        />
+      </div>
     </div>
   )
 }

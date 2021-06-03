@@ -7,7 +7,6 @@ import Fab from '@material-ui/core/Fab'
 
 import DoubleArrowIcon from '@material-ui/icons/DoubleArrow'
 import ExploreIcon from '@material-ui/icons/Explore'
-import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew'
 
 import { ProjectContext } from '../../../context/projectContext'
 import { PageLayoutContext } from '../../../context/pageLayoutContext'
@@ -45,7 +44,7 @@ const LeftSideBarContent = (): JSX.Element => {
           {...(!isLeftSideBarExpanded ? { timeout: 0 } : { timeout: 1000 })}
         >
           <Typography variant="h6" component="h2" color="secondary" className={classes.logo}>
-            <ExploreIcon /> &nbsp;DHARPA
+            <ExploreIcon /> &nbsp;LUMY
           </Typography>
         </Grow>
       </div>
@@ -70,17 +69,7 @@ const LeftSideBarContent = (): JSX.Element => {
         </List>
       </nav>
 
-      <div className={classes.sideBarBottom}>
-        <Fab
-          variant="extended"
-          size="small"
-          color="primary"
-          aria-label="quit"
-          onClick={() => alert('shutting the app down...')}
-        >
-          <PowerSettingsNewIcon />
-        </Fab>
-      </div>
+      <div className={classes.sideBarBottom}></div>
     </>
   )
 }
