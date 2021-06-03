@@ -46,6 +46,7 @@ export default makeStyles(theme => ({
   },
   additionalPane: {
     height: '100%',
+    position: 'relative',
     flex: 1,
     overflow: 'hidden'
   },
