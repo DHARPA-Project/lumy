@@ -231,7 +231,8 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
             filter={nodesFilter}
             onFiltering={setNodesFilter}
             condensed
-            sortingEnabled={true}
+            sortingEnabled
+            filteringEnabled
           />
         </Grid>
       </Grid>
