@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useRef } from 'react'
-import { motion } from 'framer-motion'
 
 import { makeStyles, useTheme } from '@material-ui/core/styles'
 
@@ -58,14 +57,8 @@ const FeatureTabs = (): JSX.Element => {
   }, [containerRef.current?.getBoundingClientRect()?.width, theme])
 
   return (
-    <motion.div
-      className={classes.featureContainer}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ delay: 0.3, duration: 0.3 }}
-      ref={containerRef}
-    >
-      <AppBar position="fixed" color="default" elevation={0}>
+    <div className={classes.featureContainer} ref={containerRef}>
+      <AppBar position="absolute" color="default" elevation={0}>
         <Tabs
           className={classes.tabList}
           value={featureTabIndex}
@@ -95,7 +88,7 @@ const FeatureTabs = (): JSX.Element => {
           {content}
         </TabPanel>
       ))}
-    </motion.div>
+    </div>
   )
 }
 

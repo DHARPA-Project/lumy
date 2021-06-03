@@ -9,7 +9,8 @@ export default makeStyles(theme => ({
     }
   },
   tableContainer: {
-    maxHeight: `calc(100vh - ${theme.spacing(36)}px)`
+    maxHeight: `calc(100vh - ${theme.spacing(36)}px)`,
+    width: '100%'
   },
   table: {
     '& thead th': {

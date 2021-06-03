@@ -1,12 +1,8 @@
-import { lighten, makeStyles } from '@material-ui/core/styles'
+import { makeStyles } from '@material-ui/core/styles'
 
 export default makeStyles(theme => ({
-  root: {
-    display: 'flex',
-    flexDirection: 'column',
-    '& caption': {
-      captionSide: 'top'
-    }
+  paperWrapper: {
+    backgroundColor: 'transparent'
   },
   tableContainer: {
     maxHeight: `calc(100vh - ${theme.spacing(36)}px)`
@@ -15,7 +11,7 @@ export default makeStyles(theme => ({
     '& thead th': {
       fontWeight: '600',
       color: theme.palette.text.primary,
-      backgroundColor: lighten(theme.palette.primary.light, 0.75)
+      backgroundColor: 'rgba(0, 0, 0, 0.05)'
     },
     '& tbody td': {
       fontWeight: '300'
@@ -27,7 +23,7 @@ export default makeStyles(theme => ({
   },
   row: {
     '&:nth-of-type(even)': {
-      backgroundColor: theme.palette.background.default
+      backgroundColor: 'rgba(0, 0, 0, 0.02)'
     },
     '&:last-of-type td': {
       borderBottom: `1px solid ${theme.palette.divider}`
