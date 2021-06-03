@@ -1,4 +1,4 @@
-import { lighten, makeStyles } from '@material-ui/core/styles'
+import { makeStyles } from '@material-ui/core/styles'
 
 export default makeStyles(theme => ({
   stepBarContainer: {
@@ -64,7 +64,7 @@ export default makeStyles(theme => ({
     padding: 0,
     border: 'none',
     borderRadius: '.5em',
-    backgroundColor: lighten(theme.palette.primary.light, 0.25),
+    backgroundColor: theme.palette.action.disabled,
     zIndex: 2,
     overflow: 'hidden',
     transition: theme.transitions.create('all', {
@@ -72,7 +72,7 @@ export default makeStyles(theme => ({
       duration: theme.transitions.duration.standard
     }),
     '&.completed': {
-      backgroundColor: theme.palette.primary.main
+      backgroundColor: theme.palette.primary.light
     }
   }
 }))
