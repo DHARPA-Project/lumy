@@ -33,8 +33,6 @@ const defaultNumberRowsPerPage = 5
 /**
  * Just an example how to deal with Arrow Table.
  * https://observablehq.com/@theneuralbit/introduction-to-apache-arrow
- *
- * TODO: Make this table beautiful and move it to a separate file to be reused.
  */
 export const TableView = <S,>({
   table,
@@ -78,7 +76,7 @@ export const TableView = <S,>({
   }
 
   return (
-    <Paper variant="outlined">
+    <Paper variant="outlined" className={classes.paperWrapper}>
       <TableContainer className={classes.tableContainer}>
         <Table className={classes.table} stickyHeader aria-label="table caption sticky">
           {!!caption?.length && <caption style={{ textAlign: 'center' }}>{caption}</caption>}

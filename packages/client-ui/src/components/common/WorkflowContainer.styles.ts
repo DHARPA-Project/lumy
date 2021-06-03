@@ -5,23 +5,59 @@ export default makeStyles(theme => ({
     minHeight: '100vh',
     width: '100%',
     display: 'grid',
-    gridTemplateColumns: 'fit-content(5%) auto'
+    gridTemplateColumns: `fit-content(5%) auto`,
+    userSelect: 'none',
+    touchCallout: 'none'
   },
   stepContainer: {
-    // height: `calc(100vh - 2 * ${theme.layout.pagePadding})`,
     height: '100vh',
+    maxWidth: '100%',
     position: 'relative',
     marginLeft: 0,
     padding: 0,
-    transition: theme.transitions.create('margin', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.standard
-    }),
-    '&.right-squeeze': {
-      marginRight: `${theme.layout.toolContainerWidth}`
+    display: 'flex',
+    overflow: 'hidden',
+    '&.horizontal': {
+      flexDirection: 'row'
     },
-    '&.right-pinch': {
-      marginRight: `${theme.layout.toolBarWidth}`
+    '&.vertical': {
+      flexDirection: 'column'
+    }
+  },
+  toolAreaToggle: {
+    position: 'absolute',
+    '&.MuiFab-root': {
+      bottom: theme.spacing(2),
+      right: theme.spacing(1)
+    },
+    '&.MuiSpeedDial-directionUp, &.MuiSpeedDial-directionLeft': {
+      bottom: theme.spacing(2),
+      right: theme.spacing(1)
+    },
+    '&.MuiSpeedDial-directionDown, &.MuiSpeedDial-directionRight': {
+      top: theme.spacing(2),
+      left: theme.spacing(1)
+    }
+  },
+  mainPane: {
+    flex: 1,
+    overflow: 'hidden',
+    transition: 'all 0.3s ease'
+  },
+  additionalPane: {
+    height: '100%',
+    position: 'relative',
+    flex: 1,
+    overflow: 'hidden'
+  },
+  paneDivider: {
+    '&.horizontal': {
+      borderRight: `2px solid ${theme.palette.divider}`,
+      cursor: 'col-resize'
+    },
+    '&.vertical': {
+      borderBottom: `2px solid ${theme.palette.divider}`,
+      cursor: 'row-resize'
     }
   }
 }))

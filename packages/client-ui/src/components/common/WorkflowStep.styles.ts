@@ -1,22 +1,17 @@
 import { makeStyles } from '@material-ui/core/styles'
 
 export default makeStyles(theme => ({
-  stepContent: {
-    // height: `calc(100vh - 2 * ${theme.layout.pagePadding})`,
-    height: '100vh',
+  mainWrapper: {
+    height: '100%',
     width: '100%',
-    // display: 'flex',
-    // flexDirection: 'column',
-    // justifyContent: 'center',
-    // alignItems: 'center',
+    flexShrink: 1,
     padding: theme.spacing(2),
-    overflow: 'scroll',
     textAlign: 'center',
     backgroundColor: theme.palette.background.paper,
-    // backgroundColor: 'rgba(0, 0, 0, 0.05)',
     color: theme.palette.text.primary
-    // border: `1px solid ${theme.palette.divider}`,
-    // borderRadius: theme.shape.borderRadius
+  },
+  header: {
+    padding: theme.spacing(2, 0)
   },
   headline: {
     margin: 0,
@@ -25,7 +20,8 @@ export default makeStyles(theme => ({
   breadcrumbs: {
     marginBottom: theme.spacing(1)
   },
-  divider: {
-    marginBottom: theme.spacing(5)
+  mainContent: {
+    height: `calc(100% - ${theme.spacing(12)}px)`,
+    overflow: 'scroll'
   }
 }))

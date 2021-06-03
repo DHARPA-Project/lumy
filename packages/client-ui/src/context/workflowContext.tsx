@@ -8,13 +8,19 @@ export type WorkflowType = {
   setIsRightSideBarVisible: Dispatch<SetStateAction<boolean>>
   isSideDrawerOpen: boolean
   setIsSideDrawerOpen: Dispatch<SetStateAction<boolean>>
-  sideDrawerTabIndex: number
-  setSideDrawerTabIndex: Dispatch<SetStateAction<number>>
+  featureTabIndex: number
+  setFeatureTabIndex: Dispatch<SetStateAction<number>>
   projectSteps: StepDesc[]
   activeStep: number
   direction: number
   setActiveStep: Dispatch<SetStateAction<[number, number]>>
   idCurrentStep: string
+  mainPaneWidth: number
+  setMainPaneWidth: Dispatch<SetStateAction<number>>
+  mainPaneHeight: number
+  setMainPaneHeight: Dispatch<SetStateAction<number>>
+  isAdditionalPaneVisible: boolean
+  setIsAdditionalPaneVisible: Dispatch<SetStateAction<boolean>>
 }
 
 type WorkflowProviderProps = {
@@ -26,10 +32,13 @@ export const WorkflowContext = createContext<WorkflowType>(null)
 const WorkflowContextProvider = ({ children }: WorkflowProviderProps): JSX.Element => {
   const [currentWorkflow] = useCurrentWorkflow()
 
-  const [isRightSideBarVisible, setIsRightSideBarVisible] = useState(true)
+  const [isRightSideBarVisible, setIsRightSideBarVisible] = useState(false)
   const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(false)
-  const [sideDrawerTabIndex, setSideDrawerTabIndex] = useState(0)
+  const [featureTabIndex, setFeatureTabIndex] = useState(0)
   const [[activeStep, direction], setActiveStep] = useState([0, 0])
+  const [isAdditionalPaneVisible, setIsAdditionalPaneVisible] = useState<boolean>(false)
+  const [mainPaneHeight, setMainPaneHeight] = useState<number>(0)
+  const [mainPaneWidth, setMainPaneWidth] = useState<number>(0)
 
   const projectSteps: StepDesc[] = Object.values(currentWorkflow?.steps || {}) || []
   const idCurrentStep = projectSteps?.[activeStep]?.step?.stepId
@@ -41,13 +50,19 @@ const WorkflowContextProvider = ({ children }: WorkflowProviderProps): JSX.Eleme
         setIsRightSideBarVisible,
         isSideDrawerOpen,
         setIsSideDrawerOpen,
-        sideDrawerTabIndex,
-        setSideDrawerTabIndex,
+        featureTabIndex,
+        setFeatureTabIndex,
         projectSteps,
         activeStep,
         direction,
         setActiveStep,
-        idCurrentStep
+        idCurrentStep,
+        mainPaneWidth,
+        setMainPaneWidth,
+        mainPaneHeight,
+        setMainPaneHeight,
+        isAdditionalPaneVisible,
+        setIsAdditionalPaneVisible
       }}
     >
       {children}
