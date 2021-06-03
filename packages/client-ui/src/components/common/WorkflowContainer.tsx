@@ -82,11 +82,11 @@ const WorkflowContainer = (): JSX.Element => {
 
   useEffect(() => {
     document.addEventListener('mouseup', onMouseUp)
-    document.addEventListener('mousemove', onMouseMove)
+    document.addEventListener('mousemove', (onMouseMove as unknown) as EventListener)
 
     return () => {
       document.removeEventListener('mouseup', onMouseUp)
-      document.removeEventListener('mousemove', onMouseMove)
+      document.removeEventListener('mousemove', (onMouseMove as unknown) as EventListener)
     }
   }, [splitDirection])
 
