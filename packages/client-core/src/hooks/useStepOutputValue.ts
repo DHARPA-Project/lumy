@@ -1,10 +1,8 @@
 import { useContext, useState, useEffect } from 'react'
-import objectHash from 'object-hash'
 import { deserialize } from '../common/codec'
 import { BackEndContext, handlerAdapter, Target } from '../common/context'
 import { Messages, TabularDataFilter } from '../common/types'
-
-const getHash = (filter?: TabularDataFilter): string => (filter == null ? '' : objectHash(filter))
+import { getHash } from '../common/utils/hash'
 
 /**
  * Use current value of the output. The value may be undefined if not set or

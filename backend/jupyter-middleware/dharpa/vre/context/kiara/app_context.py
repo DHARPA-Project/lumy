@@ -12,6 +12,8 @@ from kiara.data.values import DataValue, PipelineValue, Value
 from kiara.pipeline.structure import PipelineStructureDesc
 from kiara.workflow import KiaraWorkflow
 from kiara.defaults import SpecialValue
+from dharpa.vre.context.kiara.table_utils import filter_table, sort_table
+
 
 if TYPE_CHECKING:
     from kiara.events import StepInputEvent, StepOutputEvent
@@ -37,15 +39,21 @@ def get_value_data(
     # When it is, replace isinstance check with metadata type check
     if isinstance(actual_value, Table):
         table: Table = actual_value
-        table_stats = TableStats(rows_count=table.num_rows)
         if filter is not None:
             if filter.full_value:
+                table_stats = TableStats(rows_count=table.num_rows)
                 return (table, table_stats)
             else:
+                filtered_table = filter_table(table, filter.condition)
+                sorted_table = sort_table(filtered_table, filter.sorting)
+                table_stats = TableStats(rows_count=sorted_table.num_rows)
+
                 offset = filter.offset or 0
                 page_size = filter.page_size or 5
-                filtered_table = table.slice(offset, page_size)
-                return (filtered_table, table_stats)
+                table_page = sorted_table.slice(offset, page_size)
+                return (table_page, table_stats)
+
+        table_stats = TableStats(rows_count=table.num_rows)
         return (None, table_stats)
     return (actual_value, None)
 
