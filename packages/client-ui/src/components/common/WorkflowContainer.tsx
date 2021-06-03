@@ -39,6 +39,22 @@ const screenSplitOptions: screenSplitOption[] = [
   }
 ]
 
+const positionOffset = '100vh'
+const variants = {
+  before: (direction: number) => ({
+    y: direction > 0 ? positionOffset : `-${positionOffset}`,
+    opacity: 0
+  }),
+  ready: {
+    y: 0,
+    opacity: 1
+  },
+  after: (direction: number) => ({
+    y: direction > 0 ? `-${positionOffset}` : positionOffset,
+    opacity: 0
+  })
+}
+
 const WorkflowContainer = (): JSX.Element => {
   const stepContainerRef = useRef<HTMLDivElement>(null)
   const mainPaneRef = useRef<HTMLDivElement>(null)
@@ -180,33 +196,39 @@ const WorkflowContainer = (): JSX.Element => {
           handleBack={handlePreviousStepClick}
         />
 
-        <div className={classes.stepContainer + ` ${splitDirection}`} ref={stepContainerRef}>
-          <section className={classes.mainPane} ref={mainPaneRef}>
-            <WorkflowStep projectSteps={projectSteps} activeStep={activeStep} direction={direction} />
-          </section>
+        <AnimatePresence
+          custom={direction} // will ensure that leaving components animate using the latest data
+          exitBeforeEnter // the exiting component will finish its exit animation before the entering component is rendered
+        >
+          <motion.div
+            className={classes.stepContainer + ` ${splitDirection}`}
+            ref={stepContainerRef}
+            key={activeStep}
+            variants={variants}
+            initial="before"
+            animate="ready"
+            exit="after"
+            custom={direction}
+            transition={{
+              y: { duration: 0.2, type: 'spring', stiffness: 300, damping: 30 },
+              opacity: { duration: 0.5 }
+            }}
+          >
+            <section className={classes.mainPane} ref={mainPaneRef}>
+              <WorkflowStep projectSteps={projectSteps} activeStep={activeStep} />
+            </section>
 
-          {isAdditionalPaneVisible && (
-            <>
-              <div className={classes.paneDivider + ` ${splitDirection}`} onMouseDown={onMouseDown} />
+            {isAdditionalPaneVisible && (
+              <>
+                <div className={classes.paneDivider + ` ${splitDirection}`} onMouseDown={onMouseDown} />
 
-              <AnimatePresence>
-                <motion.section
-                  className={classes.additionalPane}
-                  ref={additionalPaneRef}
-                  initial={{ x: '100vw', opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  exit={{ x: '100vw', opacity: 0 }}
-                  transition={{
-                    y: { duration: 0.3, type: 'tween' },
-                    opacity: { duration: 0.3 }
-                  }}
-                >
+                <section className={classes.additionalPane} ref={additionalPaneRef}>
                   <FeatureTabs />
-                </motion.section>
-              </AnimatePresence>
-            </>
-          )}
-        </div>
+                </section>
+              </>
+            )}
+          </motion.div>
+        </AnimatePresence>
       </div>
       {isAdditionalPaneVisible ? (
         <SpeedDial
