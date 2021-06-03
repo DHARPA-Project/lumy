@@ -11,7 +11,7 @@ export default makeStyles(theme => ({
     '& thead th': {
       fontWeight: '600',
       color: theme.palette.text.primary,
-      backgroundColor: 'rgba(0, 0, 0, 0.05)'
+      backgroundColor: theme.palette.grey[100]
     },
     '& tbody td': {
       fontWeight: '300'
@@ -23,7 +23,7 @@ export default makeStyles(theme => ({
   },
   row: {
     '&:nth-of-type(even)': {
-      backgroundColor: 'rgba(0, 0, 0, 0.02)'
+      backgroundColor: theme.palette.grey[50]
     },
     '&:last-of-type td': {
       borderBottom: `1px solid ${theme.palette.divider}`
