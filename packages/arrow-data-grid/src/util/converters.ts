@@ -117,17 +117,18 @@ interface ColDefOptions {
 }
 
 export function toColDef(field: Field, options: ColDefOptions): GridColDef {
+  const filterOperators = getFilterOperators(field.type)
   return {
     field: field.name,
     headerName: field.metadata.get('title') ?? field.name,
     description: field.metadata.get('description'),
     flex: 1,
     sortable: options?.sortingEnabled,
-    filterable: options?.filteringEnabled,
+    filterable: options?.filteringEnabled && filterOperators.length > 0,
     editable: false, // we do not support editing (yet)
     renderCell: getCellRenderer(field.type),
     renderHeader: getHeaderRenderer(field.type),
-    filterOperators: getFilterOperators(field.type)
+    filterOperators
   }
 }
 

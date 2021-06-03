@@ -1,4 +1,4 @@
-from typing import Any, List, Optional
+from typing import List, Optional
 
 import pyarrow.compute as pc
 from dharpa.vre.types.generated import (DataTabularDataFilterCondition,
@@ -9,11 +9,12 @@ from pyarrow import Table
 
 
 def row_matches(
-    row: Any,
+    table: Table,
+    idx: int,
     filter_items: List[DataTabularDataFilterItem]
 ) -> bool:
     matches = [
-        str(item.value) in str(row[item.column])
+        str(item.value) in str(table[item.column][idx])
         for item in filter_items
     ]
     return all(matches)
@@ -41,8 +42,8 @@ def filter_table(
         return table
 
     mask = [
-        row_matches(row, filter_items)
-        for row in table
+        row_matches(table, idx, filter_items)
+        for idx in range(0, len(table))
     ]
     return pc.filter(table, mask)
 

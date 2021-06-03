@@ -54,11 +54,14 @@ export const LumyDataGridFilterPanel = ({ condition, onConditionUpdated }: Filte
     }
     onConditionUpdated?.(updatedCondition)
   }
+
+  const firstFilterableColumn = columns.all.find(column => columns.lookup[column].filterable)
+
   const handleAddNewFilter = () => {
     const updatedCondition: DataFilterCondtion = {
       operator: condition?.operator ?? DataFilterCondtionOperator.And,
       items: (condition?.items ?? []).concat({
-        column: columns.all[0],
+        column: firstFilterableColumn,
         operator: 'equals',
         value: undefined
       })
