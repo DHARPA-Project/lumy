@@ -1,9 +1,10 @@
 import { makeStyles } from '@material-ui/core/styles'
 
 export default makeStyles(theme => ({
-  root: {
+  pageContainer: {
     minHeight: '100vh',
-    width: '100vw'
+    width: '100vw',
+    overflow: 'hidden'
   },
   pageContent: {
     minHeight: '100vh',

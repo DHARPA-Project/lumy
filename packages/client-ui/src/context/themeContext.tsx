@@ -102,6 +102,31 @@ const ThemeContextProvider = ({ children }: ThemeContextProviderProps): JSX.Elem
         toolContainerWidth: '50vw'
       },
       overrides: {
+        MuiCssBaseline: {
+          '@global': {
+            '*': {
+              'scrollbar-width': 'thin',
+              'scrollbar-color': 'rgba(0,0,0,0.1) transparent' // 'thumb track'
+            },
+            '*::-webkit-scrollbar': {
+              width: defaultTheme.spacing(1),
+              height: defaultTheme.spacing(1)
+            },
+            '*::-webkit-scrollbar-track': {
+              backgroundColor: 'transparent'
+            },
+            '*::-webkit-scrollbar-thumb': {
+              borderRadius: defaultTheme.spacing(1),
+              backgroundColor: 'rgba(0,0,0,0.05)',
+              '&:hover': {
+                backgroundColor: 'rgba(0,0,0,0.1)'
+              },
+              '&:active': {
+                backgroundColor: 'rgba(0,0,0,0.2)'
+              }
+            }
+          }
+        },
         MuiTableCell: {
           root: {
             padding: defaultTheme.spacing(1)
