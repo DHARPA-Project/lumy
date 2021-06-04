@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Table as ArrowTable } from 'apache-arrow'
+import { Table as ArrowTable, Utf8 } from 'apache-arrow'
 
 import { TableStats, TabularDataFilter } from '@dharpa-vre/client-core'
 
@@ -103,11 +103,23 @@ export const TableView = <S,>({
                     />
                   </TableCell>
                 )}
-                {colIndices.map(idx => (
-                  <TableCell className={classes.borderless} key={idx}>
-                    {row[idx]}
-                  </TableCell>
-                ))}
+                {colIndices.map(idx => {
+                  let value = row[idx]
+                  value = typeof value === 'string' ? value : Array.from(value).join(', ')
+                  // console.log(
+                  //   'TableView value: ',
+                  //   typeof row[idx],
+                  //   // Array.isArray(row[idx]),
+                  //   row[idx]?.data?.type,
+                  //   // Array.from(row[idx]),
+                  //   row[idx]
+                  // )
+                  return (
+                    <TableCell className={classes.borderless} key={idx}>
+                      {value}
+                    </TableCell>
+                  )
+                })}
               </TableRow>
             ))}
           </TableBody>

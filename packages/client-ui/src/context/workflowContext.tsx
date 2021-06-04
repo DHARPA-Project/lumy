@@ -31,6 +31,7 @@ export const WorkflowContext = createContext<WorkflowType>(null)
 
 const WorkflowContextProvider = ({ children }: WorkflowProviderProps): JSX.Element => {
   const [currentWorkflow] = useCurrentWorkflow()
+  // console.log('current workflow: ', currentWorkflow)
 
   const [isRightSideBarVisible, setIsRightSideBarVisible] = useState(false)
   const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(false)

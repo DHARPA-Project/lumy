@@ -119,11 +119,14 @@ const TabularDataMappingRow = ({
                         }
                         autoWidth
                       >
-                        {columnNames.map((columnName, index) => (
-                          <MenuItem key={index} value={columnName}>
-                            {columnName}
-                          </MenuItem>
-                        ))}
+                        {columnNames.map((columnName, index) => {
+                          console.log('column name: ', columnName)
+                          return (
+                            <MenuItem key={index} value={columnName}>
+                              {columnName}
+                            </MenuItem>
+                          )
+                        })}
                       </Select>
                     </FormControl>
                   ))}

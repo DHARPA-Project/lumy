@@ -42,6 +42,7 @@ const DataSelection = ({ step }: Props): JSX.Element => {
     'selectedItemsIds'
   )
   const [repositoryItemsBatch, repositoryStats] = useDataRepository(repositoryItemsFilter)
+  console.log('repository items batch: ', repositoryItemsBatch)
 
   const updateRepositoryItemsFilter = (filter: DataRepositoryItemsFilter) =>
     setRepositoryItemsFilter({ pageSize: 5, ...filter, types: ['table'] })
