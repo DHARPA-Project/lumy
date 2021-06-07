@@ -81,7 +81,7 @@ const filterTable = (table: Table, condition?: DataFilterCondtion): Table => {
     if (item.value == null || item.value == '') continue
 
     filteredTable = arrowUtils.filterTable(filteredTable, row => {
-      return String(row[item.column]).includes(String(item.value))
+      return String(row[item.column]).toLowerCase().includes(String(item.value).toLowerCase())
     })
   }
   return filteredTable
