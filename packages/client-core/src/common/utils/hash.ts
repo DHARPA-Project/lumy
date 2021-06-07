@@ -1,11 +1,11 @@
-import { DataRepositoryItemsFilter, TabularDataFilter } from '../types'
+import objectHash from 'object-hash'
 
-export function getHash(filter?: TabularDataFilter): string {
-  if (filter == null) return ''
-  return [filter.fullValue, filter.offset, filter.pageSize].join(':')
+const withoutNilValues = <T>(obj: T): T => {
+  return Object.fromEntries(
+    Object.entries(obj)
+      .filter(([, v]) => v != null)
+      .map(([k, v]) => [k, v === Object(v) ? withoutNilValues(v as T) : v])
+  ) as T
 }
 
-export function getDataRepositoryItemsFilterHash(filter?: DataRepositoryItemsFilter): string {
-  if (filter == null) return ''
-  return [filter.offset, filter.pageSize].join(':')
-}
+export const getHash = <T>(v?: T): string => (v == null ? '' : objectHash(withoutNilValues(v)))

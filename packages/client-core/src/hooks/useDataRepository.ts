@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from 'react'
 import { deserialize } from '../common/codec'
 import { BackEndContext, handlerAdapter, Target } from '../common/context'
 import { DataRepositoryItemsFilter, TableStats, Messages, DataType } from '../common/types'
-import { getDataRepositoryItemsFilterHash as getHash } from '../common/utils/hash'
+import { getHash } from '../common/utils/hash'
 
 export type DataRepositoryItemStructure = {
   id: Utf8

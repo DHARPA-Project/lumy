@@ -178,6 +178,7 @@ export interface MsgModuleIOGetInputValue {
  * Filter for tabular data
  */
 export interface DataTabularDataFilter {
+  condition?: DataTabularDataFilterCondition
   /**
    * Whether to ignore other filter items and return full value.
    */
@@ -190,6 +191,67 @@ export interface DataTabularDataFilter {
    * Size of the page
    */
   pageSize?: number
+  sorting?: DataTabularDataSortingMethod
+}
+
+export interface DataTabularDataFilterCondition {
+  /**
+   * Condition items
+   */
+  items: DataTabularDataFilterItem[]
+  /**
+   * Operator used to combine items
+   */
+  operator: Operator
+}
+
+/**
+ * Filter condition item
+ */
+export interface DataTabularDataFilterItem {
+  /**
+   * Id of the column to filter
+   */
+  column: string
+  /**
+   * Filter operator
+   */
+  operator: string
+  /**
+   * Value for the operator
+   */
+  value: unknown
+}
+
+/**
+ * Operator used to combine items
+ */
+export enum Operator {
+  And = 'and',
+  Or = 'or'
+}
+
+/**
+ * Sorting method
+ */
+export interface DataTabularDataSortingMethod {
+  /**
+   * Id of the column to filter
+   */
+  column: string
+  /**
+   * sorting direction
+   */
+  direction?: Direction
+}
+
+/**
+ * sorting direction
+ */
+export enum Direction {
+  Asc = 'asc',
+  Default = 'default',
+  Desc = 'desc'
 }
 
 /**
