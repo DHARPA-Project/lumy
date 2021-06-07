@@ -345,7 +345,7 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
             onDisplayLabelsUpdated={setIsDisplayLabels}
           />
         </Grid>
-        <Grid item xs={9} ref={graphContainerRef}>
+        <Grid item xs={9} ref={graphContainerRef} style={{ position: 'relative' }}>
           {graphTooltipInfo !== null && (
             <div
               style={{

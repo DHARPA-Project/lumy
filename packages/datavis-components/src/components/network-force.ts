@@ -231,14 +231,12 @@ export class NetworkForce extends LitElement {
         this.dispatchEvent(new CustomEvent('node-hovered'))
       })
       .on('mousemove', (e: MouseEvent, nodeDatum: GraphNodeDatum) => {
+        const [x, y] = d3.pointer(e)
         this.dispatchEvent(
           new CustomEvent<NodeMouseEventDetails>('node-mousemove', {
             detail: {
               nodeMetadata: nodeDatum.metadata,
-              mouseCoordinates: {
-                x: e.pageX,
-                y: e.pageY
-              }
+              mouseCoordinates: { x, y }
             }
           })
         )
