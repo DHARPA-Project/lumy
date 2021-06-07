@@ -6,7 +6,7 @@ import Fab from '@material-ui/core/Fab'
 import DoubleArrowIcon from '@material-ui/icons/DoubleArrow'
 
 import useStyles from './RightSideBarContainer.styles'
-import { PageLayoutContext } from '../../../context/pageLayoutContext'
+import { WorkflowContext } from '../../../context/workflowContext'
 
 type RightSideBarContainerProps = {
   children?: React.ReactNode
@@ -15,7 +15,7 @@ type RightSideBarContainerProps = {
 const RightSideBarContainer = ({ children }: RightSideBarContainerProps): JSX.Element => {
   const classes = useStyles()
 
-  const { isRightSideBarVisible, setIsRightSideBarVisible } = useContext(PageLayoutContext)
+  const { isRightSideBarVisible, setIsRightSideBarVisible } = useContext(WorkflowContext)
 
   return (
     <Paper square={true} className={`${classes.root}${isRightSideBarVisible ? '' : ' collapsed'}`}>

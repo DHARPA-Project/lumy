@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "DataTabularDataSortingMethod",
+  "description": "Sorting method",
+  "properties": {
+    "column": {
+      "type": "string",
+      "description": "Id of the column to filter"
+    },
+    "direction": {
+      "type": "string",
+      "description": "sorting direction",
+      "enum": [
+        "asc",
+        "desc",
+        "default"
+      ]
+    }
+  },
+  "required": [
+    "column"
+  ]
+}

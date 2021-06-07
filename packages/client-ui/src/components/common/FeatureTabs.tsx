@@ -1,21 +1,34 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useRef } from 'react'
 
-import { makeStyles } from '@material-ui/core/styles'
+import { makeStyles, useTheme } from '@material-ui/core/styles'
 
 import AppBar from '@material-ui/core/AppBar'
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
 
 import { featureList } from '../../const/features'
-import { PageLayoutContext } from '../../context/pageLayoutContext'
+import { WorkflowContext } from '../../context/workflowContext'
 
 import TabPanel from './TabPanel'
 
 const useStyles = makeStyles(theme => ({
-  tabList: {
-    flexGrow: 1,
+  featureContainer: {
+    height: '100%',
     width: '100%',
+    flexGrow: 1,
     backgroundColor: theme.palette.background.paper
+  },
+  tabList: {
+    '& .MuiTab-labelIcon': {
+      minHeight: theme.spacing(6)
+    },
+    '& .MuiTab-wrapper': {
+      flexDirection: 'row',
+      '& .MuiSvgIcon-root': {
+        marginBottom: 0,
+        marginRight: theme.spacing(1)
+      }
+    }
   },
   tabItem: {
     minWidth: 100,
@@ -25,18 +38,36 @@ const useStyles = makeStyles(theme => ({
 
 const FeatureTabs = (): JSX.Element => {
   const classes = useStyles()
+  const theme = useTheme()
 
-  const { sideDrawerTabIndex, setSideDrawerTabIndex } = useContext(PageLayoutContext)
+  const containerRef = useRef(null)
+  const tabActionRef = useRef(null)
+
+  const { featureTabIndex, setFeatureTabIndex } = useContext(WorkflowContext)
+
+  // update MUI tab indicator to correct its misplacement after tab width change
+  useEffect(() => {
+    const indicatorUpdateTimeout = setTimeout(() => {
+      tabActionRef.current.updateIndicator()
+    }, theme.transitions.duration.standard)
+
+    return () => {
+      clearTimeout(indicatorUpdateTimeout)
+    }
+  }, [containerRef.current?.getBoundingClientRect()?.width, theme])
 
   return (
-    <div className={classes.tabList}>
-      <AppBar position="static" color="default">
+    <div className={classes.featureContainer} ref={containerRef}>
+      <AppBar position="absolute" color="default" elevation={0}>
         <Tabs
-          value={sideDrawerTabIndex}
-          onChange={(event, newTabIndex) => setSideDrawerTabIndex(newTabIndex)}
+          className={classes.tabList}
+          value={featureTabIndex}
+          onChange={(event, newTabIndex) => setFeatureTabIndex(newTabIndex)}
+          action={tabActionRef}
           indicatorColor="primary"
-          variant="scrollable"
-          scrollButtons="auto"
+          textColor="primary"
+          variant="standard"
+          scrollButtons="off"
           aria-label="scrollable auto icon tabs"
         >
           {featureList.map(({ id, label, icon }) => (
@@ -53,7 +84,7 @@ const FeatureTabs = (): JSX.Element => {
       </AppBar>
 
       {featureList.map(({ id, content }, index) => (
-        <TabPanel value={sideDrawerTabIndex} index={index} key={id}>
+        <TabPanel value={featureTabIndex} index={index} key={id}>
           {content}
         </TabPanel>
       ))}

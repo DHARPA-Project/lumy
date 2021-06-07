@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "DataTabularDataFilterCondition",
+  "description": "",
+  "properties": {
+    "items": {
+      "type": "array",
+      "description": "Condition items",
+      "items": {
+        "$ref": "https://dharpa.org/schema/types/data/TabularDataFilterItem.json"
+      }
+    },
+    "operator": {
+      "type": "string",
+      "description": "Operator used to combine items",
+      "enum": [
+        "and",
+        "or"
+      ]
+    }
+  },
+  "required": [
+    "items",
+    "operator"
+  ]
+}

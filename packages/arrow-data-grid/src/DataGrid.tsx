@@ -1,25 +1,38 @@
 import React from 'react'
-import { Table, Field } from 'apache-arrow'
+import { Table } from 'apache-arrow'
 import {
   DataGrid as MuiDataGrid,
   GridColumns,
   GridRowsProp,
-  GridColDef,
-  GridRowData
+  GridFooter,
+  GridSortModelParams
 } from '@material-ui/data-grid'
-import { TableStats, TabularDataFilter } from '@dharpa-vre/client-core'
-import { getCellRenderer } from './cellRenderers'
-import { getHeaderRenderer } from './headerRenderer'
+import { TableStats, TabularDataFilter, DataFilterCondtion } from '@dharpa-vre/client-core'
 import { useStyles, useHeights } from './DataGrid.styles'
+import { LumyDataGridFilterPanel, MultiFilterIconEnabler } from './LumyDataGridFilterPanel'
+import {
+  toGridFilterModelState,
+  toGridSortModel,
+  toDataSortingMethod,
+  toColDef,
+  toRow
+} from './util/converters'
 
 const DefaultPageSize = 10
 
 export interface DataGridProps {
   data: Table
-  stats?: TableStats
+  stats: TableStats
+  /* 
+    If client mode is made available, `stats` can be made optional
+    because we will have all data available in `data`.
+  */
+  // stats?: TableStats
   filter?: TabularDataFilter
   onFiltering?: (filter: TabularDataFilter) => void
   condensed?: boolean
+  sortingEnabled?: boolean
+  filteringEnabled?: boolean
 }
 
 export const DataGrid = ({
@@ -27,7 +40,9 @@ export const DataGrid = ({
   stats,
   onFiltering,
   filter,
-  condensed = false
+  condensed = false,
+  sortingEnabled = false,
+  filteringEnabled = false
 }: DataGridProps): JSX.Element => {
   const [currentPage, setCurrentPage] = React.useState(0)
   const [pageSize, setPageSize] = React.useState(filter?.pageSize ?? DefaultPageSize)
@@ -40,11 +55,17 @@ export const DataGrid = ({
    * includes only a part (page) of the whole data. In this mode when pagination,
    * filtering or sorting is requested by the user interacting with the grid,
    * the "onFiltering" property is called to instruct the backend to get more data.
+   *
+   * Not to confuse with "server/client" modes of MUI "data-grid". We are managing our
+   * data ourselves instead of letting "data-grid" do it. Even in "client" mode.
+   *
+   * NOTE: Disabled "client" mode for now to avoid duplicating filter code. We may want to
+   * enable it later.
    */
-  const gridIsInServerMode = data?.length < stats?.rowsCount && stats?.rowsCount != null
+  // const gridIsInServerMode = data?.length < stats?.rowsCount && stats?.rowsCount != null
 
   React.useEffect(() => {
-    if (!gridIsInServerMode) return
+    // if (!gridIsInServerMode) return
 
     if (filter == null) {
       console.warn(
@@ -62,15 +83,15 @@ export const DataGrid = ({
     }
 
     onFiltering?.(newFilter)
-  }, [currentPage])
+  }, [currentPage, pageSize])
 
   React.useEffect(() => {
-    if (gridIsInServerMode) {
-      const pageOffset = currentPage * pageSize
-      setIsLoading(pageOffset >= stats?.rowsCount || (data?.length ?? 0) === 0)
-    } else {
-      setIsLoading(data == null)
-    }
+    // if (gridIsInServerMode) {
+    //   const pageOffset = currentPage * pageSize
+    //   setIsLoading(pageOffset >= stats?.rowsCount || (data?.length ?? 0) === 0)
+    // } else {
+    setIsLoading(data == null)
+    // }
   }, [data, currentPage, pageSize])
 
   React.useEffect(() => {
@@ -84,31 +105,68 @@ export const DataGrid = ({
     setPageSize(filter?.pageSize)
   }, [filter?.pageSize])
 
+  const handleSortModelChange = (params: GridSortModelParams) => {
+    const updatedFilter: TabularDataFilter = {
+      ...filter,
+      sorting: toDataSortingMethod(params.sortModel)
+    }
+    onFiltering?.(updatedFilter)
+  }
+
+  const handleFilterConditionUpdated = (condition: DataFilterCondtion) => {
+    const updatedFilter: TabularDataFilter = {
+      ...filter,
+      condition
+    }
+    onFiltering?.(updatedFilter)
+  }
+
   if (data == null) return <></>
+
+  const condition = filter?.condition
 
   return (
     <MuiDataGrid
       className={classes.root}
-      columns={getColumns(data)}
-      rows={getRows(data, gridIsInServerMode ? 0 : currentPage, pageSize)}
+      columns={getColumns(data, sortingEnabled, filteringEnabled)}
+      // rows={getRows(data, gridIsInServerMode ? 0 : currentPage, pageSize)}
+      rows={getRows(data, 0, pageSize)}
       pageSize={pageSize}
       page={currentPage}
       onPageChange={p => setCurrentPage(p.page)}
       paginationMode="server"
       autoHeight
-      rowCount={gridIsInServerMode ? stats?.rowsCount : data?.length}
+      // rowCount={gridIsInServerMode ? stats?.rowsCount : data?.length}
+      rowCount={stats?.rowsCount}
       sortingMode="server"
+      filterMode="server"
       loading={isLoading}
       disableColumnSelector
       disableSelectionOnClick
       rowHeight={heights.row}
       headerHeight={heights.header}
+      components={{
+        // eslint-disable-next-line react/display-name
+        FilterPanel: () => (
+          <LumyDataGridFilterPanel condition={condition} onConditionUpdated={handleFilterConditionUpdated} />
+        ),
+        // eslint-disable-next-line react/display-name
+        Footer: () => (
+          <>
+            <MultiFilterIconEnabler />
+            <GridFooter />
+          </>
+        )
+      }}
+      filterModel={toGridFilterModelState(filter?.condition)}
+      sortModel={toGridSortModel(filter?.sorting)}
+      onSortModelChange={handleSortModelChange}
     ></MuiDataGrid>
   )
 }
 
-function getColumns(data: Table): GridColumns {
-  return data?.schema?.fields?.map(toColDef) ?? []
+function getColumns(data: Table, sortingEnabled: boolean, filteringEnabled: boolean): GridColumns {
+  return data?.schema?.fields?.map(field => toColDef(field, { sortingEnabled, filteringEnabled })) ?? []
 }
 
 function getRows(data: Table, page: number, pageSize: number): GridRowsProp {
@@ -123,27 +181,4 @@ function getRows(data: Table, page: number, pageSize: number): GridRowsProp {
   }
 
   return rows
-}
-
-function toColDef(field: Field): GridColDef {
-  return {
-    field: field.name,
-    headerName: field.metadata.get('title') ?? field.name,
-    description: field.metadata.get('description'),
-    flex: 1,
-    sortable: false, // we do not support sorting yet
-    filterable: false, // we do not support filtering yet
-    editable: false, // we do not support editing
-    renderCell: getCellRenderer(field.type),
-    renderHeader: getHeaderRenderer(field.type)
-  }
-}
-function toRow(row: ReturnType<Table['get']>, columns: string[], index: number): GridRowData {
-  const data = columns.reduce(
-    (acc, column) => ({ ...acc, [column]: row.get(column) }),
-    {} as { [key: string]: unknown }
-  )
-  // Row must have and 'id' field: https://material-ui.com/components/data-grid/rows/
-  if (!columns.includes('id')) data['id'] = index
-  return data
 }

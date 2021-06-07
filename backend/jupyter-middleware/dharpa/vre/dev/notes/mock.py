@@ -27,7 +27,7 @@ class MockNotesStore:
     def add_note(self, step_id: str, note: Note):
         notes = self.notes[step_id]
         notes.append(Note(content=note.content, id=generate_id(),
-                          created_at=datetime.now()))
+                          created_at=datetime.now().isoformat()))
         self.notes[step_id] = notes
 
     def update_note(self, step_id: str, note: Note):

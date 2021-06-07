@@ -24,7 +24,7 @@ const ProjectPage = (): JSX.Element => {
   }
 
   return (
-    <div className="project-page">
+    <div className="project-page" style={{ overflow: 'hidden' }}>
       <h1>{currentProject?.name}</h1>
       <p>ID: {currentProject?.id}</p>
       <p>category: {currentProject?.type}</p>

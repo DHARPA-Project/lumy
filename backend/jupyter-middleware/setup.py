@@ -31,7 +31,8 @@ setup_args = dict(
         'stringcase>=1.2.0',
         'dataclasses-json>=0.5.2',
         'pyyaml',
-        'kiara[all,all_modules]',
+        'kiara[all]==0.0.2',
+        'kiara_modules.core==0.0.2',
         'pandas>=1.2.4',
         'appdirs>=1.4.4'
     ],
@@ -59,9 +60,6 @@ setup_args = dict(
             'networkAnalysisDataMapping=dharpa.vre.dev.modules.network_analysis:NetworkAnalysisDataMappingModule',  # noqa
             'networkAnalysisDataVis=dharpa.vre.dev.modules.network_analysis:NetworkAnalysisDataVisModule',  # noqa
             'twoArgsMathFunction=dharpa.vre.dev.modules.two_args_math_fn:TwoArgsMathFnModule',  # noqa
-        ],
-        'kiara.pipelines': [
-            'mock=dharpa.vre:dev'
         ]
     }
 )
