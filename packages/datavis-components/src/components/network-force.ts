@@ -236,8 +236,8 @@ export class NetworkForce extends LitElement {
             detail: {
               nodeMetadata: nodeDatum.metadata,
               mouseCoordinates: {
-                x: e.x,
-                y: e.y
+                x: e.pageX,
+                y: e.pageY
               }
             }
           })

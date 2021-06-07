@@ -340,7 +340,7 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
               style={{
                 position: 'absolute',
                 left: (graphTooltipInfo.mouseCoordinates.x ?? -10) + 10,
-                top: (graphTooltipInfo.mouseCoordinates.x ?? 10) - 10,
+                top: (graphTooltipInfo.mouseCoordinates.y ?? 10) - 10,
                 visibility: isDisplayTooltip ? 'visible' : 'hidden',
                 background: 'rgba(69,77,93,.9)',
                 borderRadius: '.1rem',
@@ -365,7 +365,7 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
           )}
           <network-force
             displayIsolatedNodes={isDisplayIsolated ? undefined : true}
-            displayLabels={isDisplayLabels}
+            displayLabels={isDisplayLabels ? undefined : true}
             reapplySimulationOnUpdate={true}
             width={graphWidth}
             height={graphHeight}
