@@ -23,3 +23,21 @@ export function filterTable<T extends { [key: string]: DataType }>(
   )
   return filteredTable
 }
+
+export function sortTable<T extends { [key: string]: DataType }>(
+  table: Table<T>,
+  sortFn: (rowA: RowLike<T>, rowB: RowLike<T>) => number
+): Table<T> {
+  const rows = [...table.toArray()]
+  const rowsWithIndices = rows.map((row, index) => ({
+    index,
+    row
+  }))
+  rowsWithIndices.sort(({ row: rowA }, { row: rowB }) => sortFn(rowA, rowB))
+
+  const sortedTable = rowsWithIndices.reduce(
+    (acc, { index }) => acc.concat(table.slice(index, index + 1)),
+    table.slice(0, 0)
+  )
+  return sortedTable
+}

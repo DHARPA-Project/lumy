@@ -71,7 +71,7 @@ export const NoteViewerEditor = ({
       <Grid item>
         {(note as Note)?.createdAt != null ? (
           <Typography variant="caption" color="textSecondary">
-            {asTimeAgo((note as Note).createdAt)}
+            {asTimeAgo(new Date((note as Note).createdAt))}
           </Typography>
         ) : (
           ''

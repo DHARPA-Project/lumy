@@ -7,6 +7,9 @@ export default makeStyles(theme => ({
   section: {
     marginBottom: theme.spacing(2)
   },
+  sectionHeading: {
+    marginBottom: theme.spacing(2)
+  },
   list: {
     padding: 0,
     display: 'flex',

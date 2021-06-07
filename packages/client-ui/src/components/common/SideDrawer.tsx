@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles'
 
 import Drawer from '@material-ui/core/Drawer'
 
-import { PageLayoutContext } from '../../context/pageLayoutContext'
+import { WorkflowContext } from '../../context/workflowContext'
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -24,7 +24,7 @@ type SideDrawerProps = {
 const SideDrawer = ({ anchor, children }: SideDrawerProps): JSX.Element => {
   const classes = useStyles()
 
-  const { isSideDrawerOpen, setIsSideDrawerOpen } = useContext(PageLayoutContext)
+  const { isSideDrawerOpen, setIsSideDrawerOpen } = useContext(WorkflowContext)
 
   return (
     <Drawer

@@ -15,6 +15,7 @@ declare module '@material-ui/core/styles/createMuiTheme' {
       navBarTop: React.CSSProperties['height']
       navBarBottom: React.CSSProperties['height']
       pagePadding: React.CSSProperties['padding']
+      toolContainerWidth: React.CSSProperties['width']
     }
   }
   // allow configuration using `createMuiTheme`
@@ -27,6 +28,7 @@ declare module '@material-ui/core/styles/createMuiTheme' {
       navBarTop: React.CSSProperties['height']
       navBarBottom: React.CSSProperties['height']
       pagePadding: React.CSSProperties['padding']
+      toolContainerWidth: React.CSSProperties['width']
     }
   }
 }
@@ -78,6 +80,10 @@ const ThemeContextProvider = ({ children }: ThemeContextProviderProps): JSX.Elem
         body2: {
           fontSize: '0.75rem',
           lineHeight: 1.35
+        },
+        subtitle1: {
+          fontSize: '0.875rem',
+          lineHeight: 1.5
         }
       },
       props: {
@@ -92,9 +98,35 @@ const ThemeContextProvider = ({ children }: ThemeContextProviderProps): JSX.Elem
         toolBarWidth: '50px',
         navBarTop: '20vh',
         navBarBottom: '10vh',
-        pagePadding: '1.5rem'
+        pagePadding: '1.5rem',
+        toolContainerWidth: '50vw'
       },
       overrides: {
+        MuiCssBaseline: {
+          '@global': {
+            '*': {
+              'scrollbar-width': 'thin',
+              'scrollbar-color': 'rgba(0,0,0,0.1) transparent' // 'thumb track'
+            },
+            '*::-webkit-scrollbar': {
+              width: defaultTheme.spacing(1),
+              height: defaultTheme.spacing(1)
+            },
+            '*::-webkit-scrollbar-track': {
+              backgroundColor: 'transparent'
+            },
+            '*::-webkit-scrollbar-thumb': {
+              borderRadius: defaultTheme.spacing(1),
+              backgroundColor: 'rgba(0,0,0,0.05)',
+              '&:hover': {
+                backgroundColor: 'rgba(0,0,0,0.1)'
+              },
+              '&:active': {
+                backgroundColor: 'rgba(0,0,0,0.2)'
+              }
+            }
+          }
+        },
         MuiTableCell: {
           root: {
             padding: defaultTheme.spacing(1)

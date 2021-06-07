@@ -40,7 +40,7 @@ export default makeStyles(theme => ({
   },
   navList: {
     flexGrow: 1,
-    overflowY: 'auto'
+    overflow: 'hidden'
   },
   sideBarBottom: {
     height: theme.spacing(8),

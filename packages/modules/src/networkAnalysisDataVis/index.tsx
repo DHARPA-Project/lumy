@@ -1,6 +1,8 @@
 import React from 'react'
 import {
   ModuleProps,
+  TableStats,
+  TabularDataFilter,
   useStepInputValue,
   useStepOutputValue,
   withMockProcessor
@@ -258,6 +260,15 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
   const [isDisplayIsolated, setIsDisplayIsolated] = React.useState(true)
   const [isDisplayTooltip, setIsDisplayTooltip] = React.useState(false)
   const [graphTooltipInfo, setGraphTooltipInfo] = React.useState<TooltipInfo>(null)
+
+  // nodes page + filter for table view
+  const [nodesFilter, setNodesFilter] = React.useState<TabularDataFilter>({ pageSize: 10 })
+  const [nodesPage, , nodesStats] = useStepInputValue<NodesTable, TableStats>(
+    step.stepId,
+    'nodes',
+    nodesFilter
+  )
+
   const graphRef = React.useRef<NetworkForce>(null)
   const graphContainerRef = React.useRef()
   const graphBox = useBbox(graphContainerRef)
@@ -375,7 +386,15 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
       </Grid>
       <Grid container>
         <Grid item style={{ flexGrow: 1 }}>
-          <DataGrid data={nodes} condensed />
+          <DataGrid
+            data={nodesPage}
+            stats={nodesStats}
+            filter={nodesFilter}
+            onFiltering={setNodesFilter}
+            condensed
+            sortingEnabled
+            filteringEnabled
+          />
         </Grid>
       </Grid>
     </Grid>

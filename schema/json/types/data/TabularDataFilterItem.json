@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "DataTabularDataFilterItem",
+  "description": "Filter condition item",
+  "properties": {
+    "column": {
+      "type": "string",
+      "description": "Id of the column to filter"
+    },
+    "operator": {
+      "type": "string",
+      "description": "Filter operator"
+    },
+    "value": {
+      "description": "Value for the operator"
+    }
+  },
+  "required": [
+    "column",
+    "operator",
+    "value"
+  ]
+}

@@ -66,7 +66,7 @@ const NetworkAnalysisIntroPage: React.FC = () => {
           <Button
             className={classes.createProjectButton}
             variant="contained"
-            color="secondary"
+            color="primary"
             startIcon={<AddIcon />}
             onClick={() => setIsCreateProjectModalOpen(true)}
             size="small"
