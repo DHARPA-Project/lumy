@@ -2,7 +2,6 @@
 from dataclasses import dataclass
 from typing import Optional, List, Any, Dict, Union
 from enum import Enum
-from datetime import datetime
 
 
 @dataclass
@@ -364,8 +363,8 @@ class Note:
     """Represents a step note."""
     """Textual content of the note."""
     content: str
-    """When the note was created"""
-    created_at: datetime
+    """When the note was created. Must be an ISO string."""
+    created_at: str
     """Unique ID of the note."""
     id: str
     """Optional title of the note"""

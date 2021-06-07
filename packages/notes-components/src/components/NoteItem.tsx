@@ -33,7 +33,7 @@ export const NoteItem = ({ note, onClick }: NoteItemProps): JSX.Element => {
           <ListItemText disableTypography primary={<MarkdownRender content={note.content} />} />
         </Box>
         <Typography variant="caption" className={classes.timestamp} color="textSecondary">
-          {asTimeAgo(note.createdAt)}
+          {asTimeAgo(new Date(note.createdAt))}
         </Typography>
       </Box>
     </ListItem>

@@ -489,9 +489,9 @@ export interface Note {
    */
   content: string
   /**
-   * When the note was created
+   * When the note was created. Must be an ISO string.
    */
-  createdAt: Date
+  createdAt: string
   /**
    * Unique ID of the note.
    */
