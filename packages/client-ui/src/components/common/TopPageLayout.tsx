@@ -20,7 +20,7 @@ const TopPageLayout = ({ children }: TopPageLayoutProps): JSX.Element => {
   const { isLeftSideBarExpanded } = useContext(PageLayoutContext)
 
   return (
-    <div className={classes.root}>
+    <div className={classes.pageContainer}>
       <ThemeProvider theme={sidebarTheme}>
         <LeftSideBarContainer>
           <LeftSideBarContent />
