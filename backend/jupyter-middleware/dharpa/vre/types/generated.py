@@ -2,7 +2,6 @@
 from dataclasses import dataclass
 from typing import Optional, List, Any, Dict, Union
 from enum import Enum
-from datetime import datetime
 
 
 @dataclass
@@ -124,14 +123,57 @@ class MsgModuleIOExecute:
 
 
 @dataclass
+class DataTabularDataFilterItem:
+    """Filter condition item"""
+    """Id of the column to filter"""
+    column: str
+    """Filter operator"""
+    operator: str
+    """Value for the operator"""
+    value: Any
+
+
+class Operator(Enum):
+    """Operator used to combine items"""
+    AND = "and"
+    OR = "or"
+
+
+@dataclass
+class DataTabularDataFilterCondition:
+    """Condition items"""
+    items: List[DataTabularDataFilterItem]
+    """Operator used to combine items"""
+    operator: Operator
+
+
+class Direction(Enum):
+    """sorting direction"""
+    ASC = "asc"
+    DEFAULT = "default"
+    DESC = "desc"
+
+
+@dataclass
+class DataTabularDataSortingMethod:
+    """Sorting method"""
+    """Id of the column to filter"""
+    column: str
+    """sorting direction"""
+    direction: Optional[Direction] = None
+
+
+@dataclass
 class DataTabularDataFilter:
     """Filter for tabular data"""
+    condition: Optional[DataTabularDataFilterCondition] = None
     """Whether to ignore other filter items and return full value."""
     full_value: Optional[bool] = None
     """Offset of the page"""
     offset: Optional[int] = None
     """Size of the page"""
     page_size: Optional[int] = None
+    sorting: Optional[DataTabularDataSortingMethod] = None
 
 
 @dataclass
@@ -321,8 +363,8 @@ class Note:
     """Represents a step note."""
     """Textual content of the note."""
     content: str
-    """When the note was created"""
-    created_at: datetime
+    """When the note was created. Must be an ISO string."""
+    created_at: str
     """Unique ID of the note."""
     id: str
     """Optional title of the note"""

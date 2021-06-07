@@ -1,6 +1,8 @@
 import React from 'react'
 import {
   ModuleProps,
+  TableStats,
+  TabularDataFilter,
   useStepInputValue,
   useStepOutputValue,
   withMockProcessor
@@ -21,7 +23,7 @@ import {
 } from '@material-ui/core'
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-import { useElement, NetworkForce } from '@dharpa-vre/datavis-components'
+import { useElement, NetworkForce, NodeMouseEventDetails } from '@dharpa-vre/datavis-components'
 import { useBbox } from '../hooks/useBbox'
 import { DataGrid } from '@dharpa-vre/arrow-data-grid'
 import './styles.css'
@@ -65,14 +67,8 @@ interface OutputValues {
   shortestPath: string[]
 }
 
-interface TooltipInfo {
-  nodeId: number
-  nodeLabel: string
-  nodeGroup: string
-  nodeScaler: number
-  x: number
-  y: number
-}
+// just an alias for the mouse event details
+type TooltipInfo = NodeMouseEventDetails
 
 const StyledAccordion = withStyles({
   root: {
@@ -264,22 +260,21 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
   const [isDisplayIsolated, setIsDisplayIsolated] = React.useState(true)
   const [isDisplayTooltip, setIsDisplayTooltip] = React.useState(false)
   const [graphTooltipInfo, setGraphTooltipInfo] = React.useState<TooltipInfo>(null)
+
+  // nodes page + filter for table view
+  const [nodesFilter, setNodesFilter] = React.useState<TabularDataFilter>({ pageSize: 10 })
+  const [nodesPage, , nodesStats] = useStepInputValue<NodesTable, TableStats>(
+    step.stepId,
+    'nodes',
+    nodesFilter
+  )
+
   const graphRef = React.useRef<NetworkForce>(null)
   const graphContainerRef = React.useRef()
   const graphBox = useBbox(graphContainerRef)
 
-  const handleGraphNodeMouseMove = (event: unknown) => {
-    // console.log(event.detail)
-    const tooltipInfo = {
-      nodeId: event.detail[0].index,
-      nodeGroup: event.detail[0].metadata.group,
-      nodeLabel: event.detail[0].metadata.label,
-      nodeScaler: +event.detail[0].metadata.scaler,
-      x: event.detail[1].pageX + 10,
-      y: event.detail[1].pageY - 10
-    }
-    setGraphTooltipInfo(tooltipInfo)
-  }
+  const handleGraphNodeMouseMove = (event: CustomEvent<NodeMouseEventDetails>) =>
+    setGraphTooltipInfo(event.detail)
 
   const handleGraphNodeHovered = () => {
     setIsDisplayTooltip(true)
@@ -327,15 +322,15 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
   React.useEffect(() => {
     if (graphRef.current == null) return
     graphRef.current.addEventListener('node-hovered', handleGraphNodeHovered)
-    graphRef.current.addEventListener('node-mousemove', handleGraphNodeMouseMove)
+    graphRef.current.addEventListener('node-mousemove', handleGraphNodeMouseMove as EventListener)
     graphRef.current.addEventListener('node-hovered-out', handleGraphNodeHoveredOut)
 
     return () => {
-      graphRef.current.removeEventListener('node-hovered', handleGraphNodeHovered)
-      graphRef.current.removeEventListener('node-mousemove', handleGraphNodeMouseMove)
-      graphRef.current.removeEventListener('node-hovered-out', handleGraphNodeHoveredOut)
+      graphRef.current?.removeEventListener('node-hovered', handleGraphNodeHovered)
+      graphRef.current?.removeEventListener('node-mousemove', handleGraphNodeMouseMove as EventListener)
+      graphRef.current?.removeEventListener('node-hovered-out', handleGraphNodeHoveredOut)
     }
-  }, [graphRef])
+  }, [graphRef.current])
 
   return (
     <Grid container>
@@ -344,18 +339,19 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
           <Navigation
             nodesScalingMethod={nodesScalingMethod}
             isDisplayIsolated={isDisplayIsolated}
+            isDisplayLabels={isDisplayLabels}
             onNodesScalingMethodUpdated={setNodesScalingMethod}
             onDisplayIsolatedUpdated={setIsDisplayIsolated}
             onDisplayLabelsUpdated={setIsDisplayLabels}
           />
         </Grid>
-        <Grid item xs={9} ref={graphContainerRef}>
+        <Grid item xs={9} ref={graphContainerRef} style={{ position: 'relative' }}>
           {graphTooltipInfo !== null && (
             <div
               style={{
                 position: 'absolute',
-                left: graphTooltipInfo !== null ? graphTooltipInfo.x : 0,
-                top: graphTooltipInfo !== null ? graphTooltipInfo.y : 0,
+                left: (graphTooltipInfo.mouseCoordinates.x ?? -10) + 10,
+                top: (graphTooltipInfo.mouseCoordinates.y ?? 10) - 10,
                 visibility: isDisplayTooltip ? 'visible' : 'hidden',
                 background: 'rgba(69,77,93,.9)',
                 borderRadius: '.1rem',
@@ -369,18 +365,18 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
                 zIndex: 300
               }}
             >
-              <span style={{ display: 'block' }}>Label: {graphTooltipInfo.nodeLabel}</span>
-              {!isNaN(graphTooltipInfo.nodeScaler) && (
+              <span style={{ display: 'block' }}>Label: {graphTooltipInfo.nodeMetadata.label}</span>
+              {!isNaN(graphTooltipInfo.nodeMetadata.scaler) && (
                 <span
                   style={{ display: 'block', textTransform: 'capitalize' }}
-                >{`${nodesScalingMethod}: ${graphTooltipInfo.nodeScaler.toFixed(2)}`}</span>
+                >{`${nodesScalingMethod}: ${graphTooltipInfo.nodeMetadata.scaler.toFixed(2)}`}</span>
               )}
-              <span style={{ display: 'block' }}>Group: {graphTooltipInfo.nodeGroup}</span>
+              <span style={{ display: 'block' }}>Group: {graphTooltipInfo.nodeMetadata.group}</span>
             </div>
           )}
           <network-force
             displayIsolatedNodes={isDisplayIsolated ? undefined : true}
-            displayLabels={isDisplayLabels}
+            displayLabels={isDisplayLabels ? undefined : true}
             reapplySimulationOnUpdate={true}
             width={graphWidth}
             height={graphHeight}
@@ -390,7 +386,15 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
       </Grid>
       <Grid container>
         <Grid item style={{ flexGrow: 1 }}>
-          <DataGrid data={nodes} condensed />
+          <DataGrid
+            data={nodesPage}
+            stats={nodesStats}
+            filter={nodesFilter}
+            onFiltering={setNodesFilter}
+            condensed
+            sortingEnabled
+            filteringEnabled
+          />
         </Grid>
       </Grid>
     </Grid>

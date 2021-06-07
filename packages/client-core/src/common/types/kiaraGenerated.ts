@@ -75,6 +75,9 @@ export type PipelineId1 = string
  * The step inputs that are connected to this pipeline input
  */
 export type ConnectedInputs = StepValueAddress[]
+export type IsConstant = IsConstant1 & IsConstant2
+export type IsConstant1 = boolean
+export type IsConstant2 = string
 export type ValueName2 = string
 export type PipelineId2 = string
 /**
@@ -104,11 +107,19 @@ export type ValueSchema1 = ValueSchema
 /**
  * Whether this value is a constant.
  */
-export type IsConstant = boolean
+export type IsConstant3 = boolean
+/**
+ * The metadata of the value itself (not the actual data).
+ */
+export type ValueMetadata = ValueMetadata1
 /**
  * Description of how/where the value was set.
  */
 export type Origin = string
+/**
+ * Aliases for this value.
+ */
+export type Aliases = string[]
 /**
  * The time the last update to this value happened.
  */
@@ -274,6 +285,7 @@ export interface PipelineInputField {
   valueSchema: ValueSchema
   pipelineId: PipelineId1
   connectedInputs?: ConnectedInputs
+  isConstant?: IsConstant
 }
 /**
  * The schema of a value.
@@ -281,7 +293,7 @@ export interface PipelineInputField {
  * The schema contains the [ValueType][kiara.data.values.ValueType] of a value, as well as an optional default that
  * will be used if no user input was given (yet) for a value.
  *
- * For more complex container types like arrays, tables, unions etc, types can also be configured with values from the ``type_config`` field.
+ * For more complex container types like array, tables, unions etc, types can also be configured with values from the ``type_config`` field.
  */
 export interface ValueSchema {
   type: Type
@@ -336,12 +348,17 @@ export interface PipelineValue {
   isValid?: IsValid
   isSet: IsSet
   valueSchema: ValueSchema1
-  isConstant?: IsConstant
-  origin?: Origin
+  isConstant?: IsConstant3
+  valueMetadata: ValueMetadata
+  aliases: Aliases
   lastUpdate?: LastUpdate
   valueHash: ValueHash
   isStreaming?: IsStreaming
   metadata?: Metadata
+}
+export interface ValueMetadata1 {
+  origin?: Origin
+  [k: string]: unknown
 }
 /**
  * Metadata relating to the actual data (size, no. of rows, etc. -- depending on data type).

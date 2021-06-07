@@ -2106,6 +2106,11 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.41.tgz#d0b939d94c1d7bd53d04824af45f1139b8c45615"
   integrity sha512-dueRKfaJL4RTtSa7bWeTK1M+VH+Gns73oCgzvYfHZywRCoPSd8EkXBL0mZ9unPTveBn+D9phZBaxuzpwjWkW0g==
 
+"@types/object-hash@^2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@types/object-hash/-/object-hash-2.1.0.tgz#284353e535481690a72bf748619d77577bd23317"
+  integrity sha512-RW3VRiuQIMo5PJ4Q1IwBtdLHL/t8ACpzUY40norN9ejE6CUBwKetmSxJnITJ0NlzN/ymF1nvPvlpvegtns7yOg==
+
 "@types/plist@^3.0.1":
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/@types/plist/-/plist-3.0.2.tgz#61b3727bba0f5c462fe333542534a0c3e19ccb01"
@@ -7027,6 +7032,11 @@ object-copy@^0.1.0:
     copy-descriptor "^0.1.0"
     define-property "^0.2.5"
     kind-of "^3.0.3"
+
+object-hash@2:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/object-hash/-/object-hash-2.2.0.tgz#5ad518581eefc443bd763472b8ff2e9c2c0d54a5"
+  integrity sha512-gScRMn0bS5fH+IuwyIFgnh9zBdo4DV+6GhygmWM9HyNJSgS0hScp1f5vjtm7oIIOiT9trXrShAkLFSc2IqKNgw==
 
 object-inspect@^1.9.0:
   version "1.10.2"

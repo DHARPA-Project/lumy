@@ -24,7 +24,9 @@ import {
   DataRepositoryItemsTable,
   DataRepositoryItemsStats,
   arrowUtils,
-  Note
+  Note,
+  DataSortingMethod,
+  DataFilterCondtion
 } from '@dharpa-vre/client-core'
 import { viewProvider } from '@dharpa-vre/modules'
 
@@ -57,18 +59,55 @@ const getValueStats = <S = unknown>(value: unknown): S => {
   return undefined as S
 }
 
-const getFilteredValue = <T = unknown>(value: T, filter?: TabularDataFilter): T => {
+const sortTable = (table: Table, sortingMethod?: DataSortingMethod): Table => {
+  const sortingColumn = sortingMethod?.column
+  const sortingDirection = sortingMethod?.direction
+
+  if (sortingColumn == null) return table
+  return arrowUtils.sortTable(table, (rowA, rowB) => {
+    if (sortingDirection == null || sortingDirection == 'default') return 0
+
+    if (rowA[sortingColumn] < rowB[sortingColumn]) return sortingDirection == 'asc' ? -1 : 1
+    if (rowA[sortingColumn] > rowB[sortingColumn]) return sortingDirection == 'asc' ? 1 : -1
+    return 0
+  })
+}
+
+const filterTable = (table: Table, condition?: DataFilterCondtion): Table => {
+  // NOTE: in mock implementation only doing 'contains' filtering
+  let filteredTable = table
+  for (const item of condition?.items ?? []) {
+    if (item.operator !== 'contains') continue
+    if (item.value == null || item.value == '') continue
+
+    filteredTable = arrowUtils.filterTable(filteredTable, row => {
+      return String(row[item.column]).toLowerCase().includes(String(item.value).toLowerCase())
+    })
+  }
+  return filteredTable
+}
+
+const getFilteredValue = <T = unknown, S = { [key: string]: unknown }>(
+  value: T,
+  filter?: TabularDataFilter
+): [T, S] => {
   if (value instanceof Table) {
     const table = value
-    if (filter?.fullValue) return table
+    if (filter?.fullValue) return [table, getValueStats(table)]
     if (filter == null) return undefined
+
+    const filteredTable = filterTable(table, filter.condition)
+    const sortedTable = sortTable(filteredTable, filter.sorting)
+
+    const stats = getValueStats(sortedTable)
 
     const offset = filter?.offset ?? 0
     const pageSize = filter?.pageSize ?? 5
-    const filteredTable = table.slice(offset, offset + pageSize)
-    return (filteredTable as unknown) as T
+    const tablePage = sortedTable.slice(offset, offset + pageSize)
+
+    return [(tablePage as unknown) as T, (stats as unknown) as S]
   }
-  return value
+  return [value, undefined]
 }
 
 const newMockDataRepositoryTable = (numItems = 30): DataRepositoryItemsTable => {
@@ -424,12 +463,14 @@ export class MockContext implements IBackEndContext {
         return adapter(Messages.ModuleIO.codec.GetInputValue.decode, async ({ stepId, inputId, filter }) => {
           const storeValue = this._store.getInputValue(stepId, inputId)
 
+          const [value, stats] = getFilteredValue(storeValue, filter)
+
           return Messages.ModuleIO.codec.InputValue.encode({
             stepId,
             inputId,
             filter,
-            value: serialize(getFilteredValue(storeValue, filter)),
-            stats: getValueStats(storeValue),
+            value: serialize(value),
+            stats,
             type: getValueType(storeValue)
           })
         })(msg)
@@ -439,12 +480,14 @@ export class MockContext implements IBackEndContext {
           async ({ stepId, outputId, filter }) => {
             const storeValue = this._store.getOutputValue(stepId, outputId)
 
+            const [value, stats] = getFilteredValue(storeValue, filter)
+
             return Messages.ModuleIO.codec.OutputValue.encode({
               stepId,
               outputId,
               filter,
-              value: serialize(getFilteredValue(storeValue, filter)),
-              stats: getValueStats(storeValue),
+              value: serialize(value),
+              stats,
               type: getValueType(storeValue)
             })
           }

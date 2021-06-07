@@ -17,6 +17,14 @@ export interface EdgeMetadata {
   targetId: MetadataId
 }
 
+export interface NodeMouseEventDetails {
+  nodeMetadata: NodeMetadata
+  mouseCoordinates: {
+    x: number
+    y: number
+  }
+}
+
 interface GraphNodeDatum extends d3.SimulationNodeDatum {
   metadata: NodeMetadata
 }
@@ -105,7 +113,7 @@ export class NetworkForce extends LitElement {
   /** If `true`, force simulation will be reapplied on update
    * even if some or all of the nodes are the same.
    */
-  @property({}) displayLabels: string
+  @property({ type: Boolean }) displayLabels = false
   @property({ type: Boolean }) reapplySimulationOnUpdate = false
 
   /** Nodes of the graph */
@@ -222,8 +230,16 @@ export class NetworkForce extends LitElement {
       .on('mouseover', () => {
         this.dispatchEvent(new CustomEvent('node-hovered'))
       })
-      .on('mousemove', (_e, node) => {
-        this.dispatchEvent(new CustomEvent('node-mousemove', { detail: [node, _e] }))
+      .on('mousemove', (e: MouseEvent, nodeDatum: GraphNodeDatum) => {
+        const [x, y] = d3.pointer(e)
+        this.dispatchEvent(
+          new CustomEvent<NodeMouseEventDetails>('node-mousemove', {
+            detail: {
+              nodeMetadata: nodeDatum.metadata,
+              mouseCoordinates: { x, y }
+            }
+          })
+        )
       })
       .on('mouseout', () => {
         this.dispatchEvent(new CustomEvent('node-hovered-out'))
@@ -237,7 +253,7 @@ export class NetworkForce extends LitElement {
       .attr('dy', '0.35em')
       .attr('class', 'node-labels')
       .attr('font-family', 'sans-serif')
-      .style('opacity', this.displayLabels == 'true' ? 1 : 0)
+      .style('opacity', this.displayLabels ? 1 : 0)
 
     simulation.on('tick', () => {
       link
