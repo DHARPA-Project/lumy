@@ -109,9 +109,17 @@ export type ValueSchema1 = ValueSchema
  */
 export type IsConstant3 = boolean
 /**
+ * The metadata of the value itself (not the actual data).
+ */
+export type ValueMetadata = ValueMetadata1
+/**
  * Description of how/where the value was set.
  */
 export type Origin = string
+/**
+ * Aliases for this value.
+ */
+export type Aliases = string[]
 /**
  * The time the last update to this value happened.
  */
@@ -285,7 +293,7 @@ export interface PipelineInputField {
  * The schema contains the [ValueType][kiara.data.values.ValueType] of a value, as well as an optional default that
  * will be used if no user input was given (yet) for a value.
  *
- * For more complex container types like arrays, tables, unions etc, types can also be configured with values from the ``type_config`` field.
+ * For more complex container types like array, tables, unions etc, types can also be configured with values from the ``type_config`` field.
  */
 export interface ValueSchema {
   type: Type
@@ -341,11 +349,16 @@ export interface PipelineValue {
   isSet: IsSet
   valueSchema: ValueSchema1
   isConstant?: IsConstant3
-  origin?: Origin
+  valueMetadata: ValueMetadata
+  aliases: Aliases
   lastUpdate?: LastUpdate
   valueHash: ValueHash
   isStreaming?: IsStreaming
   metadata?: Metadata
+}
+export interface ValueMetadata1 {
+  origin?: Origin
+  [k: string]: unknown
 }
 /**
  * Metadata relating to the actual data (size, no. of rows, etc. -- depending on data type).

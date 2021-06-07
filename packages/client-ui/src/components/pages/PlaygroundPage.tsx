@@ -8,13 +8,13 @@ const PlaygroundPage = (): JSX.Element => {
       id: 'test1',
       content:
         '## boom Lorem \n**ipsum** dolor sit amet, consectetur adipiscing elit. Nulla eget nibh eget lorem porta venenatis ut vel massa. Aenean volutpat ex ac ex vehicula, pulvinar posuere elit elementum. Aenean in ante vel nulla finibus luctus non id eros. Fusce auctor tincidunt sem in vulputate. Sed finibus sollicitudin quam at bibendum. In eget ante id ligula pharetra egestas at quis lacus. Suspendisse potenti. Duis lacus enim, sagittis a consequat eget, tempus ut ante.',
-      createdAt: new Date()
+      createdAt: new Date().toISOString()
     },
     {
       id: 'test2',
       content:
         'lorem ipsum [Lorem ipsum](https://www.dharpa.org) dolor sit amet, consectetur adipiscing elit. Nulla eget nibh eget lorem porta venenatis ut vel massa. Aenean volutpat ex ac ex vehicula, pulvinar posuere elit elementum. Aenean in ante vel nulla finibus luctus non id eros. Fusce auctor tincidunt sem in vulputate. Sed finibus sollicitudin quam at bibendum. In eget ante id ligula pharetra egestas at quis lacus. Suspendisse potenti. Duis lacus enim, sagittis a consequat eget, tempus ut ante.',
-      createdAt: new Date(),
+      createdAt: new Date().toISOString(),
       title: 'Note number two'
     }
   ]
