@@ -61,11 +61,13 @@ interface InputValues {
   shortestPathTarget: string
   shortestPathMethod: ShortestPathMethod
   graphType: GraphType
+  selectedNodeId: NodesStructure['id']
 }
 
 interface OutputValues {
   graphData: GraphDataTable
   shortestPath: string[]
+  directConnections: NodesStructure['id'][]
 }
 
 // just an alias for the mouse event details
@@ -273,6 +275,11 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
   const [isDisplayTooltip, setIsDisplayTooltip] = React.useState(false)
   const [graphTooltipInfo, setGraphTooltipInfo] = React.useState<TooltipInfo>(null)
 
+  // ID of the node we will get direct neighbours for
+  const [selectedNodeId] = useStepInputValue<InputValues['selectedNodeId']>(step.stepId, 'selectedNodeId')
+  // a list of direct connections of the `selectedNodeId` node
+  const [selectedNodeDirectConnections] = useStepOutputValue(step.stepId, 'directConnections')
+
   // nodes page + filter for table view
   const [nodesFilter, setNodesFilter] = React.useState<TabularDataFilter>({ pageSize: 10 })
   const [nodesPage, , nodesStats] = useStepInputValue<NodesTable, TableStats>(
@@ -285,16 +292,30 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
   const graphContainerRef = React.useRef()
   const graphBox = useBbox(graphContainerRef)
 
-  const handleGraphNodeMouseMove = (event: CustomEvent<NodeMouseEventDetails>) =>
+  const handleGraphNodeMouseMove = (event: CustomEvent<NodeMouseEventDetails>) => {
     setGraphTooltipInfo(event.detail)
+  }
 
-  const handleGraphNodeHovered = () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleGraphNodeHovered = (event: CustomEvent<NodeMouseEventDetails>) => {
+    // TODO: uncomment for direct connection calculation
+    // const nodeId = event.detail.nodeMetadata.actualNodeId
+    // if (nodeId != null) {
+    //   setSelectedNodeId((nodeId as unknown) as Utf8)
+    // }
     setIsDisplayTooltip(true)
   }
 
   const handleGraphNodeHoveredOut = () => {
     setIsDisplayTooltip(false)
+    // TODO: uncomment for direct connection calculation
+    // setSelectedNodeId(null)
   }
+
+  React.useEffect(() => {
+    // TODO: handle updated direct connections of currently selected node.
+    console.log(`Direct connections of node ${selectedNodeId}: ${selectedNodeDirectConnections}`)
+  }, [selectedNodeDirectConnections])
 
   const graphWidth = graphBox?.width ?? 0
   const graphHeight = (graphWidth * 2) / 3
@@ -310,7 +331,9 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
       id: String(node.id),
       group: node.group,
       label: node.label,
-      scaler: normalizedScalerColumn?.[idx]
+      scaler: normalizedScalerColumn?.[idx],
+      // setting actual node ID *before* converting it to string
+      actualNodeId: node.id
     }))
 
     if (isDisplayIsolated) {
@@ -333,12 +356,12 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
 
   React.useEffect(() => {
     if (graphRef.current == null) return
-    graphRef.current.addEventListener('node-hovered', handleGraphNodeHovered)
+    graphRef.current.addEventListener('node-hovered', handleGraphNodeHovered as EventListener)
     graphRef.current.addEventListener('node-mousemove', handleGraphNodeMouseMove as EventListener)
     graphRef.current.addEventListener('node-hovered-out', handleGraphNodeHoveredOut)
 
     return () => {
-      graphRef.current?.removeEventListener('node-hovered', handleGraphNodeHovered)
+      graphRef.current?.removeEventListener('node-hovered', handleGraphNodeHovered as EventListener)
       graphRef.current?.removeEventListener('node-mousemove', handleGraphNodeMouseMove as EventListener)
       graphRef.current?.removeEventListener('node-hovered-out', handleGraphNodeHoveredOut)
     }
@@ -414,7 +437,7 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
   )
 }
 
-const mockProcessor = ({ nodes, edges }: InputValues): OutputValues => {
+const mockProcessor = ({ nodes, edges, selectedNodeId }: InputValues): OutputValues => {
   const numNodes = nodes?.length ?? 0
   const nums = [...new Array(numNodes).keys()]
   const notIsolatedNodesIds = new Set([...edges.getColumn('srcId')].concat([...edges.getColumn('tgtId')]))
@@ -434,9 +457,18 @@ const mockProcessor = ({ nodes, edges }: InputValues): OutputValues => {
     ['degree', 'eigenvector', 'betweenness', 'isLarge', 'isIsolated']
   )
 
+  let directConnections: OutputValues['directConnections'] = []
+  if (selectedNodeId != null) {
+    const id = selectedNodeId.toString()
+    directConnections = ([...edges]
+      .filter(row => row.srcId === id || row.tgtId === id)
+      .map(row => (row.srcId === id ? row.tgtId : row.srcId)) as unknown) as OutputValues['directConnections']
+  }
+
   return {
     graphData,
-    shortestPath: []
+    shortestPath: [],
+    directConnections
   }
 }
 
