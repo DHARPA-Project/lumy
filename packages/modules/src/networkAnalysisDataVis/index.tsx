@@ -17,6 +17,7 @@ import {
   AccordionSummary,
   AccordionDetails,
   FormControl,
+  Slider,
   NativeSelect,
   Typography,
   FormControlLabel
@@ -141,8 +142,6 @@ const Navigation = ({
                 <option value="degree">Most connections to other nodes (hubs)</option>
                 <option value="betweenness">Bridges between groups of nodes (brokers)</option>
                 <option value="eigenvector">Best connected to hubs</option>
-                <option value="closeness">Closer to other nodes</option>
-                <option value="eccentricity">Outliers</option>
               </NativeSelect>
             </FormControl>
             <Grid
@@ -174,18 +173,31 @@ const Navigation = ({
                 <option value="label">Label</option>
               </NativeSelect>
             </FormControl>
+
             {isDisplayLabels == true && (
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={isDisplayIsolated}
-                    onChange={() => onDisplayIsolatedUpdated?.(!isDisplayIsolated)}
-                    inputProps={{ 'aria-label': 'primary checkbox' }}
-                  />
-                }
-                label="Remove labels on smaller nodes"
-              />
+              <>
+                <Typography style={{ paddingTop: '1em', textAlign: 'left' }}>
+                  {' '}
+                  Nodes scaler threshold to display labels
+                </Typography>
+                <Grid container spacing={2}>
+                  <Grid item xs>
+                    <Slider defaultValue={0} min={0} max={3} />
+                  </Grid>
+                  <Grid item>{0}</Grid>
+                </Grid>
+              </>
             )}
+
+            <Grid
+              container
+              direction="row"
+              alignItems="center"
+              style={{ paddingBottom: '.5em', marginTop: '1.5em' }}
+            >
+              <Typography className="accordion-sub">Colors</Typography>
+              <InfoOutlinedIcon color="inherit" className="vizIconRight" />
+            </Grid>
           </AccordionDetails>
         </StyledAccordion>
         <StyledAccordion
@@ -255,7 +267,7 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
   const [edges] = useStepInputValue<EdgesTable>(step.stepId, 'edges', { fullValue: true })
   const [graphData] = useStepOutputValue<GraphDataTable>(step.stepId, 'graphData', { fullValue: true })
   //const [shortestPath] = useStepOutputValue<string[]>(step.stepId, 'shortestPath')
-  const [nodesScalingMethod, setNodesScalingMethod] = React.useState<ScalingMethods>(null)
+  const [nodesScalingMethod, setNodesScalingMethod] = React.useState<ScalingMethods>('degree')
   const [isDisplayLabels, setIsDisplayLabels] = React.useState(false)
   const [isDisplayIsolated, setIsDisplayIsolated] = React.useState(true)
   const [isDisplayTooltip, setIsDisplayTooltip] = React.useState(false)
@@ -354,6 +366,7 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
                 top: (graphTooltipInfo.mouseCoordinates.y ?? 10) - 10,
                 visibility: isDisplayTooltip ? 'visible' : 'hidden',
                 background: 'rgba(69,77,93,.9)',
+                textAlign: 'left',
                 borderRadius: '.1rem',
                 color: '#fff',
                 display: 'block',
@@ -376,7 +389,7 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
           )}
           <network-force
             displayIsolatedNodes={isDisplayIsolated ? undefined : true}
-            displayLabels={isDisplayLabels ? undefined : true}
+            displayLabels={isDisplayLabels ? undefined : false}
             reapplySimulationOnUpdate={true}
             width={graphWidth}
             height={graphHeight}

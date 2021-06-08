@@ -253,7 +253,7 @@ export class NetworkForce extends LitElement {
       .attr('dy', '0.35em')
       .attr('class', 'node-labels')
       .attr('font-family', 'sans-serif')
-      .style('opacity', this.displayLabels ? 1 : 0)
+      .style('opacity', this.displayLabels ? 0 : 1)
 
     simulation.on('tick', () => {
       link
