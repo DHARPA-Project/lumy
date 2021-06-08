@@ -91,11 +91,14 @@ const StyledAccordion = withStyles({
 })(Accordion)
 
 type ScalingMethods = keyof Omit<GraphDataStructure, 'isLarge'>
+type NodesColor = string
 
 interface NavigationProps {
   nodesScalingMethod: ScalingMethods
+  nodesColor: NodesColor
   isDisplayIsolated: boolean
   isDisplayLabels: boolean
+  onNodesColorUpdated?: (arg0: string) => void
   onNodesScalingMethodUpdated?: (m: ScalingMethods) => void
   onDisplayIsolatedUpdated?: (isIsolated: boolean) => void
   onDisplayLabelsUpdated?: (arg0: boolean) => void
@@ -103,9 +106,11 @@ interface NavigationProps {
 
 const Navigation = ({
   nodesScalingMethod,
+  nodesColor,
   isDisplayLabels,
   isDisplayIsolated,
   onNodesScalingMethodUpdated,
+  onNodesColorUpdated,
   onDisplayIsolatedUpdated,
   onDisplayLabelsUpdated
 }: NavigationProps): JSX.Element => {
@@ -200,6 +205,21 @@ const Navigation = ({
               <Typography className="accordion-sub">Colors</Typography>
               <InfoOutlinedIcon color="inherit" className="vizIconRight" />
             </Grid>
+            <FormControl style={{ width: '100%' }}>
+              <NativeSelect
+                style={{
+                  borderBottom: '0px',
+                  borderRadius: 1,
+                  paddingLeft: '.5em',
+                  border: '1px solid #ced4da'
+                }}
+                value={nodesColor ?? ''}
+                onChange={e => onNodesColorUpdated?.(e.target.value as NodesColor)}
+              >
+                <option value="same">Same for all nodes</option>
+                <option value="language">Language</option>
+              </NativeSelect>
+            </FormControl>
           </AccordionDetails>
         </StyledAccordion>
         <StyledAccordion
