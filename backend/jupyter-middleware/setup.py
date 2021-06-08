@@ -8,7 +8,7 @@ with open(os.path.join(REPO_DIR, 'package.json')) as fid:
     repo_data = json.load(fid)
 
 
-__version__ = '0.1.0'
+__version__ = '0.2.0'
 description = 'Lumy Jupyter middleware'
 
 with open('README.md', 'r') as fh:
@@ -17,7 +17,6 @@ with open('README.md', 'r') as fh:
 setup_args = dict(
     name='lumy-jupyter-middleware',
     version=__version__,
-    use_scm_version={'root': '../..'},
     url=repo_data.get('homepage'),
     author=repo_data.get('author'),
     description=description,
@@ -35,9 +34,6 @@ setup_args = dict(
         'kiara_modules.core==0.0.2',
         'pandas>=1.2.4',
         'appdirs>=1.4.4'
-    ],
-    setup_requires=[
-        'setuptools_scm'
     ],
     zip_safe=False,
     include_package_data=True,
