@@ -136,7 +136,13 @@ class NetworkAnalysisDataVisModule(KiaraModule):
                 doc="ID of the end node for the shortest path calculations",
                 optional=True,
                 default=None
-            )
+            ),
+            "selectedNodeId": ValueSchema(
+                type="any",
+                doc="ID of the selected node to calculate direct neighbours",
+                optional=True,
+                default=None
+            ),
         }
 
     def create_output_schema(self) -> Mapping[str, ValueSchema]:
@@ -148,6 +154,10 @@ class NetworkAnalysisDataVisModule(KiaraModule):
             "shortestPath": ValueSchema(
                 type="any",
                 doc="Shortest path array.",
+            ),
+            "directConnections": ValueSchema(
+                type="any",
+                doc="Ids of the direct connections of the 'selectedNodeId'",
             )
         }
 
@@ -203,3 +213,11 @@ class NetworkAnalysisDataVisModule(KiaraModule):
             outputs.set_value('shortestPath', shortest_path)
         else:
             outputs.set_value('shortestPath', [])
+
+        # direct connections
+        selected_node_id = inputs.get_value_data('selectedNodeId')
+        if selected_node_id is not None and selected_node_id in graph:
+            direct_connections = list(graph.neighbors(id))
+            outputs.set_value('directConnections', direct_connections)
+        else:
+            outputs.set_value('directConnections', [])

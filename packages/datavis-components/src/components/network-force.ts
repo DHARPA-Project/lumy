@@ -227,8 +227,16 @@ export class NetworkForce extends LitElement {
       .attr('fill', d => colorScale(d.metadata.group))
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .call((drag(simulation) as unknown) as any)
-      .on('mouseover', () => {
-        this.dispatchEvent(new CustomEvent('node-hovered'))
+      .on('mouseover', (e: MouseEvent, nodeDatum: GraphNodeDatum) => {
+        const [x, y] = d3.pointer(e)
+        this.dispatchEvent(
+          new CustomEvent<NodeMouseEventDetails>('node-hovered', {
+            detail: {
+              nodeMetadata: nodeDatum.metadata,
+              mouseCoordinates: { x, y }
+            }
+          })
+        )
       })
       .on('mousemove', (e: MouseEvent, nodeDatum: GraphNodeDatum) => {
         const [x, y] = d3.pointer(e)
