@@ -98,6 +98,8 @@ interface NavigationProps {
   nodesColor: NodesColor
   isDisplayIsolated: boolean
   isDisplayLabels: boolean
+  nodesSizeMin: number
+  nodesSizeMax: number
   onNodesColorUpdated?: (arg0: string) => void
   onNodesScalingMethodUpdated?: (m: ScalingMethods) => void
   onDisplayIsolatedUpdated?: (isIsolated: boolean) => void
@@ -105,6 +107,8 @@ interface NavigationProps {
 }
 
 const Navigation = ({
+  nodesSizeMin,
+  nodesSizeMax,
   nodesScalingMethod,
   nodesColor,
   isDisplayLabels,
@@ -116,6 +120,9 @@ const Navigation = ({
 }: NavigationProps): JSX.Element => {
   const [expandedAccordionId, setExpandedAccordionId] = React.useState<number>(null)
   const [labelValue, setLabelValue] = React.useState(null)
+
+  // Math.min(...data.map(e => e.room.price))
+  console.log(nodesSizeMin)
 
   return (
     <Grid container spacing={1} direction="column">
@@ -387,11 +394,16 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
     }
   }, [graphRef.current])
 
+  const scalerColumn = graphData?.getColumn(nodesScalingMethod)
+  console.log(scalerColumn?.toArray())
+
   return (
     <Grid container>
       <Grid container spacing={3}>
         <Grid item xs={3}>
           <Navigation
+            nodesSizeMin={5}
+            nodesSizeMax={25}
             nodesScalingMethod={nodesScalingMethod}
             isDisplayIsolated={isDisplayIsolated}
             isDisplayLabels={isDisplayLabels}
