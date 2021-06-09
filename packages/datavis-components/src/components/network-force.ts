@@ -2,7 +2,7 @@ import { LitElement, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import * as d3 from 'd3'
 
-type MetadataId = string | number
+type MetadataId = string
 
 export interface NodeMetadata {
   id: MetadataId
@@ -177,13 +177,13 @@ export class NetworkForce extends LitElement {
       .forceSimulation(this.currentGraphNodes)
       .force(
         'link',
-        d3.forceLink<GraphNodeDatum, GraphLinkDatum>(this.currentGraphLinks).id(d => String(d.metadata.id))
+        d3.forceLink<GraphNodeDatum, GraphLinkDatum>(this.currentGraphLinks).id(d => d.metadata.id)
       )
       .force('charge', d3.forceManyBody())
       .force('center', d3.forceCenter(this.width / 2, this.height / 2))
       .force(
         'collide',
-        d3.forceCollide<GraphNodeDatum>(d => scaleNode(d.metadata.scaler ?? 0) * 1.3 ?? 5)
+        d3.forceCollide<GraphNodeDatum>(d => scaleNode(d.metadata.scaler ?? 0) + 4 ?? 5)
       )
       .force('x', this.displayIsolatedNodes ? null : d3.forceX())
       .force('y', this.displayIsolatedNodes ? null : d3.forceY())

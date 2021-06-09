@@ -40,7 +40,14 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
   /* 2. Get input values that we can control */
 
   // ID of the node we will get direct neighbours for
-  const [selectedNodeId] = useStepInputValue<InputValues['selectedNodeId']>(step.stepId, 'selectedNodeId')
+
+  // TODO: replace react state variable with backend state variable when
+  // reapplying force on update is sorted out
+  // const [selectedNodeId, setSelectedNodeId] = useStepInputValue<InputValues['selectedNodeId']>(
+  //   step.stepId,
+  //   'selectedNodeId'
+  // )
+  const [selectedNodeId, setSelectedNodeId] = React.useState<InputValues['selectedNodeId']>()
 
   /* 3. Get output values */
   const [graphData] = useStepOutputValue<OutputValues['graphData']>(step.stepId, 'graphData', {
@@ -72,17 +79,13 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
 
   const handleGraphNodeHovered = (event: CustomEvent<NodeMouseEventDetails>) => {
     setGraphTooltipInfo(event.detail)
-    // TODO: uncomment for direct connection calculation
-    // const nodeId = event.detail.nodeMetadata.actualNodeId
-    // if (nodeId != null) {
-    //   setSelectedNodeId((nodeId as unknown) as Utf8)
-    // }
+    const nodeId = event.detail.nodeMetadata.id
+    if (nodeId != null) setSelectedNodeId(nodeId)
   }
 
   const handleGraphNodeHoveredOut = () => {
     setGraphTooltipInfo(undefined)
-    // TODO: uncomment for direct connection calculation
-    // setSelectedNodeId(null)
+    setSelectedNodeId(null)
   }
 
   React.useEffect(() => {
@@ -156,7 +159,7 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
           <network-force
             displayIsolatedNodes={isDisplayIsolated ? undefined : true}
             displayLabels={isDisplayLabels ? undefined : false}
-            // reapplySimulationOnUpdate={true}
+            reapplySimulationOnUpdate={undefined}
             width={graphBox?.width ?? 0}
             height={((graphBox?.width ?? 0) * 2) / 3}
             ref={graphRef}

@@ -1,5 +1,7 @@
 import { Table, Int32, Utf8, Float32, Bool } from 'apache-arrow'
 
+type NodeId = string
+
 export type EdgesStructure = {
   srcId: Utf8
   tgtId: Utf8
@@ -37,18 +39,28 @@ enum GraphType {
   Undirected = 'undirected'
 }
 
+interface GraphStats {
+  nodesCount: number
+  edgesCount: number
+  averageInDegree: number
+  averageOutDegree: number
+  density: number
+  averageShortestPathLength: number
+}
+
 export interface InputValues {
   nodes: NodesTable
   edges: EdgesTable
-  shortestPathSource: string
-  shortestPathTarget: string
+  shortestPathSource: NodeId
+  shortestPathTarget: NodeId
   shortestPathMethod: ShortestPathMethod
   graphType: GraphType
-  selectedNodeId: NodesStructure['id']
+  selectedNodeId: NodeId
 }
 
 export interface OutputValues {
   graphData: GraphDataTable
-  shortestPath: string[]
-  directConnections: NodesStructure['id'][]
+  shortestPath: NodeId[]
+  directConnections: NodeId[]
+  graphStats: GraphStats
 }
