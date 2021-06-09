@@ -117,6 +117,10 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
     <Grid container>
       <Grid container spacing={3}>
         <Grid item xs={3}>
+          <Grid item>
+            <GraphStatsPanel graphStats={graphStats} />
+          </Grid>
+
           <NavigationPanel>
             <NavigationPanelSection title="Nodes appearance" index="0">
               <NodesAppearance
@@ -168,10 +172,6 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
         </Grid>
       </Grid>
       <Grid container direction="column">
-        <Grid item>
-          <GraphStatsPanel graphStats={graphStats} />
-        </Grid>
-
         <Grid item style={{ flexGrow: 1 }}>
           <DataGrid
             data={nodesPage}
