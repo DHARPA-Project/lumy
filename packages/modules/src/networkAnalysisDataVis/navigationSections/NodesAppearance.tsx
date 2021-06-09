@@ -1,19 +1,36 @@
 import React from 'react'
-import { Grid, FormControl, Slider, NativeSelect, Typography } from '@material-ui/core'
-import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined'
-import { ScalingMethods } from '../structure'
+import { Grid, Slider, Typography } from '@material-ui/core'
+import { ScalingMethod } from '../structure'
+import { OptionSelector, Option } from '../components/OptionSelector'
 
-type NodesColor = 'useGroup' | 'noColor'
+const scalingMethodLabels: Record<ScalingMethod, string> = {
+  degree: 'Most connections to other nodes (hubs)',
+  betweenness: 'Bridges between groups of nodes (brokers)',
+  eigenvector: 'Best connected to hubs'
+}
+const scalingMethodValues: Option[] = [{ value: undefined, label: 'Equal' }].concat(
+  Object.entries(scalingMethodLabels).map(([value, label]) => ({ value, label }))
+)
+
+const displayLabelValues: Option[] = [
+  { value: String(true), label: 'Label' },
+  { value: String(false), label: 'None' }
+]
+
+const colorCodeNodesValues: Option[] = [
+  { value: String(true), label: 'By group' },
+  { value: String(false), label: 'Same for all nodes' }
+]
 
 export interface NodeAppearanceProps {
-  nodesScalingMethod: ScalingMethods
-  onNodesScalingMethodUpdated?: (m: ScalingMethods) => void
+  nodesScalingMethod: ScalingMethod
+  onNodesScalingMethodUpdated?: (m: ScalingMethod) => void
 
   isDisplayLabels: boolean
   onDisplayLabelsUpdated?: (isDisplayLabels: boolean) => void
 
-  nodesColor: NodesColor
-  onNodesColorUpdated?: (nodesColor: NodesColor) => void
+  colorCodeNodes: boolean
+  onColorCodeNodesUpdated?: (colorCodeNodes: boolean) => void
 
   nodesSizeThresholdBoundaries: [number, number]
 }
@@ -26,78 +43,36 @@ export const NodesAppearance = ({
   onNodesScalingMethodUpdated,
   isDisplayLabels,
   onDisplayLabelsUpdated,
-  nodesColor,
-  onNodesColorUpdated,
+  colorCodeNodes,
+  onColorCodeNodesUpdated,
   nodesSizeThresholdBoundaries
 }: NodeAppearanceProps): JSX.Element => {
-  const [labelValue, setLabelValue] = React.useState(null)
-
   console.log(`nodesSizeThresholdBoundaries: ${nodesSizeThresholdBoundaries}`)
 
   return (
     <Grid container direction="column">
       {/* size */}
       <Grid item>
-        <Grid container direction="row" alignItems="center" style={{ paddingBottom: '.5em' }}>
-          <Typography className="accordion-sub">Size</Typography>
-          <InfoOutlinedIcon color="inherit" className="vizIconRight" />
-        </Grid>
-
-        <FormControl>
-          <NativeSelect
-            style={{
-              borderBottom: '0px',
-              borderRadius: 1,
-              paddingLeft: '.5em',
-              border: '1px solid #ced4da'
-            }}
-            value={nodesScalingMethod ?? ''}
-            onChange={e => onNodesScalingMethodUpdated?.(e.target.value as ScalingMethods)}
-          >
-            <option value="equal">Equal</option>
-            <option value="degree">Most connections to other nodes (hubs)</option>
-            <option value="betweenness">Bridges between groups of nodes (brokers)</option>
-            <option value="eigenvector">Best connected to hubs</option>
-          </NativeSelect>
-        </FormControl>
+        <OptionSelector
+          value={nodesScalingMethod}
+          onValueChanged={v => onNodesScalingMethodUpdated?.(v as ScalingMethod)}
+          label="Size"
+          values={scalingMethodValues}
+        />
       </Grid>
 
       {/* labels */}
       <Grid item>
-        <Grid
-          container
-          direction="row"
-          alignItems="center"
-          style={{ paddingBottom: '.5em', marginTop: '1.5em' }}
-        >
-          <Typography className="accordion-sub">Labels</Typography>
-          <InfoOutlinedIcon color="inherit" className="vizIconRight" />
-        </Grid>
-
-        <FormControl style={{ width: '100%' }}>
-          <NativeSelect
-            style={{
-              width: '100%',
-              borderBottom: '0px',
-              borderRadius: 1,
-              paddingLeft: '.5em',
-              border: '1px solid #ced4da'
-            }}
-            value={labelValue ?? undefined}
-            onChange={e => {
-              e.target.value == 'none' ? onDisplayLabelsUpdated?.(false) : onDisplayLabelsUpdated?.(true)
-              setLabelValue(e.target.value)
-            }}
-          >
-            <option value="none">None</option>
-            <option value="label">Label</option>
-          </NativeSelect>
-        </FormControl>
+        <OptionSelector
+          value={String(isDisplayLabels)}
+          onValueChanged={v => onDisplayLabelsUpdated?.(v === String(true))}
+          label="Label"
+          values={displayLabelValues}
+        />
 
         {isDisplayLabels == true && (
-          <>
+          <Grid item>
             <Typography style={{ paddingTop: '1em', textAlign: 'left' }}>
-              {' '}
               Nodes scaler threshold to display labels
             </Typography>
             <Grid container spacing={2}>
@@ -106,36 +81,18 @@ export const NodesAppearance = ({
               </Grid>
               <Grid item>{0}</Grid>
             </Grid>
-          </>
+          </Grid>
         )}
       </Grid>
 
       {/* colors */}
       <Grid item>
-        <Grid
-          container
-          direction="row"
-          alignItems="center"
-          style={{ paddingBottom: '.5em', marginTop: '1.5em' }}
-        >
-          <Typography className="accordion-sub">Colors</Typography>
-          <InfoOutlinedIcon color="inherit" className="vizIconRight" />
-        </Grid>
-        <FormControl style={{ width: '100%' }}>
-          <NativeSelect
-            style={{
-              borderBottom: '0px',
-              borderRadius: 1,
-              paddingLeft: '.5em',
-              border: '1px solid #ced4da'
-            }}
-            value={nodesColor ?? ''}
-            onChange={e => onNodesColorUpdated?.(e.target.value as NodesColor)}
-          >
-            <option value="same">Same for all nodes</option>
-            <option value="language">Language</option>
-          </NativeSelect>
-        </FormControl>
+        <OptionSelector
+          value={String(colorCodeNodes)}
+          onValueChanged={v => onColorCodeNodesUpdated?.(v === String(true))}
+          label="Colors"
+          values={colorCodeNodesValues}
+        />
       </Grid>
     </Grid>
   )

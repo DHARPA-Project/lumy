@@ -3,7 +3,6 @@ import { Accordion, AccordionSummary, AccordionDetails, Typography } from '@mate
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 
 import useStyles from './NavigationPanel.styles'
-import './styles.css'
 
 interface OpenSectionIndexContext {
   sectionIndex: React.Key

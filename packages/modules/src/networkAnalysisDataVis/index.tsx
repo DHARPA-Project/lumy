@@ -8,20 +8,18 @@ import {
   withMockProcessor
 } from '@dharpa-vre/client-core'
 import { Column, Float32 } from 'apache-arrow'
-import { GraphDataStructure, InputValues, OutputValues } from './structure'
+import { ScalingMethod, InputValues, OutputValues } from './structure'
 import { Grid } from '@material-ui/core'
 import { useElement, NetworkForce, NodeMouseEventDetails } from '@dharpa-vre/datavis-components'
 import { useBbox } from '../hooks/useBbox'
 import { DataGrid } from '@dharpa-vre/arrow-data-grid'
-import { NavigationPanel, NavigationPanelSection } from './NavigationPanel'
+import { NavigationPanel, NavigationPanelSection } from './components/NavigationPanel'
 import { NodesAppearance } from './navigationSections/NodesAppearance'
 import { FilterTopologyLayout } from './navigationSections/FilterTopologyLayout'
-import { NodeTooltip } from './NodeTooltip'
+import { NodeTooltip } from './components/NodeTooltip'
 import { mockProcessor } from './mockProcessor'
 
 useElement('network-force')
-
-type ScalingMethods = keyof Omit<GraphDataStructure, 'isLarge'>
 
 const normalizeColumn = (column: Column<Float32>): number[] => {
   if (column == null) return undefined
@@ -39,7 +37,7 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
     fullValue: true
   })
   //const [shortestPath] = useStepOutputValue<string[]>(step.stepId, 'shortestPath')
-  const [nodesScalingMethod, setNodesScalingMethod] = React.useState<ScalingMethods>('degree')
+  const [nodesScalingMethod, setNodesScalingMethod] = React.useState<ScalingMethod>('degree')
   const [isDisplayLabels, setIsDisplayLabels] = React.useState(false)
   const [isDisplayIsolated, setIsDisplayIsolated] = React.useState(true)
   const [isDisplayTooltip, setIsDisplayTooltip] = React.useState(false)
@@ -151,8 +149,8 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
                 onNodesScalingMethodUpdated={setNodesScalingMethod}
                 isDisplayLabels={isDisplayLabels}
                 onDisplayLabelsUpdated={setIsDisplayLabels}
-                nodesColor={'noColor'}
-                onNodesColorUpdated={() => undefined}
+                colorCodeNodes={true}
+                onColorCodeNodesUpdated={() => undefined}
                 nodesSizeThresholdBoundaries={[0, 1]}
               />
             </NavigationPanelSection>

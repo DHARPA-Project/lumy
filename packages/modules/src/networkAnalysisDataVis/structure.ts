@@ -20,7 +20,7 @@ export type GraphDataStructure = {
   isIsolated: Bool
 }
 
-export type ScalingMethods = keyof Omit<GraphDataStructure, 'isLarge'>
+export type ScalingMethod = keyof Omit<GraphDataStructure, 'isLarge' | 'isIsolated'>
 
 type GraphDataTable = Table<GraphDataStructure>
 

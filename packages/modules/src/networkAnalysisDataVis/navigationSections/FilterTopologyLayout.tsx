@@ -17,9 +17,9 @@ export const FilterTopologyLayout = ({
     <FormControlLabel
       control={
         <Checkbox
+          color="primary"
           checked={!isDisplayIsolated}
           onChange={() => onDisplayIsolatedUpdated?.(!isDisplayIsolated)}
-          inputProps={{ 'aria-label': 'primary checkbox' }}
         />
       }
       label="Remove isolated nodes"
