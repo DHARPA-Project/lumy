@@ -7,7 +7,6 @@ import {
   useStepOutputValue,
   withMockProcessor
 } from '@dharpa-vre/client-core'
-import { Column, Float32 } from 'apache-arrow'
 import { ScalingMethod, InputValues, OutputValues } from './structure'
 import { Grid } from '@material-ui/core'
 import { useElement, NetworkForce, NodeMouseEventDetails } from '@dharpa-vre/datavis-components'
@@ -18,35 +17,17 @@ import { NodesAppearance } from './navigationSections/NodesAppearance'
 import { FilterTopologyLayout } from './navigationSections/FilterTopologyLayout'
 import { NodeTooltip } from './components/NodeTooltip'
 import { mockProcessor } from './mockProcessor'
+import { useElementEventCallback } from './hooks'
+import { buildGraphEdges, buildGraphNodes } from './graphDataMethods'
 
 useElement('network-force')
-
-const normalizeColumn = (column: Column<Float32>): number[] => {
-  if (column == null) return undefined
-  const items = [...column]
-  const max = items.reduce((acc, v) => (v > acc ? v : acc), 0)
-  return items.map(v => v / max)
-}
 
 type Props = ModuleProps<InputValues, OutputValues>
 
 const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
+  /* 1. Get read only module input values */
   const [nodes] = useStepInputValue<InputValues['nodes']>(step.stepId, 'nodes', { fullValue: true })
   const [edges] = useStepInputValue<InputValues['edges']>(step.stepId, 'edges', { fullValue: true })
-  const [graphData] = useStepOutputValue<OutputValues['graphData']>(step.stepId, 'graphData', {
-    fullValue: true
-  })
-  //const [shortestPath] = useStepOutputValue<string[]>(step.stepId, 'shortestPath')
-  const [nodesScalingMethod, setNodesScalingMethod] = React.useState<ScalingMethod>('degree')
-  const [isDisplayLabels, setIsDisplayLabels] = React.useState(false)
-  const [isDisplayIsolated, setIsDisplayIsolated] = React.useState(true)
-  const [isDisplayTooltip, setIsDisplayTooltip] = React.useState(false)
-  const [graphTooltipInfo, setGraphTooltipInfo] = React.useState<NodeMouseEventDetails>(null)
-
-  // ID of the node we will get direct neighbours for
-  const [selectedNodeId] = useStepInputValue<InputValues['selectedNodeId']>(step.stepId, 'selectedNodeId')
-  // a list of direct connections of the `selectedNodeId` node
-  const [selectedNodeDirectConnections] = useStepOutputValue(step.stepId, 'directConnections')
 
   // nodes page + filter for table view
   const [nodesFilter, setNodesFilter] = React.useState<TabularDataFilter>({ pageSize: 10 })
@@ -56,26 +37,50 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
     nodesFilter
   )
 
+  /* 2. Get input values that we can control */
+
+  // ID of the node we will get direct neighbours for
+  const [selectedNodeId] = useStepInputValue<InputValues['selectedNodeId']>(step.stepId, 'selectedNodeId')
+
+  /* 3. Get output values */
+  const [graphData] = useStepOutputValue<OutputValues['graphData']>(step.stepId, 'graphData', {
+    fullValue: true
+  })
+
+  // a list of direct connections of the `selectedNodeId` node
+  const [selectedNodeDirectConnections] = useStepOutputValue(step.stepId, 'directConnections')
+
+  //const [shortestPath] = useStepOutputValue<string[]>(step.stepId, 'shortestPath')
+
+  /* 4. Graph and its container reference - for getting container size */
   const graphRef = React.useRef<NetworkForce>(null)
   const graphContainerRef = React.useRef()
   const graphBox = useBbox(graphContainerRef)
 
+  /* 5. local state variables, mostly for navigation */
+
+  const [nodesScalingMethod, setNodesScalingMethod] = React.useState<ScalingMethod>('degree')
+  const [isDisplayLabels, setIsDisplayLabels] = React.useState(false)
+  const [isDisplayIsolated, setIsDisplayIsolated] = React.useState(true)
+  const [graphTooltipInfo, setGraphTooltipInfo] = React.useState<NodeMouseEventDetails>(null)
+  const [labelNodeSizeThreshold, setLabelNodeSizeThreshold] = React.useState<number>(null)
+
+  /* 6. handlers for graph node hover */
   const handleGraphNodeMouseMove = (event: CustomEvent<NodeMouseEventDetails>) => {
     setGraphTooltipInfo(event.detail)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleGraphNodeHovered = (event: CustomEvent<NodeMouseEventDetails>) => {
+    setGraphTooltipInfo(event.detail)
     // TODO: uncomment for direct connection calculation
     // const nodeId = event.detail.nodeMetadata.actualNodeId
     // if (nodeId != null) {
     //   setSelectedNodeId((nodeId as unknown) as Utf8)
     // }
-    setIsDisplayTooltip(true)
   }
 
   const handleGraphNodeHoveredOut = () => {
-    setIsDisplayTooltip(false)
+    setGraphTooltipInfo(undefined)
     // TODO: uncomment for direct connection calculation
     // setSelectedNodeId(null)
   }
@@ -85,58 +90,24 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
     console.log(`Direct connections of node ${selectedNodeId}: ${selectedNodeDirectConnections}`)
   }, [selectedNodeDirectConnections])
 
-  const graphWidth = graphBox?.width ?? 0
-  const graphHeight = (graphWidth * 2) / 3
-
+  /* 7. Handle changes in nodes, edges, graph data and graph parameters:
+        construct new force graph data structures and pass them to the graph
+  */
   React.useEffect(() => {
-    if (graphRef.current == null || nodes == null || graphData == null) return
-
-    const scalerColumn = graphData.getColumn(nodesScalingMethod)
-
-    const normalizedScalerColumn = normalizeColumn(scalerColumn as Column<Float32>)
-
-    const graphNodes = [...nodes.toArray()].map((node, idx) => ({
-      id: String(node.id),
-      group: node.group,
-      label: node.label,
-      scaler: normalizedScalerColumn?.[idx],
-      // setting actual node ID *before* converting it to string
-      actualNodeId: node.id
-    }))
-
-    if (isDisplayIsolated) {
-      graphRef.current.nodes = graphNodes
-    } else {
-      // filter out isolated nodes
-      const isIsolated = [...(graphData.getColumn('isIsolated') ?? [])]
-      graphRef.current.nodes = graphNodes.filter((_, idx) => !isIsolated[idx])
-    }
+    if (graphRef.current == null) return
+    const graphNodes = buildGraphNodes(nodes, graphData, isDisplayIsolated, nodesScalingMethod)
+    if (graphNodes != null) graphRef.current.nodes = graphNodes
   }, [nodes, nodesScalingMethod, graphData, graphRef.current, isDisplayIsolated])
 
   React.useEffect(() => {
-    if (graphRef.current == null || edges == null) return
-
-    graphRef.current.edges = [...edges.toArray()].map(edge => ({
-      sourceId: String(edge.srcId),
-      targetId: String(edge.tgtId)
-    }))
+    if (graphRef.current == null) return
+    const graphEdges = buildGraphEdges(edges)
+    if (graphEdges != null) graphRef.current.edges = graphEdges
   }, [edges, graphRef.current])
 
-  React.useEffect(() => {
-    if (graphRef.current == null) return
-    graphRef.current.addEventListener('node-hovered', handleGraphNodeHovered as EventListener)
-    graphRef.current.addEventListener('node-mousemove', handleGraphNodeMouseMove as EventListener)
-    graphRef.current.addEventListener('node-hovered-out', handleGraphNodeHoveredOut)
-
-    return () => {
-      graphRef.current?.removeEventListener('node-hovered', handleGraphNodeHovered as EventListener)
-      graphRef.current?.removeEventListener('node-mousemove', handleGraphNodeMouseMove as EventListener)
-      graphRef.current?.removeEventListener('node-hovered-out', handleGraphNodeHoveredOut)
-    }
-  }, [graphRef.current])
-
-  const scalerColumn = graphData?.getColumn(nodesScalingMethod)
-  console.log(scalerColumn?.toArray())
+  useElementEventCallback(graphRef.current, 'node-hovered', handleGraphNodeHovered)
+  useElementEventCallback(graphRef.current, 'node-mousemove', handleGraphNodeMouseMove)
+  useElementEventCallback(graphRef.current, 'node-hovered-out', handleGraphNodeHoveredOut)
 
   return (
     <Grid container>
@@ -151,7 +122,9 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
                 onDisplayLabelsUpdated={setIsDisplayLabels}
                 colorCodeNodes={true}
                 onColorCodeNodesUpdated={() => undefined}
-                nodesSizeThresholdBoundaries={[0, 1]}
+                labelNodeSizeThreshold={labelNodeSizeThreshold}
+                onLabelNodeSizeThresholdUpdated={setLabelNodeSizeThreshold}
+                labelNodesSizeThresholdBoundaries={[0, 10]}
               />
             </NavigationPanelSection>
             <NavigationPanelSection title="Edges appearance" index="1"></NavigationPanelSection>
@@ -166,7 +139,7 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
           </NavigationPanel>
         </Grid>
         <Grid item xs={9} ref={graphContainerRef} style={{ position: 'relative' }}>
-          {graphTooltipInfo != null && isDisplayTooltip ? (
+          {graphTooltipInfo != null ? (
             <NodeTooltip
               position={{
                 left: graphTooltipInfo.mouseCoordinates.x,
@@ -183,9 +156,9 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
           <network-force
             displayIsolatedNodes={isDisplayIsolated ? undefined : true}
             displayLabels={isDisplayLabels ? undefined : false}
-            reapplySimulationOnUpdate={true}
-            width={graphWidth}
-            height={graphHeight}
+            // reapplySimulationOnUpdate={true}
+            width={graphBox?.width ?? 0}
+            height={((graphBox?.width ?? 0) * 2) / 3}
             ref={graphRef}
           />
         </Grid>

@@ -32,7 +32,9 @@ export interface NodeAppearanceProps {
   colorCodeNodes: boolean
   onColorCodeNodesUpdated?: (colorCodeNodes: boolean) => void
 
-  nodesSizeThresholdBoundaries: [number, number]
+  labelNodeSizeThreshold?: number
+  onLabelNodeSizeThresholdUpdated?: (labelNodeSizeThreshold: number) => void
+  labelNodesSizeThresholdBoundaries?: [number, number]
 }
 
 /**
@@ -45,10 +47,10 @@ export const NodesAppearance = ({
   onDisplayLabelsUpdated,
   colorCodeNodes,
   onColorCodeNodesUpdated,
-  nodesSizeThresholdBoundaries
+  labelNodeSizeThreshold,
+  onLabelNodeSizeThresholdUpdated,
+  labelNodesSizeThresholdBoundaries
 }: NodeAppearanceProps): JSX.Element => {
-  console.log(`nodesSizeThresholdBoundaries: ${nodesSizeThresholdBoundaries}`)
-
   return (
     <Grid container direction="column">
       {/* size */}
@@ -73,13 +75,18 @@ export const NodesAppearance = ({
         {isDisplayLabels == true && (
           <Grid item>
             <Typography style={{ paddingTop: '1em', textAlign: 'left' }}>
-              Nodes scaler threshold to display labels
+              Display nodes of at least this size
             </Typography>
             <Grid container spacing={2}>
               <Grid item xs>
-                <Slider defaultValue={0} min={0} max={3} />
+                <Slider
+                  value={labelNodeSizeThreshold ?? 0}
+                  onChange={(_, v) => onLabelNodeSizeThresholdUpdated?.(v as number)}
+                  min={labelNodesSizeThresholdBoundaries?.[0] ?? 0}
+                  max={labelNodesSizeThresholdBoundaries?.[1] ?? 1}
+                />
               </Grid>
-              <Grid item>{0}</Grid>
+              <Grid item>{labelNodeSizeThreshold ?? 0}</Grid>
             </Grid>
           </Grid>
         )}

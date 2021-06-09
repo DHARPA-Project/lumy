@@ -183,7 +183,7 @@ export class NetworkForce extends LitElement {
       .force('center', d3.forceCenter(this.width / 2, this.height / 2))
       .force(
         'collide',
-        d3.forceCollide<GraphNodeDatum>(d => scaleNode(d.metadata.scaler ?? 0) ?? 5)
+        d3.forceCollide<GraphNodeDatum>(d => scaleNode(d.metadata.scaler ?? 0) * 1.3 ?? 5)
       )
       .force('x', this.displayIsolatedNodes ? null : d3.forceX())
       .force('y', this.displayIsolatedNodes ? null : d3.forceY())
