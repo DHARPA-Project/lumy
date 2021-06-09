@@ -6,12 +6,15 @@ import PageLayoutContextProvider from '../context/pageLayoutContext'
 import ProjectContextProvider from '../context/projectContext'
 
 import TopPageLayout from './common/TopPageLayout'
-import IntroPage from './pages/IntroPage'
+import HomePage from './pages/HomePage'
+import NetworkAnalysisPage from './pages/NetworkAnalysisPage'
+// import IntroPage from './pages/IntroPage'
 import ToyVrePage from './pages/ToyVrePage'
-import NetworkAnalysisIntroPage from './pages/NetworkAnalysisIntroPage'
-import ProjectPage from './pages/ProjectPage'
+// import NetworkAnalysisIntroPage from './pages/NetworkAnalysisIntroPage'
+// import ProjectPage from './pages/ProjectPage'
 import LabPage from './pages/LabPage'
 import PlaygroundPage from './pages/PlaygroundPage'
+import WorkflowProjectPage from './pages/WorkflowProjectPage'
 
 export const App = (): JSX.Element => {
   return (
@@ -21,12 +24,14 @@ export const App = (): JSX.Element => {
           <Router>
             <TopPageLayout>
               <Switch>
-                <Redirect from="/" exact to="/intro" />
-                <Route path="/intro" exact component={IntroPage} />
+                <Redirect from="/" exact to="/home" />
+                <Route path="/home" exact component={HomePage} />
+                <Route path="/workflows/network-analysis" exact component={NetworkAnalysisPage} />
+                <Route path="/workflows/network-analysis/directed" exact component={WorkflowProjectPage} />
+                {/* <Route path="/intro" exact component={IntroPage} /> */}
+                {/* <Route path="/projects/:id" exact component={ProjectPage} /> */}
                 <Route path="/toy" exact component={ToyVrePage} />
                 <Route path="/lab" exact component={LabPage} />
-                <Route path="/workflows/network-analysis" exact component={NetworkAnalysisIntroPage} />
-                <Route path="/projects/:id" exact component={ProjectPage} />
                 <Route path="/playground" exact component={PlaygroundPage} />
               </Switch>
             </TopPageLayout>

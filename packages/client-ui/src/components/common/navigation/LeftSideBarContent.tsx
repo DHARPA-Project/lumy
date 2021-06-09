@@ -8,7 +8,7 @@ import Fab from '@material-ui/core/Fab'
 import DoubleArrowIcon from '@material-ui/icons/DoubleArrow'
 import ExploreIcon from '@material-ui/icons/Explore'
 
-import { ProjectContext } from '../../../context/projectContext'
+// import { ProjectContext } from '../../../context/projectContext'
 import { PageLayoutContext } from '../../../context/pageLayoutContext'
 import { pageRoutes, NavItemType } from '../../../const/routes'
 import useStyles from './LeftSideBarContent.styles'
@@ -20,7 +20,7 @@ const LeftSideBarContent = (): JSX.Element => {
 
   const { isLeftSideBarExpanded, setIsLeftSideBarExpanded } = useContext(PageLayoutContext)
 
-  const { projectList } = useContext(ProjectContext)
+  // const { projectList } = useContext(ProjectContext)
 
   return (
     <>
@@ -54,7 +54,7 @@ const LeftSideBarContent = (): JSX.Element => {
           {pageRoutes.map((route, index) => (
             <NavItem key={index} isNavBarExpanded={isLeftSideBarExpanded} nested={false} {...route} />
           ))}
-          {projectList.map(project => (
+          {/* {projectList.map(project => (
             <NavItem
               key={project.id}
               isNavBarExpanded={isLeftSideBarExpanded}
@@ -65,7 +65,7 @@ const LeftSideBarContent = (): JSX.Element => {
               currentStep={project.currentStep}
               type={NavItemType.projectLink}
             />
-          ))}
+          ))} */}
         </List>
       </nav>
 
