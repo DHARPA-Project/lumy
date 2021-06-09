@@ -20,7 +20,7 @@ export const App = (): JSX.Element => {
 
   return (
     <>
-      <div style={{ overflow: 'auto', flexGrow: 1, display: 'flex' }}>
+      <div style={{ overflowX: 'hidden', overflowY: 'scroll', flexGrow: 1, display: 'flex' }}>
         {workflow == null ? <LoadingView /> : <WorkflowPreview workflow={workflow} />}
       </div>
       <Box pt={1}>

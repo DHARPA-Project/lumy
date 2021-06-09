@@ -7,280 +7,21 @@ import {
   useStepOutputValue,
   withMockProcessor
 } from '@dharpa-vre/client-core'
-import { Table, Bool, Float32Vector, Vector, Float32, BoolVector, Column } from 'apache-arrow'
-import { EdgesStructure, NodesStructure } from './structure'
-import {
-  withStyles,
-  Grid,
-  Checkbox,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  FormControl,
-  Slider,
-  NativeSelect,
-  Typography,
-  FormControlLabel
-} from '@material-ui/core'
-import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined'
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
+import { Column, Float32 } from 'apache-arrow'
+import { GraphDataStructure, InputValues, OutputValues } from './structure'
+import { Grid } from '@material-ui/core'
 import { useElement, NetworkForce, NodeMouseEventDetails } from '@dharpa-vre/datavis-components'
 import { useBbox } from '../hooks/useBbox'
 import { DataGrid } from '@dharpa-vre/arrow-data-grid'
-import './styles.css'
+import { NavigationPanel, NavigationPanelSection } from './NavigationPanel'
+import { NodesAppearance } from './navigationSections/NodesAppearance'
+import { FilterTopologyLayout } from './navigationSections/FilterTopologyLayout'
+import { NodeTooltip } from './NodeTooltip'
+import { mockProcessor } from './mockProcessor'
 
 useElement('network-force')
 
-export type GraphDataStructure = {
-  degree: Float32
-  eigenvector: Float32
-  betweenness: Float32
-  isLarge: Bool
-  isIsolated: Bool
-}
-
-type GraphDataTable = Table<GraphDataStructure>
-
-type NodesTable = Table<NodesStructure>
-type EdgesTable = Table<EdgesStructure>
-
-enum ShortestPathMethod {
-  Weighted = 'weighted',
-  NotWeighted = 'notWeighted'
-}
-
-enum GraphType {
-  Directed = 'directed',
-  Undirected = 'undirected'
-}
-
-interface InputValues {
-  nodes: NodesTable
-  edges: EdgesTable
-  shortestPathSource: string
-  shortestPathTarget: string
-  shortestPathMethod: ShortestPathMethod
-  graphType: GraphType
-  selectedNodeId: NodesStructure['id']
-}
-
-interface OutputValues {
-  graphData: GraphDataTable
-  shortestPath: string[]
-  directConnections: NodesStructure['id'][]
-}
-
-// just an alias for the mouse event details
-type TooltipInfo = NodeMouseEventDetails
-
-const StyledAccordion = withStyles({
-  root: {
-    border: '1px solid rgba(0, 0, 0, .125)',
-    boxShadow: 'none',
-    '&:not(:last-child)': {
-      borderBottom: 0
-    },
-    '&:before': {
-      display: 'none'
-    },
-    '&$expanded': {
-      margin: 'auto'
-    }
-  },
-  expanded: {}
-})(Accordion)
-
 type ScalingMethods = keyof Omit<GraphDataStructure, 'isLarge'>
-type NodesColor = string
-
-interface NavigationProps {
-  nodesScalingMethod: ScalingMethods
-  nodesColor: NodesColor
-  isDisplayIsolated: boolean
-  isDisplayLabels: boolean
-  nodesSizeMin: number
-  nodesSizeMax: number
-  onNodesColorUpdated?: (arg0: string) => void
-  onNodesScalingMethodUpdated?: (m: ScalingMethods) => void
-  onDisplayIsolatedUpdated?: (isIsolated: boolean) => void
-  onDisplayLabelsUpdated?: (arg0: boolean) => void
-}
-
-const Navigation = ({
-  nodesSizeMin,
-  nodesSizeMax,
-  nodesScalingMethod,
-  nodesColor,
-  isDisplayLabels,
-  isDisplayIsolated,
-  onNodesScalingMethodUpdated,
-  onNodesColorUpdated,
-  onDisplayIsolatedUpdated,
-  onDisplayLabelsUpdated
-}: NavigationProps): JSX.Element => {
-  const [expandedAccordionId, setExpandedAccordionId] = React.useState<number>(null)
-  const [labelValue, setLabelValue] = React.useState(null)
-
-  // Math.min(...data.map(e => e.room.price))
-  console.log(nodesSizeMin)
-
-  return (
-    <Grid container spacing={1} direction="column">
-      <Grid item>
-        <StyledAccordion
-          expanded={expandedAccordionId === 0}
-          onChange={(e, isExpanded) => setExpandedAccordionId(isExpanded ? 0 : null)}
-        >
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography>Nodes appearance</Typography>
-          </AccordionSummary>
-
-          <AccordionDetails style={{ display: 'block' }}>
-            <Grid container direction="row" alignItems="center" style={{ paddingBottom: '.5em' }}>
-              <Typography className="accordion-sub">Size</Typography>
-              <InfoOutlinedIcon color="inherit" className="vizIconRight" />
-            </Grid>
-
-            <FormControl>
-              <NativeSelect
-                style={{
-                  borderBottom: '0px',
-                  borderRadius: 1,
-                  paddingLeft: '.5em',
-                  border: '1px solid #ced4da'
-                }}
-                value={nodesScalingMethod ?? ''}
-                onChange={e => onNodesScalingMethodUpdated?.(e.target.value as ScalingMethods)}
-              >
-                <option value="equal">Equal</option>
-                <option value="degree">Most connections to other nodes (hubs)</option>
-                <option value="betweenness">Bridges between groups of nodes (brokers)</option>
-                <option value="eigenvector">Best connected to hubs</option>
-              </NativeSelect>
-            </FormControl>
-            <Grid
-              container
-              direction="row"
-              alignItems="center"
-              style={{ paddingBottom: '.5em', marginTop: '1.5em' }}
-            >
-              <Typography className="accordion-sub">Labels</Typography>
-              <InfoOutlinedIcon color="inherit" className="vizIconRight" />
-            </Grid>
-
-            <FormControl style={{ width: '100%' }}>
-              <NativeSelect
-                style={{
-                  width: '100%',
-                  borderBottom: '0px',
-                  borderRadius: 1,
-                  paddingLeft: '.5em',
-                  border: '1px solid #ced4da'
-                }}
-                value={labelValue ?? undefined}
-                onChange={e => {
-                  e.target.value == 'none' ? onDisplayLabelsUpdated?.(false) : onDisplayLabelsUpdated?.(true)
-                  setLabelValue(e.target.value)
-                }}
-              >
-                <option value="none">None</option>
-                <option value="label">Label</option>
-              </NativeSelect>
-            </FormControl>
-
-            {isDisplayLabels == true && (
-              <>
-                <Typography style={{ paddingTop: '1em', textAlign: 'left' }}>
-                  {' '}
-                  Nodes scaler threshold to display labels
-                </Typography>
-                <Grid container spacing={2}>
-                  <Grid item xs>
-                    <Slider defaultValue={0} min={0} max={3} />
-                  </Grid>
-                  <Grid item>{0}</Grid>
-                </Grid>
-              </>
-            )}
-
-            <Grid
-              container
-              direction="row"
-              alignItems="center"
-              style={{ paddingBottom: '.5em', marginTop: '1.5em' }}
-            >
-              <Typography className="accordion-sub">Colors</Typography>
-              <InfoOutlinedIcon color="inherit" className="vizIconRight" />
-            </Grid>
-            <FormControl style={{ width: '100%' }}>
-              <NativeSelect
-                style={{
-                  borderBottom: '0px',
-                  borderRadius: 1,
-                  paddingLeft: '.5em',
-                  border: '1px solid #ced4da'
-                }}
-                value={nodesColor ?? ''}
-                onChange={e => onNodesColorUpdated?.(e.target.value as NodesColor)}
-              >
-                <option value="same">Same for all nodes</option>
-                <option value="language">Language</option>
-              </NativeSelect>
-            </FormControl>
-          </AccordionDetails>
-        </StyledAccordion>
-        <StyledAccordion
-          expanded={expandedAccordionId === 1}
-          onChange={(e, isExpanded) => setExpandedAccordionId(isExpanded ? 1 : null)}
-        >
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography>Edges appearance</Typography>
-          </AccordionSummary>
-          <AccordionDetails></AccordionDetails>
-        </StyledAccordion>
-        <StyledAccordion
-          expanded={expandedAccordionId === 2}
-          onChange={(e, isExpanded) => setExpandedAccordionId(isExpanded ? 2 : null)}
-        >
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography>Filter/Topology/Layout</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={!isDisplayIsolated}
-                  onChange={() => onDisplayIsolatedUpdated?.(!isDisplayIsolated)}
-                  inputProps={{ 'aria-label': 'primary checkbox' }}
-                />
-              }
-              label="Remove isolated nodes"
-            />
-          </AccordionDetails>
-        </StyledAccordion>
-        <StyledAccordion
-          expanded={expandedAccordionId === 3}
-          onChange={(e, isExpanded) => setExpandedAccordionId(isExpanded ? 3 : null)}
-        >
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography>Shortest path</Typography>
-          </AccordionSummary>
-          <AccordionDetails></AccordionDetails>
-        </StyledAccordion>
-        <StyledAccordion
-          expanded={expandedAccordionId === 4}
-          onChange={(e, isExpanded) => setExpandedAccordionId(isExpanded ? 4 : null)}
-        >
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography>Communities</Typography>
-          </AccordionSummary>
-          <AccordionDetails></AccordionDetails>
-        </StyledAccordion>
-      </Grid>
-      <Grid item></Grid>
-    </Grid>
-  )
-}
 
 const normalizeColumn = (column: Column<Float32>): number[] => {
   if (column == null) return undefined
@@ -292,15 +33,17 @@ const normalizeColumn = (column: Column<Float32>): number[] => {
 type Props = ModuleProps<InputValues, OutputValues>
 
 const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
-  const [nodes] = useStepInputValue<NodesTable>(step.stepId, 'nodes', { fullValue: true })
-  const [edges] = useStepInputValue<EdgesTable>(step.stepId, 'edges', { fullValue: true })
-  const [graphData] = useStepOutputValue<GraphDataTable>(step.stepId, 'graphData', { fullValue: true })
+  const [nodes] = useStepInputValue<InputValues['nodes']>(step.stepId, 'nodes', { fullValue: true })
+  const [edges] = useStepInputValue<InputValues['edges']>(step.stepId, 'edges', { fullValue: true })
+  const [graphData] = useStepOutputValue<OutputValues['graphData']>(step.stepId, 'graphData', {
+    fullValue: true
+  })
   //const [shortestPath] = useStepOutputValue<string[]>(step.stepId, 'shortestPath')
   const [nodesScalingMethod, setNodesScalingMethod] = React.useState<ScalingMethods>('degree')
   const [isDisplayLabels, setIsDisplayLabels] = React.useState(false)
   const [isDisplayIsolated, setIsDisplayIsolated] = React.useState(true)
   const [isDisplayTooltip, setIsDisplayTooltip] = React.useState(false)
-  const [graphTooltipInfo, setGraphTooltipInfo] = React.useState<TooltipInfo>(null)
+  const [graphTooltipInfo, setGraphTooltipInfo] = React.useState<NodeMouseEventDetails>(null)
 
   // ID of the node we will get direct neighbours for
   const [selectedNodeId] = useStepInputValue<InputValues['selectedNodeId']>(step.stepId, 'selectedNodeId')
@@ -309,7 +52,7 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
 
   // nodes page + filter for table view
   const [nodesFilter, setNodesFilter] = React.useState<TabularDataFilter>({ pageSize: 10 })
-  const [nodesPage, , nodesStats] = useStepInputValue<NodesTable, TableStats>(
+  const [nodesPage, , nodesStats] = useStepInputValue<InputValues['nodes'], TableStats>(
     step.stepId,
     'nodes',
     nodesFilter
@@ -401,46 +144,43 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
     <Grid container>
       <Grid container spacing={3}>
         <Grid item xs={3}>
-          <Navigation
-            nodesSizeMin={5}
-            nodesSizeMax={25}
-            nodesScalingMethod={nodesScalingMethod}
-            isDisplayIsolated={isDisplayIsolated}
-            isDisplayLabels={isDisplayLabels}
-            onNodesScalingMethodUpdated={setNodesScalingMethod}
-            onDisplayIsolatedUpdated={setIsDisplayIsolated}
-            onDisplayLabelsUpdated={setIsDisplayLabels}
-          />
+          <NavigationPanel>
+            <NavigationPanelSection title="Nodes appearance" index="0">
+              <NodesAppearance
+                nodesScalingMethod={nodesScalingMethod}
+                onNodesScalingMethodUpdated={setNodesScalingMethod}
+                isDisplayLabels={isDisplayLabels}
+                onDisplayLabelsUpdated={setIsDisplayLabels}
+                nodesColor={'noColor'}
+                onNodesColorUpdated={() => undefined}
+                nodesSizeThresholdBoundaries={[0, 1]}
+              />
+            </NavigationPanelSection>
+            <NavigationPanelSection title="Edges appearance" index="1"></NavigationPanelSection>
+            <NavigationPanelSection title="Filter/Topology/Layout" index="2">
+              <FilterTopologyLayout
+                isDisplayIsolated={isDisplayIsolated}
+                onDisplayIsolatedUpdated={setIsDisplayIsolated}
+              />
+            </NavigationPanelSection>
+            <NavigationPanelSection title="Shortest path" index="3"></NavigationPanelSection>
+            <NavigationPanelSection title="Communities" index="4"></NavigationPanelSection>
+          </NavigationPanel>
         </Grid>
         <Grid item xs={9} ref={graphContainerRef} style={{ position: 'relative' }}>
-          {graphTooltipInfo !== null && (
-            <div
-              style={{
-                position: 'absolute',
-                left: (graphTooltipInfo.mouseCoordinates.x ?? -10) + 10,
-                top: (graphTooltipInfo.mouseCoordinates.y ?? 10) - 10,
-                visibility: isDisplayTooltip ? 'visible' : 'hidden',
-                background: 'rgba(69,77,93,.9)',
-                textAlign: 'left',
-                borderRadius: '.1rem',
-                color: '#fff',
-                display: 'block',
-                fontSize: '11px',
-                maxWidth: '320px',
-                padding: '.2rem .4rem',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'pre',
-                zIndex: 300
+          {graphTooltipInfo != null && isDisplayTooltip ? (
+            <NodeTooltip
+              position={{
+                left: graphTooltipInfo.mouseCoordinates.x,
+                top: graphTooltipInfo.mouseCoordinates.y
               }}
-            >
-              <span style={{ display: 'block' }}>Label: {graphTooltipInfo.nodeMetadata.label}</span>
-              {!isNaN(graphTooltipInfo.nodeMetadata.scaler) && (
-                <span
-                  style={{ display: 'block', textTransform: 'capitalize' }}
-                >{`${nodesScalingMethod}: ${graphTooltipInfo.nodeMetadata.scaler.toFixed(2)}`}</span>
-              )}
-              <span style={{ display: 'block' }}>Group: {graphTooltipInfo.nodeMetadata.group}</span>
-            </div>
+              label={graphTooltipInfo.nodeMetadata.label}
+              scalingMethod={nodesScalingMethod}
+              scalingValue={graphTooltipInfo.nodeMetadata.scaler}
+              group={graphTooltipInfo.nodeMetadata.group}
+            />
+          ) : (
+            ''
           )}
           <network-force
             displayIsolatedNodes={isDisplayIsolated ? undefined : true}
@@ -467,41 +207,6 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
       </Grid>
     </Grid>
   )
-}
-
-const mockProcessor = ({ nodes, edges, selectedNodeId }: InputValues): OutputValues => {
-  const numNodes = nodes?.length ?? 0
-  const nums = [...new Array(numNodes).keys()]
-  const notIsolatedNodesIds = new Set([...edges.getColumn('srcId')].concat([...edges.getColumn('tgtId')]))
-  const isIsolated = [...nodes.getColumn('id')].map(id => !notIsolatedNodesIds.has(id))
-
-  const graphData = Table.new<GraphDataStructure>(
-    [
-      Float32Vector.from(nums.map(() => Math.random())),
-      Float32Vector.from(nums.map(() => Math.random())),
-      Float32Vector.from(nums.map(() => Math.random())),
-      Vector.from({
-        values: nums.map(() => (Math.random() > 0.5 ? true : null)),
-        type: new Bool()
-      }),
-      BoolVector.from(isIsolated)
-    ],
-    ['degree', 'eigenvector', 'betweenness', 'isLarge', 'isIsolated']
-  )
-
-  let directConnections: OutputValues['directConnections'] = []
-  if (selectedNodeId != null) {
-    const id = selectedNodeId.toString()
-    directConnections = ([...edges]
-      .filter(row => row.srcId === id || row.tgtId === id)
-      .map(row => (row.srcId === id ? row.tgtId : row.srcId)) as unknown) as OutputValues['directConnections']
-  }
-
-  return {
-    graphData,
-    shortestPath: [],
-    directConnections
-  }
 }
 
 export default withMockProcessor(NetworkAnalysisDataVis, mockProcessor)
