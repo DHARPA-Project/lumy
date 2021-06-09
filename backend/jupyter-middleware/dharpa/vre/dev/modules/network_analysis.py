@@ -158,7 +158,11 @@ class NetworkAnalysisDataVisModule(KiaraModule):
             "directConnections": ValueSchema(
                 type="any",
                 doc="Ids of the direct connections of the 'selectedNodeId'",
-            )
+            ),
+            "graphStats": ValueSchema(
+                type="any",
+                doc="Graph stats",
+            ),
         }
 
     def process(self, inputs: StepInputs, outputs: StepOutputs) -> None:

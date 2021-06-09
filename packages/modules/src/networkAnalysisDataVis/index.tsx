@@ -19,6 +19,7 @@ import { NodeTooltip } from './components/NodeTooltip'
 import { mockProcessor } from './mockProcessor'
 import { useElementEventCallback } from './hooks'
 import { buildGraphEdges, buildGraphNodes } from './graphDataMethods'
+import { GraphStatsPanel } from './components/GraphStatsPanel'
 
 useElement('network-force')
 
@@ -56,8 +57,8 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
 
   // a list of direct connections of the `selectedNodeId` node
   const [selectedNodeDirectConnections] = useStepOutputValue(step.stepId, 'directConnections')
-
   //const [shortestPath] = useStepOutputValue<string[]>(step.stepId, 'shortestPath')
+  const [graphStats] = useStepOutputValue<OutputValues['graphStats']>(step.stepId, 'graphStats')
 
   /* 4. Graph and its container reference - for getting container size */
   const graphRef = React.useRef<NetworkForce>(null)
@@ -166,7 +167,11 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
           />
         </Grid>
       </Grid>
-      <Grid container>
+      <Grid container direction="column">
+        <Grid item>
+          <GraphStatsPanel graphStats={graphStats} />
+        </Grid>
+
         <Grid item style={{ flexGrow: 1 }}>
           <DataGrid
             data={nodesPage}
