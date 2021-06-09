@@ -188,7 +188,7 @@ export class NetworkForce extends LitElement {
       )*/
       .force(
         'collide',
-        d3.forceCollide<GraphNodeDatum>(d => scaleNode(d.metadata.scaler ?? 5))
+        d3.forceCollide<GraphNodeDatum>(d => scaleNode(d.metadata.scaler ?? 0) ?? 5)
       )
       .force('x', this.displayIsolatedNodes ? null : d3.forceX())
       .force('y', this.displayIsolatedNodes ? null : d3.forceY())
