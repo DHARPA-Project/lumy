@@ -34,7 +34,7 @@ export interface NodeAppearanceProps {
 
   labelNodeSizeThreshold?: number
   onLabelNodeSizeThresholdUpdated?: (labelNodeSizeThreshold: number) => void
-  labelNodesSizeThresholdBoundaries?: [number, number]
+  labelNodesSizeThresholdBoundaries?: [number, number, number]
 }
 
 /**
@@ -84,6 +84,7 @@ export const NodesAppearance = ({
                   onChange={(_, v) => onLabelNodeSizeThresholdUpdated?.(v as number)}
                   min={labelNodesSizeThresholdBoundaries?.[0] ?? 0}
                   max={labelNodesSizeThresholdBoundaries?.[1] ?? 1}
+                  step={labelNodesSizeThresholdBoundaries?.[2] ?? 0.1}
                 />
               </Grid>
               <Grid item>{labelNodeSizeThreshold ?? 0.8}</Grid>

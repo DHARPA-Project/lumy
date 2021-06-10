@@ -65,6 +65,13 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
   const graphContainerRef = React.useRef()
   const graphBox = useBbox(graphContainerRef)
 
+  // tried to play around with graphData?.getColumn('degree') but don't find an efficient way to have min and max, maybe a min and max could be provided by back-end for each scaler column?
+
+  // nodesScaler min and max temporary dummy values
+  const nodeScalerMin = 0
+  const nodeScalerMax = 1
+  const nodeScalerStep = nodeScalerMax / 10
+
   /* 5. local state variables, mostly for navigation */
 
   const [nodesScalingMethod, setNodesScalingMethod] = React.useState<ScalingMethod>('degree')
@@ -132,7 +139,11 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
                 onColorCodeNodesUpdated={() => undefined}
                 labelNodeSizeThreshold={labelNodeSizeThreshold}
                 onLabelNodeSizeThresholdUpdated={setLabelNodeSizeThreshold}
-                labelNodesSizeThresholdBoundaries={[0, 10]}
+                labelNodesSizeThresholdBoundaries={[
+                  nodeScalerMin ?? 0,
+                  nodeScalerMax ?? 1,
+                  nodeScalerStep ?? 0.1
+                ]}
               />
             </NavigationPanelSection>
             <NavigationPanelSection title="Edges appearance" index="1"></NavigationPanelSection>
@@ -164,7 +175,7 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
           <network-force
             displayIsolatedNodes={isDisplayIsolated ? undefined : true}
             displayLabels={isDisplayLabels ? undefined : false}
-            labelNodeSizeThreshold={0.8}
+            labelNodeSizeThreshold={labelNodeSizeThreshold ?? 0.8}
             reapplySimulationOnUpdate={undefined}
             width={graphBox?.width ?? 0}
             height={((graphBox?.width ?? 0) * 2) / 3}
