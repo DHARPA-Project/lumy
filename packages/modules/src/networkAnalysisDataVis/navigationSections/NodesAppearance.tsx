@@ -80,13 +80,13 @@ export const NodesAppearance = ({
             <Grid container spacing={2}>
               <Grid item xs>
                 <Slider
-                  value={labelNodeSizeThreshold ?? 0}
+                  value={labelNodeSizeThreshold ?? 0.8}
                   onChange={(_, v) => onLabelNodeSizeThresholdUpdated?.(v as number)}
                   min={labelNodesSizeThresholdBoundaries?.[0] ?? 0}
                   max={labelNodesSizeThresholdBoundaries?.[1] ?? 1}
                 />
               </Grid>
-              <Grid item>{labelNodeSizeThreshold ?? 0}</Grid>
+              <Grid item>{labelNodeSizeThreshold ?? 0.8}</Grid>
             </Grid>
           </Grid>
         )}

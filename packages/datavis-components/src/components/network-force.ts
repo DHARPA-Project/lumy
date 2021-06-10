@@ -113,6 +113,8 @@ export class NetworkForce extends LitElement {
   /** If `true`, force simulation will be reapplied on update
    * even if some or all of the nodes are the same.
    */
+
+  @property({ type: Number }) labelNodeSizeThreshold: any = 5
   @property({ type: Boolean }) displayLabels = false
   @property({ type: Boolean }) reapplySimulationOnUpdate = true
   // if set to false, problem with isolated nodes
@@ -266,7 +268,25 @@ export class NetworkForce extends LitElement {
       .attr('dy', '0.35em')
       .attr('class', 'node-labels')
       .attr('font-family', 'sans-serif')
-      .style('opacity', this.displayLabels ? 0 : 1)
+      .style(
+        'display',
+        d =>
+          this.displayLabels ? 'none' : d.metadata.scaler > this.labelNodeSizeThreshold ? 'inline' : 'none'
+
+        /*
+        labelNodeSizeThreshold
+      d => {
+        this.displayLabels ? 'none' : 'inline'
+       
+        if (displayLabels.labels == "no")
+          { return "none" }
+        else if (displayLabels.labels == "yes" && nodesFull[i][chooseSizeParam] > labelSize){
+        return "inline"}
+        else {
+        return "none"} 
+      } */
+      )
+    //.style('opacity', this.displayLabels ? 0 : 1)
 
     simulation.on('tick', () => {
       link

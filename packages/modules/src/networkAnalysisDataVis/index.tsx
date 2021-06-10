@@ -164,6 +164,7 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
           <network-force
             displayIsolatedNodes={isDisplayIsolated ? undefined : true}
             displayLabels={isDisplayLabels ? undefined : false}
+            labelNodeSizeThreshold={0.8}
             reapplySimulationOnUpdate={undefined}
             width={graphBox?.width ?? 0}
             height={((graphBox?.width ?? 0) * 2) / 3}

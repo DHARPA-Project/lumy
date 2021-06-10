@@ -17,7 +17,7 @@ export interface GraphStatsPanelProps {
 }
 
 export const GraphStatsPanel = ({ graphStats }: GraphStatsPanelProps): JSX.Element => {
-  const classes = useStyles()
+  //const classes = useStyles()
 
   // don't know how to map object entries with typescript
   // styles need to be defined properly in style file
