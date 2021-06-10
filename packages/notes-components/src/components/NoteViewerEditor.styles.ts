@@ -18,7 +18,7 @@ export default makeStyles(theme => ({
       transform: 'scaleX(0)'
     },
     '& input': {
-      fontSize: theme.typography.fontSize * 2
+      fontSize: theme.typography.h6.fontSize
     }
   },
   noteActionButtonsContainer: {

@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
   },
   tabList: {
     '& .MuiTab-labelIcon': {
-      minHeight: theme.spacing(6)
+      minHeight: theme.spacing(5)
     },
     '& .MuiTab-wrapper': {
       flexDirection: 'row',
@@ -58,7 +58,7 @@ const FeatureTabs = (): JSX.Element => {
 
   return (
     <div className={classes.featureContainer} ref={containerRef}>
-      <AppBar position="absolute" color="default" elevation={0}>
+      <AppBar position="absolute" color="default" variant="elevation" elevation={0}>
         <Tabs
           className={classes.tabList}
           value={featureTabIndex}

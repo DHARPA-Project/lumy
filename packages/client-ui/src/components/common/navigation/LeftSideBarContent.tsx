@@ -43,7 +43,7 @@ const LeftSideBarContent = (): JSX.Element => {
           style={{ transformOrigin: '0 0 0' }}
           {...(!isLeftSideBarExpanded ? { timeout: 0 } : { timeout: 1000 })}
         >
-          <Typography variant="h6" component="h2" color="secondary" className={classes.logo}>
+          <Typography variant="h6" component="h2" color="initial" className={classes.logo}>
             <ExploreIcon /> &nbsp;LUMY
           </Typography>
         </Grow>

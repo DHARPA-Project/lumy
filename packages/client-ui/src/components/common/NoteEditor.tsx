@@ -16,8 +16,8 @@ import { Note as NoteType, useStepNotes } from '@dharpa-vre/client-core'
 import { WorkflowContext } from '../../context/workflowContext'
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    padding: theme.spacing(2),
+  noteEditor: {
+    padding: theme.spacing(1),
     backgroundColor: theme.palette.background.default
   }
 }))
@@ -30,7 +30,7 @@ const NoteEditor = (): JSX.Element => {
   const [selectedNote, setSelectedNote] = useState<NoteType | EditedNoteType>()
 
   return (
-    <div className={classes.root}>
+    <div className={classes.noteEditor}>
       {selectedNote != null ? (
         <NoteViewerEditor
           note={selectedNote}
