@@ -18,8 +18,8 @@ const displayLabelValues: Option[] = [
 ]
 
 const colorCodeNodesValues: Option[] = [
-  { value: String(true), label: 'By group' },
-  { value: String(false), label: 'Same for all nodes' }
+  { value: String(false), label: 'Language' },
+  { value: String(true), label: 'Same for all nodes' }
 ]
 
 export interface NodeAppearanceProps {
@@ -75,7 +75,7 @@ export const NodesAppearance = ({
         {isDisplayLabels == true && (
           <Grid item>
             <Typography style={{ paddingTop: '1em', textAlign: 'left' }}>
-              Display nodes of at least this size
+              Display labels for nodes of at least this size
             </Typography>
             <Grid container spacing={2}>
               <Grid item xs>
@@ -98,7 +98,7 @@ export const NodesAppearance = ({
         <OptionSelector
           value={String(colorCodeNodes)}
           onValueChanged={v => onColorCodeNodesUpdated?.(v === String(true))}
-          label="Colors"
+          label="Nodes color"
           values={colorCodeNodesValues}
         />
       </Grid>

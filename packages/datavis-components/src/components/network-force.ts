@@ -113,6 +113,7 @@ export class NetworkForce extends LitElement {
   /** If `true`, force simulation will be reapplied on update
    * even if some or all of the nodes are the same.
    */
+  @property({ type: Boolean }) colorCodeNodes = false
 
   @property({ type: Number }) labelNodeSizeThreshold: any = 5
   @property({ type: Boolean }) displayLabels = false
@@ -231,7 +232,7 @@ export class NetworkForce extends LitElement {
         return 1
       })
       .attr('r', d => scaleNode(d.metadata.scaler ?? 0) ?? 5)
-      .attr('fill', d => colorScale(d.metadata.group))
+      .attr('fill', d => (this.colorCodeNodes ? colorScale(d.metadata.group) : '#4E79A7'))
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .call((drag(simulation) as unknown) as any)
       .on('mouseover', (e: MouseEvent, nodeDatum: GraphNodeDatum) => {
@@ -268,25 +269,9 @@ export class NetworkForce extends LitElement {
       .attr('dy', '0.35em')
       .attr('class', 'node-labels')
       .attr('font-family', 'sans-serif')
-      .style(
-        'display',
-        d =>
-          this.displayLabels ? 'none' : d.metadata.scaler > this.labelNodeSizeThreshold ? 'inline' : 'none'
-
-        /*
-        labelNodeSizeThreshold
-      d => {
-        this.displayLabels ? 'none' : 'inline'
-       
-        if (displayLabels.labels == "no")
-          { return "none" }
-        else if (displayLabels.labels == "yes" && nodesFull[i][chooseSizeParam] > labelSize){
-        return "inline"}
-        else {
-        return "none"} 
-      } */
+      .style('display', d =>
+        this.displayLabels ? 'none' : d.metadata.scaler > this.labelNodeSizeThreshold ? 'inline' : 'none'
       )
-    //.style('opacity', this.displayLabels ? 0 : 1)
 
     simulation.on('tick', () => {
       link

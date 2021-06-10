@@ -79,6 +79,7 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
   const [isDisplayIsolated, setIsDisplayIsolated] = React.useState(true)
   const [graphTooltipInfo, setGraphTooltipInfo] = React.useState<NodeMouseEventDetails>(null)
   const [labelNodeSizeThreshold, setLabelNodeSizeThreshold] = React.useState<number>(null)
+  const [colorCodeNodes, setColorCodeNodes] = React.useState(true)
 
   /* 6. handlers for graph node hover */
   const handleGraphNodeMouseMove = (event: CustomEvent<NodeMouseEventDetails>) => {
@@ -135,8 +136,8 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
                 onNodesScalingMethodUpdated={setNodesScalingMethod}
                 isDisplayLabels={isDisplayLabels}
                 onDisplayLabelsUpdated={setIsDisplayLabels}
-                colorCodeNodes={true}
-                onColorCodeNodesUpdated={() => undefined}
+                colorCodeNodes={colorCodeNodes}
+                onColorCodeNodesUpdated={setColorCodeNodes}
                 labelNodeSizeThreshold={labelNodeSizeThreshold}
                 onLabelNodeSizeThresholdUpdated={setLabelNodeSizeThreshold}
                 labelNodesSizeThresholdBoundaries={[
@@ -175,6 +176,7 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
           <network-force
             displayIsolatedNodes={isDisplayIsolated ? undefined : true}
             displayLabels={isDisplayLabels ? undefined : false}
+            colorCodeNodes={colorCodeNodes ? undefined : false}
             labelNodeSizeThreshold={labelNodeSizeThreshold ?? 0.8}
             reapplySimulationOnUpdate={undefined}
             width={graphBox?.width ?? 0}
