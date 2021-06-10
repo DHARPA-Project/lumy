@@ -1,8 +1,8 @@
 import React from 'react'
 
-import InfoOutlineIcon from '@material-ui/icons/InfoOutlined'
-import AccountTreeIcon from '@material-ui/icons/AccountTree'
-import ToysIcon from '@material-ui/icons/Toys'
+// import InfoOutlineIcon from '@material-ui/icons/InfoOutlined'
+// import AccountTreeIcon from '@material-ui/icons/AccountTree'
+// import ToysIcon from '@material-ui/icons/Toys'
 import BubbleChartIcon from '@material-ui/icons/BubbleChart'
 
 export enum NavItemType {
