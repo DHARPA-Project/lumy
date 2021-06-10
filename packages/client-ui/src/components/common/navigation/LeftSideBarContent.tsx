@@ -8,9 +8,10 @@ import Fab from '@material-ui/core/Fab'
 import DoubleArrowIcon from '@material-ui/icons/DoubleArrow'
 import ExploreIcon from '@material-ui/icons/Explore'
 
-import { ProjectContext } from '../../../context/projectContext'
+// import { ProjectContext } from '../../../context/projectContext'
 import { PageLayoutContext } from '../../../context/pageLayoutContext'
-import { pageRoutes, NavItemType } from '../../../const/routes'
+// import { pageRoutes, NavItemType } from '../../../const/routes'
+import { pageRoutes } from '../../../const/routes'
 import useStyles from './LeftSideBarContent.styles'
 
 import NavItem from './NavItem'
@@ -20,7 +21,7 @@ const LeftSideBarContent = (): JSX.Element => {
 
   const { isLeftSideBarExpanded, setIsLeftSideBarExpanded } = useContext(PageLayoutContext)
 
-  const { projectList } = useContext(ProjectContext)
+  // const { projectList } = useContext(ProjectContext)
 
   return (
     <>
@@ -43,7 +44,7 @@ const LeftSideBarContent = (): JSX.Element => {
           style={{ transformOrigin: '0 0 0' }}
           {...(!isLeftSideBarExpanded ? { timeout: 0 } : { timeout: 1000 })}
         >
-          <Typography variant="h6" component="h2" color="secondary" className={classes.logo}>
+          <Typography variant="h6" component="h2" color="initial" className={classes.logo}>
             <ExploreIcon /> &nbsp;LUMY
           </Typography>
         </Grow>
@@ -54,7 +55,7 @@ const LeftSideBarContent = (): JSX.Element => {
           {pageRoutes.map((route, index) => (
             <NavItem key={index} isNavBarExpanded={isLeftSideBarExpanded} nested={false} {...route} />
           ))}
-          {projectList.map(project => (
+          {/* {projectList.map(project => (
             <NavItem
               key={project.id}
               isNavBarExpanded={isLeftSideBarExpanded}
@@ -65,7 +66,7 @@ const LeftSideBarContent = (): JSX.Element => {
               currentStep={project.currentStep}
               type={NavItemType.projectLink}
             />
-          ))}
+          ))} */}
         </List>
       </nav>
 

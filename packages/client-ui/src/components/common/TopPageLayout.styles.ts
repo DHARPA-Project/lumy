@@ -13,7 +13,7 @@ export default makeStyles(theme => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.standard
     }),
-    background: 'linear-gradient(110deg, rgba(0, 0, 0, 0.04) 60%, rgba(0, 0, 0, 0.02) 60%)',
+    // background: 'linear-gradient(110deg, rgba(0, 0, 0, 0.04) 60%, rgba(0, 0, 0, 0.02) 60%)',
     '&.left-pinch': {
       marginLeft: `${theme.layout.sideBarFullWidth}`
     }
