@@ -11,7 +11,7 @@ export default makeStyles(theme => ({
     color: theme.palette.text.primary
   },
   header: {
-    padding: theme.spacing(2, 0)
+    padding: theme.spacing(1, 0)
   },
   headline: {
     margin: 0,

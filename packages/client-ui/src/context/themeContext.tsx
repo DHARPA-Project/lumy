@@ -84,11 +84,29 @@ const ThemeContextProvider = ({ children }: ThemeContextProviderProps): JSX.Elem
         subtitle1: {
           fontSize: '0.875rem',
           lineHeight: 1.5
+        },
+        h5: {
+          fontSize: '1.1rem',
+          lineHeight: 1.6
+        },
+        h6: {
+          fontSize: '1rem',
+          lineHeight: 1.5
         }
       },
       props: {
         MuiSvgIcon: {
           fontSize: 'small'
+        },
+        MuiPaper: {
+          variant: 'outlined',
+          elevation: 0
+        },
+        MuiCard: {
+          variant: 'outlined'
+        },
+        MuiCardActionArea: {
+          disableRipple: true
         }
       },
       layout: {
@@ -135,6 +153,20 @@ const ThemeContextProvider = ({ children }: ThemeContextProviderProps): JSX.Elem
         MuiTablePagination: {
           root: {
             fontSize: '0.75rem'
+          }
+        },
+        MuiTabs: {
+          root: {
+            minHeight: defaultTheme.spacing(5)
+          }
+        },
+        MuiTab: {
+          root: {
+            fontSize: '0.8125rem'
+          },
+          labelIcon: {
+            minHeight: defaultTheme.spacing(5),
+            paddingTop: '6px'
           }
         }
       },

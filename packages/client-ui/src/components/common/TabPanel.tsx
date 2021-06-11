@@ -14,8 +14,8 @@ type TabPanelProps = {
 const useStyles = makeStyles((theme: Theme) => ({
   tabPanel: {
     marginTop: theme.spacing(6),
-    height: `calc(100% - ${theme.spacing(6)}px)`,
-    overflow: 'scroll'
+    height: `calc(100% - ${theme.spacing(5)}px)`,
+    overflow: 'overlay'
   }
 }))
 

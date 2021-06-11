@@ -34,7 +34,7 @@ export const MarkdownEditorViewer = ({ text, onChanged, defaultTab = 'view' }: P
   const classes = useStyles()
 
   return (
-    <Grid container wrap="nowrap" direction="column" spacing={1}>
+    <Grid container wrap="nowrap" direction="column" spacing={0}>
       <Grid item>
         <Tabs
           value={tabId}

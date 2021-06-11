@@ -77,7 +77,9 @@ const mockProcessor = (
 ): OutputValues => {
   if (dataRepositoryTable == null) return
 
-  const fields = new Set(((metadataFields ?? []) as KnownMetadataFields[]).concat(['id']))
+  const fields = new Set(
+    ((metadataFields ?? []) as KnownMetadataFields[]).concat(['id', 'alias', 'columnNames'])
+  )
 
   const selectedItems = arrowUtils.filterTable(dataRepositoryTable.select(...fields), row =>
     selectedItemsIds.includes(row.id)
