@@ -47,9 +47,9 @@ export const NodesAppearance = ({
   onDisplayLabelsUpdated,
   colorCodeNodes,
   onColorCodeNodesUpdated,
-  labelNodeSizeThreshold,
+  labelNodeSizeThreshold = 0.8,
   onLabelNodeSizeThresholdUpdated,
-  labelNodesSizeThresholdBoundaries
+  labelNodesSizeThresholdBoundaries = [0, 1, 0.1]
 }: NodeAppearanceProps): JSX.Element => {
   return (
     <Grid container direction="column">
@@ -80,14 +80,14 @@ export const NodesAppearance = ({
             <Grid container spacing={2}>
               <Grid item xs>
                 <Slider
-                  value={labelNodeSizeThreshold ?? 0.8}
+                  value={labelNodeSizeThreshold}
                   onChange={(_, v) => onLabelNodeSizeThresholdUpdated?.(v as number)}
-                  min={labelNodesSizeThresholdBoundaries?.[0] ?? 0}
-                  max={labelNodesSizeThresholdBoundaries?.[1] ?? 1}
-                  step={labelNodesSizeThresholdBoundaries?.[2] ?? 0.1}
+                  min={labelNodesSizeThresholdBoundaries[0]}
+                  max={labelNodesSizeThresholdBoundaries[1]}
+                  step={labelNodesSizeThresholdBoundaries[2]}
                 />
               </Grid>
-              <Grid item>{labelNodeSizeThreshold ?? 0.8}</Grid>
+              <Grid item>{labelNodeSizeThreshold?.toFixed(2)}</Grid>
             </Grid>
           </Grid>
         )}

@@ -18,8 +18,9 @@ import { FilterTopologyLayout } from './navigationSections/FilterTopologyLayout'
 import { NodeTooltip } from './components/NodeTooltip'
 import { mockProcessor } from './mockProcessor'
 import { useElementEventCallback } from './hooks'
-import { buildGraphEdges, buildGraphNodes } from './graphDataMethods'
+import { buildGraphEdges, buildGraphNodes, getNodeScalerParameters } from './graphDataMethods'
 import { GraphStatsPanel } from './components/GraphStatsPanel'
+import { normalizedValue } from './utils'
 
 useElement('network-force')
 
@@ -65,20 +66,13 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
   const graphContainerRef = React.useRef()
   const graphBox = useBbox(graphContainerRef)
 
-  // tried to play around with graphData?.getColumn('degree') but don't find an efficient way to have min and max, maybe a min and max could be provided by back-end for each scaler column?
-
-  // nodesScaler min and max temporary dummy values
-  const nodeScalerMin = 0
-  const nodeScalerMax = 1
-  const nodeScalerStep = nodeScalerMax / 10
-
   /* 5. local state variables, mostly for navigation */
 
   const [nodesScalingMethod, setNodesScalingMethod] = React.useState<ScalingMethod>('degree')
   const [isDisplayLabels, setIsDisplayLabels] = React.useState(false)
   const [isDisplayIsolated, setIsDisplayIsolated] = React.useState(true)
   const [graphTooltipInfo, setGraphTooltipInfo] = React.useState<NodeMouseEventDetails>(null)
-  const [labelNodeSizeThreshold, setLabelNodeSizeThreshold] = React.useState<number>(null)
+  const [labelNodeSizeThreshold, setLabelNodeSizeThreshold] = React.useState<number>(0.8)
   const [colorCodeNodes, setColorCodeNodes] = React.useState(true)
 
   /* 6. handlers for graph node hover */
@@ -121,6 +115,9 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
   useElementEventCallback(graphRef.current, 'node-mousemove', handleGraphNodeMouseMove)
   useElementEventCallback(graphRef.current, 'node-hovered-out', handleGraphNodeHoveredOut)
 
+  /* 8. local variables */
+  const nodeScalerParams = getNodeScalerParameters(graphData, nodesScalingMethod)
+
   return (
     <Grid container>
       <Grid container spacing={3}>
@@ -141,9 +138,9 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
                 labelNodeSizeThreshold={labelNodeSizeThreshold}
                 onLabelNodeSizeThresholdUpdated={setLabelNodeSizeThreshold}
                 labelNodesSizeThresholdBoundaries={[
-                  nodeScalerMin ?? 0,
-                  nodeScalerMax ?? 1,
-                  nodeScalerStep ?? 0.1
+                  nodeScalerParams.min,
+                  nodeScalerParams.max,
+                  nodeScalerParams.step
                 ]}
               />
             </NavigationPanelSection>
@@ -177,7 +174,11 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
             displayIsolatedNodes={isDisplayIsolated ? undefined : true}
             displayLabels={isDisplayLabels ? undefined : false}
             colorCodeNodes={colorCodeNodes ? undefined : false}
-            labelNodeSizeThreshold={labelNodeSizeThreshold ?? 0.8}
+            labelNodeSizeThreshold={normalizedValue(
+              labelNodeSizeThreshold,
+              nodeScalerParams.min,
+              nodeScalerParams.max
+            )}
             reapplySimulationOnUpdate={undefined}
             width={graphBox?.width ?? 0}
             height={((graphBox?.width ?? 0) * 2) / 3}

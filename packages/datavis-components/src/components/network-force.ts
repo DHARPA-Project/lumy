@@ -115,7 +115,7 @@ export class NetworkForce extends LitElement {
    */
   @property({ type: Boolean }) colorCodeNodes = false
 
-  @property({ type: Number }) labelNodeSizeThreshold: any = 5
+  @property({ type: Number }) labelNodeSizeThreshold = 5
   @property({ type: Boolean }) displayLabels = false
   @property({ type: Boolean }) reapplySimulationOnUpdate = true
   // if set to false, problem with isolated nodes

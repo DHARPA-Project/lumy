@@ -41,3 +41,29 @@ export function buildGraphEdges(edges: InputValues['edges']): EdgeMetadata[] | u
     targetId: String(edge.tgtId)
   }))
 }
+
+interface NodeScalerParameters {
+  min: number
+  max: number
+  step: number
+}
+
+export function getNodeScalerParameters(
+  graphData: OutputValues['graphData'],
+  scalingMethod: ScalingMethod
+): NodeScalerParameters {
+  const groupValues = graphData ? [...graphData?.getColumn(scalingMethod)] : []
+  const groupValuesMin = Math.min(...groupValues)
+  const groupValuesMax = Math.max(...groupValues)
+
+  // nodesScaler min and max temporary dummy values
+  const min = isFinite(groupValuesMin) ? groupValuesMin : 0
+  const max = isFinite(groupValuesMax) ? groupValuesMax : 1
+  const step = (max - min) / 10
+
+  return {
+    min,
+    max,
+    step
+  }
+}
