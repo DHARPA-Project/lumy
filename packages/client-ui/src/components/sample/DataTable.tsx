@@ -63,15 +63,7 @@ const DataTable = ({
   columns = sampleColumns,
   options = sampleOptions
 }: DataTableProps): JSX.Element => {
-  return (
-    <MUIDataTable
-      // className={classes.root}
-      title={title}
-      data={data}
-      columns={columns}
-      options={options}
-    />
-  )
+  return <MUIDataTable title={title} data={data} columns={columns} options={options} />
 }
 
 export default DataTable
