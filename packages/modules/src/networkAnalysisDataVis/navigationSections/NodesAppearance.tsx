@@ -18,7 +18,7 @@ const displayLabelValues: Option[] = [
 ]
 
 const colorCodeNodesValues: Option[] = [
-  { value: String(false), label: 'Language' },
+  { value: String(false), label: 'Current group from the mapping step' },
   { value: String(true), label: 'Same for all nodes' }
 ]
 

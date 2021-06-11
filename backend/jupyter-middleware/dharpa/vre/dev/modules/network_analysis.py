@@ -160,7 +160,7 @@ class NetworkAnalysisDataVisModule(KiaraModule):
                 doc="Ids of the direct connections of the 'selectedNodeId'",
             ),
             "graphStats": ValueSchema(
-                type="any",
+                type="dict",
                 doc="Graph stats",
             ),
         }
@@ -225,3 +225,27 @@ class NetworkAnalysisDataVisModule(KiaraModule):
             outputs.set_value('directConnections', direct_connections)
         else:
             outputs.set_value('directConnections', [])
+
+        # stats
+        num_nodes = graph.number_of_nodes()
+        if num_nodes == 0:
+            num_nodes = 1  # to avoid division by zero down below
+        # TODO: This sometimes throws this error:
+        # networkx.exception.NetworkXError: Graph is not weakly connected.
+        # Look into it when there is a moment
+        try:
+            avg_shortest_path_len = nx.average_shortest_path_length(graph)
+        except Exception:
+            avg_shortest_path_len = 0
+
+        graph_stats = {
+            'nodesCount': nx.number_of_nodes(graph),
+            'edgesCount': nx.number_of_edges(graph),
+            'averageInDegree':
+            sum(d for _, d in graph.in_degree()) / float(num_nodes),
+            'averageOutDegree':
+            sum(d for _, d in graph.out_degree()) / float(num_nodes),
+            'density': nx.density(graph),
+            'averageShortestPathLength': avg_shortest_path_len
+        }
+        outputs.set_value('graphStats', graph_stats)
