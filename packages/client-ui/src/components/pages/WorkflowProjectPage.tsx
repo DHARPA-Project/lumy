@@ -23,7 +23,7 @@ const WorkflowProjectPage = (): JSX.Element => {
   return (
     <div className={classes.dataSourceSelection}>
       <Button variant="outlined" fullWidth onClick={() => setDataSource('repository')}>
-        Use repository data
+        My repository data
       </Button>
 
       <p>or</p>

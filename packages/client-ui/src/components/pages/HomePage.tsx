@@ -28,7 +28,7 @@ const HomePage: React.FC = () => {
               Network Analysis
             </Typography>
             <Typography variant="body2" color="textSecondary" component="p" align="center">
-              Visualize force-directed network graphs assembled from raw data.
+              Visualize network graphs assembled from raw data.
             </Typography>
           </CardContent>
           <div className={classes.cardImage}>
@@ -52,7 +52,7 @@ const HomePage: React.FC = () => {
               Topic Modelling
             </Typography>
             <Typography variant="body2" color="textSecondary" component="p" align="center">
-              Discover patterns and topics in large collections of unstructured text.
+              Discover patterns in large collections of unstructured text.
             </Typography>
           </CardContent>
           <div className={classes.cardImage}>
@@ -76,7 +76,7 @@ const HomePage: React.FC = () => {
               Geolocation
             </Typography>
             <Typography variant="body2" color="textSecondary" component="p" align="center">
-              Standardize, enrich, explore, and visualize coordinate data.
+              Standardize, enrich, explore, and visualize geographic data.
             </Typography>
           </CardContent>
           <div className={classes.cardImage}>

@@ -2,7 +2,7 @@ import React from 'react'
 
 const SampleNetworkGraph: React.FC = () => {
   return (
-    <svg viewBox="0,0,954,500" width="286" height="150">
+    <svg viewBox="250,0,500,500" width="260" height="150">
       <g stroke="#999" strokeOpacity="0.6">
         <line
           strokeWidth="1"
