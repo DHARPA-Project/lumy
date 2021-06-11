@@ -6,7 +6,23 @@ type DefaultIO = { [key: string]: unknown }
 
 export type MockProcessor<I, O> = (inputValues: I, dataRepositoryTable?: DataRepositoryItemsTable) => O
 
-const noOpMockProcessor: MockProcessor<unknown, DefaultIO> = () => ({})
+const noOpMockProcessor: MockProcessor<unknown, unknown> = () => ({})
+
+// https://github.com/facebook/react/blob/5aa0c5671fdddc46092d46420fff84a82df558ac/packages/react/src/ReactLazy.js#L45
+interface LazyResult<I, O> {
+  mockProcessor?: MockProcessor<I, O>
+}
+type LazyResultPromise = <I, O>() => Promise<{ default: LazyResult<I, O> }>
+interface IntrospectedLazyComponent<I, O> {
+  _payload: {
+    _status: number
+    _result: LazyResult<I, O> | LazyResultPromise
+  }
+}
+
+const isLazyComponent = <I, O>(c: unknown): c is IntrospectedLazyComponent<I, O> => {
+  return typeof (c as IntrospectedLazyComponent<I, O>)?._payload?._status === 'number'
+}
 
 /**
  * This function assumes that a module panel component may have a property
@@ -17,13 +33,45 @@ const noOpMockProcessor: MockProcessor<unknown, DefaultIO> = () => ({})
  * If processor is not provided by the component author, a `no-op` processor
  * is returned that returns an empty object.
  */
-export const getMockProcessor = <I, O>(
+export const getMockProcessor = async <I, O>(
   viewProvider: ModuleViewProvider,
   moduleId: string
-): MockProcessor<I, O> => {
+): Promise<MockProcessor<I, O>> => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const component = (viewProvider.getModulePanel(moduleId) as unknown) as any
-  return component?.mockProcessor ?? component?._payload?._result?.mockProcessor ?? noOpMockProcessor
+  if (isLazyComponent<I, O>(component)) {
+    const status = component._payload._status
+    // ready
+    if (status === 1) {
+      return ((component._payload?._result as LazyResult<I, O>)?.mockProcessor ??
+        noOpMockProcessor) as MockProcessor<I, O>
+    }
+    // rejected
+    if (status === 2) {
+      console.warn(
+        `Could not load mock processor for module ${moduleId}. Loading of the lazy component has been rejected`
+      )
+      return noOpMockProcessor as MockProcessor<I, O>
+    }
+    // pending
+    if (status === 0) {
+      console.debug(`Lazy component for ${moduleId} is still loading`)
+      return noOpMockProcessor as MockProcessor<I, O>
+    }
+    // uninitialized
+    if (status === -1) {
+      const fn = component._payload?._result as LazyResultPromise
+      const promise = fn?.()
+      if (promise != null)
+        return promise.then(
+          result => (result?.default?.mockProcessor ?? noOpMockProcessor) as MockProcessor<I, O>
+        )
+      return noOpMockProcessor as MockProcessor<I, O>
+    }
+    console.warn(`Unknown status: ${status}`)
+    return noOpMockProcessor as MockProcessor<I, O>
+  }
+  return component?.mockProcessor ?? noOpMockProcessor
 }
 
 export type DataProcessorResult<I = DefaultIO, O = DefaultIO> = {
@@ -51,10 +99,12 @@ export const mockDataProcessorFactory = (
       inputValues
     )
 
-    const outputs = getMockProcessor<DataProcessorResult['inputs'], DataProcessorResult['outputs']>(
+    const processor = await getMockProcessor<DataProcessorResult['inputs'], DataProcessorResult['outputs']>(
       viewProvider,
       moduleId
-    )(inputValues, dataRepositoryTable)
+    )
+
+    const outputs = processor(inputValues, dataRepositoryTable)
 
     return {
       inputs: inputValues,
