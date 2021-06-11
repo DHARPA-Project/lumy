@@ -18,7 +18,7 @@ const centeredStyle = {
 const BackEndAvailabilityScreen = () => {
   const backendIsReady = useBackendIsReady()
 
-  if (!backendIsReady) return <p style={centeredStyle}>↻ Backend is starting...</p>
+  if (!backendIsReady) return <p style={centeredStyle}>Percolations are imminent...</p>
 
   return <App />
 }
