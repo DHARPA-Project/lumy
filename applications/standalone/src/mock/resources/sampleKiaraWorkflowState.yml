@@ -1205,51 +1205,51 @@ structure:
         processingStage: 3
         required: true
         stepId: m3
-    m4:
-      inputConnections:
-        a:
-        - __pipeline__.m4__a
-        b:
-        - __pipeline__.m4__b
-        operator:
-        - __pipeline__.m4__operator
-      outputConnections:
-        c:
-        - m5.a
-        - __pipeline__.m4__c
-      processingStage: 1
-      required: false
-      step:
-        inputLinks: {}
-        moduleConfig: {}
-        moduleType: twoArgsMathFunction
-        parentId: networkAnalysisDev_0
-        processingStage: 1
-        required: false
-        stepId: m4
-    m5:
-      inputConnections:
-        a:
-        - m4.c
-        b:
-        - __pipeline__.m5__b
-        operator:
-        - __pipeline__.m5__operator
-      outputConnections:
-        c:
-        - __pipeline__.m5__c
-      processingStage: 2
-      required: false
-      step:
-        inputLinks:
-          a:
-          - stepId: m4
-            subValue: null
-            valueName: c
-        moduleConfig: {}
-        moduleType: twoArgsMathFunction
-        parentId: networkAnalysisDev_0
-        processingStage: 2
-        required: false
-        stepId: m5
+    # m4:
+    #   inputConnections:
+    #     a:
+    #     - __pipeline__.m4__a
+    #     b:
+    #     - __pipeline__.m4__b
+    #     operator:
+    #     - __pipeline__.m4__operator
+    #   outputConnections:
+    #     c:
+    #     - m5.a
+    #     - __pipeline__.m4__c
+    #   processingStage: 1
+    #   required: false
+    #   step:
+    #     inputLinks: {}
+    #     moduleConfig: {}
+    #     moduleType: twoArgsMathFunction
+    #     parentId: networkAnalysisDev_0
+    #     processingStage: 1
+    #     required: false
+    #     stepId: m4
+    # m5:
+    #   inputConnections:
+    #     a:
+    #     - m4.c
+    #     b:
+    #     - __pipeline__.m5__b
+    #     operator:
+    #     - __pipeline__.m5__operator
+    #   outputConnections:
+    #     c:
+    #     - __pipeline__.m5__c
+    #   processingStage: 2
+    #   required: false
+    #   step:
+    #     inputLinks:
+    #       a:
+    #       - stepId: m4
+    #         subValue: null
+    #         valueName: c
+    #     moduleConfig: {}
+    #     moduleType: twoArgsMathFunction
+    #     parentId: networkAnalysisDev_0
+    #     processingStage: 2
+    #     required: false
+    #     stepId: m5
 
