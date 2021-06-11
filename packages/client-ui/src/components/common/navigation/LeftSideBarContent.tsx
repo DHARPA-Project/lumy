@@ -29,7 +29,7 @@ const LeftSideBarContent = (): JSX.Element => {
         <Fab
           variant="extended"
           size="small"
-          color="primary"
+          color="default"
           aria-label="toggle"
           className={classes.sideBarToggleButton + (isLeftSideBarExpanded ? ' aside' : '')}
           onClick={() => setIsLeftSideBarExpanded(prevStatus => !prevStatus)}

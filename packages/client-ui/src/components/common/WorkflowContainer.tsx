@@ -270,7 +270,6 @@ const WorkflowContainer = (): JSX.Element => {
               icon={feature.icon}
               tooltipTitle={feature.tooltip}
               onClick={() => {
-                console.log(`${feature.label} clicked`)
                 setFeatureTabIndex(index)
                 handleOpenAdditionalPane()
               }}

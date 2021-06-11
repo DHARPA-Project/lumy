@@ -70,7 +70,8 @@ const ThemeContextProvider = ({ children }: ThemeContextProviderProps): JSX.Elem
   const createCustomTheme = (extendedOptions?: ThemeOptions) =>
     createMuiTheme({
       palette: {
-        type: darkModeEnabled ? ('dark' as PaletteType) : ('light' as PaletteType)
+        type: darkModeEnabled ? ('dark' as PaletteType) : ('light' as PaletteType),
+        secondary: defaultTheme.palette.primary
       },
       typography: {
         body1: {
@@ -127,17 +128,17 @@ const ThemeContextProvider = ({ children }: ThemeContextProviderProps): JSX.Elem
               'scrollbar-color': 'rgba(0,0,0,0.1) transparent' // 'thumb track'
             },
             '*::-webkit-scrollbar': {
-              width: defaultTheme.spacing(1),
-              height: defaultTheme.spacing(1)
+              width: defaultTheme.spacing(0.5),
+              height: defaultTheme.spacing(0.5)
             },
             '*::-webkit-scrollbar-track': {
               backgroundColor: 'transparent'
             },
             '*::-webkit-scrollbar-thumb': {
-              borderRadius: defaultTheme.spacing(1),
-              backgroundColor: 'rgba(0,0,0,0.05)',
+              borderRadius: defaultTheme.spacing(0.5),
+              backgroundColor: 'rgba(0,0,0,0.1)',
               '&:hover': {
-                backgroundColor: 'rgba(0,0,0,0.1)'
+                backgroundColor: 'rgba(0,0,0,0.15)'
               },
               '&:active': {
                 backgroundColor: 'rgba(0,0,0,0.2)'
@@ -168,6 +169,11 @@ const ThemeContextProvider = ({ children }: ThemeContextProviderProps): JSX.Elem
             minHeight: defaultTheme.spacing(5),
             paddingTop: '6px'
           }
+        },
+        MuiFab: {
+          root: {
+            boxShadow: 'none'
+          }
         }
       },
       ...extendedOptions
@@ -179,11 +185,11 @@ const ThemeContextProvider = ({ children }: ThemeContextProviderProps): JSX.Elem
   const globalTheme = createCustomTheme()
   const sidebarTheme = createCustomTheme({
     palette: {
-      type: 'dark',
-      background: {
-        paper: '#222A45',
-        default: '#1a2038'
-      }
+      type: 'light'
+      // background: {
+      //   paper: '#222A45',
+      //   default: '#1a2038'
+      // }
     }
   })
 

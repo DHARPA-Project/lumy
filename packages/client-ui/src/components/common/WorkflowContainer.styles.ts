@@ -30,6 +30,9 @@ export default makeStyles(theme => ({
       bottom: theme.spacing(2),
       right: theme.spacing(1)
     },
+    '& .MuiSpeedDialAction-fab': {
+      backgroundColor: theme.palette.action.hover
+    },
     '&.MuiSpeedDial-directionUp, &.MuiSpeedDial-directionLeft': {
       bottom: theme.spacing(2),
       right: theme.spacing(1)
