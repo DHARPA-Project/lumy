@@ -7,223 +7,186 @@ import {
   useStepOutputValue,
   withMockProcessor
 } from '@dharpa-vre/client-core'
-import { Table, Bool, Float32Vector, Vector, Float32, BoolVector, Column } from 'apache-arrow'
-import { EdgesStructure, NodesStructure } from './structure'
-import {
-  withStyles,
-  Button,
-  Grid,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Typography,
-  RadioGroup,
-  FormControlLabel,
-  Radio
-} from '@material-ui/core'
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
-import { useElement, NetworkForce } from '@dharpa-vre/datavis-components'
+import { ScalingMethod, InputValues, OutputValues } from './structure'
+import { Grid } from '@material-ui/core'
+import { useElement, NetworkForce, NodeMouseEventDetails } from '@dharpa-vre/datavis-components'
 import { useBbox } from '../hooks/useBbox'
 import { DataGrid } from '@dharpa-vre/arrow-data-grid'
+import { NavigationPanel, NavigationPanelSection } from './components/NavigationPanel'
+import { NodesAppearance } from './navigationSections/NodesAppearance'
+import { FilterTopologyLayout } from './navigationSections/FilterTopologyLayout'
+import { NodeTooltip } from './components/NodeTooltip'
+import { mockProcessor } from './mockProcessor'
+import { useElementEventCallback } from './hooks'
+import { buildGraphEdges, buildGraphNodes, getNodeScalerParameters } from './graphDataMethods'
+import { GraphStatsPanel } from './components/GraphStatsPanel'
+import { normalizedValue } from './utils'
 
 useElement('network-force')
-
-export type GraphDataStructure = {
-  degree: Float32
-  eigenvector: Float32
-  betweenness: Float32
-  isLarge: Bool
-  isIsolated: Bool
-}
-
-type GraphDataTable = Table<GraphDataStructure>
-
-type NodesTable = Table<NodesStructure>
-type EdgesTable = Table<EdgesStructure>
-
-enum ShortestPathMethod {
-  Weighted = 'weighted',
-  NotWeighted = 'notWeighted'
-}
-
-enum GraphType {
-  Directed = 'directed',
-  Undirected = 'undirected'
-}
-
-interface InputValues {
-  nodes: NodesTable
-  edges: EdgesTable
-  shortestPathSource: string
-  shortestPathTarget: string
-  shortestPathMethod: ShortestPathMethod
-  graphType: GraphType
-}
-
-interface OutputValues {
-  graphData: GraphDataTable
-  shortestPath: string[]
-}
-
-const StyledAccordion = withStyles({
-  root: {
-    border: '1px solid rgba(0, 0, 0, .125)',
-    boxShadow: 'none',
-    '&:not(:last-child)': {
-      borderBottom: 0
-    },
-    '&:before': {
-      display: 'none'
-    },
-    '&$expanded': {
-      margin: 'auto'
-    }
-  },
-  expanded: {}
-})(Accordion)
-
-type ScalingMethods = keyof Omit<GraphDataStructure, 'isLarge'>
-
-interface NavigationProps {
-  nodesScalingMethod: ScalingMethods
-  isDisplayIsolated: boolean
-  onNodesScalingMethodUpdated?: (m: ScalingMethods) => void
-  onDisplayIsolatedUpdated?: (isIsolated: boolean) => void
-}
-
-const Navigation = ({
-  nodesScalingMethod,
-  isDisplayIsolated,
-  onNodesScalingMethodUpdated,
-  onDisplayIsolatedUpdated
-}: NavigationProps): JSX.Element => {
-  const [expandedAccordionId, setExpandedAccordionId] = React.useState<number>(null)
-
-  return (
-    <Grid container spacing={1} direction="column">
-      <Grid item>
-        <StyledAccordion
-          expanded={expandedAccordionId === 0}
-          onChange={(e, isExpanded) => setExpandedAccordionId(isExpanded ? 0 : null)}
-        >
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography>Nodes size</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <RadioGroup
-              value={nodesScalingMethod ?? ''}
-              onChange={e => onNodesScalingMethodUpdated?.(e.target.value as ScalingMethods)}
-            >
-              <FormControlLabel value="" control={<Radio />} label="Equal" />
-              <FormControlLabel value="degree" control={<Radio />} label="Degree" />
-              <FormControlLabel value="betweenness" control={<Radio />} label="Betweenness Centrality" />
-              <FormControlLabel value="eigenvector" control={<Radio />} label="Eigenvector Centrality" />
-            </RadioGroup>
-          </AccordionDetails>
-        </StyledAccordion>
-        <StyledAccordion
-          expanded={expandedAccordionId === 1}
-          onChange={(e, isExpanded) => setExpandedAccordionId(isExpanded ? 1 : null)}
-        >
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography>Nodes filtering</Typography>
-          </AccordionSummary>
-          <AccordionDetails></AccordionDetails>
-        </StyledAccordion>
-      </Grid>
-      <Grid item>
-        <Button onClick={() => onDisplayIsolatedUpdated?.(!isDisplayIsolated)}>
-          {isDisplayIsolated ? 'Hide isolated nodes' : 'Display isolated nodes'}
-        </Button>
-      </Grid>
-    </Grid>
-  )
-}
-
-const normalizeColumn = (column: Column<Float32>): number[] => {
-  if (column == null) return undefined
-  const items = [...column]
-  const max = items.reduce((acc, v) => (v > acc ? v : acc), 0)
-  return items.map(v => v / max)
-}
 
 type Props = ModuleProps<InputValues, OutputValues>
 
 const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
-  const [nodes] = useStepInputValue<NodesTable>(step.stepId, 'nodes', { fullValue: true })
-  const [edges] = useStepInputValue<EdgesTable>(step.stepId, 'edges', { fullValue: true })
-  const [graphData] = useStepOutputValue<GraphDataTable>(step.stepId, 'graphData', { fullValue: true })
+  /* 1. Get read only module input values */
+  const [nodes] = useStepInputValue<InputValues['nodes']>(step.stepId, 'nodes', { fullValue: true })
+  const [edges] = useStepInputValue<InputValues['edges']>(step.stepId, 'edges', { fullValue: true })
 
   // nodes page + filter for table view
   const [nodesFilter, setNodesFilter] = React.useState<TabularDataFilter>({ pageSize: 10 })
-  const [nodesPage, , nodesStats] = useStepInputValue<NodesTable, TableStats>(
+  const [nodesPage, , nodesStats] = useStepInputValue<InputValues['nodes'], TableStats>(
     step.stepId,
     'nodes',
     nodesFilter
   )
 
-  const [nodesScalingMethod, setNodesScalingMethod] = React.useState<ScalingMethods>()
-  const [isDisplayIsolated, setIsDisplayIsolated] = React.useState(false)
+  /* 2. Get input values that we can control */
+
+  // ID of the node we will get direct neighbours for
+
+  // TODO: replace react state variable with backend state variable when
+  // reapplying force on update is sorted out
+  // const [selectedNodeId, setSelectedNodeId] = useStepInputValue<InputValues['selectedNodeId']>(
+  //   step.stepId,
+  //   'selectedNodeId'
+  // )
+  const [selectedNodeId, setSelectedNodeId] = React.useState<InputValues['selectedNodeId']>()
+
+  /* 3. Get output values */
+  const [graphData] = useStepOutputValue<OutputValues['graphData']>(step.stepId, 'graphData', {
+    fullValue: true
+  })
+
+  // a list of direct connections of the `selectedNodeId` node
+  const [selectedNodeDirectConnections] = useStepOutputValue(step.stepId, 'directConnections')
+  //const [shortestPath] = useStepOutputValue<string[]>(step.stepId, 'shortestPath')
+  const [graphStats] = useStepOutputValue<OutputValues['graphStats']>(step.stepId, 'graphStats')
+
+  /* 4. Graph and its container reference - for getting container size */
   const graphRef = React.useRef<NetworkForce>(null)
   const graphContainerRef = React.useRef()
   const graphBox = useBbox(graphContainerRef)
 
-  const graphWidth = graphBox?.width ?? 0
-  const graphHeight = (graphWidth * 2) / 3
+  /* 5. local state variables, mostly for navigation */
+
+  const [nodesScalingMethod, setNodesScalingMethod] = React.useState<ScalingMethod>('degree')
+  const [isDisplayLabels, setIsDisplayLabels] = React.useState(false)
+  const [isDisplayIsolated, setIsDisplayIsolated] = React.useState(true)
+  const [graphTooltipInfo, setGraphTooltipInfo] = React.useState<NodeMouseEventDetails>(null)
+  const [labelNodeSizeThreshold, setLabelNodeSizeThreshold] = React.useState<number>(0.8)
+  const [colorCodeNodes, setColorCodeNodes] = React.useState(true)
+
+  /* 6. handlers for graph node hover */
+  const handleGraphNodeMouseMove = (event: CustomEvent<NodeMouseEventDetails>) => {
+    setGraphTooltipInfo(event.detail)
+  }
+
+  const handleGraphNodeHovered = (event: CustomEvent<NodeMouseEventDetails>) => {
+    setGraphTooltipInfo(event.detail)
+    const nodeId = event.detail.nodeMetadata.id
+    if (nodeId != null) setSelectedNodeId(nodeId)
+  }
+
+  const handleGraphNodeHoveredOut = () => {
+    setGraphTooltipInfo(undefined)
+    setSelectedNodeId(null)
+  }
 
   React.useEffect(() => {
-    if (graphRef.current == null || nodes == null || graphData == null) return
+    // TODO: handle updated direct connections of currently selected node.
+    console.log(`Direct connections of node ${selectedNodeId}: ${selectedNodeDirectConnections}`)
+  }, [selectedNodeDirectConnections])
 
-    const scalerColumn = graphData.getColumn(nodesScalingMethod)
-    const normalizedScalerColumn = normalizeColumn(scalerColumn as Column<Float32>)
-
-    const graphNodes = [...nodes.toArray()].map((node, idx) => ({
-      id: String(node.id),
-      group: node.group,
-      label: node.label,
-      scaler: normalizedScalerColumn?.[idx]
-    }))
-
-    if (isDisplayIsolated) {
-      graphRef.current.nodes = graphNodes
-    } else {
-      // filter out isolated nodes
-      const isIsolated = [...(graphData.getColumn('isIsolated') ?? [])]
-      graphRef.current.nodes = graphNodes.filter((_, idx) => !isIsolated[idx])
-    }
+  /* 7. Handle changes in nodes, edges, graph data and graph parameters:
+        construct new force graph data structures and pass them to the graph
+  */
+  React.useEffect(() => {
+    if (graphRef.current == null) return
+    const graphNodes = buildGraphNodes(nodes, graphData, isDisplayIsolated, nodesScalingMethod)
+    if (graphNodes != null) graphRef.current.nodes = graphNodes
   }, [nodes, nodesScalingMethod, graphData, graphRef.current, isDisplayIsolated])
 
   React.useEffect(() => {
-    if (graphRef.current == null || edges == null) return
-
-    graphRef.current.edges = [...edges.toArray()].map(edge => ({
-      sourceId: String(edge.srcId),
-      targetId: String(edge.tgtId)
-    }))
+    if (graphRef.current == null) return
+    const graphEdges = buildGraphEdges(edges)
+    if (graphEdges != null) graphRef.current.edges = graphEdges
   }, [edges, graphRef.current])
+
+  useElementEventCallback(graphRef.current, 'node-hovered', handleGraphNodeHovered)
+  useElementEventCallback(graphRef.current, 'node-mousemove', handleGraphNodeMouseMove)
+  useElementEventCallback(graphRef.current, 'node-hovered-out', handleGraphNodeHoveredOut)
+
+  /* 8. local variables */
+  const nodeScalerParams = getNodeScalerParameters(graphData, nodesScalingMethod)
 
   return (
     <Grid container>
       <Grid container spacing={3}>
         <Grid item xs={3}>
-          <Navigation
-            nodesScalingMethod={nodesScalingMethod}
-            isDisplayIsolated={isDisplayIsolated}
-            onNodesScalingMethodUpdated={setNodesScalingMethod}
-            onDisplayIsolatedUpdated={setIsDisplayIsolated}
-          />
+          <Grid item>
+            <GraphStatsPanel graphStats={graphStats} />
+          </Grid>
+
+          <NavigationPanel>
+            <NavigationPanelSection title="Nodes appearance" index="0">
+              <NodesAppearance
+                nodesScalingMethod={nodesScalingMethod}
+                onNodesScalingMethodUpdated={setNodesScalingMethod}
+                isDisplayLabels={isDisplayLabels}
+                onDisplayLabelsUpdated={setIsDisplayLabels}
+                colorCodeNodes={colorCodeNodes}
+                onColorCodeNodesUpdated={setColorCodeNodes}
+                labelNodeSizeThreshold={labelNodeSizeThreshold}
+                onLabelNodeSizeThresholdUpdated={setLabelNodeSizeThreshold}
+                labelNodesSizeThresholdBoundaries={[
+                  nodeScalerParams.min,
+                  nodeScalerParams.max,
+                  nodeScalerParams.step
+                ]}
+              />
+            </NavigationPanelSection>
+            <NavigationPanelSection title="Edges appearance" index="1"></NavigationPanelSection>
+            <NavigationPanelSection title="Filter/Topology/Layout" index="2">
+              <FilterTopologyLayout
+                isDisplayIsolated={isDisplayIsolated}
+                onDisplayIsolatedUpdated={setIsDisplayIsolated}
+              />
+            </NavigationPanelSection>
+            <NavigationPanelSection title="Shortest path" index="3"></NavigationPanelSection>
+            <NavigationPanelSection title="Communities" index="4"></NavigationPanelSection>
+          </NavigationPanel>
         </Grid>
-        <Grid item xs={9} ref={graphContainerRef}>
+        <Grid item xs={9} ref={graphContainerRef} style={{ position: 'relative' }}>
+          {graphTooltipInfo != null ? (
+            <NodeTooltip
+              position={{
+                left: graphTooltipInfo.mouseCoordinates.x,
+                top: graphTooltipInfo.mouseCoordinates.y
+              }}
+              label={graphTooltipInfo.nodeMetadata.label}
+              scalingMethod={nodesScalingMethod}
+              scalingValue={graphTooltipInfo.nodeMetadata.scaler}
+              group={graphTooltipInfo.nodeMetadata.group}
+            />
+          ) : (
+            ''
+          )}
           <network-force
             displayIsolatedNodes={isDisplayIsolated ? undefined : true}
-            reapplySimulationOnUpdate={true}
-            width={graphWidth}
-            height={graphHeight}
+            displayLabels={isDisplayLabels ? undefined : false}
+            colorCodeNodes={colorCodeNodes ? undefined : false}
+            labelNodeSizeThreshold={normalizedValue(
+              labelNodeSizeThreshold,
+              nodeScalerParams.min,
+              nodeScalerParams.max
+            )}
+            reapplySimulationOnUpdate={undefined}
+            width={graphBox?.width ?? 0}
+            height={((graphBox?.width ?? 0) * 2) / 3}
             ref={graphRef}
           />
         </Grid>
       </Grid>
-      <Grid container>
+      <Grid container direction="column">
         <Grid item style={{ flexGrow: 1 }}>
           <DataGrid
             data={nodesPage}
@@ -238,32 +201,6 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
       </Grid>
     </Grid>
   )
-}
-
-const mockProcessor = ({ nodes, edges }: InputValues): OutputValues => {
-  const numNodes = nodes?.length ?? 0
-  const nums = [...new Array(numNodes).keys()]
-  const notIsolatedNodesIds = new Set([...edges.getColumn('srcId')].concat([...edges.getColumn('tgtId')]))
-  const isIsolated = [...nodes.getColumn('id')].map(id => !notIsolatedNodesIds.has(id))
-
-  const graphData = Table.new<GraphDataStructure>(
-    [
-      Float32Vector.from(nums.map(() => Math.random())),
-      Float32Vector.from(nums.map(() => Math.random())),
-      Float32Vector.from(nums.map(() => Math.random())),
-      Vector.from({
-        values: nums.map(() => (Math.random() > 0.5 ? true : null)),
-        type: new Bool()
-      }),
-      BoolVector.from(isIsolated)
-    ],
-    ['degree', 'eigenvector', 'betweenness', 'isLarge', 'isIsolated']
-  )
-
-  return {
-    graphData,
-    shortestPath: []
-  }
 }
 
 export default withMockProcessor(NetworkAnalysisDataVis, mockProcessor)

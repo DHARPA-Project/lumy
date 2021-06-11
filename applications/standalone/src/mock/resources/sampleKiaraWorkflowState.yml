@@ -1,498 +1,803 @@
 pipelineInputs:
   values:
     m1__metadataFields:
-      id: 8d328613-ee4e-42d7-a569-27d58e9cde4b
+      id: 81eac19a-83b6-48e9-a529-e77ffa8f2422
       isConstant: false
+      isSet: true
       isStreaming: false
-      isValid: false
-      lastUpdate: 2021-05-04 13:44:07.086619
-      metadata: {}
+      isValid: true
+      lastUpdate: 2021-06-09 17:28:56.175000
+      metadata:
+        python:
+          cls: list
+        type: {}
       origin: pipeline_input:networkAnalysisDev_0.metadataFields
+      valueHash: &id001
+      - -- deferred --
       valueSchema:
         default: []
         doc: Metadata field.
-        subSchema: null
+        optional: false
         type: any
+        typeConfig: {}
     m1__selectedItemsIds:
-      id: 1dde36f5-ada5-4f8b-b5ee-a25127376166
+      id: 8e496409-e341-4d31-a9b6-70c0c92681b5
       isConstant: false
+      isSet: true
       isStreaming: false
-      isValid: false
-      lastUpdate: 2021-05-04 13:44:07.086490
-      metadata: {}
+      isValid: true
+      lastUpdate: 2021-06-09 17:28:56.174739
+      metadata:
+        python:
+          cls: list
+        type: {}
       origin: pipeline_input:networkAnalysisDev_0.selectedItemsIds
+      valueHash: *id001
       valueSchema:
         default: []
         doc: URIs of selected items.
-        subSchema: null
+        optional: false
         type: any
+        typeConfig: {}
     m2__edgesMappingTable:
-      id: 01877c21-6600-43ad-b0dc-150cf196f8a8
+      id: 25d1b375-8003-47a7-8089-bb6ee752a104
       isConstant: false
+      isSet: false
       isStreaming: false
-      isValid: false
-      lastUpdate: 2021-05-04 13:44:07.086922
+      isValid: true
+      lastUpdate: 2021-06-09 17:28:56.175567
       metadata: {}
       origin: pipeline_input:networkAnalysisDev_0.edgesMappingTable
+      valueHash: &id002
+      - -- no_value --
       valueSchema:
-        default: []
+        default: &id003
+        - __not_set__
         doc: Edges mapping table.
-        subSchema: null
+        optional: true
         type: table
+        typeConfig: {}
     m2__nodesMappingTable:
-      id: da0254bc-a89e-4506-b1d7-c8cf2d9a6417
+      id: 6f823b5b-f4c5-4d6a-96cd-87357887229e
       isConstant: false
+      isSet: false
       isStreaming: false
-      isValid: false
-      lastUpdate: 2021-05-04 13:44:07.086804
+      isValid: true
+      lastUpdate: 2021-06-09 17:28:56.175388
       metadata: {}
       origin: pipeline_input:networkAnalysisDev_0.nodesMappingTable
+      valueHash: *id002
       valueSchema:
-        default: []
+        default: *id003
         doc: Nodes mapping table.
-        subSchema: null
+        optional: true
         type: table
-    m4__a:
-      id: 62bd1627-07c1-4412-958d-9d3acc9dfb54
+        typeConfig: {}
+    m3__selectedNodeId:
+      id: 25025fe7-36c5-4e73-8839-b8609ad84a7c
       isConstant: false
+      isSet: false
       isStreaming: false
-      isValid: false
-      lastUpdate: 2021-05-04 13:44:07.087181
+      isValid: true
+      lastUpdate: 2021-06-09 17:28:56.176272
       metadata: {}
+      origin: pipeline_input:networkAnalysisDev_0.selectedNodeId
+      valueHash: *id002
+      valueSchema:
+        default: null
+        doc: ID of the selected node to calculate direct neighbours
+        optional: true
+        type: any
+        typeConfig: {}
+    m3__shortestPathSource:
+      id: 767ec77d-6b42-47ad-b730-522d445cfea2
+      isConstant: false
+      isSet: false
+      isStreaming: false
+      isValid: true
+      lastUpdate: 2021-06-09 17:28:56.175938
+      metadata: {}
+      origin: pipeline_input:networkAnalysisDev_0.shortestPathSource
+      valueHash: *id002
+      valueSchema:
+        default: null
+        doc: ID of the start node for the shortest path calculations
+        optional: true
+        type: any
+        typeConfig: {}
+    m3__shortestPathTarget:
+      id: e0d6dfde-564a-44da-9588-dc89597421b2
+      isConstant: false
+      isSet: false
+      isStreaming: false
+      isValid: true
+      lastUpdate: 2021-06-09 17:28:56.176102
+      metadata: {}
+      origin: pipeline_input:networkAnalysisDev_0.shortestPathTarget
+      valueHash: *id002
+      valueSchema:
+        default: null
+        doc: ID of the end node for the shortest path calculations
+        optional: true
+        type: any
+        typeConfig: {}
+    m4__a:
+      id: c3be49de-2aa1-4bf2-9bcf-0938a952187a
+      isConstant: false
+      isSet: true
+      isStreaming: false
+      isValid: true
+      lastUpdate: 2021-06-09 17:28:56.176455
+      metadata:
+        python:
+          cls: int
+        type: {}
       origin: pipeline_input:networkAnalysisDev_0.a
+      valueHash: *id001
       valueSchema:
         default: 1
         doc: a.
-        subSchema: null
+        optional: true
         type: any
+        typeConfig: {}
     m4__b:
-      id: bfa059c1-b831-406a-bc97-448fea0cb199
+      id: 6b15d270-1b62-4ffa-8575-772f9e6db90d
       isConstant: false
+      isSet: true
       isStreaming: false
-      isValid: false
-      lastUpdate: 2021-05-04 13:44:07.087305
-      metadata: {}
+      isValid: true
+      lastUpdate: 2021-06-09 17:28:56.176652
+      metadata:
+        python:
+          cls: int
+        type: {}
       origin: pipeline_input:networkAnalysisDev_0.b
+      valueHash: *id001
       valueSchema:
         default: 1
         doc: b.
-        subSchema: null
+        optional: true
         type: any
+        typeConfig: {}
     m4__operator:
-      id: 1786f73e-1e91-4c78-a537-cb0ee8ace726
+      id: eb9a9701-601b-4894-8cfa-bddb4b8e1cb3
       isConstant: false
+      isSet: true
       isStreaming: false
-      isValid: false
-      lastUpdate: 2021-05-04 13:44:07.087422
-      metadata: {}
+      isValid: true
+      lastUpdate: 2021-06-09 17:28:56.176843
+      metadata:
+        python:
+          cls: str
+        type: {}
       origin: pipeline_input:networkAnalysisDev_0.operator
+      valueHash: *id001
       valueSchema:
         default: add
         doc: operator.
-        subSchema: null
+        optional: true
         type: any
+        typeConfig: {}
     m5__b:
-      id: 0584f559-d0fe-4ef4-b5f7-7dc230f798c4
+      id: 3f873e14-a612-4a12-a894-ab17bded757a
       isConstant: false
+      isSet: true
       isStreaming: false
-      isValid: false
-      lastUpdate: 2021-05-04 13:44:07.087606
-      metadata: {}
+      isValid: true
+      lastUpdate: 2021-06-09 17:28:56.177127
+      metadata:
+        python:
+          cls: int
+        type: {}
       origin: pipeline_input:networkAnalysisDev_0.b
+      valueHash: *id001
       valueSchema:
         default: 1
         doc: b.
-        subSchema: null
+        optional: true
         type: any
+        typeConfig: {}
     m5__operator:
-      id: 07b3f5f8-2335-4e34-bf22-196c4268155c
+      id: 69c9c36b-62a2-43d6-8dca-87a394926062
       isConstant: false
+      isSet: true
       isStreaming: false
-      isValid: false
-      lastUpdate: 2021-05-04 13:44:07.087727
-      metadata: {}
+      isValid: true
+      lastUpdate: 2021-06-09 17:28:56.177313
+      metadata:
+        python:
+          cls: str
+        type: {}
       origin: pipeline_input:networkAnalysisDev_0.operator
+      valueHash: *id001
       valueSchema:
         default: add
         doc: operator.
-        subSchema: null
+        optional: true
         type: any
+        typeConfig: {}
 pipelineOutputs:
   values:
     m1__selectedItems:
-      id: c9198a29-9baf-4368-967a-fa6386ca2cc4
+      id: 2494ad75-5776-4411-93e9-da0c3c9ca87f
       isConstant: false
+      isSet: false
       isStreaming: false
       isValid: false
-      lastUpdate: 2021-05-04 13:44:07.085669
+      lastUpdate: 2021-06-09 17:28:56.173243
       metadata: {}
-      origin: null
+      origin: step_output:networkAnalysisDev_0.m1.selectedItems
+      valueHash: *id002
       valueSchema:
-        default: null
-        doc: -- linked value --
-        subSchema: null
-        type: any
+        default: *id003
+        doc: Selected corpus.
+        optional: false
+        type: table
+        typeConfig: {}
     m2__edges:
-      id: b7a09c95-30ce-4064-b158-4e9707b167d6
+      id: 75632a0a-19a5-4bf7-bfd0-75ab87cc859e
       isConstant: false
+      isSet: false
       isStreaming: false
       isValid: false
-      lastUpdate: 2021-05-04 13:44:07.085940
+      lastUpdate: 2021-06-09 17:28:56.173626
       metadata: {}
-      origin: null
+      origin: step_output:networkAnalysisDev_0.m2.edges
+      valueHash: *id002
       valueSchema:
-        default: null
-        doc: -- linked value --
-        subSchema: null
-        type: any
+        default: *id003
+        doc: Edges table.
+        optional: false
+        type: table
+        typeConfig: {}
     m2__nodes:
-      id: 18279478-87a9-435c-8794-97b45a6bfc36
+      id: 41f360bf-c885-4aaa-b6d8-5e2ba8a54e41
       isConstant: false
+      isSet: false
       isStreaming: false
       isValid: false
-      lastUpdate: 2021-05-04 13:44:07.085818
+      lastUpdate: 2021-06-09 17:28:56.173443
       metadata: {}
-      origin: null
+      origin: step_output:networkAnalysisDev_0.m2.nodes
+      valueHash: *id002
       valueSchema:
-        default: null
-        doc: -- linked value --
-        subSchema: null
+        default: *id003
+        doc: Nodes table.
+        optional: false
+        type: table
+        typeConfig: {}
+    m3__directConnections:
+      id: 4a316e05-3e22-4128-bdef-97391fdae94a
+      isConstant: false
+      isSet: false
+      isStreaming: false
+      isValid: false
+      lastUpdate: 2021-06-09 17:28:56.174145
+      metadata: {}
+      origin: step_output:networkAnalysisDev_0.m3.directConnections
+      valueHash: *id002
+      valueSchema:
+        default: *id003
+        doc: Ids of the direct connections of the 'selectedNodeId'
+        optional: false
         type: any
+        typeConfig: {}
     m3__graphData:
-      id: 135c9714-6f2e-4d27-a747-d996aaaeb856
+      id: b12e31a6-426b-42cc-97a3-eefc37b75f1d
       isConstant: false
+      isSet: false
       isStreaming: false
       isValid: false
-      lastUpdate: 2021-05-04 13:44:07.086061
+      lastUpdate: 2021-06-09 17:28:56.173801
       metadata: {}
-      origin: null
+      origin: step_output:networkAnalysisDev_0.m3.graphData
+      valueHash: *id002
       valueSchema:
-        default: null
-        doc: -- linked value --
-        subSchema: null
+        default: *id003
+        doc: Nodes table.
+        optional: false
+        type: table
+        typeConfig: {}
+    m3__graphStats:
+      id: e2e512d5-b0e9-4135-9e80-c4e573874af3
+      isConstant: false
+      isSet: false
+      isStreaming: false
+      isValid: false
+      lastUpdate: 2021-06-09 17:28:56.174313
+      metadata: {}
+      origin: step_output:networkAnalysisDev_0.m3.graphStats
+      valueHash: *id002
+      valueSchema:
+        default: *id003
+        doc: Graph stats
+        optional: false
         type: any
+        typeConfig: {}
     m3__shortestPath:
-      id: 045b6701-8483-46ed-a654-c6356cc3e952
+      id: cd3e92ff-60db-48f9-b9b0-563ac4615823
       isConstant: false
+      isSet: false
       isStreaming: false
       isValid: false
-      lastUpdate: 2021-05-04 13:44:07.086186
+      lastUpdate: 2021-06-09 17:28:56.173966
       metadata: {}
-      origin: null
+      origin: step_output:networkAnalysisDev_0.m3.shortestPath
+      valueHash: *id002
       valueSchema:
-        default: null
-        doc: -- linked value --
-        subSchema: null
+        default: *id003
+        doc: Shortest path array.
+        optional: false
         type: any
+        typeConfig: {}
     m4__c:
-      id: db0675b5-0e43-428b-9f22-247e2d7a072a
+      id: 99f17b16-b801-4655-91c3-15aad4a8deb3
       isConstant: false
+      isSet: false
       isStreaming: false
       isValid: false
-      lastUpdate: 2021-05-04 13:44:07.086303
+      lastUpdate: 2021-06-09 17:28:56.174480
       metadata: {}
-      origin: null
+      origin: step_output:networkAnalysisDev_0.m4.c
+      valueHash: *id002
       valueSchema:
-        default: null
-        doc: -- linked value --
-        subSchema: null
+        default: *id003
+        doc: c.
+        optional: false
         type: any
+        typeConfig: {}
     m5__c:
-      id: cbec1c17-2d1a-4dcc-bae9-62d8ce9e02e7
+      id: d029c658-32fe-4636-b027-69014e9c0601
       isConstant: false
+      isSet: false
       isStreaming: false
       isValid: false
-      lastUpdate: 2021-05-04 13:44:07.086419
+      lastUpdate: 2021-06-09 17:28:56.174643
       metadata: {}
-      origin: null
+      origin: step_output:networkAnalysisDev_0.m5.c
+      valueHash: *id002
       valueSchema:
-        default: null
-        doc: -- linked value --
-        subSchema: null
+        default: *id003
+        doc: c.
+        optional: false
         type: any
-status: stale
+        typeConfig: {}
+status: &id004 inputs_ready
 stepInputs:
   m1:
     values:
       metadataFields:
-        id: ee6d8510-7308-4b68-a9c8-6f6a7cb4ddde
+        id: fe2fda72-1996-412e-ac6f-f17474c85992
         isConstant: false
+        isSet: true
         isStreaming: false
-        isValid: false
-        lastUpdate: 2021-05-04 13:44:07.086678
-        metadata: {}
+        isValid: true
+        lastUpdate: 2021-06-09 17:28:56.175107
+        metadata:
+          type: {}
         origin: step_input:networkAnalysisDev_0.m1.metadataFields
+        valueHash: *id001
         valueSchema:
-          default: null
-          doc: -- linked value --
-          subSchema: null
+          default: []
+          doc: Metadata field.
+          optional: false
           type: any
+          typeConfig: {}
       selectedItemsIds:
-        id: 727f1056-200e-4380-b5d1-0f706e5a496b
+        id: 4a4bb431-ec83-4568-8298-6eb404f89de3
         isConstant: false
+        isSet: true
         isStreaming: false
-        isValid: false
-        lastUpdate: 2021-05-04 13:44:07.086557
-        metadata: {}
+        isValid: true
+        lastUpdate: 2021-06-09 17:28:56.174898
+        metadata:
+          type: {}
         origin: step_input:networkAnalysisDev_0.m1.selectedItemsIds
+        valueHash: *id001
         valueSchema:
-          default: null
-          doc: -- linked value --
-          subSchema: null
+          default: []
+          doc: URIs of selected items.
+          optional: false
           type: any
+          typeConfig: {}
   m2:
     values:
       corpus:
-        id: 1c680ef5-8cc1-407b-8f78-7b50a0f4008d
+        id: f6e9d3a8-2f37-4b9d-8dd5-90a8db8bdb24
         isConstant: false
+        isSet: false
         isStreaming: false
         isValid: false
-        lastUpdate: 2021-05-04 13:44:07.086746
+        lastUpdate: 2021-06-09 17:28:56.175280
         metadata: {}
         origin: step_input:networkAnalysisDev_0.m2.corpus
+        valueHash: *id002
         valueSchema:
-          default: null
-          doc: -- linked value --
-          subSchema: null
-          type: any
+          default: *id003
+          doc: Corpus items.
+          optional: false
+          type: table
+          typeConfig: {}
       edgesMappingTable:
-        id: 9575054d-8dc3-4be5-902b-f587c2211db0
+        id: e7585866-2925-4615-89d9-092f37ca9be5
         isConstant: false
+        isSet: false
         isStreaming: false
-        isValid: false
-        lastUpdate: 2021-05-04 13:44:07.086986
+        isValid: true
+        lastUpdate: 2021-06-09 17:28:56.175659
         metadata: {}
         origin: step_input:networkAnalysisDev_0.m2.edgesMappingTable
+        valueHash: *id002
         valueSchema:
-          default: null
-          doc: -- linked value --
-          subSchema: null
-          type: any
+          default: *id003
+          doc: Edges mapping table.
+          optional: true
+          type: table
+          typeConfig: {}
       nodesMappingTable:
-        id: 12c1bf1e-ca67-4a3a-8053-d5a43f287bdc
+        id: fbfaf48a-88fc-4cd2-b38f-43009233c1cd
         isConstant: false
+        isSet: false
         isStreaming: false
-        isValid: false
-        lastUpdate: 2021-05-04 13:44:07.086866
+        isValid: true
+        lastUpdate: 2021-06-09 17:28:56.175471
         metadata: {}
         origin: step_input:networkAnalysisDev_0.m2.nodesMappingTable
+        valueHash: *id002
         valueSchema:
-          default: null
-          doc: -- linked value --
-          subSchema: null
-          type: any
+          default: *id003
+          doc: Nodes mapping table.
+          optional: true
+          type: table
+          typeConfig: {}
   m3:
     values:
       edges:
-        id: 6cf0d640-16c7-41ce-a754-3649de8f7a1f
+        id: 1ddb22c6-0554-42d5-a5b3-fb5496aa97a1
         isConstant: false
+        isSet: false
         isStreaming: false
         isValid: false
-        lastUpdate: 2021-05-04 13:44:07.087122
+        lastUpdate: 2021-06-09 17:28:56.175844
         metadata: {}
         origin: step_input:networkAnalysisDev_0.m3.edges
+        valueHash: *id002
         valueSchema:
-          default: null
-          doc: -- linked value --
-          subSchema: null
-          type: any
+          default: *id003
+          doc: Edges table.
+          optional: false
+          type: table
+          typeConfig: {}
       nodes:
-        id: b1affc73-1611-45b7-9c55-3235cc649891
+        id: 7f23b510-cfb0-4aac-9a71-da5dbfbeb37a
         isConstant: false
+        isSet: false
         isStreaming: false
         isValid: false
-        lastUpdate: 2021-05-04 13:44:07.087053
+        lastUpdate: 2021-06-09 17:28:56.175755
         metadata: {}
         origin: step_input:networkAnalysisDev_0.m3.nodes
+        valueHash: *id002
+        valueSchema:
+          default: *id003
+          doc: Nodes table.
+          optional: false
+          type: table
+          typeConfig: {}
+      selectedNodeId:
+        id: d2903da8-147e-485b-8203-a01019fe11d1
+        isConstant: false
+        isSet: false
+        isStreaming: false
+        isValid: true
+        lastUpdate: 2021-06-09 17:28:56.176355
+        metadata: {}
+        origin: step_input:networkAnalysisDev_0.m3.selectedNodeId
+        valueHash: *id002
         valueSchema:
           default: null
-          doc: -- linked value --
-          subSchema: null
+          doc: ID of the selected node to calculate direct neighbours
+          optional: true
           type: any
+          typeConfig: {}
+      shortestPathSource:
+        id: 3b72a32a-16e0-4a8a-b250-ff0338dbfc45
+        isConstant: false
+        isSet: false
+        isStreaming: false
+        isValid: true
+        lastUpdate: 2021-06-09 17:28:56.176014
+        metadata: {}
+        origin: step_input:networkAnalysisDev_0.m3.shortestPathSource
+        valueHash: *id002
+        valueSchema:
+          default: null
+          doc: ID of the start node for the shortest path calculations
+          optional: true
+          type: any
+          typeConfig: {}
+      shortestPathTarget:
+        id: 3b811fc1-5415-43c0-a5c6-14ad6813ad0a
+        isConstant: false
+        isSet: false
+        isStreaming: false
+        isValid: true
+        lastUpdate: 2021-06-09 17:28:56.176180
+        metadata: {}
+        origin: step_input:networkAnalysisDev_0.m3.shortestPathTarget
+        valueHash: *id002
+        valueSchema:
+          default: null
+          doc: ID of the end node for the shortest path calculations
+          optional: true
+          type: any
+          typeConfig: {}
   m4:
     values:
       a:
-        id: 000ee2f2-c6b5-442e-a3fa-7226cc5a3ae4
+        id: c5537dcd-7d68-42bb-827f-673a874a9b73
         isConstant: false
+        isSet: true
         isStreaming: false
-        isValid: false
-        lastUpdate: 2021-05-04 13:44:07.087242
-        metadata: {}
+        isValid: true
+        lastUpdate: 2021-06-09 17:28:56.176559
+        metadata:
+          type: {}
         origin: step_input:networkAnalysisDev_0.m4.a
+        valueHash: *id001
         valueSchema:
-          default: null
-          doc: -- linked value --
-          subSchema: null
+          default: 1
+          doc: a.
+          optional: false
           type: any
+          typeConfig: {}
       b:
-        id: c3c4a13b-3c19-48a1-851e-5863dfde5d73
+        id: bb7d6514-9a09-4736-87bd-6567a4c6b355
         isConstant: false
+        isSet: true
         isStreaming: false
-        isValid: false
-        lastUpdate: 2021-05-04 13:44:07.087363
-        metadata: {}
+        isValid: true
+        lastUpdate: 2021-06-09 17:28:56.176746
+        metadata:
+          type: {}
         origin: step_input:networkAnalysisDev_0.m4.b
+        valueHash: *id001
         valueSchema:
-          default: null
-          doc: -- linked value --
-          subSchema: null
+          default: 1
+          doc: b.
+          optional: false
           type: any
+          typeConfig: {}
       operator:
-        id: ba2e6887-a8ff-4706-a18c-3f94f28f5b5f
+        id: 30b49afa-084e-4ad1-b26d-2b8752a1f02c
         isConstant: false
+        isSet: true
         isStreaming: false
-        isValid: false
-        lastUpdate: 2021-05-04 13:44:07.087481
-        metadata: {}
+        isValid: true
+        lastUpdate: 2021-06-09 17:28:56.176940
+        metadata:
+          type: {}
         origin: step_input:networkAnalysisDev_0.m4.operator
+        valueHash: *id001
         valueSchema:
-          default: null
-          doc: -- linked value --
-          subSchema: null
+          default: add
+          doc: operator.
+          optional: false
           type: any
+          typeConfig: {}
   m5:
     values:
       a:
-        id: 4127192a-d957-4feb-9668-4172508381ea
+        id: 27484cb4-14d5-47ab-a91a-a8277fef42e5
         isConstant: false
+        isSet: false
         isStreaming: false
         isValid: false
-        lastUpdate: 2021-05-04 13:44:07.087546
+        lastUpdate: 2021-06-09 17:28:56.177039
         metadata: {}
         origin: step_input:networkAnalysisDev_0.m5.a
+        valueHash: *id002
         valueSchema:
-          default: null
-          doc: -- linked value --
-          subSchema: null
+          default: 1
+          doc: a.
+          optional: false
           type: any
+          typeConfig: {}
       b:
-        id: e7fe8743-72d6-4970-bb83-eb14b19f8709
+        id: c0434b06-064a-42af-85b1-a88962229d64
         isConstant: false
+        isSet: true
         isStreaming: false
-        isValid: false
-        lastUpdate: 2021-05-04 13:44:07.087666
-        metadata: {}
+        isValid: true
+        lastUpdate: 2021-06-09 17:28:56.177221
+        metadata:
+          type: {}
         origin: step_input:networkAnalysisDev_0.m5.b
+        valueHash: *id001
         valueSchema:
-          default: null
-          doc: -- linked value --
-          subSchema: null
+          default: 1
+          doc: b.
+          optional: false
           type: any
+          typeConfig: {}
       operator:
-        id: 840f8d7e-0363-4ea8-a700-aee7488aee5c
+        id: 25602223-b2ed-4922-874b-6edf7d1919a7
         isConstant: false
+        isSet: true
         isStreaming: false
-        isValid: false
-        lastUpdate: 2021-05-04 13:44:07.087788
-        metadata: {}
+        isValid: true
+        lastUpdate: 2021-06-09 17:28:56.177410
+        metadata:
+          type: {}
         origin: step_input:networkAnalysisDev_0.m5.operator
+        valueHash: *id001
         valueSchema:
-          default: null
-          doc: -- linked value --
-          subSchema: null
+          default: add
+          doc: operator.
+          optional: false
           type: any
+          typeConfig: {}
 stepOutputs:
   m1:
     values:
       selectedItems:
-        id: fb14205c-59d4-4b03-a83e-ca2ef314fc71
+        id: df6eb8e9-f5b5-4d5e-9886-544c8bd8a1ea
         isConstant: false
+        isSet: false
         isStreaming: false
         isValid: false
-        lastUpdate: 2021-05-04 13:44:07.085537
+        lastUpdate: 2021-06-09 17:28:56.173093
         metadata: {}
         origin: step_output:networkAnalysisDev_0.m1.selectedItems
+        valueHash: *id002
         valueSchema:
-          default: null
+          default: *id003
           doc: Selected corpus.
-          subSchema: null
+          optional: false
           type: table
+          typeConfig: {}
   m2:
     values:
       edges:
-        id: 0555360a-1bed-40d2-a53b-bfd07280f13d
+        id: 64422e54-3b40-4c86-8ee5-6feb241a681e
         isConstant: false
+        isSet: false
         isStreaming: false
         isValid: false
-        lastUpdate: 2021-05-04 13:44:07.085878
+        lastUpdate: 2021-06-09 17:28:56.173539
         metadata: {}
         origin: step_output:networkAnalysisDev_0.m2.edges
+        valueHash: *id002
         valueSchema:
-          default: null
+          default: *id003
           doc: Edges table.
-          subSchema: null
+          optional: false
           type: table
+          typeConfig: {}
       nodes:
-        id: 07f11c04-d3a6-4ff2-9a45-85c66171abc4
+        id: 4711da44-b714-4089-a8a0-64118ba56816
         isConstant: false
+        isSet: false
         isStreaming: false
         isValid: false
-        lastUpdate: 2021-05-04 13:44:07.085750
+        lastUpdate: 2021-06-09 17:28:56.173354
         metadata: {}
         origin: step_output:networkAnalysisDev_0.m2.nodes
+        valueHash: *id002
         valueSchema:
-          default: null
+          default: *id003
           doc: Nodes table.
-          subSchema: null
+          optional: false
           type: table
+          typeConfig: {}
   m3:
     values:
-      graphData:
-        id: a526f4c1-ceca-4ca0-bf7a-136cf3bb1172
+      directConnections:
+        id: 028ddc95-ccbc-42f1-b650-90fc9f0dc615
         isConstant: false
+        isSet: false
         isStreaming: false
         isValid: false
-        lastUpdate: 2021-05-04 13:44:07.085998
+        lastUpdate: 2021-06-09 17:28:56.174061
+        metadata: {}
+        origin: step_output:networkAnalysisDev_0.m3.directConnections
+        valueHash: *id002
+        valueSchema:
+          default: *id003
+          doc: Ids of the direct connections of the 'selectedNodeId'
+          optional: false
+          type: any
+          typeConfig: {}
+      graphData:
+        id: c5857deb-b1db-4237-912d-9321a9b813d5
+        isConstant: false
+        isSet: false
+        isStreaming: false
+        isValid: false
+        lastUpdate: 2021-06-09 17:28:56.173721
         metadata: {}
         origin: step_output:networkAnalysisDev_0.m3.graphData
+        valueHash: *id002
         valueSchema:
-          default: null
+          default: *id003
           doc: Nodes table.
-          subSchema: null
+          optional: false
           type: table
-      shortestPath:
-        id: 1da64242-01ad-482b-9885-12e326477196
+          typeConfig: {}
+      graphStats:
+        id: 6e034783-645b-4b82-af19-295cef0f4a10
         isConstant: false
+        isSet: false
         isStreaming: false
         isValid: false
-        lastUpdate: 2021-05-04 13:44:07.086118
+        lastUpdate: 2021-06-09 17:28:56.174233
+        metadata: {}
+        origin: step_output:networkAnalysisDev_0.m3.graphStats
+        valueHash: *id002
+        valueSchema:
+          default: *id003
+          doc: Graph stats
+          optional: false
+          type: any
+          typeConfig: {}
+      shortestPath:
+        id: 2c5e09cf-462b-4450-b65a-98d5e5c47571
+        isConstant: false
+        isSet: false
+        isStreaming: false
+        isValid: false
+        lastUpdate: 2021-06-09 17:28:56.173885
         metadata: {}
         origin: step_output:networkAnalysisDev_0.m3.shortestPath
+        valueHash: *id002
         valueSchema:
-          default: null
+          default: *id003
           doc: Shortest path array.
-          subSchema: null
+          optional: false
           type: any
+          typeConfig: {}
   m4:
     values:
       c:
-        id: c4d12087-b582-4f63-9e02-acca1cbc5997
+        id: d8eae6d0-790f-45d9-8140-5fe5596980ea
         isConstant: false
+        isSet: false
         isStreaming: false
         isValid: false
-        lastUpdate: 2021-05-04 13:44:07.086240
+        lastUpdate: 2021-06-09 17:28:56.174397
         metadata: {}
         origin: step_output:networkAnalysisDev_0.m4.c
+        valueHash: *id002
         valueSchema:
-          default: null
+          default: *id003
           doc: c.
-          subSchema: null
+          optional: false
           type: any
+          typeConfig: {}
   m5:
     values:
       c:
-        id: f20cf9d3-a13b-446a-a886-dd2444c5753d
+        id: ed3dd3a9-c9f6-4e1d-a6f8-2194c10defb7
         isConstant: false
+        isSet: false
         isStreaming: false
         isValid: false
-        lastUpdate: 2021-05-04 13:44:07.086360
+        lastUpdate: 2021-06-09 17:28:56.174564
         metadata: {}
         origin: step_output:networkAnalysisDev_0.m5.c
+        valueHash: *id002
         valueSchema:
-          default: null
+          default: *id003
           doc: c.
-          subSchema: null
+          optional: false
           type: any
+          typeConfig: {}
+stepStates:
+  m1: *id004
+  m2: &id005 stale
+  m3: *id005
+  m4: *id004
+  m5: *id005
 structure:
   pipelineId: networkAnalysisDev_0
   pipelineInputConnections:
@@ -504,6 +809,12 @@ structure:
     - m2.edgesMappingTable
     m2__nodesMappingTable:
     - m2.nodesMappingTable
+    m3__selectedNodeId:
+    - m3.selectedNodeId
+    m3__shortestPathSource:
+    - m3.shortestPathSource
+    m3__shortestPathTarget:
+    - m3.shortestPathTarget
     m4__a:
     - m4.a
     m4__b:
@@ -514,14 +825,291 @@ structure:
     - m5.b
     m5__operator:
     - m5.operator
+  pipelineInputs:
+    m1__metadataFields:
+      connectedInputs:
+      - stepId: m1
+        subValue: null
+        valueName: metadataFields
+      pipelineId: networkAnalysisDev_0
+      valueName: m1__metadataFields
+      valueSchema:
+        default: []
+        doc: Metadata field.
+        optional: false
+        type: any
+        typeConfig: {}
+    m1__selectedItemsIds:
+      connectedInputs:
+      - stepId: m1
+        subValue: null
+        valueName: selectedItemsIds
+      pipelineId: networkAnalysisDev_0
+      valueName: m1__selectedItemsIds
+      valueSchema:
+        default: []
+        doc: URIs of selected items.
+        optional: false
+        type: any
+        typeConfig: {}
+    m2__edgesMappingTable:
+      connectedInputs:
+      - stepId: m2
+        subValue: null
+        valueName: edgesMappingTable
+      pipelineId: networkAnalysisDev_0
+      valueName: m2__edgesMappingTable
+      valueSchema:
+        default: *id003
+        doc: Edges mapping table.
+        optional: true
+        type: table
+        typeConfig: {}
+    m2__nodesMappingTable:
+      connectedInputs:
+      - stepId: m2
+        subValue: null
+        valueName: nodesMappingTable
+      pipelineId: networkAnalysisDev_0
+      valueName: m2__nodesMappingTable
+      valueSchema:
+        default: *id003
+        doc: Nodes mapping table.
+        optional: true
+        type: table
+        typeConfig: {}
+    m3__selectedNodeId:
+      connectedInputs:
+      - stepId: m3
+        subValue: null
+        valueName: selectedNodeId
+      pipelineId: networkAnalysisDev_0
+      valueName: m3__selectedNodeId
+      valueSchema:
+        default: null
+        doc: ID of the selected node to calculate direct neighbours
+        optional: true
+        type: any
+        typeConfig: {}
+    m3__shortestPathSource:
+      connectedInputs:
+      - stepId: m3
+        subValue: null
+        valueName: shortestPathSource
+      pipelineId: networkAnalysisDev_0
+      valueName: m3__shortestPathSource
+      valueSchema:
+        default: null
+        doc: ID of the start node for the shortest path calculations
+        optional: true
+        type: any
+        typeConfig: {}
+    m3__shortestPathTarget:
+      connectedInputs:
+      - stepId: m3
+        subValue: null
+        valueName: shortestPathTarget
+      pipelineId: networkAnalysisDev_0
+      valueName: m3__shortestPathTarget
+      valueSchema:
+        default: null
+        doc: ID of the end node for the shortest path calculations
+        optional: true
+        type: any
+        typeConfig: {}
+    m4__a:
+      connectedInputs:
+      - stepId: m4
+        subValue: null
+        valueName: a
+      pipelineId: networkAnalysisDev_0
+      valueName: m4__a
+      valueSchema:
+        default: 1
+        doc: a.
+        optional: true
+        type: any
+        typeConfig: {}
+    m4__b:
+      connectedInputs:
+      - stepId: m4
+        subValue: null
+        valueName: b
+      pipelineId: networkAnalysisDev_0
+      valueName: m4__b
+      valueSchema:
+        default: 1
+        doc: b.
+        optional: true
+        type: any
+        typeConfig: {}
+    m4__operator:
+      connectedInputs:
+      - stepId: m4
+        subValue: null
+        valueName: operator
+      pipelineId: networkAnalysisDev_0
+      valueName: m4__operator
+      valueSchema:
+        default: add
+        doc: operator.
+        optional: true
+        type: any
+        typeConfig: {}
+    m5__b:
+      connectedInputs:
+      - stepId: m5
+        subValue: null
+        valueName: b
+      pipelineId: networkAnalysisDev_0
+      valueName: m5__b
+      valueSchema:
+        default: 1
+        doc: b.
+        optional: true
+        type: any
+        typeConfig: {}
+    m5__operator:
+      connectedInputs:
+      - stepId: m5
+        subValue: null
+        valueName: operator
+      pipelineId: networkAnalysisDev_0
+      valueName: m5__operator
+      valueSchema:
+        default: add
+        doc: operator.
+        optional: true
+        type: any
+        typeConfig: {}
   pipelineOutputConnections:
     m1__selectedItems: m1.selectedItems
     m2__edges: m2.edges
     m2__nodes: m2.nodes
+    m3__directConnections: m3.directConnections
     m3__graphData: m3.graphData
+    m3__graphStats: m3.graphStats
     m3__shortestPath: m3.shortestPath
     m4__c: m4.c
     m5__c: m5.c
+  pipelineOutputs:
+    m1__selectedItems:
+      connectedOutput:
+        stepId: m1
+        subValue: null
+        valueName: selectedItems
+      pipelineId: networkAnalysisDev_0
+      valueName: m1__selectedItems
+      valueSchema:
+        default: *id003
+        doc: Selected corpus.
+        optional: false
+        type: table
+        typeConfig: {}
+    m2__edges:
+      connectedOutput:
+        stepId: m2
+        subValue: null
+        valueName: edges
+      pipelineId: networkAnalysisDev_0
+      valueName: m2__edges
+      valueSchema:
+        default: *id003
+        doc: Edges table.
+        optional: false
+        type: table
+        typeConfig: {}
+    m2__nodes:
+      connectedOutput:
+        stepId: m2
+        subValue: null
+        valueName: nodes
+      pipelineId: networkAnalysisDev_0
+      valueName: m2__nodes
+      valueSchema:
+        default: *id003
+        doc: Nodes table.
+        optional: false
+        type: table
+        typeConfig: {}
+    m3__directConnections:
+      connectedOutput:
+        stepId: m3
+        subValue: null
+        valueName: directConnections
+      pipelineId: networkAnalysisDev_0
+      valueName: m3__directConnections
+      valueSchema:
+        default: *id003
+        doc: Ids of the direct connections of the 'selectedNodeId'
+        optional: false
+        type: any
+        typeConfig: {}
+    m3__graphData:
+      connectedOutput:
+        stepId: m3
+        subValue: null
+        valueName: graphData
+      pipelineId: networkAnalysisDev_0
+      valueName: m3__graphData
+      valueSchema:
+        default: *id003
+        doc: Nodes table.
+        optional: false
+        type: table
+        typeConfig: {}
+    m3__graphStats:
+      connectedOutput:
+        stepId: m3
+        subValue: null
+        valueName: graphStats
+      pipelineId: networkAnalysisDev_0
+      valueName: m3__graphStats
+      valueSchema:
+        default: *id003
+        doc: Graph stats
+        optional: false
+        type: any
+        typeConfig: {}
+    m3__shortestPath:
+      connectedOutput:
+        stepId: m3
+        subValue: null
+        valueName: shortestPath
+      pipelineId: networkAnalysisDev_0
+      valueName: m3__shortestPath
+      valueSchema:
+        default: *id003
+        doc: Shortest path array.
+        optional: false
+        type: any
+        typeConfig: {}
+    m4__c:
+      connectedOutput:
+        stepId: m4
+        subValue: null
+        valueName: c
+      pipelineId: networkAnalysisDev_0
+      valueName: m4__c
+      valueSchema:
+        default: *id003
+        doc: c.
+        optional: false
+        type: any
+        typeConfig: {}
+    m5__c:
+      connectedOutput:
+        stepId: m5
+        subValue: null
+        valueName: c
+      pipelineId: networkAnalysisDev_0
+      valueName: m5__c
+      valueSchema:
+        default: *id003
+        doc: c.
+        optional: false
+        type: any
+        typeConfig: {}
   processingStages:
   - - m1
     - m4
@@ -540,12 +1128,14 @@ structure:
         - m2.corpus
         - __pipeline__.m1__selectedItems
       processingStage: 1
+      required: true
       step:
         inputLinks: {}
         moduleConfig: {}
         moduleType: dataSelection
         parentId: networkAnalysisDev_0
         processingStage: 1
+        required: true
         stepId: m1
     m2:
       inputConnections:
@@ -563,6 +1153,7 @@ structure:
         - m3.nodes
         - __pipeline__.m2__nodes
       processingStage: 2
+      required: true
       step:
         inputLinks:
           corpus:
@@ -573,6 +1164,7 @@ structure:
         moduleType: networkAnalysisDataMapping
         parentId: networkAnalysisDev_0
         processingStage: 2
+        required: true
         stepId: m2
     m3:
       inputConnections:
@@ -580,12 +1172,23 @@ structure:
         - m2.edges
         nodes:
         - m2.nodes
+        selectedNodeId:
+        - __pipeline__.m3__selectedNodeId
+        shortestPathSource:
+        - __pipeline__.m3__shortestPathSource
+        shortestPathTarget:
+        - __pipeline__.m3__shortestPathTarget
       outputConnections:
+        directConnections:
+        - __pipeline__.m3__directConnections
         graphData:
         - __pipeline__.m3__graphData
+        graphStats:
+        - __pipeline__.m3__graphStats
         shortestPath:
         - __pipeline__.m3__shortestPath
       processingStage: 3
+      required: true
       step:
         inputLinks:
           edges:
@@ -600,6 +1203,7 @@ structure:
         moduleType: networkAnalysisDataVis
         parentId: networkAnalysisDev_0
         processingStage: 3
+        required: true
         stepId: m3
     m4:
       inputConnections:
@@ -614,12 +1218,14 @@ structure:
         - m5.a
         - __pipeline__.m4__c
       processingStage: 1
+      required: false
       step:
         inputLinks: {}
         moduleConfig: {}
         moduleType: twoArgsMathFunction
         parentId: networkAnalysisDev_0
         processingStage: 1
+        required: false
         stepId: m4
     m5:
       inputConnections:
@@ -633,6 +1239,7 @@ structure:
         c:
         - __pipeline__.m5__c
       processingStage: 2
+      required: false
       step:
         inputLinks:
           a:
@@ -643,4 +1250,6 @@ structure:
         moduleType: twoArgsMathFunction
         parentId: networkAnalysisDev_0
         processingStage: 2
+        required: false
         stepId: m5
+

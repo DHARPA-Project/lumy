@@ -136,7 +136,13 @@ class NetworkAnalysisDataVisModule(KiaraModule):
                 doc="ID of the end node for the shortest path calculations",
                 optional=True,
                 default=None
-            )
+            ),
+            "selectedNodeId": ValueSchema(
+                type="any",
+                doc="ID of the selected node to calculate direct neighbours",
+                optional=True,
+                default=None
+            ),
         }
 
     def create_output_schema(self) -> Mapping[str, ValueSchema]:
@@ -148,7 +154,15 @@ class NetworkAnalysisDataVisModule(KiaraModule):
             "shortestPath": ValueSchema(
                 type="any",
                 doc="Shortest path array.",
-            )
+            ),
+            "directConnections": ValueSchema(
+                type="any",
+                doc="Ids of the direct connections of the 'selectedNodeId'",
+            ),
+            "graphStats": ValueSchema(
+                type="dict",
+                doc="Graph stats",
+            ),
         }
 
     def process(self, inputs: StepInputs, outputs: StepOutputs) -> None:
@@ -203,3 +217,35 @@ class NetworkAnalysisDataVisModule(KiaraModule):
             outputs.set_value('shortestPath', shortest_path)
         else:
             outputs.set_value('shortestPath', [])
+
+        # direct connections
+        selected_node_id = inputs.get_value_data('selectedNodeId')
+        if selected_node_id is not None and selected_node_id in graph:
+            direct_connections = list(graph.neighbors(id))
+            outputs.set_value('directConnections', direct_connections)
+        else:
+            outputs.set_value('directConnections', [])
+
+        # stats
+        num_nodes = graph.number_of_nodes()
+        if num_nodes == 0:
+            num_nodes = 1  # to avoid division by zero down below
+        # TODO: This sometimes throws this error:
+        # networkx.exception.NetworkXError: Graph is not weakly connected.
+        # Look into it when there is a moment
+        try:
+            avg_shortest_path_len = nx.average_shortest_path_length(graph)
+        except Exception:
+            avg_shortest_path_len = 0
+
+        graph_stats = {
+            'nodesCount': nx.number_of_nodes(graph),
+            'edgesCount': nx.number_of_edges(graph),
+            'averageInDegree':
+            sum(d for _, d in graph.in_degree()) / float(num_nodes),
+            'averageOutDegree':
+            sum(d for _, d in graph.out_degree()) / float(num_nodes),
+            'density': nx.density(graph),
+            'averageShortestPathLength': avg_shortest_path_len
+        }
+        outputs.set_value('graphStats', graph_stats)

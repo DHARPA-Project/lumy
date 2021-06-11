@@ -8,7 +8,7 @@ with open(os.path.join(REPO_DIR, 'package.json')) as fid:
     repo_data = json.load(fid)
 
 
-__version__ = '0.2.0'
+__version__ = '0.2.1'
 description = 'Lumy Jupyter middleware'
 
 with open('README.md', 'r') as fh:

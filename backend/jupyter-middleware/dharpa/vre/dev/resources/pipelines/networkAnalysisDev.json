@@ -21,17 +21,6 @@
         "nodes": "m2.nodes",
         "edges": "m2.edges"
       }
-    },
-    {
-      "module_type": "twoArgsMathFunction",
-      "step_id": "m4"
-    },
-    {
-      "module_type": "twoArgsMathFunction",
-      "step_id": "m5",
-      "input_links": {
-        "a": "m4.c"
-      }
     }
   ],
   "input_aliases": {},
