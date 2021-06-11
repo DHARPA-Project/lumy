@@ -15,7 +15,7 @@ import Divider from '@material-ui/core/Divider'
 import useStyles from './NetworkAnalysisPage.styles'
 
 import SampleNetworkGraph from '../../assets/svgs/SampleNetworkGraph'
-import ForceDirectedNetworkGraph from '../../assets/svgs/ForceDirectedNetworkGraph'
+import ForceDirectedNetworkGraph from '../../assets/svgs/DirectedNetworkGraph'
 import MultiGraphNetworkGraph from '../../assets/svgs/MultiGraphNetworkGraph'
 
 const NetworkAnalysisPage: React.FC = () => {
@@ -91,7 +91,7 @@ const NetworkAnalysisPage: React.FC = () => {
                 Directed
               </Typography>
               <Typography variant="body2" color="textSecondary" component="p" align="center">
-                Visualize force-directed network graphs assembled from raw data.
+                Visualize directed network graphs assembled from raw data.
               </Typography>
             </CardContent>
             <div className={classes.cardImage}>

@@ -6,7 +6,7 @@ import TableChartIcon from '@material-ui/icons/TableChart'
 
 import NoteEditor from '../components/common/NoteEditor'
 import CodeView from '../components/common/CodeView'
-import DataTable from '../components/common/DataTable'
+import DataPreview from '../components/common/DataPreview'
 
 export interface IFeature {
   id: string
@@ -29,7 +29,7 @@ export const featureList: IFeature[] = [
     label: 'Data',
     tooltip: 'View Data',
     icon: <TableChartIcon />,
-    content: <DataTable />
+    content: <DataPreview />
   },
   {
     id: 'notes',

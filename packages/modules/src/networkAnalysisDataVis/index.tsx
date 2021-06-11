@@ -1,17 +1,17 @@
 import React from 'react'
 import {
   ModuleProps,
-  TableStats,
-  TabularDataFilter,
+  // TableStats,
+  // TabularDataFilter,
   useStepInputValue,
   useStepOutputValue,
   withMockProcessor
 } from '@dharpa-vre/client-core'
 import { ScalingMethod, InputValues, OutputValues } from './structure'
-import { Grid } from '@material-ui/core'
+import Grid from '@material-ui/core/Grid'
 import { useElement, NetworkForce, NodeMouseEventDetails } from '@dharpa-vre/datavis-components'
 import { useBbox } from '../hooks/useBbox'
-import { DataGrid } from '@dharpa-vre/arrow-data-grid'
+// import { DataGrid } from '@dharpa-vre/arrow-data-grid'
 import { NavigationPanel, NavigationPanelSection } from './components/NavigationPanel'
 import { NodesAppearance } from './navigationSections/NodesAppearance'
 import { FilterTopologyLayout } from './navigationSections/FilterTopologyLayout'
@@ -32,12 +32,12 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
   const [edges] = useStepInputValue<InputValues['edges']>(step.stepId, 'edges', { fullValue: true })
 
   // nodes page + filter for table view
-  const [nodesFilter, setNodesFilter] = React.useState<TabularDataFilter>({ pageSize: 10 })
-  const [nodesPage, , nodesStats] = useStepInputValue<InputValues['nodes'], TableStats>(
-    step.stepId,
-    'nodes',
-    nodesFilter
-  )
+  // const [nodesFilter, setNodesFilter] = React.useState<TabularDataFilter>({ pageSize: 10 })
+  // const [nodesPage, , nodesStats] = useStepInputValue<InputValues['nodes'], TableStats>(
+  //   step.stepId,
+  //   'nodes',
+  //   nodesFilter
+  // )
 
   /* 2. Get input values that we can control */
 
@@ -120,73 +120,73 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
 
   return (
     <Grid container>
-      <Grid container spacing={3}>
-        <Grid item xs={3}>
-          <Grid item>
-            <GraphStatsPanel graphStats={graphStats} />
-          </Grid>
+      {/* <Grid container> */}
+      <Grid item xs={3}>
+        {/* <Grid item> */}
+        <GraphStatsPanel graphStats={graphStats} />
+        {/* </Grid> */}
 
-          <NavigationPanel>
-            <NavigationPanelSection title="Nodes appearance" index="0">
-              <NodesAppearance
-                nodesScalingMethod={nodesScalingMethod}
-                onNodesScalingMethodUpdated={setNodesScalingMethod}
-                isDisplayLabels={isDisplayLabels}
-                onDisplayLabelsUpdated={setIsDisplayLabels}
-                colorCodeNodes={colorCodeNodes}
-                onColorCodeNodesUpdated={setColorCodeNodes}
-                labelNodeSizeThreshold={labelNodeSizeThreshold}
-                onLabelNodeSizeThresholdUpdated={setLabelNodeSizeThreshold}
-                labelNodesSizeThresholdBoundaries={[
-                  nodeScalerParams.min,
-                  nodeScalerParams.max,
-                  nodeScalerParams.step
-                ]}
-              />
-            </NavigationPanelSection>
-            <NavigationPanelSection title="Edges appearance" index="1"></NavigationPanelSection>
-            <NavigationPanelSection title="Filter/Topology/Layout" index="2">
-              <FilterTopologyLayout
-                isDisplayIsolated={isDisplayIsolated}
-                onDisplayIsolatedUpdated={setIsDisplayIsolated}
-              />
-            </NavigationPanelSection>
-            <NavigationPanelSection title="Shortest path" index="3"></NavigationPanelSection>
-            <NavigationPanelSection title="Communities" index="4"></NavigationPanelSection>
-          </NavigationPanel>
-        </Grid>
-        <Grid item xs={9} ref={graphContainerRef} style={{ position: 'relative' }}>
-          {graphTooltipInfo != null ? (
-            <NodeTooltip
-              position={{
-                left: graphTooltipInfo.mouseCoordinates.x,
-                top: graphTooltipInfo.mouseCoordinates.y
-              }}
-              label={graphTooltipInfo.nodeMetadata.label}
-              scalingMethod={nodesScalingMethod}
-              scalingValue={graphTooltipInfo.nodeMetadata.scaler}
-              group={graphTooltipInfo.nodeMetadata.group}
+        <NavigationPanel>
+          <NavigationPanelSection title="Nodes appearance" index="0">
+            <NodesAppearance
+              nodesScalingMethod={nodesScalingMethod}
+              onNodesScalingMethodUpdated={setNodesScalingMethod}
+              isDisplayLabels={isDisplayLabels}
+              onDisplayLabelsUpdated={setIsDisplayLabels}
+              colorCodeNodes={colorCodeNodes}
+              onColorCodeNodesUpdated={setColorCodeNodes}
+              labelNodeSizeThreshold={labelNodeSizeThreshold}
+              onLabelNodeSizeThresholdUpdated={setLabelNodeSizeThreshold}
+              labelNodesSizeThresholdBoundaries={[
+                nodeScalerParams.min,
+                nodeScalerParams.max,
+                nodeScalerParams.step
+              ]}
             />
-          ) : (
-            ''
-          )}
-          <network-force
-            displayIsolatedNodes={isDisplayIsolated ? undefined : true}
-            displayLabels={isDisplayLabels ? undefined : false}
-            colorCodeNodes={colorCodeNodes ? undefined : false}
-            labelNodeSizeThreshold={normalizedValue(
-              labelNodeSizeThreshold,
-              nodeScalerParams.min,
-              nodeScalerParams.max
-            )}
-            reapplySimulationOnUpdate={undefined}
-            width={graphBox?.width ?? 0}
-            height={((graphBox?.width ?? 0) * 2) / 3}
-            ref={graphRef}
-          />
-        </Grid>
+          </NavigationPanelSection>
+          <NavigationPanelSection title="Edges appearance" index="1"></NavigationPanelSection>
+          <NavigationPanelSection title="Filter/Topology/Layout" index="2">
+            <FilterTopologyLayout
+              isDisplayIsolated={isDisplayIsolated}
+              onDisplayIsolatedUpdated={setIsDisplayIsolated}
+            />
+          </NavigationPanelSection>
+          <NavigationPanelSection title="Shortest path" index="3"></NavigationPanelSection>
+          <NavigationPanelSection title="Communities" index="4"></NavigationPanelSection>
+        </NavigationPanel>
       </Grid>
-      <Grid container direction="column">
+      <Grid item xs={9} ref={graphContainerRef} style={{ position: 'relative' }}>
+        {graphTooltipInfo != null ? (
+          <NodeTooltip
+            position={{
+              left: graphTooltipInfo.mouseCoordinates.x,
+              top: graphTooltipInfo.mouseCoordinates.y
+            }}
+            label={graphTooltipInfo.nodeMetadata.label}
+            scalingMethod={nodesScalingMethod}
+            scalingValue={graphTooltipInfo.nodeMetadata.scaler}
+            group={graphTooltipInfo.nodeMetadata.group}
+          />
+        ) : (
+          ''
+        )}
+        <network-force
+          displayIsolatedNodes={isDisplayIsolated ? undefined : true}
+          displayLabels={isDisplayLabels ? undefined : false}
+          colorCodeNodes={colorCodeNodes ? undefined : false}
+          labelNodeSizeThreshold={normalizedValue(
+            labelNodeSizeThreshold,
+            nodeScalerParams.min,
+            nodeScalerParams.max
+          )}
+          reapplySimulationOnUpdate={undefined}
+          width={graphBox?.width ?? 0}
+          height={((graphBox?.width ?? 0) * 2) / 3}
+          ref={graphRef}
+        />
+      </Grid>
+      {/* </Grid> */}
+      {/* <Grid container direction="column">
         <Grid item style={{ flexGrow: 1 }}>
           <DataGrid
             data={nodesPage}
@@ -198,7 +198,7 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
             filteringEnabled
           />
         </Grid>
-      </Grid>
+      </Grid> */}
     </Grid>
   )
 }
