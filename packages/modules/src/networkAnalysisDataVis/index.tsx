@@ -122,39 +122,39 @@ const NetworkAnalysisDataVis = ({ step }: Props): JSX.Element => {
     <Grid container>
       {/* <Grid container> */}
       <Grid item xs={3}>
-          {/* <Grid item> */}
-          <GraphStatsPanel graphStats={graphStats} />
-          {/* </Grid> */}
+        {/* <Grid item> */}
+        <GraphStatsPanel graphStats={graphStats} />
+        {/* </Grid> */}
 
-          <NavigationPanel>
-            <NavigationPanelSection title="Nodes appearance" index="0">
-              <NodesAppearance
-                nodesScalingMethod={nodesScalingMethod}
-                onNodesScalingMethodUpdated={setNodesScalingMethod}
-                isDisplayLabels={isDisplayLabels}
-                onDisplayLabelsUpdated={setIsDisplayLabels}
-                colorCodeNodes={colorCodeNodes}
-                onColorCodeNodesUpdated={setColorCodeNodes}
-                labelNodeSizeThreshold={labelNodeSizeThreshold}
-                onLabelNodeSizeThresholdUpdated={setLabelNodeSizeThreshold}
-                labelNodesSizeThresholdBoundaries={[
-                  nodeScalerParams.min,
-                  nodeScalerParams.max,
-                  nodeScalerParams.step
-                ]}
-              />
-            </NavigationPanelSection>
-            <NavigationPanelSection title="Edges appearance" index="1"></NavigationPanelSection>
-            <NavigationPanelSection title="Filter/Topology/Layout" index="2">
-              <FilterTopologyLayout
-                isDisplayIsolated={isDisplayIsolated}
-                onDisplayIsolatedUpdated={setIsDisplayIsolated}
-              />
-            </NavigationPanelSection>
-            <NavigationPanelSection title="Shortest path" index="3"></NavigationPanelSection>
-            <NavigationPanelSection title="Communities" index="4"></NavigationPanelSection>
-          </NavigationPanel>
-        </Grid>
+        <NavigationPanel>
+          <NavigationPanelSection title="Nodes appearance" index="0">
+            <NodesAppearance
+              nodesScalingMethod={nodesScalingMethod}
+              onNodesScalingMethodUpdated={setNodesScalingMethod}
+              isDisplayLabels={isDisplayLabels}
+              onDisplayLabelsUpdated={setIsDisplayLabels}
+              colorCodeNodes={colorCodeNodes}
+              onColorCodeNodesUpdated={setColorCodeNodes}
+              labelNodeSizeThreshold={labelNodeSizeThreshold}
+              onLabelNodeSizeThresholdUpdated={setLabelNodeSizeThreshold}
+              labelNodesSizeThresholdBoundaries={[
+                nodeScalerParams.min,
+                nodeScalerParams.max,
+                nodeScalerParams.step
+              ]}
+            />
+          </NavigationPanelSection>
+          <NavigationPanelSection title="Edges appearance" index="1"></NavigationPanelSection>
+          <NavigationPanelSection title="Filter/Topology/Layout" index="2">
+            <FilterTopologyLayout
+              isDisplayIsolated={isDisplayIsolated}
+              onDisplayIsolatedUpdated={setIsDisplayIsolated}
+            />
+          </NavigationPanelSection>
+          <NavigationPanelSection title="Shortest path" index="3"></NavigationPanelSection>
+          <NavigationPanelSection title="Communities" index="4"></NavigationPanelSection>
+        </NavigationPanel>
+      </Grid>
       <Grid item xs={9} ref={graphContainerRef} style={{ position: 'relative' }}>
         {graphTooltipInfo != null ? (
           <NodeTooltip
