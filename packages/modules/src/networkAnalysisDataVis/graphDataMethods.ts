@@ -52,7 +52,7 @@ export function getNodeScalerParameters(
   graphData: OutputValues['graphData'],
   scalingMethod: ScalingMethod
 ): NodeScalerParameters {
-  const groupValues = graphData ? [...graphData?.getColumn(scalingMethod)] : []
+  const groupValues = [...(graphData?.getColumn(scalingMethod) ?? [])]
   const groupValuesMin = Math.min(...groupValues)
   const groupValuesMax = Math.max(...groupValues)
 
