@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Table as ArrowTable } from 'apache-arrow'
+import { Table as ArrowTable, Utf8Vector } from 'apache-arrow'
 
 import { TableStats, TabularDataFilter } from '@dharpa-vre/client-core'
 
@@ -17,6 +17,7 @@ import useStyles from './TableView.styles'
 
 export interface TableProps<S> {
   table: ArrowTable
+  fields: string[]
   tableStats: TableStats
   filter?: TabularDataFilter
   onFilterChanged?: (filter: TabularDataFilter) => void
@@ -36,6 +37,7 @@ const defaultNumberRowsPerPage = 5
  */
 export const TableView = <S,>({
   table,
+  fields,
   tableStats,
   selections,
   filter,
@@ -47,8 +49,6 @@ export const TableView = <S,>({
   caption
 }: TableProps<S>): JSX.Element => {
   const classes = useStyles()
-
-  const colIndices = [...Array(table.numCols).keys()]
 
   const [pageNumber, setPageNumber] = useState(0)
   const [numRowsPerPage, setNumRowsPerPage] = useState(filter?.pageSize ?? defaultNumberRowsPerPage)
@@ -83,18 +83,18 @@ export const TableView = <S,>({
           <TableHead>
             <TableRow>
               {useSelection ? <TableCell align="center"></TableCell> : ''}
-              {table.schema.fields.map((field, idx) => (
+              {fields.map((field, idx) => (
                 <TableCell key={idx} align="center">
-                  {field.name}
+                  {field}
                 </TableCell>
               ))}
             </TableRow>
           </TableHead>
           <TableBody className={classes.tableBody}>
-            {[...table].map((row, idx) => (
-              <TableRow className={classes.row} key={idx}>
+            {[...table].map((row, rowIndex) => (
+              <TableRow className={classes.row} key={rowIndex}>
                 {useSelection && (
-                  <TableCell className={classes.borderless}>
+                  <TableCell className={classes.borderless} align="center">
                     <Checkbox
                       className={classes.checkbox}
                       color="primary"
@@ -103,11 +103,15 @@ export const TableView = <S,>({
                     />
                   </TableCell>
                 )}
-                {colIndices.map(idx => (
-                  <TableCell className={classes.borderless} key={idx}>
-                    {row[idx]}
-                  </TableCell>
-                ))}
+                {fields.map((field, idx) => {
+                  let value = table?.getColumn(field).toArray()[rowIndex]
+                  if (value instanceof Utf8Vector) value = Array.from(value).join(', ')
+                  return (
+                    <TableCell className={classes.borderless} key={idx} align="center">
+                      {value}
+                    </TableCell>
+                  )
+                })}
               </TableRow>
             ))}
           </TableBody>
