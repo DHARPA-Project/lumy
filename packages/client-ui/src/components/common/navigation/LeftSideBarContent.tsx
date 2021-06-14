@@ -19,8 +19,8 @@ import NavItem from './NavItem'
 const LeftSideBarContent = (): JSX.Element => {
   const classes = useStyles()
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { isLeftSideBarExpanded, setIsLeftSideBarExpanded } = useContext(PageLayoutContext)
+  // const { isLeftSideBarExpanded, setIsLeftSideBarExpanded } = useContext(PageLayoutContext)
+  const { isLeftSideBarExpanded } = useContext(PageLayoutContext)
 
   // const { projectList } = useContext(ProjectContext)
 
