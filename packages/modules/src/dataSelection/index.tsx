@@ -30,6 +30,8 @@ interface OutputValues {
 
 type Props = ModuleProps<InputValues, OutputValues>
 
+const fieldsToDisplay = ['alias', 'columnNames']
+
 const DataSelection = ({ step }: Props): JSX.Element => {
   const classes = useStyles()
 
@@ -55,6 +57,7 @@ const DataSelection = ({ step }: Props): JSX.Element => {
         {repositoryItemsBatch != null && repositoryStats != null && (
           <TableView
             table={repositoryItemsBatch}
+            fields={fieldsToDisplay}
             tableStats={repositoryStats}
             selections={selectedItemsIds}
             onSelectionsChanged={setSelectedItemsIds}
