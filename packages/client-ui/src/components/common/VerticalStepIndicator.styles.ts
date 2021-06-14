@@ -64,7 +64,7 @@ export default makeStyles(theme => ({
     padding: 0,
     border: 'none',
     borderRadius: '.5em',
-    backgroundColor: theme.palette.action.disabled,
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
     zIndex: 2,
     overflow: 'hidden',
     transition: theme.transitions.create('all', {
@@ -72,7 +72,7 @@ export default makeStyles(theme => ({
       duration: theme.transitions.duration.standard
     }),
     '&.completed': {
-      backgroundColor: theme.palette.primary.light
+      backgroundColor: 'rgba(0, 0, 0, 0.3)'
     }
   }
 }))

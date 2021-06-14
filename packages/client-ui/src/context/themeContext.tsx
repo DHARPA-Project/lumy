@@ -174,6 +174,25 @@ const ThemeContextProvider = ({ children }: ThemeContextProviderProps): JSX.Elem
           root: {
             boxShadow: 'none'
           }
+        },
+        MuiIconButton: {
+          root: {
+            padding: defaultTheme.spacing(1)
+          }
+        },
+        MuiAccordionSummary: {
+          root: {
+            minHeight: defaultTheme.spacing(4),
+            '&.Mui-expanded': {
+              minHeight: defaultTheme.spacing(6)
+            }
+          },
+          content: {
+            margin: defaultTheme.spacing(1, 0),
+            '&.Mui-expanded': {
+              margin: defaultTheme.spacing(2, 0)
+            }
+          }
         }
       },
       ...extendedOptions

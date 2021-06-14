@@ -1,7 +1,5 @@
 import React, { useContext } from 'react'
 
-import Paper from '@material-ui/core/Paper'
-
 import useStyles from './LeftSideBarContainer.styles'
 import { PageLayoutContext } from '../../../context/pageLayoutContext'
 
@@ -15,9 +13,9 @@ const LeftSideBarContainer = ({ children }: LeftSideBarContainerProps): JSX.Elem
   const { isLeftSideBarExpanded } = useContext(PageLayoutContext)
 
   return (
-    <Paper square={true} className={`${classes.root}${isLeftSideBarExpanded ? '' : ' collapsed'}`}>
+    <div className={`${classes.sideBarContainer}${isLeftSideBarExpanded ? '' : ' collapsed'}`}>
       {children}
-    </Paper>
+    </div>
   )
 }
 
