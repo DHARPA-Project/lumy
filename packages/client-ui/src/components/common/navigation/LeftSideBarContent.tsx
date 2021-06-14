@@ -3,9 +3,9 @@ import React, { useContext } from 'react'
 import List from '@material-ui/core/List'
 import Typography from '@material-ui/core/Typography'
 import Grow from '@material-ui/core/Grow'
-import Fab from '@material-ui/core/Fab'
+// import Fab from '@material-ui/core/Fab'
 
-import DoubleArrowIcon from '@material-ui/icons/DoubleArrow'
+// import DoubleArrowIcon from '@material-ui/icons/DoubleArrow'
 import ExploreIcon from '@material-ui/icons/Explore'
 
 // import { ProjectContext } from '../../../context/projectContext'
@@ -19,14 +19,15 @@ import NavItem from './NavItem'
 const LeftSideBarContent = (): JSX.Element => {
   const classes = useStyles()
 
-  const { isLeftSideBarExpanded, setIsLeftSideBarExpanded } = useContext(PageLayoutContext)
+  // const { isLeftSideBarExpanded, setIsLeftSideBarExpanded } = useContext(PageLayoutContext)
+  const { isLeftSideBarExpanded } = useContext(PageLayoutContext)
 
   // const { projectList } = useContext(ProjectContext)
 
   return (
     <>
       <div className={classes.sideBarTop}>
-        <Fab
+        {/* <Fab
           variant="extended"
           size="small"
           color="default"
@@ -37,7 +38,7 @@ const LeftSideBarContent = (): JSX.Element => {
           <DoubleArrowIcon
             className={classes.sideBarExpandArrow + (isLeftSideBarExpanded ? ' inward' : '')}
           />
-        </Fab>
+        </Fab> */}
 
         <Grow
           in={isLeftSideBarExpanded}
