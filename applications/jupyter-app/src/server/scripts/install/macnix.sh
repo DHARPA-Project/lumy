@@ -7,8 +7,6 @@ trap 'echo "\"${last_command}\" command returned exit code $?."' EXIT
 
 app_name="Lumy"
 
-set
-
 if [[ "$OSTYPE" == "darwin"* ]]; then
   # https://pypi.org/project/appdirs/
   app_data_dir="${HOME}/Library/Application Support/${app_name}"
