@@ -1,21 +1,50 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useParams } from 'react-router'
+import { useHistory } from 'react-router-dom'
 
 import Button from '@material-ui/core/Button'
 
 import WorkflowContextProvider from '../../context/workflowContext'
 
 import WorkflowContainer from '../common/WorkflowContainer'
+import { WorkflowStepSynchroniser } from '../renderless/WorkflowStepSynchroniser'
 
 import useStyles from './WorkflowProjectPage.styles'
 
-const WorkflowProjectPage = (): JSX.Element => {
-  const classes = useStyles()
+interface RouterParams {
+  stepId?: string
+}
+const stepParameterName: keyof RouterParams = 'stepId'
 
-  const [dataSource, setDataSource] = useState<string>(null)
+export interface WorkflowProjectPageProps {
+  /**
+   * URL prefix of this page without the step ID suffix.
+   */
+  pageUrlPrefix: string
+}
+
+const WorkflowProjectPage = ({ pageUrlPrefix }: WorkflowProjectPageProps): JSX.Element => {
+  const classes = useStyles()
+  const { stepId } = useParams<RouterParams>()
+  const history = useHistory()
+
+  const [dataSource, setDataSource] = useState<'repository' | 'upload'>(null)
+
+  useEffect(() => {
+    if (stepId != null && dataSource == null) setDataSource('repository')
+  }, [stepId])
+
+  const handleWorkflowStepUpdated = (stepId: string) => {
+    history.push(`${pageUrlPrefix}/${stepId}`)
+  }
 
   if (dataSource === 'repository')
     return (
       <WorkflowContextProvider>
+        <WorkflowStepSynchroniser
+          stepParameterName={stepParameterName}
+          onStepUpdated={handleWorkflowStepUpdated}
+        />
         <WorkflowContainer />
       </WorkflowContextProvider>
     )

@@ -1112,9 +1112,7 @@ structure:
         typeConfig: {}
   processingStages:
   - - m1
-    - m4
   - - m2
-    - m5
   - - m3
   steps:
     m1:

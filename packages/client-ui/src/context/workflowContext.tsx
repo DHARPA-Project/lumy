@@ -1,6 +1,6 @@
 import React, { useState, createContext, Dispatch, SetStateAction } from 'react'
 
-import { useCurrentWorkflow } from '@dharpa-vre/client-core'
+import { useCurrentWorkflow, workflowUtils } from '@dharpa-vre/client-core'
 import { StepDesc } from '@dharpa-vre/client-core/src/common/types/kiaraGenerated'
 
 export type WorkflowType = {
@@ -40,8 +40,9 @@ const WorkflowContextProvider = ({ children }: WorkflowProviderProps): JSX.Eleme
   const [mainPaneHeight, setMainPaneHeight] = useState<number>(0)
   const [mainPaneWidth, setMainPaneWidth] = useState<number>(0)
 
-  const projectSteps: StepDesc[] = Object.values(currentWorkflow?.steps || {}) || []
-  const idCurrentStep = projectSteps?.[activeStep]?.step?.stepId
+  const stepIds = workflowUtils.getOrderedStepIds(currentWorkflow)
+  const idCurrentStep = stepIds[activeStep]
+  const projectSteps: StepDesc[] = stepIds.map(stepId => currentWorkflow?.steps?.[stepId])
 
   return (
     <WorkflowContext.Provider
