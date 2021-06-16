@@ -23,6 +23,22 @@ function generateToken(length: number): string {
     .slice(0, length)
 }
 
+declare const LUMY_MIDDLEWARE_VERSION: string
+const AnyMiddlewareVersion = 'any'
+
+/**
+ * Returns required middleware version.
+ * Version is resolved in the following order:
+ * - contents of the `MIDDLEWARE_VERSION` environmental variable
+ * - LUMY_MIDDLEWARE_VERSION variable with the value set by webpack.
+ */
+function getRequiredMiddlewareVersion(): string | undefined {
+  const overriddenVersion = process.env['MIDDLEWARE_VERSION']
+  const version = overriddenVersion ?? LUMY_MIDDLEWARE_VERSION
+  if (version === AnyMiddlewareVersion) return undefined
+  return version
+}
+
 async function createWindow(port: number, token: string) {
   const win = new BrowserWindow({
     width: 960,
@@ -59,10 +75,21 @@ function execute(
   app: string,
   args: string[],
   stdoutHandler: (data: unknown) => void,
-  stderrHandler: (data: unknown) => void
+  stderrHandler: (data: unknown) => void,
+  env?: NodeJS.ProcessEnv
 ): Promise<number> {
+  const spawnEnv = { ...process.env }
+  Object.entries(env ?? {}).forEach(([k, v]) => {
+    if (k in spawnEnv) {
+      if (v == null) delete spawnEnv[k]
+      else spawnEnv[k] = v
+    }
+  })
+
   return new Promise((res, rej) => {
-    const p = spawn(app, args)
+    const p = spawn(app, args, {
+      env: spawnEnv
+    })
     p.on('error', rej)
 
     p.stdout.on('data', stdoutHandler)
@@ -80,7 +107,10 @@ async function shouldRunInstaller(): Promise<boolean> {
     exe,
     args,
     (msg: unknown) => console.log(`[Install check]: ${msg}`),
-    (msg: unknown) => console.log(`[Install check] (ERROR): ${msg}`)
+    (msg: unknown) => console.log(`[Install check] (ERROR): ${msg}`),
+    {
+      MIDDLEWARE_VERSION: getRequiredMiddlewareVersion()
+    }
   )
   return installedCheckExitCode !== 0
 }
@@ -90,7 +120,9 @@ async function installBackend(
   stderrHandler: (data: unknown) => void
 ): Promise<void> {
   const [exe, args] = getInstallAppAndArgs(ForcePowerShell)
-  const installerExitCode = await execute(exe, args, stdoutHandler, stderrHandler)
+  const installerExitCode = await execute(exe, args, stdoutHandler, stderrHandler, {
+    MIDDLEWARE_VERSION: getRequiredMiddlewareVersion()
+  })
   if (installerExitCode !== 0) throw new Error(`Installer returned a nonzero exit code: ${installerExitCode}`)
 }
 
@@ -112,7 +144,8 @@ function startJupyterServerProcess(
         ...process.env,
         JUPYTER_PORT_OVERRIDE: String(port),
         JUPYTER_TOKEN: token,
-        JUPYTER_ORIGIN_PAT_OVERRIDE: 'file://.*'
+        JUPYTER_ORIGIN_PAT_OVERRIDE: 'file://.*',
+        MIDDLEWARE_VERSION: getRequiredMiddlewareVersion()
       }
     })
     p.on('error', rej)

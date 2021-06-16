@@ -67,5 +67,10 @@
   "sideEffects": [
     "*.css",
     "*.scss"
-  ]
+  ],
+  "lumy": {
+    "middleware": {
+      "version": "0.3.0"
+    }
+  }
 }

@@ -2,6 +2,8 @@
 const path = require('path')
 const webpack = require('webpack')
 
+const package = require('./package.json')
+
 module.exports = {
   entry: {
     main: './src/electron/main.ts',
@@ -43,7 +45,8 @@ module.exports = {
   },
   plugins: [
     new webpack.DefinePlugin({
-      'process.env.USE_JUPYTER_LAB': JSON.stringify(false)
+      'process.env.USE_JUPYTER_LAB': JSON.stringify(false),
+      LUMY_MIDDLEWARE_VERSION: JSON.stringify(package.lumy.middleware.version)
     })
   ]
 }

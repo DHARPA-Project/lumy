@@ -54,6 +54,24 @@ else {
   Write-Host "Skipped activating conda environment"
 }
 
+if (![string]::IsNullOrEmpty($env:MIDDLEWARE_VERSION)) {
+  $required_middleware_version = $env:MIDDLEWARE_VERSION
+
+  $pip_version_output = pip show --no-input lumy_middleware | Select-String -Pattern "^Version:"
+  $current_middleware_version = $pip_version_output -replace '^Version:\s+', ''
+
+  if ($current_middleware_version -ne $required_middleware_version) {
+    throw "Current version of middleware ($current_middleware_version) is different from required ($required_middleware_version). Exiting."
+  }
+  else {
+    "Correct middleware version detected: $current_middleware_version"
+  }
+}
+else {
+  Write-Host "Not checking middleware version because the required version is not defined in MIDDLEWARE_VERSION: $MIDDLEWARE_VERSION"
+}
+
+
 if ($args[0] -ne "--dry-run") {
   python $main_file_path
   $code = $LastExitCode

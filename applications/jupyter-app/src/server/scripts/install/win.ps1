@@ -125,7 +125,7 @@ function Start-CreateLink {
     if ($code -ne 0) {
       throw "mkdir exited with code: ${code}"
     }
-    ln -s ${miniconda_install_path} "${miniconda_app_dir}"    
+    ln -sf ${miniconda_install_path} "${miniconda_app_dir}"    
     $code = $LastExitCode
     if ($code -ne 0) {
       throw "ln exited with code: ${code}"
@@ -181,7 +181,14 @@ function Start-InstallPythonDependencies {
 }
 
 function Start-InstallOrUpdateVreBackend {
-  pip install -U --extra-index-url https://pypi.fury.io/dharpa/ lumy-middleware
+  if ([string]::IsNullOrEmpty($env:MIDDLEWARE_VERSION)) {
+    $middleware_package = "lumy-middleware"
+  }
+  else {
+    $middleware_version = $env:MIDDLEWARE_VERSION
+    $middleware_package = "lumy-middleware==${middleware_version}"
+  }
+  pip install -U --extra-index-url https://pypi.fury.io/dharpa/ $middleware_package
   $code = $LastExitCode
   if ($code -ne 0) {
     throw "'pip install' exited with code: ${code}"
