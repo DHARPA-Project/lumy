@@ -181,7 +181,7 @@ function Start-InstallPythonDependencies {
 }
 
 function Start-InstallOrUpdateVreBackend {
-  pip install -U --extra-index-url https://pypi.fury.io/dharpa/ lumy-jupyter-middleware
+  pip install -U --extra-index-url https://pypi.fury.io/dharpa/ lumy-middleware
   $code = $LastExitCode
   if ($code -ne 0) {
     throw "'pip install' exited with code: ${code}"

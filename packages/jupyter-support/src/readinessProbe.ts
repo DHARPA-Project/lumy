@@ -13,7 +13,7 @@ export enum ReadinessStatus {
 const BackEndReadyCheckCode = 'IpythonKernelController.get_instance().is_ready'
 
 const BackEndStartCode = `
-  from dharpa.vre.jupyter.controller import IpythonKernelController
+  from lumy_middleware.jupyter.controller import IpythonKernelController
   IpythonKernelController.start()
 `
 

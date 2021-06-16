@@ -98,7 +98,7 @@ function install_python_dependencies {
 }
 
 function install_or_update_vre_backend {
-  pip install -U --extra-index-url https://pypi.fury.io/dharpa/ lumy-jupyter-middleware
+  pip install -U --extra-index-url https://pypi.fury.io/dharpa/ lumy-middleware
 }
 
 run_installer

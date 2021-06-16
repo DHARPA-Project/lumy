@@ -213,22 +213,38 @@ async function quicktypeJSONSchema(
   return writeFile(outputFile, content)
 }
 
+const MiddlewareDirectoryParametersPrefix = '--middleware-directory='
+
+function getMiddlewareDirectory(): string {
+  const param = process.argv.find(s => s.startsWith(MiddlewareDirectoryParametersPrefix))
+  if (param == null) return undefined
+  return param.replace(MiddlewareDirectoryParametersPrefix, '')
+}
+
 async function main() {
+  const middlewareDirectory = getMiddlewareDirectory()
   const schemasLocation = '../schema/json'
 
   const prefixMapper = {
     'https://dharpa.org/schema': schemasLocation
   }
-  const jupyterMiddlewarePath = '../backend/jupyter-middleware'
   const clientCorePath = '../packages/client-core/src/common'
 
-  await quicktypeJSONSchema(
-    'python',
-    prefixMapper,
-    schemasLocation,
-    `${jupyterMiddlewarePath}/dharpa/vre/types/generated.py`
-  )
+  if (middlewareDirectory != null) {
+    console.info(`Generating code for middleware in "${middlewareDirectory}"`)
+    await quicktypeJSONSchema(
+      'python',
+      prefixMapper,
+      schemasLocation,
+      `${middlewareDirectory}/lumy_middleware/types/generated.py`
+    )
+  } else {
+    console.info(
+      `Skipped code geneartion for middleware because middleware directory was not provided in ${MiddlewareDirectoryParametersPrefix}`
+    )
+  }
 
+  console.info('Generating code for the front end')
   await quicktypeJSONSchema(
     'typescript',
     prefixMapper,
