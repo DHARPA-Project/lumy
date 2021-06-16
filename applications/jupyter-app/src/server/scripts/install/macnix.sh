@@ -98,7 +98,13 @@ function install_python_dependencies {
 }
 
 function install_or_update_vre_backend {
-  pip install -U --extra-index-url https://pypi.fury.io/dharpa/ lumy-middleware
+  if [ -z "$MIDDLEWARE_VERSION" ]; then
+    middleware_package="lumy-middleware"
+  else
+    middleware_package="lumy-middleware==$MIDDLEWARE_VERSION"
+  fi
+  echo "Installing middleware: ${middleware_package}"
+  pip install -U --extra-index-url https://pypi.fury.io/dharpa/ ${middleware_package}
 }
 
 run_installer

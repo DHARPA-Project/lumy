@@ -29,6 +29,12 @@ Depending on the OS, Conda will be installed in:
 - **Win**: `C:\apps\Lumy\miniconda`
 - **Linux**: `~/.local/share/Lumy/miniconda`
 
+## Middleware version
+
+The version of the middleware to be used by the app is defined in `package.json` file under `lumy.middleware.version`. This is the version that is compiled into electron main process file. This version is checked by the startup script and an installer is launched if the installed version of the middleware is different from the required version. The installer updates the version of the middleware.
+
+You can override the version by starting the electron process with `MIDDLEWARE_VERSION` environmental variable set to the version you want it to install. Alternatively if you want to run the app with whatever version of the middleware is installed in the virtual environment, you can set the version to `any`. This method is useful during development.
+
 #### Virtual environment
 
 If you already have a virtual environment with the Lumy middleware and Kiara already installed, you can tell the app to avoid installing and using the sandboxed Conda environment. To do this, start the app with the following flag:

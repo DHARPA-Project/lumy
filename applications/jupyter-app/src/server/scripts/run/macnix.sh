@@ -34,6 +34,20 @@ else
   echo "Skipped activating conda environment"
 fi
 
+# Check that the correct version of middleware is installed
+if [ ! -z "$MIDDLEWARE_VERSION" ]; then
+  middleware_package="lumy-middleware==$MIDDLEWARE_VERSION"
+  current_version=$(pip show --no-input lumy_middleware | grep "^Version:" | cut -d' ' -f2)
+  if [ "$current_version" != "$MIDDLEWARE_VERSION" ]; then
+    echo "Current version of middleware ($current_version) is different from required ($MIDDLEWARE_VERSION). Exiting."
+    exit 1
+  else
+    echo "Correct middleware version detected: $current_version"
+  fi
+else
+  echo "Not checking middleware version because the required version is not defined in MIDDLEWARE_VERSION: $MIDDLEWARE_VERSION"
+fi
+
 
 if [ "$1" != "--dry-run" ]; then
   python "${script_dir}/../../main.py"
