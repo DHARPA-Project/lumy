@@ -1,4 +1,4 @@
-import { PipelineState, StepDesc } from '../types'
+import { PipelineState, StepDesc, PipelineStructure } from '../types'
 
 const PipelineTag = '__pipeline__'
 
@@ -32,4 +32,13 @@ export function getStepsConnections(
   inputId: string
 ): [string, string][] {
   return connections?.[inputId]?.filter(onlyStepConnections).map(parseStepConnectionString)
+}
+
+/**
+ * Workflow steps may be defined out of order in the workflow structure but they
+ * have a certain execution order. This helper returns steps IDs in the correct
+ * order of execution.
+ */
+export function getOrderedStepIds(pipelineStructure: PipelineStructure): string[] {
+  return pipelineStructure?.processingStages?.flat() ?? []
 }

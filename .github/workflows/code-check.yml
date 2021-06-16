@@ -3,7 +3,7 @@ name: Type check and lint code
 on: [push]
 
 jobs:
-  build:
+  typecheck_and_lint:
     runs-on: ubuntu-latest
     strategy:
       matrix:

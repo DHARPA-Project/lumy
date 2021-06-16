@@ -16,6 +16,8 @@ import LabPage from './pages/LabPage'
 import PlaygroundPage from './pages/PlaygroundPage'
 import WorkflowProjectPage from './pages/WorkflowProjectPage'
 
+const WorkflowUrlPrefix = '/workflows/network-analysis/directed'
+
 export const App = (): JSX.Element => {
   return (
     <ThemeContextProvider>
@@ -27,7 +29,11 @@ export const App = (): JSX.Element => {
                 <Redirect from="/" exact to="/home" />
                 <Route path="/home" exact component={HomePage} />
                 <Route path="/workflows/network-analysis" exact component={NetworkAnalysisPage} />
-                <Route path="/workflows/network-analysis/directed" exact component={WorkflowProjectPage} />
+                <Route
+                  path={`${WorkflowUrlPrefix}/:stepId?`}
+                  exact
+                  component={() => <WorkflowProjectPage pageUrlPrefix={WorkflowUrlPrefix} />}
+                />
                 {/* <Route path="/intro" exact component={IntroPage} /> */}
                 {/* <Route path="/projects/:id" exact component={ProjectPage} /> */}
                 <Route path="/toy" exact component={ToyVrePage} />
