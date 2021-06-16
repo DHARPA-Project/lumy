@@ -4,8 +4,6 @@
 
 All front end Typescript packages are in `packages` directory, except the `jupyterlab-extension` package which is in `applications` directory.
 
-All back end Python packages are in `backend`.
-
 JSON schema files are in `schema/json`.
 
 ### Front end packages
@@ -13,10 +11,6 @@ JSON schema files are in `schema/json`.
 Configuration files for [eslint](https://eslint.org/), [prettier](https://prettier.io/) and base configuration file (`tsconfig.base.json`) for Typescript are here, in the top level directory.
 
 Use [yarn](https://yarnpkg.com/) instead of `npm` because `yarn` has mono repo support without external packages.
-
-### Back end packages
-
-TBD
 
 ### VSCode support
 
@@ -72,7 +66,7 @@ pip install jupyterlab>=3.0.0
 VRE middleware in development mode
 
 ```
-pip install -e backend/jupyter-middleware
+pip install -U --extra-index-url https://pypi.fury.io/dharpa/ lumy-middleware
 ```
 
 #### 3. Install Jupyter Lab extension
@@ -119,7 +113,6 @@ The web app is available on [http://localhost:8080/](http://localhost:8080/).
 ## Modules panels
 
 Modules panels components are in `packages/modules`. Generally one file per module, mapped to module by `id` in the `index.ts`.
-
 
 ## Repository structure overview
 
