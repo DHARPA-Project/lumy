@@ -12,6 +12,10 @@ extraMetadata:
   main: dist/electron/main.js
 mac:
   target: default
+  hardenedRuntime: true
+  entitlements: "./resources/mac/entitlements.plist"
+  entitlementsInherit: "./resources/mac/entitlements.plist"
+afterSign: electron-builder-notarize
 linux:
   target: tar.gz
 win:
