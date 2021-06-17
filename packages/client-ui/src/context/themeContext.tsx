@@ -2,36 +2,9 @@ import React, { useState, createContext } from 'react'
 
 import CssBaseline from '@material-ui/core/CssBaseline'
 
-import { createMuiTheme, MuiThemeProvider, Theme } from '@material-ui/core/styles'
-import { PaletteType, ThemeOptions } from '@material-ui/core'
+import { MuiThemeProvider, Theme } from '@material-ui/core/styles'
 
-declare module '@material-ui/core/styles/createMuiTheme' {
-  interface Theme {
-    layout: {
-      sideBarFullWidth: React.CSSProperties['width']
-      sideBarCollapsedWidth: React.CSSProperties['width']
-      navLinkTextWidth: React.CSSProperties['width']
-      toolBarWidth: React.CSSProperties['width']
-      navBarTop: React.CSSProperties['height']
-      navBarBottom: React.CSSProperties['height']
-      pagePadding: React.CSSProperties['padding']
-      toolContainerWidth: React.CSSProperties['width']
-    }
-  }
-  // allow configuration using `createMuiTheme`
-  interface ThemeOptions {
-    layout?: {
-      sideBarFullWidth?: React.CSSProperties['width']
-      sideBarCollapsedWidth?: React.CSSProperties['width']
-      navLinkTextWidth: React.CSSProperties['width']
-      toolBarWidth: React.CSSProperties['width']
-      navBarTop: React.CSSProperties['height']
-      navBarBottom: React.CSSProperties['height']
-      pagePadding: React.CSSProperties['padding']
-      toolContainerWidth: React.CSSProperties['width']
-    }
-  }
-}
+import { createCustomTheme } from '../theme'
 
 export type ThemeContextType = {
   darkModeEnabled: boolean
@@ -44,8 +17,6 @@ type ThemeContextProviderProps = {
 }
 
 export const ThemeContext = createContext<ThemeContextType>(null)
-
-const defaultTheme = createMuiTheme()
 
 const getThemeFromLocalStorage = () => {
   const valueInLocalStorage = localStorage.getItem('darkModeEnabled')
@@ -61,142 +32,6 @@ const ThemeContextProvider = ({ children }: ThemeContextProviderProps): JSX.Elem
       return !previousMode
     })
   }
-
-  /**
-   * Shallow-merge additional options on top of default options to create custom MUI themes
-   * @param extendedOptions object containing default Material UI theme options
-   * @returns extended Material UI theme object
-   */
-  const createCustomTheme = (extendedOptions?: ThemeOptions) =>
-    createMuiTheme({
-      palette: {
-        type: darkModeEnabled ? ('dark' as PaletteType) : ('light' as PaletteType),
-        secondary: defaultTheme.palette.primary
-      },
-      typography: {
-        body1: {
-          fontSize: '0.75rem',
-          lineHeight: 1.35
-        },
-        body2: {
-          fontSize: '0.75rem',
-          lineHeight: 1.35
-        },
-        subtitle1: {
-          fontSize: '0.875rem',
-          lineHeight: 1.5
-        },
-        h5: {
-          fontSize: '1.1rem',
-          lineHeight: 1.6
-        },
-        h6: {
-          fontSize: '1rem',
-          lineHeight: 1.5
-        }
-      },
-      props: {
-        MuiSvgIcon: {
-          fontSize: 'small'
-        },
-        MuiPaper: {
-          variant: 'outlined',
-          elevation: 0
-        },
-        MuiCard: {
-          variant: 'outlined'
-        },
-        MuiCardActionArea: {
-          disableRipple: true
-        }
-      },
-      layout: {
-        sideBarFullWidth: '200px',
-        sideBarCollapsedWidth: '40px',
-        navLinkTextWidth: 90,
-        toolBarWidth: '50px',
-        navBarTop: '20vh',
-        navBarBottom: '10vh',
-        pagePadding: '1.5rem',
-        toolContainerWidth: '50vw'
-      },
-      overrides: {
-        MuiCssBaseline: {
-          '@global': {
-            '*': {
-              'scrollbar-width': 'thin',
-              'scrollbar-color': 'rgba(0,0,0,0.1) transparent' // 'thumb track'
-            },
-            '*::-webkit-scrollbar': {
-              width: defaultTheme.spacing(0.5),
-              height: defaultTheme.spacing(0.5)
-            },
-            '*::-webkit-scrollbar-track': {
-              backgroundColor: 'transparent'
-            },
-            '*::-webkit-scrollbar-thumb': {
-              borderRadius: defaultTheme.spacing(0.5),
-              backgroundColor: 'rgba(0,0,0,0.1)',
-              '&:hover': {
-                backgroundColor: 'rgba(0,0,0,0.15)'
-              },
-              '&:active': {
-                backgroundColor: 'rgba(0,0,0,0.2)'
-              }
-            }
-          }
-        },
-        MuiTableCell: {
-          root: {
-            padding: defaultTheme.spacing(1)
-          }
-        },
-        MuiTablePagination: {
-          root: {
-            fontSize: '0.75rem'
-          }
-        },
-        MuiTabs: {
-          root: {
-            minHeight: defaultTheme.spacing(5)
-          }
-        },
-        MuiTab: {
-          root: {
-            fontSize: '0.8125rem'
-          },
-          labelIcon: {
-            minHeight: defaultTheme.spacing(5),
-            paddingTop: '6px'
-          }
-        },
-        MuiFab: {
-          root: {
-            boxShadow: 'none'
-          }
-        },
-        MuiIconButton: {
-          root: {
-            padding: defaultTheme.spacing(1)
-          }
-        },
-        MuiAccordionSummary: {
-          root: {
-            minHeight: defaultTheme.spacing(4),
-            '&.Mui-expanded': {
-              minHeight: defaultTheme.spacing(6)
-            }
-          },
-          content: {
-            margin: defaultTheme.spacing(1, 0),
-            '&.Mui-expanded': {
-              margin: defaultTheme.spacing(2, 0)
-            }
-          }
-        }
-      },
-      ...extendedOptions
-    })
 
   // Keep in mind that createCustomTheme() performs a shallow merge...
   // ... of default option and extended option objects; deeply nested properties...
