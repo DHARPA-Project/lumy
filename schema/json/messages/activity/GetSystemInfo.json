@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "MsgGetSystemInfo",
+  "description": "Get System information",
+  "properties": {
+    "fields": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": []
+}

@@ -23,7 +23,9 @@ import {
   MsgDataRepositoryItems,
   MsgDataRepositoryFindItems,
   MsgNotesUpdate,
-  MsgNotesDelete
+  MsgNotesDelete,
+  MsgSystemInfo,
+  MsgGetSystemInfo
 } from './generated'
 
 /**
@@ -55,11 +57,15 @@ export namespace Activity {
   export type Error = MsgError
   export type ExecutionState = MsgExecutionState
   export type Progress = MsgProgress
+  export type SystemInfo = MsgSystemInfo
+  export type GetSystemInfo = MsgGetSystemInfo
 
   export namespace codec {
     export const Error = Codec<Error>('Error')
     export const ExecutionState = Codec<ExecutionState>('ExecutionState')
     export const Progress = Codec<Progress>('Progress')
+    export const SystemInfo = Codec<SystemInfo>('SystemInfo')
+    export const GetSystemInfo = Codec<SystemInfo>('GetSystemInfo')
   }
 }
 

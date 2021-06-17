@@ -43,6 +43,16 @@ export enum State {
 
 /**
  * Target: "activity"
+ * Message type: "GetSystemInfo"
+ *
+ * Get System information
+ */
+export interface MsgGetSystemInfo {
+  fields?: string[]
+}
+
+/**
+ * Target: "activity"
  * Message type: "Progress"
  *
  * Announces progress of current operation to the frontend.
@@ -52,6 +62,19 @@ export interface MsgProgress {
    * Progress in percents.
    */
   progress: number
+}
+
+/**
+ * Target: "activity"
+ * Message type: "SystemInfo"
+ *
+ * System information
+ */
+export interface MsgSystemInfo {
+  /**
+   * Versions of backend components.
+   */
+  versions: { [key: string]: unknown }
 }
 
 /**

@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "MsgSystemInfo",
+  "description": "System information",
+  "properties": {
+    "versions": {
+      "type": "object",
+      "description": "Versions of backend components."
+    }
+  },
+  "required": [
+    "versions"
+  ]
+}
