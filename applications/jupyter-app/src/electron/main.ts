@@ -33,9 +33,10 @@ const AnyMiddlewareVersion = 'any'
  * - LUMY_MIDDLEWARE_VERSION variable with the value set by webpack.
  */
 function getRequiredMiddlewareVersion(): string | undefined {
-  const overriddenVersion = process.env['MIDDLEWARE_VERSION']
-  const version = overriddenVersion ?? LUMY_MIDDLEWARE_VERSION
-  if (version === AnyMiddlewareVersion) return undefined
+  const overriddenVersion =
+    process.env['MIDDLEWARE_VERSION'] == null ? '' : process.env['MIDDLEWARE_VERSION'].trim()
+  const version = overriddenVersion.length > 0 ? overriddenVersion : LUMY_MIDDLEWARE_VERSION
+  if (version === AnyMiddlewareVersion || version.length === 0) return undefined
   return version
 }
 
@@ -81,8 +82,13 @@ function execute(
   const spawnEnv = { ...process.env }
   Object.entries(env ?? {}).forEach(([k, v]) => {
     if (k in spawnEnv) {
-      if (v == null) delete spawnEnv[k]
-      else spawnEnv[k] = v
+      if (v == null) {
+        delete spawnEnv[k]
+      } else {
+        spawnEnv[k] = v
+      }
+    } else {
+      spawnEnv[k] = v
     }
   })
 
