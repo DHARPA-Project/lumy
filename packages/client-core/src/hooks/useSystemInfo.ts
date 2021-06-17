@@ -4,9 +4,15 @@ import { Messages } from '../common/types'
 
 type SystemInfo = Messages.Activity.SystemInfo
 
+const getLumyUIVersion = () => {
+  const version = process.env.LUMY_VERSION ?? 'unknown'
+  const buildHash = process.env.LUMY_BUILD_HASH ?? 'unknown'
+  return `${version}-${buildHash}`
+}
+
 export const useSystemInfo = (): SystemInfo => {
   const context = useContext(BackEndContext)
-  const [info, setInfo] = useState<SystemInfo>()
+  const [info, setInfo] = useState<SystemInfo>({ versions: {} })
 
   useEffect(() => {
     const handler = handlerAdapter(Messages.Activity.codec.SystemInfo.decode, msg => setInfo(msg))
@@ -18,5 +24,7 @@ export const useSystemInfo = (): SystemInfo => {
     return () => context.unsubscribe(Target.Activity, handler)
   }, [])
 
-  return info
+  return info != null
+    ? { ...info, versions: Object.assign(info?.versions ?? {}, { ui: getLumyUIVersion() }) }
+    : undefined
 }

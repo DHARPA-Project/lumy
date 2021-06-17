@@ -3,6 +3,17 @@ const path = require('path')
 const webpack = require('webpack')
 const HTMLWebPackPlugin = require('html-webpack-plugin')
 
+const package = require('./package.json')
+
+function getBuildHash() {
+  if (process.env.BUILD_HASH != null) return process.env.BUILD_HASH
+  try {
+    return require('child_process').execSync('git rev-parse --short HEAD').toString().replace('\n', '')
+  } catch (e) {
+    return 'N/A'
+  }
+}
+
 module.exports = {
   entry: {
     index: './src/webapp/index.ts',
@@ -141,7 +152,9 @@ module.exports = {
       chunks: ['installer']
     }),
     new webpack.DefinePlugin({
-      'process.env.USE_JUPYTER_LAB': JSON.stringify(false)
+      'process.env.USE_JUPYTER_LAB': JSON.stringify(false),
+      'process.env.LUMY_BUILD_HASH': JSON.stringify(getBuildHash()),
+      'process.env.LUMY_VERSION': JSON.stringify(package.version)
     }),
     // FROM: https://github.com/jupyterlab/jupyterlab/blob/master/builder/src/webpack.config.base.ts#L94-L98
     new webpack.ProvidePlugin({
