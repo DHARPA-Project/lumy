@@ -1,6 +1,9 @@
 import React from 'react'
+
 import { Grid, FormControl, NativeSelect, Typography } from '@material-ui/core'
+
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined'
+
 import useStyles from './OptionSelector.styles'
 
 export interface Option {
@@ -23,6 +26,7 @@ export const OptionSelector = ({
   onValueChanged
 }: OptionSelectorProps): JSX.Element => {
   const classes = useStyles()
+
   return (
     <div className={classes.root}>
       <Grid container direction="row" alignItems="center" classes={{ root: classes.labelRoot }}>
