@@ -32,7 +32,7 @@ export const GraphStatsPanel = ({ graphStats }: GraphStatsPanelProps): JSX.Eleme
   return (
     <div className={classes.statContainer}>
       <Accordion expanded={expanded} onChange={() => setExpanded(prevStatus => !prevStatus)}>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1d-content" id="panel1d-header">
+        <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1d-content">
           <Typography>Graph Statistics</Typography>
         </AccordionSummary>
         <AccordionDetails>

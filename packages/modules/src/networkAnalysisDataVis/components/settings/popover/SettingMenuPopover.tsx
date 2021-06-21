@@ -47,11 +47,7 @@ const SettingMenuPopover = ({
       <List
         component="nav"
         aria-labelledby="nested-list-subheader"
-        subheader={
-          <ListSubheader component="div" id="nested-list-subheader">
-            Enable required graph settings
-          </ListSubheader>
-        }
+        subheader={<ListSubheader component="div">Enable required graph settings</ListSubheader>}
         className={classes.list}
       >
         {settingList.map(setting => (
