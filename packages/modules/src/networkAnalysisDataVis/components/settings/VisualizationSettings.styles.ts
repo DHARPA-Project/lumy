@@ -8,12 +8,19 @@ export default makeStyles((theme: Theme) => ({
     justifyContent: 'space-between'
   },
   popoverButton: {
-    marginRight: -theme.spacing(1)
+    marginRight: -theme.spacing(1.5)
   },
   settingCardContent: {
     padding: 0,
     '&:last-child': {
       padding: 0
+    },
+    '& .MuiPaper-outlined': {
+      borderRight: 'none',
+      borderBottom: 'none',
+      borderLeft: 'none',
+      borderTopLeftRadius: 0,
+      borderTopRightRadius: 0
     }
   }
 }))

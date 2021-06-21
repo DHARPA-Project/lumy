@@ -26,17 +26,25 @@ export default {
       }
     }
   },
+  MuiAccordionDetails: {
+    root: {
+      paddingTop: 0,
+      paddingRight: defaultTheme.spacing(1),
+      paddingBottom: defaultTheme.spacing(1),
+      paddingLeft: defaultTheme.spacing(1)
+    }
+  },
   MuiAccordionSummary: {
     root: {
       minHeight: defaultTheme.spacing(4),
       '&.Mui-expanded': {
-        minHeight: defaultTheme.spacing(6)
+        minHeight: defaultTheme.spacing(4)
       }
     },
     content: {
       margin: defaultTheme.spacing(1, 0),
       '&.Mui-expanded': {
-        margin: defaultTheme.spacing(2, 0)
+        margin: defaultTheme.spacing(1, 0)
       }
     }
   },
@@ -55,6 +63,17 @@ export default {
   MuiIconButton: {
     root: {
       padding: defaultTheme.spacing(1)
+    }
+  },
+  MuiListItem: {
+    root: {
+      paddingTop: defaultTheme.spacing(0),
+      paddingBottom: defaultTheme.spacing(0)
+    }
+  },
+  MuiListItemIcon: {
+    root: {
+      minWidth: defaultTheme.spacing(4)
     }
   },
   MuiOutlinedInput: {
@@ -88,6 +107,11 @@ export default {
     },
     toolbar: {
       minHeight: 'auto'
+    }
+  },
+  PrivateSwitchBase: {
+    root: {
+      padding: defaultTheme.spacing(1)
     }
   }
 }

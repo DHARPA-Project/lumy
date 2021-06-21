@@ -25,10 +25,12 @@ const TableCell = ({ children }: TableCellProps): JSX.Element => {
 }
 
 export const GraphStatsPanel = ({ graphStats }: GraphStatsPanelProps): JSX.Element => {
+  const classes = useStyles()
+
   const [expanded, setExpanded] = useState<boolean>(false)
 
   return (
-    <div>
+    <div className={classes.statContainer}>
       <Accordion expanded={expanded} onChange={() => setExpanded(prevStatus => !prevStatus)}>
         <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1d-content" id="panel1d-header">
           <Typography>Graph Statistics</Typography>
