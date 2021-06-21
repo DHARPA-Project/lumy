@@ -66,13 +66,7 @@ const VisualizationSettings = (): JSX.Element => {
                       subsetting =>
                         subsetting.selected && (
                           <Grid item className="subsetting-grid-item" key={subsetting.name}>
-                            {subsetting.component ? (
-                              subsetting.component
-                            ) : (
-                              <Typography variant="body1" component="h6" align="center">
-                                {subsetting.name}
-                              </Typography>
-                            )}
+                            {subsetting.component}
                           </Grid>
                         )
                     )}
