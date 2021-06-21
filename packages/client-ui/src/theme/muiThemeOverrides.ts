@@ -8,14 +8,14 @@ export default {
         'scrollbar-color': 'rgba(0,0,0,0.1) transparent' // 'thumb track'
       },
       '*::-webkit-scrollbar': {
-        width: defaultTheme.spacing(0.5),
-        height: defaultTheme.spacing(0.5)
+        width: defaultTheme?.layout?.scrollBarWidth,
+        height: defaultTheme?.layout?.scrollBarWidth
       },
       '*::-webkit-scrollbar-track': {
         backgroundColor: 'transparent'
       },
       '*::-webkit-scrollbar-thumb': {
-        borderRadius: defaultTheme.spacing(0.5),
+        borderRadius: defaultTheme?.layout?.scrollBarWidth,
         backgroundColor: 'rgba(0,0,0,0.1)',
         '&:hover': {
           backgroundColor: 'rgba(0,0,0,0.15)'

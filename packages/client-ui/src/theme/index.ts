@@ -6,7 +6,7 @@ import muiDefaultProps from './muiDefaultProps'
 import muiThemeOverrides from './muiThemeOverrides'
 
 declare module '@material-ui/core/styles/createMuiTheme' {
-  interface Theme {
+  export interface Theme {
     layout: {
       sideBarFullWidth: React.CSSProperties['width']
       sideBarCollapsedWidth: React.CSSProperties['width']
@@ -16,10 +16,11 @@ declare module '@material-ui/core/styles/createMuiTheme' {
       navBarBottom: React.CSSProperties['height']
       pagePadding: React.CSSProperties['padding']
       toolContainerWidth: React.CSSProperties['width']
+      scrollBarWidth: React.CSSProperties['width']
     }
   }
   // allow configuration using `createMuiTheme`
-  interface ThemeOptions {
+  export interface ThemeOptions {
     layout?: {
       sideBarFullWidth?: React.CSSProperties['width']
       sideBarCollapsedWidth?: React.CSSProperties['width']
@@ -29,6 +30,7 @@ declare module '@material-ui/core/styles/createMuiTheme' {
       navBarBottom: React.CSSProperties['height']
       pagePadding: React.CSSProperties['padding']
       toolContainerWidth: React.CSSProperties['width']
+      scrollBarWidth: React.CSSProperties['width']
     }
   }
 }
@@ -75,7 +77,8 @@ export const createCustomTheme = (extendedOptions?: ThemeOptions, darkModeEnable
       navBarTop: '20vh',
       navBarBottom: '10vh',
       pagePadding: '1.5rem',
-      toolContainerWidth: '50vw'
+      toolContainerWidth: '50vw',
+      scrollBarWidth: '4px'
     },
     overrides: muiThemeOverrides,
     ...extendedOptions

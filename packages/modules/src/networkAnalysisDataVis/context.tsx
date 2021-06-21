@@ -5,7 +5,7 @@ import { PipelineStep, useStepInputValue, useStepOutputValue } from '@dharpa-vre
 import { ScalingMethod, InputValues, OutputValues } from './structure'
 
 import { NetworkForce, NodeMouseEventDetails } from '@dharpa-vre/datavis-components'
-import { useBbox } from '../hooks/useBbox'
+import { useBoxSize } from '../hooks/useBoxSize'
 import { useElementEventCallback } from './hooks'
 import {
   buildGraphEdges,
@@ -16,7 +16,7 @@ import {
 
 export type NetworkGraphContextType = {
   colorCodeNodes: boolean
-  graphBox: DOMRect
+  graphBoxSize: DOMRect
   graphContainerRef: React.Ref<HTMLDivElement>
   graphRef: React.MutableRefObject<NetworkForce>
   graphStats: OutputValues['graphStats']
@@ -78,7 +78,7 @@ const NetworkGraphContextProvider = ({ step, children }: NetworkGraphContextProv
   /* 4. Graph and its container reference - for getting container size */
   const graphRef = useRef<NetworkForce>(null)
   const graphContainerRef = useRef()
-  const graphBox = useBbox(graphContainerRef)
+  const graphBoxSize = useBoxSize(graphContainerRef)
 
   /* 5. local state variables, mostly for navigation */
 
@@ -136,7 +136,7 @@ const NetworkGraphContextProvider = ({ step, children }: NetworkGraphContextProv
     <NetworkGraphContext.Provider
       value={{
         colorCodeNodes,
-        graphBox,
+        graphBoxSize,
         graphContainerRef,
         graphRef,
         graphStats,

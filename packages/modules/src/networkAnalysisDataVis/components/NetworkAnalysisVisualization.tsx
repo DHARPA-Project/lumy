@@ -16,7 +16,7 @@ const NetworkAnalysisVisualizationContainer = (): JSX.Element => {
 
   const {
     colorCodeNodes,
-    graphBox,
+    graphBoxSize,
     graphContainerRef,
     graphRef,
     graphStats,
@@ -59,8 +59,8 @@ const NetworkAnalysisVisualizationContainer = (): JSX.Element => {
             nodeScalerParams.max
           )}
           reapplySimulationOnUpdate={undefined}
-          width={graphBox?.width ?? 0}
-          height={((graphBox?.width ?? 0) * 2) / 3}
+          width={graphBoxSize?.width ?? 0}
+          height={graphBoxSize?.height ?? 0}
           ref={graphRef}
         />
       </div>
