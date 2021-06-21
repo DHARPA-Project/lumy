@@ -10,81 +10,10 @@ import Tooltip from '@material-ui/core/Tooltip'
 import AddCircleTwoToneIcon from '@material-ui/icons/AddCircleTwoTone'
 
 import useStyles from './VisualizationSettings.styles'
+import initialSettingList, { SettingItem } from '../../settingList'
 
 import { NavigationPanel, NavigationPanelSection } from '../common/NavigationPanel'
 import SettingMenuPopover from './popover/SettingMenuPopover'
-import NodeSize from '../settings/subsettings/nodes/NodeSize'
-import NodeLabel from '../settings/subsettings/nodes/NodeLabel'
-import NodeColor from '../settings/subsettings/nodes/NodeColor'
-import IsolatedNodes from '../settings/subsettings/layout/IsolatedNodes'
-
-export interface SubsettingItem {
-  name: string
-  selected: boolean
-  component: unknown
-}
-
-export interface SettingItem {
-  name: string
-  selected: boolean
-  component: unknown
-  subSettings: SubsettingItem[]
-}
-
-const initialSettingList: SettingItem[] = [
-  {
-    name: 'node appearance',
-    selected: false,
-    component: null,
-    subSettings: [
-      {
-        name: 'size',
-        selected: false,
-        component: <NodeSize />
-      },
-      {
-        name: 'label',
-        selected: false,
-        component: <NodeLabel />
-      },
-      {
-        name: 'node color',
-        selected: false,
-        component: <NodeColor />
-      }
-    ]
-  },
-  {
-    name: 'edge appearance',
-    selected: false,
-    component: null,
-    subSettings: []
-  },
-  {
-    name: 'layout/topology/filter',
-    selected: false,
-    component: null,
-    subSettings: [
-      {
-        name: 'remove isolated nodes',
-        selected: false,
-        component: <IsolatedNodes />
-      }
-    ]
-  },
-  {
-    name: 'shortest path',
-    selected: false,
-    component: null,
-    subSettings: []
-  },
-  {
-    name: 'community detection',
-    selected: false,
-    component: null,
-    subSettings: []
-  }
-]
 
 const VisualizationSettings = (): JSX.Element => {
   const classes = useStyles()

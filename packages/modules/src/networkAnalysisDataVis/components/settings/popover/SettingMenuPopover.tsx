@@ -5,7 +5,7 @@ import ListSubheader from '@material-ui/core/ListSubheader'
 import List from '@material-ui/core/List'
 
 import useStyles from './SettingMenuPopover.styles'
-import { SettingItem } from '../VisualizationSettings'
+import { SettingItem } from '../../../settingList'
 import PopoverSettingItem from './PopoverSettingItem'
 
 export interface SettingMenuPopoverProps {

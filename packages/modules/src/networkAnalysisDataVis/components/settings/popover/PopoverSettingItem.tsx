@@ -8,7 +8,7 @@ import Collapse from '@material-ui/core/Collapse'
 import Checkbox from '@material-ui/core/Checkbox'
 
 import useStyles from './PopoverSettingItem.styles'
-import { SettingItem } from '../VisualizationSettings'
+import { SettingItem } from '../../../settingList'
 
 export interface PopoverSettingItemProps {
   setting: SettingItem
