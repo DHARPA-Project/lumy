@@ -65,7 +65,7 @@ export namespace Activity {
     export const ExecutionState = Codec<ExecutionState>('ExecutionState')
     export const Progress = Codec<Progress>('Progress')
     export const SystemInfo = Codec<SystemInfo>('SystemInfo')
-    export const GetSystemInfo = Codec<SystemInfo>('GetSystemInfo')
+    export const GetSystemInfo = Codec<GetSystemInfo>('GetSystemInfo')
   }
 }
 

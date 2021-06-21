@@ -19,7 +19,7 @@ export const useSystemInfo = (): SystemInfo => {
     context.subscribe(Target.Activity, handler)
 
     // get the most recent data on first use
-    context.sendMessage(Target.Activity, Messages.Activity.codec.GetSystemInfo.encode(null))
+    context.sendMessage(Target.Activity, Messages.Activity.codec.GetSystemInfo.encode({}))
 
     return () => context.unsubscribe(Target.Activity, handler)
   }, [])
