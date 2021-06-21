@@ -5,7 +5,8 @@ export default makeStyles((theme: Theme) => ({
     height: '100%',
     maxHeight: '100%',
     display: 'grid',
-    gridTemplateColumns: 'fit-content(25%) auto'
+    // gridTemplateColumns: 'fit-content(25%) auto'
+    gridTemplateColumns: 'minmax(250px, 25%) auto'
   },
   graphContainer: {
     height: `calc(100% - ${theme.spacing(0.5)}px)`, // subtract size of scroll bar

@@ -10,6 +10,8 @@ import Checkbox from '@material-ui/core/Checkbox'
 import useStyles from './PopoverSettingItem.styles'
 import { SettingItem } from '../../../settingList'
 
+import TextPill from '../../common/TextPill'
+
 export interface PopoverSettingItemProps {
   setting: SettingItem
   setSettingList: React.Dispatch<React.SetStateAction<SettingItem[]>>
@@ -60,7 +62,10 @@ const PopoverSettingItem = ({ setting, setSettingList }: PopoverSettingItemProps
               <ListItemIcon>
                 <Checkbox edge="start" checked={subsetting.selected} tabIndex={-1} />
               </ListItemIcon>
-              <ListItemText primary={subsetting.name} />
+              <ListItemText className={classes.itemText}>
+                {subsetting.name}
+                {subsetting.important && <TextPill text="important" />}
+              </ListItemText>
             </ListItem>
           ))}
         </List>

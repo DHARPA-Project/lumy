@@ -5,7 +5,8 @@ export default makeStyles(theme => ({
     position: 'relative'
   },
   list: {
-    width: 250,
+    width: 'auto',
+    minWidth: 260,
     backgroundColor: theme.palette.background.paper
   }
 }))

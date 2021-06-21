@@ -7,6 +7,7 @@ import IsolatedNodes from './components/settings/subsettings/layout/IsolatedNode
 
 export interface SubsettingItem {
   name: string
+  important: boolean
   selected: boolean
   component: unknown
 }
@@ -26,16 +27,19 @@ const settingList: SettingItem[] = [
     subSettings: [
       {
         name: 'size',
+        important: true,
         selected: false,
         component: <NodeSize />
       },
       {
         name: 'label',
+        important: false,
         selected: false,
         component: <NodeLabel />
       },
       {
         name: 'node color',
+        important: true,
         selected: false,
         component: <NodeColor />
       }
@@ -54,6 +58,7 @@ const settingList: SettingItem[] = [
     subSettings: [
       {
         name: 'remove isolated nodes',
+        important: false,
         selected: false,
         component: <IsolatedNodes />
       }

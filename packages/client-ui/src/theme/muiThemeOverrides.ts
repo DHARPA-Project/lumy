@@ -55,6 +55,11 @@ export default {
       }
     }
   },
+  MuiChip: {
+    root: {
+      height: 'auto'
+    }
+  },
   MuiFab: {
     root: {
       boxShadow: 'none'
