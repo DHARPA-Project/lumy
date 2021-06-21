@@ -40,6 +40,8 @@ class ApplicationUpdater {
       this.setState(UpdateState.NotAvailable)
       this.reportError(error)
     })
+    // check updates right away
+    this.checkUpdates()
   }
 
   setState(updateState: UpdateState) {
