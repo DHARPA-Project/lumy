@@ -1,7 +1,5 @@
 import React, { useContext } from 'react'
 
-import Grid from '@material-ui/core/Grid'
-
 import { useElement } from '@dharpa-vre/datavis-components'
 import { NetworkGraphContext } from '../context'
 import { normalizedValue } from '../utils'
@@ -31,14 +29,14 @@ const NetworkAnalysisVisualizationContainer = (): JSX.Element => {
   } = useContext(NetworkGraphContext) // prettier-ignore
 
   return (
-    <Grid container>
-      <Grid item xs={2}>
+    <div className={classes.visualizationContainer}>
+      <div className="left">
         <GraphStatsPanel graphStats={graphStats} />
 
         <VisualizationSettings />
-      </Grid>
+      </div>
 
-      <Grid item xs={10} ref={graphContainerRef} className={classes.graphContainer}>
+      <div ref={graphContainerRef} className={classes.graphContainer}>
         {graphTooltipInfo != null && (
           <NodeTooltip
             position={{
@@ -65,8 +63,8 @@ const NetworkAnalysisVisualizationContainer = (): JSX.Element => {
           height={((graphBox?.width ?? 0) * 2) / 3}
           ref={graphRef}
         />
-      </Grid>
-    </Grid>
+      </div>
+    </div>
   )
 }
 
