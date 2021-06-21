@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react'
 import { useParams } from 'react-router'
-import { useCurrentWorkflow, workflowUtils } from '@dharpa-vre/client-core'
+import { useCurrentWorkflow, useSystemInfo, workflowUtils } from '@dharpa-vre/client-core'
 import { WorkflowContext } from '../../context/workflowContext'
 
 interface WorkflowStepSynchroniserProps {
@@ -17,10 +17,19 @@ export const WorkflowStepSynchroniser = ({
   onStepUpdated
 }: WorkflowStepSynchroniserProps): JSX.Element => {
   const { activeStep, setActiveStep } = useContext(WorkflowContext)
+  const systemInfo = useSystemInfo()
   const params = useParams<{ [key: string]: string }>()
   const stepId = params[stepParameterName]
 
   const [currentWorkflow] = useCurrentWorkflow()
+
+  /* TODO: this is a temporary place to display system info.
+     There will be a dedicated UI component for this later.
+  */
+  useEffect(() => {
+    if (systemInfo == null) return
+    console.info(`💫💫💫 Lumy System Info: ${JSON.stringify(systemInfo)}`)
+  }, [systemInfo])
 
   useEffect(() => {
     if (currentWorkflow == null) return

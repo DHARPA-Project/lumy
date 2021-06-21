@@ -403,6 +403,7 @@ export class MockContext implements IBackEndContext {
     this._signals[Target.ModuleIO].connect(this._handleModuleIO, this)
     this._signals[Target.DataRepository].connect(this._handleDataRepository, this)
     this._signals[Target.Notes].connect(this._handleNotes, this)
+    this._signals[Target.Activity].connect(this._handleActivity, this)
 
     setTimeout(() => {
       this._isReady = true
@@ -434,9 +435,21 @@ export class MockContext implements IBackEndContext {
     return stepDesc?.step?.moduleType
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private async _handleActivity(_: MockContext, _msg: ME<unknown>): Promise<ME<unknown> | undefined | void> {
-    return Promise.resolve()
+  private async _handleActivity(_: MockContext, msg: ME<unknown>): Promise<ME<unknown> | undefined | void> {
+    switch (msg.action) {
+      case Messages.Activity.codec.GetSystemInfo.action:
+        return adapter(Messages.Activity.codec.GetSystemInfo.decode, async () => {
+          const msg = Messages.Activity.codec.SystemInfo.encode({
+            versions: {
+              middleware: 'in-browser-mock',
+              backend: 'in-browser-mock'
+            }
+          })
+          this._signals[Target.Activity].emit(msg)
+        })(msg)
+      default:
+        break
+    }
   }
 
   private async _handleWorkflow(_: MockContext, msg: ME<unknown>): Promise<ME<unknown> | undefined | void> {

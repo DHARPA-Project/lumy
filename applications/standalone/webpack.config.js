@@ -3,6 +3,17 @@ const path = require('path')
 const webpack = require('webpack')
 const HTMLWebPackPlugin = require('html-webpack-plugin')
 
+const package = require('./package.json')
+
+function getBuildHash() {
+  if (process.env.BUILD_HASH != null) return process.env.BUILD_HASH
+  try {
+    return require('child_process').execSync('git rev-parse --short HEAD').toString().replace('\n', '')
+  } catch (e) {
+    return 'N/A'
+  }
+}
+
 module.exports = {
   entry: {
     index: './src/index.tsx',
@@ -89,7 +100,9 @@ module.exports = {
       chunks: ['splash']
     }),
     new webpack.DefinePlugin({
-      'process.env.USE_JUPYTER_LAB': JSON.stringify(false)
+      'process.env.USE_JUPYTER_LAB': JSON.stringify(false),
+      'process.env.LUMY_BUILD_HASH': JSON.stringify(getBuildHash()),
+      'process.env.LUMY_VERSION': JSON.stringify(package.version)
     })
   ]
 }
