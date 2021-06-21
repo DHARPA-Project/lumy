@@ -1,7 +1,7 @@
 {
   "name": "@dharpa-vre/jupyterlab-extension",
   "version": "0.1.0",
-  "description": "DHARPA VRE JupyterLab extension.",
+  "description": "Lumy extension.",
   "keywords": [
     "jupyter",
     "jupyterlab",

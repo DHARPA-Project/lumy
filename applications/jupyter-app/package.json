@@ -12,6 +12,7 @@
   "repository": {
     "url": "https://github.com/DHARPA-Project/codename-vre.git"
   },
+  "productName": "Lumy",
   "scripts": {
     "webapp:watch": "webpack -c webpack.config.webapp.js --watch --progress",
     "webapp:serve": "webpack serve -c webpack.config.webapp.js",
@@ -29,6 +30,7 @@
     "@jupyterlab/services": "6",
     "@lumino/signaling": "1",
     "@lumino/widgets": "1",
+    "electron-updater": "4",
     "process": "0",
     "react": "17",
     "tree-kill": "1"
