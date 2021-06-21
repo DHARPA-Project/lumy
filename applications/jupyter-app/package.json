@@ -29,6 +29,7 @@
     "@jupyterlab/services": "6",
     "@lumino/signaling": "1",
     "@lumino/widgets": "1",
+    "electron-updater": "4",
     "process": "0",
     "react": "17",
     "tree-kill": "1"

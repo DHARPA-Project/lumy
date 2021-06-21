@@ -1,5 +1,6 @@
 appId: "org.dharpa.lumy"
 productName: "Lumy"
+copyright: ""
 directories:
   # buildResources: dist
   output: electron_dist

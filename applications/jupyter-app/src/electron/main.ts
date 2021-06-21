@@ -5,6 +5,7 @@ import { spawn, ChildProcess } from 'child_process'
 import treeKill from 'tree-kill'
 import { waitForPort, getFreePort } from './networkUtils'
 import { InstallerComm, getRunAppAndArgs, getInstallAppAndArgs } from './installer'
+import { setUpUpdater } from './updater'
 
 const AppMainHtmlFile = path.resolve(__dirname, '../webapp/index.html')
 const InstallerHtmlFile = path.resolve(__dirname, '../webapp/installer.html')
@@ -258,6 +259,7 @@ async function main() {
     mainWindow.show()
     installerWindow?.destroy()
     console.log('Platform is ready')
+    setUpUpdater()
   }
 }
 
