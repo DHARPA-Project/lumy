@@ -12,6 +12,7 @@
   "repository": {
     "url": "https://github.com/DHARPA-Project/codename-vre.git"
   },
+  "productName": "Lumy",
   "scripts": {
     "webapp:watch": "webpack -c webpack.config.webapp.js --watch --progress",
     "webapp:serve": "webpack serve -c webpack.config.webapp.js",
