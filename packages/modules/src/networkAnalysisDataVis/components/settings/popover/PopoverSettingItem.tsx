@@ -24,7 +24,7 @@ const PopoverSettingItem = ({ setting, setSettingList }: PopoverSettingItemProps
     )
   }
 
-  const handleSubettingSelection = (subsettingName: string) => {
+  const handleSubsettingSelection = (subsettingName: string) => {
     setSettingList(prevSettingList =>
       prevSettingList.map(settingItem => {
         if (settingItem.name !== setting.name) return settingItem
@@ -53,7 +53,7 @@ const PopoverSettingItem = ({ setting, setSettingList }: PopoverSettingItemProps
           {setting.subSettings.map(subsetting => (
             <ListItem
               button
-              onClick={() => handleSubettingSelection(subsetting.name)}
+              onClick={() => handleSubsettingSelection(subsetting.name)}
               className={classes.nested}
               key={subsetting.name}
             >
