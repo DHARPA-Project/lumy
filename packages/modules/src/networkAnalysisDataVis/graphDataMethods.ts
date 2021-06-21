@@ -14,11 +14,11 @@ export function buildGraphNodes(
   nodes: InputValues['nodes'],
   graphData: OutputValues['graphData'],
   displayIsolatedNodes: boolean,
-  nodesScalingMethod: ScalingMethod
+  nodeScalingMethod: ScalingMethod
 ): NodeMetadata[] | undefined {
   if (nodes == null) return undefined
 
-  const scalerColumn = graphData?.getColumn(nodesScalingMethod)
+  const scalerColumn = graphData?.getColumn(nodeScalingMethod)
   const normalizedScalerColumn = normalizeNumbers([...(scalerColumn?.toArray() ?? [])])
 
   const graphNodes: NodeMetadata[] = [...nodes.toArray()].map((node, idx) => ({
@@ -42,7 +42,7 @@ export function buildGraphEdges(edges: InputValues['edges']): EdgeMetadata[] | u
   }))
 }
 
-interface NodeScalerParameters {
+export interface NodeScalerParameters {
   min: number
   max: number
   step: number

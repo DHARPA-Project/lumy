@@ -10,6 +10,12 @@ export default {
   MuiCheckbox: {
     disableRipple: true
   },
+  MuiList: {
+    disablePadding: true
+  },
+  MuiListItem: {
+    disableRipple: true
+  },
   MuiPaper: {
     variant: 'outlined',
     elevation: 0

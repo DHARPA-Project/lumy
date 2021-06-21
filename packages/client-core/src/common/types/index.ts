@@ -21,4 +21,4 @@ export {
 } from './generated'
 export * as Messages from './messages'
 export * from './base'
-export type { PipelineState, Structure as PipelineStructure, StepDesc } from './kiaraGenerated'
+export type { PipelineState, PipelineStep, Structure as PipelineStructure, StepDesc } from './kiaraGenerated'

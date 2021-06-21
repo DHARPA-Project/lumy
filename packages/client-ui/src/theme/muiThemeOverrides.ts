@@ -8,14 +8,14 @@ export default {
         'scrollbar-color': 'rgba(0,0,0,0.1) transparent' // 'thumb track'
       },
       '*::-webkit-scrollbar': {
-        width: defaultTheme.spacing(0.5),
-        height: defaultTheme.spacing(0.5)
+        width: defaultTheme?.layout?.scrollBarWidth,
+        height: defaultTheme?.layout?.scrollBarWidth
       },
       '*::-webkit-scrollbar-track': {
         backgroundColor: 'transparent'
       },
       '*::-webkit-scrollbar-thumb': {
-        borderRadius: defaultTheme.spacing(0.5),
+        borderRadius: defaultTheme?.layout?.scrollBarWidth,
         backgroundColor: 'rgba(0,0,0,0.1)',
         '&:hover': {
           backgroundColor: 'rgba(0,0,0,0.15)'
@@ -26,17 +26,25 @@ export default {
       }
     }
   },
+  MuiAccordionDetails: {
+    root: {
+      paddingTop: 0,
+      paddingRight: defaultTheme.spacing(1),
+      paddingBottom: defaultTheme.spacing(1),
+      paddingLeft: defaultTheme.spacing(1)
+    }
+  },
   MuiAccordionSummary: {
     root: {
       minHeight: defaultTheme.spacing(4),
       '&.Mui-expanded': {
-        minHeight: defaultTheme.spacing(6)
+        minHeight: defaultTheme.spacing(4)
       }
     },
     content: {
       margin: defaultTheme.spacing(1, 0),
       '&.Mui-expanded': {
-        margin: defaultTheme.spacing(2, 0)
+        margin: defaultTheme.spacing(1, 0)
       }
     }
   },
@@ -47,6 +55,11 @@ export default {
       }
     }
   },
+  MuiChip: {
+    root: {
+      height: 'auto'
+    }
+  },
   MuiFab: {
     root: {
       boxShadow: 'none'
@@ -55,6 +68,17 @@ export default {
   MuiIconButton: {
     root: {
       padding: defaultTheme.spacing(1)
+    }
+  },
+  MuiListItem: {
+    root: {
+      paddingTop: defaultTheme.spacing(0),
+      paddingBottom: defaultTheme.spacing(0)
+    }
+  },
+  MuiListItemIcon: {
+    root: {
+      minWidth: defaultTheme.spacing(4)
     }
   },
   MuiOutlinedInput: {
@@ -88,6 +112,11 @@ export default {
     },
     toolbar: {
       minHeight: 'auto'
+    }
+  },
+  PrivateSwitchBase: {
+    root: {
+      padding: defaultTheme.spacing(1)
     }
   }
 }
