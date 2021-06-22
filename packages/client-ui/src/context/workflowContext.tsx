@@ -3,7 +3,7 @@ import React, { useState, createContext, Dispatch, SetStateAction } from 'react'
 import { useCurrentWorkflow, workflowUtils } from '@dharpa-vre/client-core'
 import { StepDesc } from '@dharpa-vre/client-core/src/common/types/kiaraGenerated'
 
-import sampleJupyterNotebook from '../data/notebook.json'
+import sampleJupyterNotebook from '../data/notebook.ipynb'
 
 export type WorkflowType = {
   isRightSideBarVisible: boolean
@@ -46,7 +46,7 @@ const WorkflowContextProvider = ({ children }: WorkflowProviderProps): JSX.Eleme
   const stepIds = workflowUtils.getOrderedStepIds(currentWorkflow)
   const idCurrentStep = stepIds[activeStep]
   const projectSteps: StepDesc[] = stepIds.map(stepId => currentWorkflow?.steps?.[stepId])
-  const workflowCode = sampleJupyterNotebook
+  const workflowCode = JSON.parse(sampleJupyterNotebook)
 
   return (
     <WorkflowContext.Provider
