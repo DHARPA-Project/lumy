@@ -1,6 +1,9 @@
 import { ComponentsProps } from '@material-ui/core/styles/props'
 
 export default {
+  MuiButton: {
+    disableElevation: true
+  },
   MuiCard: {
     variant: 'outlined'
   },
