@@ -3,6 +3,8 @@ import React, { useState, createContext, Dispatch, SetStateAction } from 'react'
 import { useCurrentWorkflow, workflowUtils } from '@dharpa-vre/client-core'
 import { StepDesc } from '@dharpa-vre/client-core/src/common/types/kiaraGenerated'
 
+import sampleJupyterNotebook from '../data/notebook.ipynb'
+
 export type WorkflowType = {
   isRightSideBarVisible: boolean
   setIsRightSideBarVisible: Dispatch<SetStateAction<boolean>>
@@ -21,6 +23,7 @@ export type WorkflowType = {
   setMainPaneHeight: Dispatch<SetStateAction<number>>
   isAdditionalPaneVisible: boolean
   setIsAdditionalPaneVisible: Dispatch<SetStateAction<boolean>>
+  workflowCode: Record<string, unknown>
 }
 
 type WorkflowProviderProps = {
@@ -43,6 +46,7 @@ const WorkflowContextProvider = ({ children }: WorkflowProviderProps): JSX.Eleme
   const stepIds = workflowUtils.getOrderedStepIds(currentWorkflow)
   const idCurrentStep = stepIds[activeStep]
   const projectSteps: StepDesc[] = stepIds.map(stepId => currentWorkflow?.steps?.[stepId])
+  const workflowCode = JSON.parse(sampleJupyterNotebook)
 
   return (
     <WorkflowContext.Provider
@@ -63,7 +67,8 @@ const WorkflowContextProvider = ({ children }: WorkflowProviderProps): JSX.Eleme
         mainPaneHeight,
         setMainPaneHeight,
         isAdditionalPaneVisible,
-        setIsAdditionalPaneVisible
+        setIsAdditionalPaneVisible,
+        workflowCode
       }}
     >
       {children}

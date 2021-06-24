@@ -5,8 +5,8 @@ import CodeIcon from '@material-ui/icons/Code'
 import TableChartIcon from '@material-ui/icons/TableChart'
 
 import NoteEditor from '../components/common/NoteEditor'
-import CodeView from '../components/common/CodeView'
 import DataPreview from '../components/common/DataPreview'
+import CodeView from '../components/common/code/CodeView'
 
 export interface IFeature {
   id: string

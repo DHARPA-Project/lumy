@@ -80,7 +80,7 @@ module.exports = {
         }
       },
       {
-        test: /\.(yml|yaml)$/,
+        test: /\.(yml|yaml|ipynb)$/,
         loader: 'raw-loader'
       }
     ]
