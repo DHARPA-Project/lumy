@@ -38,6 +38,10 @@ module.exports = {
       {
         test: /\.svg$/,
         use: ['svg-url-loader']
+      },
+      {
+        test: /\.ipynb$/,
+        loader: 'raw-loader'
       }
     ]
   },

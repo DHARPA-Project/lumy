@@ -21,18 +21,21 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 
   # https://docs.conda.io/projects/continuumio-conda/en/latest/user-guide/install/macos.html
   miniconda_installer_url="https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh"
+
+  tmp_dir=${TMPDIR}
 else
   app_data_dir="${HOME}/.local/share/${app_name}"
   miniconda_install_path="${app_data_dir}/miniconda"
 
   miniconda_installer_url="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
+
+  tmp_dir=$(dirname $(mktemp -u))
 fi
 
 miniconda_app_dir="${app_data_dir}/miniconda"
 
 miniconda_installer_file="miniconda.sh"
 
-tmp_dir=${TMPDIR}
 
 miniconda_installer_file_location="${tmp_dir}/${miniconda_installer_file}"
 

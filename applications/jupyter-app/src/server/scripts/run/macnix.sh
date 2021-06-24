@@ -13,7 +13,6 @@ else
   app_data_dir="${HOME}/.local/share/${app_name}"
 fi
 
-app_data_dir="${HOME}/Library/Application Support/${app_name}"
 miniconda_app_dir="${app_data_dir}/miniconda"
 default_conda_env_name="default"
 script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
