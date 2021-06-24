@@ -25,7 +25,6 @@ type TabularDataMappingRowProps = {
   columnNames: string[]
   requiredDataSets: IRequiredDataSet[]
   isDataSetMappedInDataSource: (dataSourceId: string, dataSetName: string) => boolean
-  getFieldMappedToColumn: (dataSourceId: string, selectedColumn: string) => string
   getColumnMappedToField: (dataSourceId: string, fieldName: string) => string
   clearMappingsForDataSet: (dataSourceId: string, dataSetName: string) => void
   setColumnMappedToField: (dataSourceId: string, fieldName: string, columnName: string) => void
@@ -37,7 +36,6 @@ const TabularDataMappingRow = ({
   columnNames,
   requiredDataSets,
   isDataSetMappedInDataSource,
-  getFieldMappedToColumn,
   getColumnMappedToField,
   clearMappingsForDataSet,
   setColumnMappedToField
@@ -66,16 +64,7 @@ const TabularDataMappingRow = ({
 
   // Sets the selected column as source of data for the specified required field
   const handleFieldSelection = (fieldName: string, selectedColumn: string): void => {
-    const fieldCorrespondingToColumn = getFieldMappedToColumn(rowId, selectedColumn)
-
-    // if chosen column already mapped to another field, set error message, clear value, and return
-    if (fieldCorrespondingToColumn) {
-      setErrorMessage(`column ${selectedColumn} already mapped to field "${fieldCorrespondingToColumn}"`)
-      setColumnMappedToField(rowId, fieldName, undefined)
-      return
-    }
-
-    // ... otherwise, clear error message and save the value of the selected column
+    // clear error message and save the value of the selected column
     setErrorMessage('')
     setColumnMappedToField(rowId, fieldName, selectedColumn)
   }
