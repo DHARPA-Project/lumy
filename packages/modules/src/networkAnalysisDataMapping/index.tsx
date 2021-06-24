@@ -71,18 +71,6 @@ const NetworkAnalysisDataMapping = ({ step }: Props): JSX.Element => {
     )
   }
 
-  const getFieldMappedToColumn = (dataSourceId: string, selectedColumn: string): string => {
-    const correspondingNodeMappingField = Object.entries(
-      toObject(nodeMappingTable) ?? {}
-    ).find(([, mappingList]) => mappingList.some(mapping => mapping.column === selectedColumn))?.[0]
-
-    const correspondingEdgeMappingField = Object.entries(
-      toObject(edgeMappingTable) ?? {}
-    ).find(([, mappingList]) => mappingList.some(mapping => mapping.column === selectedColumn))?.[0]
-
-    return correspondingNodeMappingField || correspondingEdgeMappingField
-  }
-
   const getColumnMappedToField = (dataSourceId: string, fieldName: string): string => {
     const fieldMap =
       ((toObject(nodeMappingTable) ?? {})?.[fieldName] ?? []).find(
@@ -167,7 +155,6 @@ const NetworkAnalysisDataMapping = ({ step }: Props): JSX.Element => {
       corpusPage={corpusPage}
       requiredDataSets={networkAnalysisDataSets}
       isDataSetMappedInDataSource={isDataSetMappedInDataSource}
-      getFieldMappedToColumn={getFieldMappedToColumn}
       getColumnMappedToField={getColumnMappedToField}
       clearMappingsForDataSet={clearMappingsForDataSet}
       setColumnMappedToField={setColumnMappedToField}

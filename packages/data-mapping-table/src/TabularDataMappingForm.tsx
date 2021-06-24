@@ -25,7 +25,6 @@ type TabularDataMappingFormProps = {
   corpusPage: CorpusTableType
   requiredDataSets: IRequiredDataSetProp[]
   isDataSetMappedInDataSource: (dataSourceId: string, dataSetName: string) => boolean
-  getFieldMappedToColumn: (dataSourceId: string, selectedColumn: string) => string
   getColumnMappedToField: (dataSourceId: string, fieldName: string) => string
   clearMappingsForDataSet: (dataSourceId: string, dataSetName: string) => void
   setColumnMappedToField: (dataSourceId: string, fieldName: string, columnName: string) => void
@@ -38,7 +37,6 @@ export const TabularDataMappingForm = ({
   corpusPage,
   requiredDataSets,
   isDataSetMappedInDataSource,
-  getFieldMappedToColumn,
   getColumnMappedToField,
   clearMappingsForDataSet,
   setColumnMappedToField
@@ -69,7 +67,6 @@ export const TabularDataMappingForm = ({
                 columnNames={[...(row.columnNames ?? [])]}
                 requiredDataSets={requiredDataSets}
                 isDataSetMappedInDataSource={isDataSetMappedInDataSource}
-                getFieldMappedToColumn={getFieldMappedToColumn}
                 getColumnMappedToField={getColumnMappedToField}
                 clearMappingsForDataSet={clearMappingsForDataSet}
                 setColumnMappedToField={setColumnMappedToField}
