@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "type": "object",
+  "title": "MsgDataRepositoryItemValue",
+  "description": "Response to GetItemValue request.\nContains value and metadata.",
+  "additionalProperties": false,
+  "properties": {
+    "itemId": {
+      "type": "string",
+      "description": "Unique ID of the item."
+    },
+    "type": {
+      "type": "string",
+      "description": "Type of the value"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Metadata of the value if applicable. Simple types usually do not include it.\nComplex ones like table do."
+    },
+    "value": {
+      "description": "Actual serialized value.\nIt may be a filtered value in case of a complex value.\nFilter is also returned if the value is filtered."
+    },
+    "filter": {
+      "description": "Filter applied to the value",
+      "$ref": "https://dharpa.org/schema/types/data/TabularDataFilter.json"
+    }
+  },
+  "required": [
+    "itemId",
+    "type"
+  ]
+}
