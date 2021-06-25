@@ -11,8 +11,7 @@ import {
   useDataRepository,
   DataRepositoryItemStructure,
   DataRepositoryItemsTable,
-  arrowUtils,
-  useDataRepositoryItemValue
+  arrowUtils
 } from '@dharpa-vre/client-core'
 
 import useStyles from './DataSelection.styles'
