@@ -124,81 +124,31 @@ export interface DataRepositoryItemsFilter {
 
 /**
  * Target: "dataRepository"
- * Message type: "Items"
+ * Message type: "GetItemValue"
  *
- * Items from data repository.
+ * Get value from data repository.
  */
-export interface MsgDataRepositoryItems {
-  filter: DataRepositoryItemsFilter
+export interface MsgDataRepositoryGetItemValue {
   /**
-   * Serialized table with items as rows.
+   * Filter applied to the value
+   * TODO: This is tabular filter at the moment but will be changed to an abstract filter
+   * which will depend on the data type.
    */
-  items: unknown
-  /**
-   * Stats of the data repository.
-   */
-  stats: { [key: string]: unknown }
-}
-
-/**
- * Target: "dataRepository"
- * Message type: "Subset"
- *
- * A subset of items
- */
-export interface MsgDataRepositorySubset {
-  /**
-   * Unique ID of the subset
-   */
-  id: string
-  /**
-   * List of items IDs to add to the subset
-   */
-  itemsIds: string[]
-  /**
-   * Label of the subset
-   */
-  label: string
-}
-
-/**
- * Target: "moduleIO"
- * Message type: "Execute"
- *
- * Run this step with the latest used parameters on all data (not preview only).
- */
-export interface MsgModuleIOExecute {
-  /**
-   * Unique ID of the step within the workflow.
-   */
-  id: string
-}
-
-/**
- * Target: "moduleIO"
- * Message type: "GetInputValue"
- *
- * Get value of a step input from the current workflow.
- * This is a 'pull' request meaning that a synchronous response will be returned. The
- * behaviour of the response is different depending on whether it is a simple or complex
- * value.
- * For simple values the filter is ignored and full value is always returned.
- * For complex values only stats are returned unless 'filter' is set and is not empty.
- */
-export interface MsgModuleIOGetInputValue {
   filter?: DataTabularDataFilter
   /**
-   * ID of the input
+   * Unique ID of the item.
    */
-  inputId: string
-  /**
-   * Unique ID of the step within the workflow that we are getting parameters for.
-   */
-  stepId: string
+  itemId: string
 }
 
 /**
+ * Filter applied to the value
+ * TODO: This is tabular filter at the moment but will be changed to an abstract filter
+ * which will depend on the data type.
+ *
  * Filter for tabular data
+ *
+ * Filter applied to the value
  */
 export interface DataTabularDataFilter {
   condition?: DataTabularDataFilterCondition
@@ -275,6 +225,114 @@ export enum Direction {
   Asc = 'asc',
   Default = 'default',
   Desc = 'desc'
+}
+
+/**
+ * Target: "dataRepository"
+ * Message type: "ItemValue"
+ *
+ * Response to GetItemValue request.
+ * Contains value and metadata.
+ */
+export interface MsgDataRepositoryItemValue {
+  /**
+   * Filter applied to the value
+   */
+  filter?: DataTabularDataFilter
+  /**
+   * Unique ID of the item.
+   */
+  itemId: string
+  /**
+   * Metadata of the value if applicable. Simple types usually do not include it.
+   * Complex ones like table do.
+   */
+  metadata?: { [key: string]: unknown }
+  /**
+   * Type of the value
+   */
+  type: string
+  /**
+   * Actual serialized value.
+   * It may be a filtered value in case of a complex value.
+   * Filter is also returned if the value is filtered.
+   */
+  value?: unknown
+}
+
+/**
+ * Target: "dataRepository"
+ * Message type: "Items"
+ *
+ * Items from data repository.
+ */
+export interface MsgDataRepositoryItems {
+  filter: DataRepositoryItemsFilter
+  /**
+   * Serialized table with items as rows.
+   */
+  items: unknown
+  /**
+   * Stats of the data repository.
+   */
+  stats: { [key: string]: unknown }
+}
+
+/**
+ * Target: "dataRepository"
+ * Message type: "Subset"
+ *
+ * A subset of items
+ */
+export interface MsgDataRepositorySubset {
+  /**
+   * Unique ID of the subset
+   */
+  id: string
+  /**
+   * List of items IDs to add to the subset
+   */
+  itemsIds: string[]
+  /**
+   * Label of the subset
+   */
+  label: string
+}
+
+/**
+ * Target: "moduleIO"
+ * Message type: "Execute"
+ *
+ * Run this step with the latest used parameters on all data (not preview only).
+ */
+export interface MsgModuleIOExecute {
+  /**
+   * Unique ID of the step within the workflow.
+   */
+  id: string
+}
+
+/**
+ * Target: "moduleIO"
+ * Message type: "GetInputValue"
+ *
+ * Get value of a step input from the current workflow.
+ * This is a 'pull' request meaning that a synchronous response will be returned. The
+ * behaviour of the response is different depending on whether it is a simple or complex
+ * value.
+ * For simple values the filter is ignored and full value is always returned.
+ * For complex values only stats are returned unless 'filter' is set and is not empty.
+ */
+export interface MsgModuleIOGetInputValue {
+  filter?: DataTabularDataFilter
+  /**
+   * ID of the input
+   */
+  inputId: string
+  /**
+   * Unique ID of the step within the workflow that we are getting parameters for.
+   */
+  stepId: string
 }
 
 /**

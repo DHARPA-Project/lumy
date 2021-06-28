@@ -25,7 +25,9 @@ import {
   MsgNotesUpdate,
   MsgNotesDelete,
   MsgSystemInfo,
-  MsgGetSystemInfo
+  MsgGetSystemInfo,
+  MsgDataRepositoryItemValue,
+  MsgDataRepositoryGetItemValue
 } from './generated'
 
 /**
@@ -100,10 +102,14 @@ export namespace ModuleIO {
 export namespace DataRepository {
   export type Items = MsgDataRepositoryItems
   export type FindItems = MsgDataRepositoryFindItems
+  export type ItemValue = MsgDataRepositoryItemValue
+  export type GetItemValue = MsgDataRepositoryGetItemValue
 
   export namespace codec {
     export const Items = Codec<Items>('Items')
     export const FindItems = Codec<FindItems>('FindItems')
+    export const ItemValue = Codec<ItemValue>('ItemValue')
+    export const GetItemValue = Codec<GetItemValue>('GetItemValue')
   }
 }
 

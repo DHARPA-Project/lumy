@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "type": "object",
+  "title": "MsgDataRepositoryGetItemValue",
+  "description": "Get value from data repository.",
+  "additionalProperties": false,
+  "properties": {
+    "itemId": {
+      "type": "string",
+      "description": "Unique ID of the item."
+    },
+    "filter": {
+      "description": "Filter applied to the value\nTODO: This is tabular filter at the moment but will be changed to an abstract filter which will depend on the data type.",
+      "$ref": "https://dharpa.org/schema/types/data/TabularDataFilter.json"
+    }
+  },
+  "required": [
+    "itemId"
+  ]
+}

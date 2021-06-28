@@ -94,7 +94,7 @@ const getFilteredValue = <T = unknown, S = { [key: string]: unknown }>(
   if (value instanceof Table) {
     const table = value
     if (filter?.fullValue) return [table, getValueStats(table)]
-    if (filter == null) return undefined
+    if (filter == null) return [undefined, getValueStats(table)]
 
     const filteredTable = filterTable(table, filter.condition)
     const sortedTable = sortTable(filteredTable, filter.sorting)
@@ -548,6 +548,38 @@ export class MockContext implements IBackEndContext {
             stats: (stats as unknown) as { [key: string]: unknown }
           })
           this._signals[Target.DataRepository].emit(message)
+        })(msg)
+      case Messages.DataRepository.codec.GetItemValue.action:
+        return adapter(Messages.DataRepository.codec.GetItemValue.decode, async ({ itemId, filter }) => {
+          const repositoryTable = this._mockDataRepository
+          const row = [...repositoryTable].find(({ id }) => id === itemId)
+          if (row == null) return // no such item
+
+          if (row.type === 'table') {
+            const rowNumbers = [...Array(20).keys()]
+            const tableStructure = [...row.columnNames].reduce((acc, colName) => {
+              return { ...acc, [colName]: Utf8Vector.from(rowNumbers.map(n => `${colName} : ${n}`)) }
+            }, {})
+            const tableValue = Table.new(tableStructure)
+            const [value, meta] = getFilteredValue(tableValue, filter)
+
+            const message = Messages.DataRepository.codec.ItemValue.encode({
+              itemId,
+              type: 'table',
+              filter,
+              metadata: meta,
+              value: serialize(value)
+            })
+            this._signals[Target.DataRepository].emit(message)
+          } else {
+            const message = Messages.DataRepository.codec.ItemValue.encode({
+              itemId,
+              type: row.type,
+              filter,
+              value: 'test'
+            })
+            this._signals[Target.DataRepository].emit(message)
+          }
         })(msg)
       default:
         break
