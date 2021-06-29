@@ -1,7 +1,14 @@
-import React from 'react'
-import { Table } from 'apache-arrow'
+import React, { useState } from 'react'
+import { Table as ArrowTable } from 'apache-arrow'
 
-import Typography from '@material-ui/core/Typography'
+import Paper from '@material-ui/core/Paper'
+import TableContainer from '@material-ui/core/TableContainer'
+import Table from '@material-ui/core/Table'
+import TableHead from '@material-ui/core/TableHead'
+import TableBody from '@material-ui/core/TableBody'
+import TableRow from '@material-ui/core/TableRow'
+import TableCell from '@material-ui/core/TableCell'
+import TablePagination from '@material-ui/core/TablePagination'
 
 import {
   ModuleProps,
@@ -16,27 +23,27 @@ import {
 
 import useStyles from './DataSelection.styles'
 
-import { TableView } from '../components/TableView'
+import DataSourceRow from './DataSourceRow'
 
 interface InputValues {
-  repositoryItems?: Table<DataRepositoryItemStructure>
+  repositoryItems?: ArrowTable<DataRepositoryItemStructure>
   selectedItemsIds?: string[]
   metadataFields?: string[]
 }
 
 interface OutputValues {
-  selectedItems?: Table<Partial<DataRepositoryItemStructure>>
+  selectedItems?: ArrowTable<Partial<DataRepositoryItemStructure>>
 }
 
 type Props = ModuleProps<InputValues, OutputValues>
 
-const fieldsToDisplay = ['alias', 'columnNames']
+const defaultNumberRowsPerPage = 5
 
 const DataSelection = ({ step }: Props): JSX.Element => {
   const classes = useStyles()
 
   const [repositoryItemsFilter, setRepositoryItemsFilter] = React.useState<DataRepositoryItemsFilter>({
-    pageSize: 5,
+    pageSize: defaultNumberRowsPerPage,
     types: ['table']
   })
   const [selectedItemsIds = [], setSelectedItemsIds] = useStepInputValue<string[]>(
@@ -46,29 +53,76 @@ const DataSelection = ({ step }: Props): JSX.Element => {
   const [repositoryItemsBatch, repositoryStats] = useDataRepository(repositoryItemsFilter)
 
   const updateRepositoryItemsFilter = (filter: DataRepositoryItemsFilter) =>
-    setRepositoryItemsFilter({ pageSize: 5, ...filter, types: ['table'] })
+    setRepositoryItemsFilter({ pageSize: defaultNumberRowsPerPage, ...filter, types: ['table'] })
+
+  const [pageNumber, setPageNumber] = useState(0)
+  const [numRowsPerPage, setNumRowsPerPage] = useState(
+    repositoryItemsFilter?.pageSize ?? defaultNumberRowsPerPage
+  )
+
+  const handlePageNumberChange = (event: unknown, newPageNumber: number) => {
+    setPageNumber(newPageNumber)
+    updateRepositoryItemsFilter?.({
+      pageSize: numRowsPerPage,
+      offset: newPageNumber * numRowsPerPage
+    })
+  }
+
+  const handleNumRowsPerPageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setNumRowsPerPage(+event.target.value)
+    setPageNumber(0)
+    updateRepositoryItemsFilter?.({
+      pageSize: +event.target.value,
+      offset: 0
+    })
+  }
 
   return (
-    <div key={step.stepId}>
-      <section className={classes.section}>
-        <Typography className={classes.sectionHeading} variant="subtitle1" gutterBottom>
-          Select the repository items that contain data about the nodes and edges
-        </Typography>
-        {repositoryItemsBatch != null && repositoryStats != null && (
-          <TableView
-            table={repositoryItemsBatch}
-            fields={fieldsToDisplay}
-            tableStats={repositoryStats}
-            selections={selectedItemsIds}
-            onSelectionsChanged={setSelectedItemsIds}
-            filter={repositoryItemsFilter}
-            onFilterChanged={updateRepositoryItemsFilter}
-            usePagination
-            useSelection
+    <section className={classes.section} key={step.stepId}>
+      {repositoryItemsBatch != null && repositoryStats != null && (
+        <Paper variant="outlined" className={classes.paperWrapper}>
+          <TableContainer className={classes.tableContainer}>
+            <Table className={classes.table} stickyHeader aria-label="table caption sticky">
+              <caption style={{ textAlign: 'center' }}>
+                Select the repository items that contain data about the nodes and edges
+              </caption>
+              <TableHead>
+                <TableRow>
+                  <TableCell align="center" className={classes.tableHeadCell}></TableCell>
+                  <TableCell align="center" className={classes.tableHeadCell}>
+                    data source name
+                  </TableCell>
+                  <TableCell align="center" className={classes.tableHeadCell}>
+                    columns in data source
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody className={classes.tableBody}>
+                {[...repositoryItemsBatch].map((row, rowIndex) => (
+                  <DataSourceRow
+                    repositoryItemBatch={repositoryItemsBatch}
+                    repositoryItem={row}
+                    rowIndex={rowIndex}
+                    selectedItemIds={selectedItemsIds}
+                    setSelectedItemIds={setSelectedItemsIds}
+                    key={rowIndex}
+                  />
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePagination
+            component="div"
+            count={repositoryStats.rowsCount}
+            page={pageNumber}
+            rowsPerPage={numRowsPerPage}
+            rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+            onChangePage={handlePageNumberChange}
+            onChangeRowsPerPage={handleNumRowsPerPageChange}
           />
-        )}
-      </section>
-    </div>
+        </Paper>
+      )}
+    </section>
   )
 }
 
@@ -87,9 +141,7 @@ const mockProcessor = (
   const selectedItems = arrowUtils.filterTable(dataRepositoryTable.select(...fields), row =>
     selectedItemsIds.includes(row.id)
   )
-  return {
-    selectedItems
-  }
+  return { selectedItems }
 }
 
 export default withMockProcessor(DataSelection, mockProcessor)
