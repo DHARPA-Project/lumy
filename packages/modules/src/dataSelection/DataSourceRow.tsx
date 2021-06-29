@@ -60,11 +60,7 @@ const DataSourceRow = ({
           onChange={event => handleRowSelection(repositoryItem[0], event.target.checked)}
         />
       </TableCell>
-      <TableCell
-        className={classes.borderless}
-        align="center"
-        onClick={() => console.log(`file ${dataSourceId} clicked`)}
-      >
+      <TableCell className={classes.borderless} align="center">
         <Tooltip
           arrow
           classes={{
