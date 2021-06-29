@@ -7,11 +7,7 @@ import TableCell from '@material-ui/core/TableCell'
 import Tooltip from '@material-ui/core/Tooltip'
 import Checkbox from '@material-ui/core/Checkbox'
 
-import {
-  useDataRepositoryItemValue,
-  DataRepositoryItemStructure,
-  DataRepositoryItemsTable
-} from '@dharpa-vre/client-core'
+import { useDataRepositoryItemValue, DataRepositoryItemsTable } from '@dharpa-vre/client-core'
 import { LoadingIndicator } from '@dharpa-vre/client-ui'
 
 import useStyles from './DataSourceRow.styles'
@@ -20,7 +16,8 @@ import { TableView } from '../components/TableView'
 
 type DataSourceRowProps = {
   repositoryItemBatch: DataRepositoryItemsTable
-  repositoryItem: RowLike<DataRepositoryItemStructure>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  repositoryItem: RowLike<any>
   rowIndex: number
   selectedItemIds: string[]
   setSelectedItemIds: (value: string[]) => Promise<void>
