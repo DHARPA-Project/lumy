@@ -53,10 +53,6 @@ const DataSourceRow = ({
       <TableCell className={classes.borderless} align="center">
         <Tooltip
           arrow
-          classes={{
-            tooltip: classes.tooltip,
-            arrow: classes.tooltipArrow
-          }}
           title={
             dataSourceContentTable ? (
               <TableView

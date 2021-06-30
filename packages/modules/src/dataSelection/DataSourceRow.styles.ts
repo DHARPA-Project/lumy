@@ -15,13 +15,5 @@ export default makeStyles(theme => ({
   checkbox: {
     marginRight: theme.spacing(2),
     padding: theme.spacing(0.5)
-  },
-  tooltip: {
-    backgroundColor: theme.palette.grey[200]
-  },
-  tooltipArrow: {
-    '&:before': {
-      backgroundColor: theme.palette.grey[200]
-    }
   }
 }))
