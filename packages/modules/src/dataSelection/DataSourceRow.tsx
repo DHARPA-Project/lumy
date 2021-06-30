@@ -7,11 +7,9 @@ import Tooltip from '@material-ui/core/Tooltip'
 import Checkbox from '@material-ui/core/Checkbox'
 
 import { useDataRepositoryItemValue, DataRepositoryItemStructure } from '@dharpa-vre/client-core'
-import { LoadingIndicator } from '@dharpa-vre/client-ui'
+import { LoadingIndicator, TableView } from '@dharpa-vre/client-ui'
 
 import useStyles from './DataSourceRow.styles'
-
-import { TableView } from '../components/TableView'
 
 type RepositoryItemId = DataRepositoryItemStructure['id']['TValue']
 
