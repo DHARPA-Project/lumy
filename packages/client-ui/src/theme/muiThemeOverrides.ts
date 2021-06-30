@@ -114,6 +114,14 @@ export default {
       minHeight: 'auto'
     }
   },
+  MuiTooltip: {
+    tooltip: {
+      backgroundColor: defaultTheme.palette.grey[200]
+    },
+    arrow: {
+      color: defaultTheme.palette.grey[200]
+    }
+  },
   PrivateSwitchBase: {
     root: {
       padding: defaultTheme.spacing(1)

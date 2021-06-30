@@ -21,7 +21,7 @@ export interface TableProps<S> {
   tableStats: TableStats
   filter?: TabularDataFilter
   onFilterChanged?: (filter: TabularDataFilter) => void
-  selections: S[]
+  selections?: S[]
   onSelectionsChanged?: (selections: S[]) => void
   selectionRowIndex?: number
   usePagination?: boolean
@@ -35,7 +35,7 @@ const defaultNumberRowsPerPage = 5
  * Just an example how to deal with Arrow Table.
  * https://observablehq.com/@theneuralbit/introduction-to-apache-arrow
  */
-export const TableView = <S,>({
+const TableView = <S,>({
   table,
   requiredFields,
   tableStats,
@@ -143,3 +143,5 @@ export const TableView = <S,>({
     </Paper>
   )
 }
+
+export default TableView

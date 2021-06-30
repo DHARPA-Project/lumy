@@ -7,11 +7,9 @@ import Tooltip from '@material-ui/core/Tooltip'
 import Checkbox from '@material-ui/core/Checkbox'
 
 import { useDataRepositoryItemValue, DataRepositoryItemStructure } from '@dharpa-vre/client-core'
-import { LoadingIndicator } from '@dharpa-vre/client-ui'
+import { LoadingIndicator, TableView } from '@dharpa-vre/client-ui'
 
 import useStyles from './DataSourceRow.styles'
-
-import { TableView } from '../components/TableView'
 
 type RepositoryItemId = DataRepositoryItemStructure['id']['TValue']
 
@@ -28,14 +26,10 @@ const DataSourceRow = ({
 }: DataSourceRowProps): JSX.Element => {
   const classes = useStyles()
 
-  const dataSourceId = repositoryItem.id
-  const [dataSourceContentTable, dataSourceContentMetadata] = useDataRepositoryItemValue(
-    dataSourceId,
-    { pageSize: 5 }
-  ) // prettier-ignore
-
-  const dataSourceName = repositoryItem.alias
-  const columnsInDataSource = [...(repositoryItem.columnNames ?? [])]
+  const [
+    dataSourceContentTable,
+    dataSourceContentMetadata
+  ] = useDataRepositoryItemValue(repositoryItem.id, { pageSize: 5}) // prettier-ignore
 
   const handleRowSelection = (id: string, isSelected: boolean) => {
     if (isSelected) setSelectedItemIds(selectedItemIds.concat([id]))
@@ -55,10 +49,6 @@ const DataSourceRow = ({
       <TableCell className={classes.borderless} align="center">
         <Tooltip
           arrow
-          classes={{
-            tooltip: classes.tooltip,
-            arrow: classes.tooltipArrow
-          }}
           title={
             dataSourceContentTable ? (
               <TableView
@@ -72,11 +62,11 @@ const DataSourceRow = ({
             )
           }
         >
-          <span>{dataSourceName}</span>
+          <span>{repositoryItem.alias}</span>
         </Tooltip>
       </TableCell>
       <TableCell className={classes.borderless} align="center">
-        {columnsInDataSource.join(', ')}
+        {[...(repositoryItem.columnNames ?? [])].join(', ')}
       </TableCell>
     </TableRow>
   )
