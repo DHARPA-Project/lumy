@@ -1,10 +1,15 @@
 import { useContext, useState, useEffect } from 'react'
+import { Table as ArrowTable } from 'apache-arrow'
 import { deserialize } from '../common/codec'
 import { BackEndContext, handlerAdapter, Target } from '../common/context'
-import { Messages, TabularDataFilter } from '../common/types'
+import { Messages, TableStats, TabularDataFilter } from '../common/types'
 import { getHash } from '../common/utils/hash'
 
-export const useDataRepositoryItemValue = <ValueType, MetadataType = unknown, FilterType = TabularDataFilter>(
+export const useDataRepositoryItemValue = <
+  ValueType = ArrowTable,
+  MetadataType = TableStats,
+  FilterType = TabularDataFilter
+>(
   itemId: string,
   filter?: FilterType
 ): [ValueType | undefined, MetadataType | undefined] => {

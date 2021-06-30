@@ -1,30 +1,33 @@
 import { makeStyles } from '@material-ui/core/styles'
 
 export default makeStyles(theme => ({
-  headline: {
-    marginTop: theme.spacing(3)
-  },
   section: {
     marginBottom: theme.spacing(2)
   },
-  sectionHeading: {
-    marginBottom: theme.spacing(2)
+  paperWrapper: {
+    backgroundColor: 'transparent'
   },
-  list: {
-    padding: 0,
-    display: 'flex',
-    listStyleType: 'none'
+  tableContainer: {
+    maxHeight: `calc(100vh - ${theme.spacing(36)}px)`,
+    '& caption': {
+      captionSide: 'top'
+    }
   },
-  listItem: {
-    flexGrow: 1,
-    display: 'flex',
-    justifyContent: 'center'
+  table: {
+    '& thead th': {
+      fontWeight: '600',
+      color: theme.palette.text.primary,
+      backgroundColor: theme.palette.grey[100]
+    },
+    '& tbody td': {
+      fontWeight: '300'
+    }
   },
-  switch: {
-    pointerEvents: 'auto'
+  tableHeadCell: {
+    borderTop: `1px solid ${theme.palette.divider}`
   },
-  listItemText: {
-    margin: theme.spacing(0, 1),
-    padding: 0
+  tableBody: {
+    maxHeight: `calc(100vh - ${theme.spacing(43)}px)`,
+    overflow: 'auto'
   }
 }))

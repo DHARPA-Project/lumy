@@ -17,7 +17,7 @@ import useStyles from './TableView.styles'
 
 export interface TableProps<S> {
   table: ArrowTable
-  fields: string[]
+  requiredFields?: string[]
   tableStats: TableStats
   filter?: TabularDataFilter
   onFilterChanged?: (filter: TabularDataFilter) => void
@@ -37,7 +37,7 @@ const defaultNumberRowsPerPage = 5
  */
 export const TableView = <S,>({
   table,
-  fields,
+  requiredFields,
   tableStats,
   selections,
   filter,
@@ -82,12 +82,18 @@ export const TableView = <S,>({
           {!!caption?.length && <caption style={{ textAlign: 'center' }}>{caption}</caption>}
           <TableHead>
             <TableRow>
-              {useSelection ? <TableCell align="center"></TableCell> : ''}
-              {fields.map((field, idx) => (
-                <TableCell key={idx} align="center">
-                  {field}
-                </TableCell>
-              ))}
+              {useSelection && <TableCell align="center"></TableCell>}
+              {requiredFields
+                ? requiredFields.map((field, idx) => (
+                    <TableCell key={idx} align="center">
+                      {field}
+                    </TableCell>
+                  ))
+                : (table?.schema?.fields ?? []).map((field, idx) => (
+                    <TableCell key={idx} align="center">
+                      {field.name}
+                    </TableCell>
+                  ))}
             </TableRow>
           </TableHead>
           <TableBody className={classes.tableBody}>
@@ -103,15 +109,21 @@ export const TableView = <S,>({
                     />
                   </TableCell>
                 )}
-                {fields.map((field, idx) => {
-                  let value = table?.getColumn(field).toArray()[rowIndex]
-                  if (value instanceof Utf8Vector) value = Array.from(value).join(', ')
-                  return (
-                    <TableCell className={classes.borderless} key={idx} align="center">
-                      {value}
-                    </TableCell>
-                  )
-                })}
+                {requiredFields
+                  ? requiredFields.map((field, index) => {
+                      let value = table?.getColumn(field).toArray()[rowIndex]
+                      if (value instanceof Utf8Vector) value = Array.from(value).join(', ')
+                      return (
+                        <TableCell className={classes.borderless} key={index} align="center">
+                          {value}
+                        </TableCell>
+                      )
+                    })
+                  : Array.from({ length: table?.numCols ?? 0 }, (_, i) => i).map(index => (
+                      <TableCell className={classes.borderless} key={index}>
+                        {row[index]}
+                      </TableCell>
+                    ))}
               </TableRow>
             ))}
           </TableBody>
