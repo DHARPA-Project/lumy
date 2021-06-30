@@ -100,9 +100,7 @@ const DataSelection = ({ step }: Props): JSX.Element => {
               <TableBody className={classes.tableBody}>
                 {[...repositoryItemsBatch].map((row, rowIndex) => (
                   <DataSourceRow
-                    repositoryItemBatch={repositoryItemsBatch}
                     repositoryItem={row}
-                    rowIndex={rowIndex}
                     selectedItemIds={selectedItemsIds}
                     setSelectedItemIds={setSelectedItemsIds}
                     key={rowIndex}

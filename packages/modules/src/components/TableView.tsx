@@ -82,7 +82,7 @@ export const TableView = <S,>({
           {!!caption?.length && <caption style={{ textAlign: 'center' }}>{caption}</caption>}
           <TableHead>
             <TableRow>
-              {useSelection ? <TableCell align="center"></TableCell> : ''}
+              {useSelection && <TableCell align="center"></TableCell>}
               {requiredFields
                 ? requiredFields.map((field, idx) => (
                     <TableCell key={idx} align="center">

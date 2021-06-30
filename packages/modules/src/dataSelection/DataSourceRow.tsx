@@ -1,5 +1,4 @@
 import React from 'react'
-import { Utf8, Utf8Vector } from 'apache-arrow'
 import { RowLike } from 'apache-arrow/type'
 
 import TableRow from '@material-ui/core/TableRow'
@@ -7,43 +6,36 @@ import TableCell from '@material-ui/core/TableCell'
 import Tooltip from '@material-ui/core/Tooltip'
 import Checkbox from '@material-ui/core/Checkbox'
 
-import { useDataRepositoryItemValue, DataRepositoryItemsTable } from '@dharpa-vre/client-core'
+import { useDataRepositoryItemValue, DataRepositoryItemStructure } from '@dharpa-vre/client-core'
 import { LoadingIndicator } from '@dharpa-vre/client-ui'
 
 import useStyles from './DataSourceRow.styles'
 
 import { TableView } from '../components/TableView'
 
+type RepositoryItemId = DataRepositoryItemStructure['id']['TValue']
+
 type DataSourceRowProps = {
-  repositoryItemBatch: DataRepositoryItemsTable
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  repositoryItem: RowLike<any>
-  rowIndex: number
-  selectedItemIds: string[]
-  setSelectedItemIds: (value: string[]) => Promise<void>
+  repositoryItem: RowLike<DataRepositoryItemStructure>
+  selectedItemIds: RepositoryItemId[]
+  setSelectedItemIds: (value: RepositoryItemId[]) => Promise<void>
 }
 
 const DataSourceRow = ({
-  repositoryItemBatch,
   repositoryItem,
-  rowIndex,
   selectedItemIds,
   setSelectedItemIds
 }: DataSourceRowProps): JSX.Element => {
   const classes = useStyles()
 
-  const dataSourceId = String(repositoryItemBatch?.getColumn('id').toArray()[rowIndex])
+  const dataSourceId = repositoryItem.id
   const [dataSourceContentTable, dataSourceContentMetadata] = useDataRepositoryItemValue(
     dataSourceId,
     { pageSize: 5 }
   ) // prettier-ignore
 
-  const dataSourceName = repositoryItemBatch?.getColumn('alias').toArray()[rowIndex]
-  let columnsInDataSource: Utf8 | number | string = repositoryItemBatch?.getColumn('columnNames').toArray()[
-    rowIndex
-  ]
-  if (columnsInDataSource instanceof Utf8Vector)
-    columnsInDataSource = Array.from(columnsInDataSource).join(', ')
+  const dataSourceName = repositoryItem.alias
+  const columnsInDataSource = [...(repositoryItem.columnNames ?? [])]
 
   const handleRowSelection = (id: string, isSelected: boolean) => {
     if (isSelected) setSelectedItemIds(selectedItemIds.concat([id]))
@@ -51,13 +43,13 @@ const DataSourceRow = ({
   }
 
   return (
-    <TableRow className={classes.row} key={rowIndex}>
+    <TableRow className={classes.row}>
       <TableCell className={classes.borderless} align="center">
         <Checkbox
           className={classes.checkbox}
           color="primary"
-          checked={selectedItemIds.includes(repositoryItem[0])}
-          onChange={event => handleRowSelection(repositoryItem[0], event.target.checked)}
+          checked={selectedItemIds.includes(repositoryItem.id)}
+          onChange={event => handleRowSelection(repositoryItem.id, event.target.checked)}
         />
       </TableCell>
       <TableCell className={classes.borderless} align="center">
