@@ -11,6 +11,10 @@ import FormControl from '@material-ui/core/FormControl'
 import InputLabel from '@material-ui/core/InputLabel'
 import FormHelperText from '@material-ui/core/FormHelperText'
 import Collapse from '@material-ui/core/Collapse'
+import Tooltip from '@material-ui/core/Tooltip'
+
+import { LoadingIndicator, TableView } from '@dharpa-vre/client-ui'
+import { useDataRepositoryItemValue } from '@dharpa-vre/client-core'
 
 import useStyles from './TabularDataMappingRow.styles'
 
@@ -42,6 +46,11 @@ const TabularDataMappingRow = ({
 }: TabularDataMappingRowProps): JSX.Element => {
   const classes = useStyles()
 
+  const [
+    dataSourceContentTable,
+    dataSourceContentMetadata
+  ] = useDataRepositoryItemValue(rowId, { pageSize: 5}) // prettier-ignore
+
   const [errorMessage, setErrorMessage] = useState<string>('')
 
   // When the user toggles the checkbox that marks the current resource as a source of required data...
@@ -72,7 +81,18 @@ const TabularDataMappingRow = ({
   return (
     <>
       <TableRow className={classes.row}>
-        <TableCell className={classes.tableCell}>{rowName}</TableCell>
+        <Tooltip
+          arrow
+          title={
+            dataSourceContentTable ? (
+              <TableView table={dataSourceContentTable} tableStats={dataSourceContentMetadata} />
+            ) : (
+              <LoadingIndicator />
+            )
+          }
+        >
+          <TableCell className={classes.tableCell}>{rowName}</TableCell>
+        </Tooltip>
 
         {requiredDataSets.map(dataSet => (
           <TableCell className={classes.tableCell} key={dataSet.name}>
