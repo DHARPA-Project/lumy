@@ -76,7 +76,7 @@ const DataSourceRow = ({
         </Tooltip>
       </TableCell>
       <TableCell className={classes.borderless} align="center">
-        {columnsInDataSource}
+        {columnsInDataSource.join(', ')}
       </TableCell>
     </TableRow>
   )
