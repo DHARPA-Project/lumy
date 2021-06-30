@@ -26,14 +26,10 @@ const DataSourceRow = ({
 }: DataSourceRowProps): JSX.Element => {
   const classes = useStyles()
 
-  const dataSourceId = repositoryItem.id
-  const [dataSourceContentTable, dataSourceContentMetadata] = useDataRepositoryItemValue(
-    dataSourceId,
-    { pageSize: 5 }
-  ) // prettier-ignore
-
-  const dataSourceName = repositoryItem.alias
-  const columnsInDataSource = [...(repositoryItem.columnNames ?? [])]
+  const [
+    dataSourceContentTable,
+    dataSourceContentMetadata
+  ] = useDataRepositoryItemValue(repositoryItem.id, { pageSize: 5}) // prettier-ignore
 
   const handleRowSelection = (id: string, isSelected: boolean) => {
     if (isSelected) setSelectedItemIds(selectedItemIds.concat([id]))
@@ -66,11 +62,11 @@ const DataSourceRow = ({
             )
           }
         >
-          <span>{dataSourceName}</span>
+          <span>{repositoryItem.alias}</span>
         </Tooltip>
       </TableCell>
       <TableCell className={classes.borderless} align="center">
-        {columnsInDataSource.join(', ')}
+        {[...(repositoryItem.columnNames ?? [])].join(', ')}
       </TableCell>
     </TableRow>
   )

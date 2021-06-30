@@ -51,7 +51,7 @@ const networkAnalysisDataSets: IRequiredDataSetProp[] = [
 ]
 
 const NetworkAnalysisDataMapping = ({ step }: Props): JSX.Element => {
-  const [corpusPage] = useStepInputValue<CorpusTableType>(step.stepId, 'corpus', { fullValue: true }) // prettier-ignore
+  const [corpusPage] = useStepInputValue<CorpusTableType>(step.stepId, 'corpus', { fullValue: true })
   const [nodeMappingTable, setNodeMappingTable] = useStepInputValue<MappingTable>(
     step.stepId,
     'nodesMappingTable',
