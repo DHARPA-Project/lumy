@@ -50,10 +50,16 @@ export default makeStyles(theme => ({
   additionalPane: {
     height: '100%',
     position: 'relative',
-    flex: 1,
-    overflow: 'hidden'
+    flexGrow: 1,
+    flexShrink: 1,
+    flexBasis: 0,
+    overflow: 'hidden',
+    '&.invisible': {
+      flexGrow: 0
+    }
   },
   paneDivider: {
+    visibility: 'visible',
     '&.horizontal': {
       borderRight: `2px solid ${theme.palette.divider}`,
       cursor: 'col-resize'
@@ -61,6 +67,10 @@ export default makeStyles(theme => ({
     '&.vertical': {
       borderBottom: `2px solid ${theme.palette.divider}`,
       cursor: 'row-resize'
+    },
+    '&.invisible': {
+      border: 'none',
+      visibility: 'hidden'
     }
   }
 }))

@@ -218,18 +218,25 @@ const WorkflowContainer = (): JSX.Element => {
               <WorkflowStep projectSteps={projectSteps} activeStep={activeStep} />
             </section>
 
-            {isAdditionalPaneVisible && (
-              <>
-                <div className={classes.paneDivider + ` ${splitDirection}`} onMouseDown={onMouseDown} />
+            <div
+              className={
+                classes.paneDivider + (isAdditionalPaneVisible ? '' : ' invisible') + ` ${splitDirection}`
+              }
+              onMouseDown={onMouseDown}
+            />
 
-                <section className={classes.additionalPane} ref={additionalPaneRef}>
-                  <FeatureTabs />
-                </section>
+            <section
+              className={classes.additionalPane + (isAdditionalPaneVisible ? '' : ' invisible')}
+              ref={additionalPaneRef}
+            >
+              <FeatureTabs />
+            </section>
               </>
             )}
           </motion.div>
         </AnimatePresence>
       </div>
+
       {isAdditionalPaneVisible ? (
         <SpeedDial
           ariaLabel="screen-split-options"
