@@ -32,7 +32,7 @@ const PopoverSettingItem = ({ setting, setSettingList }: PopoverSettingItemProps
         if (settingItem.name !== setting.name) return settingItem
         return {
           ...settingItem,
-          subSettings: settingItem.subSettings.map(subsettingItem =>
+          children: settingItem.children.map(subsettingItem =>
             subsettingItem.name !== subsettingName
               ? subsettingItem
               : { ...subsettingItem, selected: !subsettingItem.selected }
@@ -44,15 +44,15 @@ const PopoverSettingItem = ({ setting, setSettingList }: PopoverSettingItemProps
 
   return (
     <>
-      <ListItem button onClick={handleSettingSelection}>
+      <ListItem component="li">
         <ListItemIcon>
           <Checkbox checked={setting.selected} edge="start" tabIndex={-1} />
         </ListItemIcon>
         <ListItemText primary={setting.name} />
       </ListItem>
       <Collapse in={setting.selected} timeout="auto" unmountOnExit>
-        <List component="div">
-          {setting.subSettings.map(subsetting => (
+        <List component="ul">
+          {setting.children.map(subsetting => (
             <ListItem
               button
               onClick={() => handleSubsettingSelection(subsetting.name)}

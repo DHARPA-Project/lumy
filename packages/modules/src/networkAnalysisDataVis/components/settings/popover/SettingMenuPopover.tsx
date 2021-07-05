@@ -40,12 +40,9 @@ const SettingMenuPopover = ({
         vertical: 'top',
         horizontal: 'left'
       }}
-      // PaperProps={{
-      //   padding
-      // }}
     >
       <List
-        component="nav"
+        component="ul"
         aria-labelledby="nested-list-subheader"
         subheader={<ListSubheader component="div">Enable required graph settings</ListSubheader>}
         className={classes.list}

@@ -62,7 +62,7 @@ const VisualizationSettings = (): JSX.Element => {
                   index={settingItemIndex}
                 >
                   <Grid container direction="column">
-                    {(settingItem.subSettings ?? []).map(
+                    {(settingItem.children ?? []).map(
                       subsetting =>
                         subsetting.selected && (
                           <Grid item className="subsetting-grid-item" key={subsetting.name}>

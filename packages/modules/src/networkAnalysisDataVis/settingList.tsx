@@ -6,6 +6,7 @@ import NodeColor from './components/settings/subsettings/nodes/NodeColor'
 import IsolatedNodes from './components/settings/subsettings/layout/IsolatedNodes'
 
 export interface SubsettingItem {
+  id: string
   name: string
   important: boolean
   selected: boolean
@@ -13,31 +14,36 @@ export interface SubsettingItem {
 }
 
 export interface SettingItem {
+  id: string
   name: string
   selected: boolean
   component: unknown
-  subSettings: SubsettingItem[]
+  children: SubsettingItem[]
 }
 
 const settingList: SettingItem[] = [
   {
+    id: 'node-appearance',
     name: 'node appearance',
     selected: false,
     component: null,
-    subSettings: [
+    children: [
       {
+        id: 'node-size',
         name: 'size',
         important: true,
         selected: false,
         component: <NodeSize />
       },
       {
+        id: 'node-label',
         name: 'label',
         important: false,
         selected: false,
         component: <NodeLabel />
       },
       {
+        id: 'node-color',
         name: 'node color',
         important: true,
         selected: false,
@@ -46,17 +52,20 @@ const settingList: SettingItem[] = [
     ]
   },
   {
+    id: 'edge-appearance',
     name: 'edge appearance',
     selected: false,
     component: null,
-    subSettings: []
+    children: []
   },
   {
+    id: 'layout-toplogy-filter',
     name: 'layout/topology/filter',
     selected: false,
     component: null,
-    subSettings: [
+    children: [
       {
+        id: 'remove-isolated-nodes',
         name: 'remove isolated nodes',
         important: false,
         selected: false,
@@ -65,16 +74,18 @@ const settingList: SettingItem[] = [
     ]
   },
   {
+    id: 'shortest-path',
     name: 'shortest path',
     selected: false,
     component: null,
-    subSettings: []
+    children: []
   },
   {
+    id: 'community-detection',
     name: 'community detection',
     selected: false,
     component: null,
-    subSettings: []
+    children: []
   }
 ]
 
