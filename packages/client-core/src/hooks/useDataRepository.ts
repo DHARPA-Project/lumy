@@ -7,7 +7,7 @@ import { getHash } from '../common/utils/hash'
 
 export type DataRepositoryItemStructure = {
   id: Utf8
-  alias: Utf8
+  label: Utf8
   type: Utf8
   columnNames?: List<Utf8>
   columnTypes?: List<Utf8>

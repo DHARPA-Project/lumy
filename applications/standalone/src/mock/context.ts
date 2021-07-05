@@ -116,7 +116,7 @@ const newMockDataRepositoryTable = (numItems = 30): DataRepositoryItemsTable => 
 
   return Table.new({
     id: Utf8Vector.from(rowNumbers.map(n => `id-${n}`)),
-    alias: Utf8Vector.from(rowNumbers.map(n => `Item #${n}`)),
+    label: Utf8Vector.from(rowNumbers.map(n => `Item #${n}`)),
     type: Utf8Vector.from(isTableType.map(isTable => (isTable ? 'table' : 'string'))),
     columnNames: ListVector.from({
       values: isTableType.map((isTable, idx) =>
