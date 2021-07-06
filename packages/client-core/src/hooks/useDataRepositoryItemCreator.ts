@@ -3,16 +3,16 @@ import { BackEndContext, handlerAdapter, Target } from '../common/context'
 import { Messages, WorkflowExecutionStatus } from '../common/types'
 
 type ItemStatus = 'new' | 'creating' | 'created' | 'error'
-type Method = 'table.from_csv' | 'onboarding.file.import'
+export type ItemCreationMethod = 'table.from_csv' | 'onboarding.file.import'
 
 type InputBuilderFn = (filePath: string) => Record<string, unknown>
 
-const inputsBuilders: Record<Method, InputBuilderFn> = {
+const inputsBuilders: Record<ItemCreationMethod, InputBuilderFn> = {
   'table.from_csv': (path: string) => ({ path }),
   'onboarding.file.import': (path: string) => ({ path })
 }
 
-type AddItemFn = (method: Method, filePath: string, workflowId: string) => void
+type AddItemFn = (method: ItemCreationMethod, filePath: string, workflowId: string) => void
 
 export const useDataRepositoryItemCreator = (
   requestId: string
@@ -45,9 +45,9 @@ export const useDataRepositoryItemCreator = (
     context.subscribe(Target.Workflow, workflowExecutionHandler)
 
     return () => context.unsubscribe(Target.Workflow, workflowExecutionHandler)
-  }, [])
+  }, [requestId])
 
-  const addItem = (method: Method, filePath: string, workflowId: string) => {
+  const addItem = (method: ItemCreationMethod, filePath: string, workflowId: string) => {
     const inputs = inputsBuilders[method](filePath)
     const msg = Messages.Workflow.codec.Execute.encode({
       moduleName: method,
@@ -57,6 +57,7 @@ export const useDataRepositoryItemCreator = (
       workflowId
     })
     context.sendMessage(Target.Workflow, msg)
+    setStatus('creating')
   }
 
   return [status, addItem, lastErrorMessage]
