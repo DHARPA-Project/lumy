@@ -1,6 +1,7 @@
 import React, { useContext } from 'react'
 
 import { useElement } from '@dharpa-vre/datavis-components'
+import { DocumentationPortal } from '@dharpa-vre/client-ui'
 import { NetworkGraphContext } from '../context'
 import { normalizedValue } from '../utils'
 import useStyles from './NetworkAnalysisVisualization.styles'
@@ -64,6 +65,10 @@ const NetworkAnalysisVisualizationContainer = (): JSX.Element => {
           ref={graphRef}
         />
       </div>
+
+      <DocumentationPortal>
+        <p>documentation</p>
+      </DocumentationPortal>
     </div>
   )
 }
