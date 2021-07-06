@@ -677,6 +677,63 @@ export interface MsgParametersSnapshots {
 
 /**
  * Target: "workflow"
+ * Message type: "Execute"
+ *
+ * Execute a Kiara workflow.
+ */
+export interface MsgWorkflowExecute {
+  /**
+   * Input values of the workflow.
+   */
+  inputs?: { [key: string]: unknown }
+  /**
+   * Name of the module or pipeline workflow to execute.
+   */
+  moduleName: string
+  /**
+   * A unique ID representing this request. It's needed solely to correlate this request to
+   * the response in pub/sub.
+   */
+  requestId: string
+  /**
+   * If true, the outputs of the workflow will be saved in the data repository.
+   */
+  save?: boolean
+  /**
+   * ID of the workflow execution
+   */
+  workflowId?: string
+}
+
+/**
+ * Target: "workflow"
+ * Message type: "ExecutionResult"
+ *
+ * Result of an execution of a Kiara workflow.
+ */
+export interface MsgWorkflowExecutionResult {
+  /**
+   * Error message when status is 'error'.
+   */
+  errorMessage?: string
+  /**
+   * A unique ID representing the execution request. Set in `Execute` message.
+   */
+  requestId: string
+  /**
+   * Result of the execution. Structure depends on the workflow. TBD.
+   */
+  result?: { [key: string]: unknown }
+  status: Status
+}
+
+export enum Status {
+  Error = 'error',
+  Ok = 'ok'
+}
+
+/**
+ * Target: "workflow"
  * Message type: "Updated"
  *
  * Contains current workflow.

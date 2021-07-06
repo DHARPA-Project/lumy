@@ -27,7 +27,9 @@ import {
   MsgSystemInfo,
   MsgGetSystemInfo,
   MsgDataRepositoryItemValue,
-  MsgDataRepositoryGetItemValue
+  MsgDataRepositoryGetItemValue,
+  MsgWorkflowExecute,
+  MsgWorkflowExecutionResult
 } from './generated'
 
 /**
@@ -48,10 +50,14 @@ export namespace Parameters {
 export namespace Workflow {
   export type Updated = MsgWorkflowUpdated
   export type GetCurrent = void
+  export type Execute = MsgWorkflowExecute
+  export type ExecutionResult = MsgWorkflowExecutionResult
 
   export namespace codec {
     export const Updated = Codec<Updated>('Updated')
     export const GetCurrent = Codec<GetCurrent>('GetCurrent')
+    export const Execute = Codec<Execute>('Execute')
+    export const ExecutionResult = Codec<ExecutionResult>('ExecutionResult')
   }
 }
 

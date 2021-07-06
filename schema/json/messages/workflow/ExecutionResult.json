@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "MsgWorkflowExecutionResult",
+  "description": "Result of an execution of a Kiara workflow.",
+  "properties": {
+    "requestId": {
+      "type": "string",
+      "description": "A unique ID representing the execution request. Set in `Execute` message."
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "ok",
+        "error"
+      ]
+    },
+    "result": {
+      "type": "object",
+      "description": "Result of the execution. Structure depends on the workflow. TBD."
+    },
+    "errorMessage": {
+      "type": "string",
+      "description": "Error message when status is 'error'."
+    }
+  },
+  "required": [
+    "requestId",
+    "status"
+  ]
+}
