@@ -62,7 +62,7 @@ const DataSourceRow = ({
             )
           }
         >
-          <span>{repositoryItem.alias}</span>
+          <span>{repositoryItem.label}</span>
         </Tooltip>
       </TableCell>
       <TableCell className={classes.borderless} align="center">

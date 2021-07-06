@@ -64,7 +64,7 @@ export const TabularDataMappingForm = ({
               <TabularDataMappingRow
                 key={row.id}
                 rowId={row.id}
-                rowName={row.alias}
+                rowName={row.label}
                 columnNames={[...(row.columnNames ?? [])]}
                 requiredDataSets={requiredDataSets}
                 isDataSetMappedInDataSource={isDataSetMappedInDataSource}
