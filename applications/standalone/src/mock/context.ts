@@ -26,7 +26,8 @@ import {
   arrowUtils,
   Note,
   DataSortingMethod,
-  DataFilterCondtion
+  DataFilterCondtion,
+  WorkflowExecutionStatus
 } from '@dharpa-vre/client-core'
 import { viewProvider } from '@dharpa-vre/modules'
 
@@ -460,6 +461,27 @@ export class MockContext implements IBackEndContext {
             workflow: (this._currentWorkflow.structure as unknown) as { [key: string]: unknown }
           })
           this._signals[Target.Workflow].emit(msg)
+        })(msg)
+      case Messages.Workflow.codec.Execute.action:
+        return adapter(Messages.Workflow.codec.Execute.decode, async message => {
+          await new Promise(res => setTimeout(res, 1000))
+          if (message.moduleName === 'table.from_csv') {
+            return Messages.Workflow.codec.ExecutionResult.encode({
+              requestId: message.requestId,
+              status: WorkflowExecutionStatus.Ok,
+              result: {
+                test: '123'
+              }
+            })
+          }
+          return Messages.Workflow.codec.ExecutionResult.encode({
+            requestId: message.requestId,
+            status: WorkflowExecutionStatus.Error,
+            result: {
+              test: '123'
+            },
+            errorMessage: 'With mock middleware only "table.from_csv" returns a successful response'
+          })
         })(msg)
       default:
         break

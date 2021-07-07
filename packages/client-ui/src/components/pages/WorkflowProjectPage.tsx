@@ -57,7 +57,7 @@ const WorkflowProjectPage = ({ pageUrlPrefix }: WorkflowProjectPageProps): JSX.E
 
       <p>or</p>
 
-      <Button variant="outlined" fullWidth onClick={() => setDataSource('upload')}>
+      <Button variant="outlined" fullWidth onClick={() => history.push('/dataregistry/add')}>
         Upload new data
       </Button>
     </div>

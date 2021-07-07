@@ -17,7 +17,8 @@ export {
   State,
   DataType,
   Operator as DataFilterCondtionOperator,
-  Direction as DataSortingDirection
+  Direction as DataSortingDirection,
+  Status as WorkflowExecutionStatus
 } from './generated'
 export * as Messages from './messages'
 export * from './base'

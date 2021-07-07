@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "MsgWorkflowExecute",
+  "description": "Execute a Kiara workflow.",
+  "properties": {
+    "requestId": {
+      "type": "string",
+      "description": "A unique ID representing this request. It's needed solely to correlate this request to the response in pub/sub."
+    },
+    "moduleName": {
+      "type": "string",
+      "description": "Name of the module or pipeline workflow to execute."
+    },
+    "workflowId": {
+      "type": "string",
+      "description": "ID of the workflow execution"
+    },
+    "save": {
+      "type": "boolean",
+      "description": "If true, the outputs of the workflow will be saved in the data repository."
+    },
+    "inputs": {
+      "type": "object",
+      "description": "Input values of the workflow."
+    }
+  },
+  "required": [
+    "requestId",
+    "moduleName"
+  ]
+}

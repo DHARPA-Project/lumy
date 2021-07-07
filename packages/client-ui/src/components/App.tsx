@@ -15,6 +15,7 @@ import ToyVrePage from './pages/ToyVrePage'
 import LabPage from './pages/LabPage'
 import PlaygroundPage from './pages/PlaygroundPage'
 import WorkflowProjectPage from './pages/WorkflowProjectPage'
+import AddDataRegistryItemPage from './pages/AddDataRegistryItemPage'
 
 const WorkflowUrlPrefix = '/workflows/network-analysis/directed'
 
@@ -39,6 +40,7 @@ export const App = (): JSX.Element => {
                 <Route path="/toy" exact component={ToyVrePage} />
                 <Route path="/lab" exact component={LabPage} />
                 <Route path="/playground" exact component={PlaygroundPage} />
+                <Route path="/dataregistry/add" exact component={AddDataRegistryItemPage} />
               </Switch>
             </TopPageLayout>
           </Router>
