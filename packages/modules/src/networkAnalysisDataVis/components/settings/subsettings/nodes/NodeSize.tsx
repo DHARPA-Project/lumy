@@ -13,15 +13,20 @@ const scalingMethodValues: Option[] = [{ value: undefined, label: 'equal' }].con
   Object.entries(scalingMethodLabels).map(([value, label]) => ({ value, label }))
 )
 
-const NodeSize = (): JSX.Element => {
+type NodeSizeProps = {
+  subsettingId: string
+}
+
+const NodeSize = ({ subsettingId }: NodeSizeProps): JSX.Element => {
   const { nodeScalingMethod, setNodeScalingMethod } = useContext(NetworkGraphContext)
 
   return (
     <OptionSelector
       value={nodeScalingMethod}
       onValueChanged={v => setNodeScalingMethod?.(v as ScalingMethod)}
+      documentationId={subsettingId}
       label="size"
-      values={scalingMethodValues}
+      options={scalingMethodValues}
     />
   )
 }

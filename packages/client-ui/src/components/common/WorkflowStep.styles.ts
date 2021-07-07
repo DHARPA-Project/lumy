@@ -6,7 +6,6 @@ export default makeStyles(theme => ({
     width: '100%',
     flexShrink: 1,
     padding: theme.spacing(2),
-    textAlign: 'center',
     backgroundColor: theme.palette.background.paper,
     color: theme.palette.text.primary
   },
@@ -21,7 +20,7 @@ export default makeStyles(theme => ({
     marginBottom: theme.spacing(1)
   },
   mainContent: {
-    height: `calc(100% - ${theme.spacing(12)}px)`,
+    height: '100%',
     overflow: 'scroll'
   }
 }))

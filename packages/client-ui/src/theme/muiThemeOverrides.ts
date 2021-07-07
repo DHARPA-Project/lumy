@@ -81,6 +81,20 @@ export default {
       minWidth: defaultTheme.spacing(4)
     }
   },
+  MuiNativeSelect: {
+    root: {
+      borderWidth: '1px',
+      borderStyle: 'solid',
+      borderColor: defaultTheme.palette.divider,
+      borderRadius: defaultTheme.shape.borderRadius
+    },
+    select: {
+      borderRadius: defaultTheme.shape.borderRadius,
+      '&:focus': {
+        borderRadius: defaultTheme.shape.borderRadius
+      }
+    }
+  },
   MuiOutlinedInput: {
     inputMarginDense: {
       paddingTop: defaultTheme.spacing(1),
@@ -116,10 +130,21 @@ export default {
   },
   MuiTooltip: {
     tooltip: {
-      backgroundColor: defaultTheme.palette.grey[200]
+      backgroundColor: defaultTheme.palette.grey[200],
+      color: defaultTheme.palette.text.primary
     },
     arrow: {
       color: defaultTheme.palette.grey[200]
+    }
+  },
+  MuiTreeItem: {
+    iconContainer: {
+      color: defaultTheme.palette.grey[500]
+    }
+  },
+  MuiTreeView: {
+    root: {
+      textAlign: 'left'
     }
   },
   PrivateSwitchBase: {

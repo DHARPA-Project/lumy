@@ -66,7 +66,7 @@ const FeatureTabs = (): JSX.Element => {
           action={tabActionRef}
           indicatorColor="primary"
           textColor="primary"
-          variant="standard"
+          variant="scrollable"
           scrollButtons="off"
           aria-label="scrollable auto icon tabs"
         >
@@ -84,7 +84,7 @@ const FeatureTabs = (): JSX.Element => {
       </AppBar>
 
       {featureList.map(({ id, content }, index) => (
-        <TabPanel value={featureTabIndex} index={index} key={id}>
+        <TabPanel value={featureTabIndex} index={index} id={id} key={id}>
           {content}
         </TabPanel>
       ))}

@@ -28,7 +28,7 @@ const SettingMenuPopover = ({
   return (
     <Popover
       className={classes.popover}
-      id={isVisible ? 'simple-popover' : undefined}
+      id={isVisible ? 'setting-menu-popover' : undefined}
       open={isVisible}
       anchorEl={anchorEl}
       onClose={handleClose}
@@ -40,12 +40,9 @@ const SettingMenuPopover = ({
         vertical: 'top',
         horizontal: 'left'
       }}
-      // PaperProps={{
-      //   padding
-      // }}
     >
       <List
-        component="nav"
+        component="ul"
         aria-labelledby="nested-list-subheader"
         subheader={<ListSubheader component="div">Enable required graph settings</ListSubheader>}
         className={classes.list}
