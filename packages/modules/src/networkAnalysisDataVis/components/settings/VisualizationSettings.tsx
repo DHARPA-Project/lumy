@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 
 import Grid from '@material-ui/core/Grid'
 import Card from '@material-ui/core/Card'
@@ -10,7 +10,7 @@ import Tooltip from '@material-ui/core/Tooltip'
 import AddCircleTwoToneIcon from '@material-ui/icons/AddCircleTwoTone'
 
 import useStyles from './VisualizationSettings.styles'
-import initialSettingList, { SettingItem } from '../../settingList'
+import { NetworkGraphContext } from '../../context'
 
 import { NavigationPanel, NavigationPanelSection } from '../common/NavigationPanel'
 import SettingMenuPopover from './popover/SettingMenuPopover'
@@ -18,7 +18,8 @@ import SettingMenuPopover from './popover/SettingMenuPopover'
 const VisualizationSettings = (): JSX.Element => {
   const classes = useStyles()
 
-  const [settingList, setSettingList] = useState<SettingItem[]>(initialSettingList)
+  const { settingList, setSettingList } = useContext(NetworkGraphContext)
+
   const [popoverAnchorEl, setPopoverAnchorEl] = useState<HTMLButtonElement | null>(null)
 
   const handleOpenPopover = (event: React.MouseEvent<HTMLButtonElement>) => {

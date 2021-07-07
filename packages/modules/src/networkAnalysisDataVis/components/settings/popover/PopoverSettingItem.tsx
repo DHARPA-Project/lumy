@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
@@ -9,6 +9,8 @@ import Checkbox from '@material-ui/core/Checkbox'
 
 import useStyles from './PopoverSettingItem.styles'
 import { SettingItem } from '../../../settingList'
+import { NetworkGraphContext } from '../../../context'
+import { WorkflowContext, featureIds, featureList } from '@dharpa-vre/client-ui'
 
 import TextPill from '../../common/TextPill'
 
@@ -19,6 +21,9 @@ export interface PopoverSettingItemProps {
 
 const PopoverSettingItem = ({ setting, setSettingList }: PopoverSettingItemProps): JSX.Element => {
   const classes = useStyles()
+
+  const { setHighlightedDocItem } = useContext(NetworkGraphContext)
+  const { openFeatureTab } = useContext(WorkflowContext)
 
   const handleSettingSelection = () => {
     setSettingList(prevSettingList =>
@@ -46,24 +51,36 @@ const PopoverSettingItem = ({ setting, setSettingList }: PopoverSettingItemProps
     <>
       <ListItem component="li">
         <ListItemIcon>
-          <Checkbox checked={setting.selected} edge="start" tabIndex={-1} />
+          <Checkbox checked={setting.selected} edge="start" tabIndex={-1} onClick={handleSettingSelection} />
         </ListItemIcon>
         <ListItemText primary={setting.name} />
       </ListItem>
       <Collapse in={setting.selected} timeout="auto" unmountOnExit>
         <List component="ul">
           {setting.children.map(subsetting => (
-            <ListItem
-              button
-              onClick={() => handleSubsettingSelection(subsetting.name)}
-              className={classes.nested}
-              key={subsetting.name}
-            >
+            <ListItem component="li" className={classes.nested} key={subsetting.name}>
               <ListItemIcon>
-                <Checkbox edge="start" checked={subsetting.selected} tabIndex={-1} />
+                <Checkbox
+                  edge="start"
+                  checked={subsetting.selected}
+                  onClick={() => {
+                    handleSubsettingSelection(subsetting.name)
+                  }}
+                  tabIndex={-1}
+                />
               </ListItemIcon>
-              <ListItemText className={classes.itemText}>
-                {subsetting.name}
+
+              <ListItemText
+                className={classes.itemTextContainer}
+                onClick={() => {
+                  setHighlightedDocItem(subsetting.id)
+                  const documentationTabIndex = featureList.findIndex(
+                    feature => feature.id === featureIds.documentation
+                  )
+                  if (documentationTabIndex >= 0) openFeatureTab(documentationTabIndex)
+                }}
+              >
+                <span className={classes.itemTextContent}>{subsetting.name}</span>
                 {subsetting.important && <TextPill text="important" />}
               </ListItemText>
             </ListItem>

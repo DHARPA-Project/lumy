@@ -171,6 +171,8 @@ const WorkflowContextProvider = ({ children }: WorkflowProviderProps): JSX.Eleme
   const openFeatureTab = (tabIndex: number): void => {
     setFeatureTabIndex(tabIndex)
 
+    if (isAdditionalPaneVisible) return
+
     if (splitDirection === 'vertical') {
       setMainPaneHeight(getStepContainerHeight() / 2)
     } else {

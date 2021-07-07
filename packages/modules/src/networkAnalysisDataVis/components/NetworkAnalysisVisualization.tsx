@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 
 import { useElement } from '@dharpa-vre/datavis-components'
-import { DocumentationPortal } from '@dharpa-vre/client-ui'
+import { DocumentationPortal, TreeView } from '@dharpa-vre/client-ui'
 import { NetworkGraphContext } from '../context'
 import { normalizedValue } from '../utils'
 import useStyles from './NetworkAnalysisVisualization.styles'
@@ -16,6 +16,8 @@ const NetworkAnalysisVisualizationContainer = (): JSX.Element => {
   const classes = useStyles()
 
   const {
+    settingList,
+    highlightedDocItem,
     colorCodeNodes,
     graphBoxSize,
     graphContainerRef,
@@ -67,7 +69,7 @@ const NetworkAnalysisVisualizationContainer = (): JSX.Element => {
       </div>
 
       <DocumentationPortal>
-        <p>documentation</p>
+        <TreeView treeStructure={settingList} selectedItem={highlightedDocItem} />
       </DocumentationPortal>
     </div>
   )
