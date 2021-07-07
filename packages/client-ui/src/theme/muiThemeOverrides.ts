@@ -122,6 +122,16 @@ export default {
       color: defaultTheme.palette.grey[200]
     }
   },
+  MuiTreeItem: {
+    iconContainer: {
+      color: defaultTheme.palette.grey[500]
+    }
+  },
+  MuiTreeView: {
+    root: {
+      textAlign: 'left'
+    }
+  },
   PrivateSwitchBase: {
     root: {
       padding: defaultTheme.spacing(1)

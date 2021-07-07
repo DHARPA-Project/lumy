@@ -8,6 +8,7 @@ import IsolatedNodes from './components/settings/subsettings/layout/IsolatedNode
 export interface SubsettingItem {
   id: string
   name: string
+  details?: string
   important: boolean
   selected: boolean
   component: unknown
@@ -31,23 +32,26 @@ const settingList: SettingItem[] = [
       {
         id: 'node-size',
         name: 'size',
+        details: 'Node sizes can be adjusted to reflect various degrees of connectedness.',
         important: true,
         selected: false,
-        component: <NodeSize />
+        component: <NodeSize subsettingId="node-size" />
       },
       {
         id: 'node-label',
         name: 'label',
+        details: `Choose whether you'd like to display node labels.`,
         important: false,
         selected: false,
-        component: <NodeLabel />
+        component: <NodeLabel subsettingId="node-label" />
       },
       {
         id: 'node-color',
         name: 'node color',
+        details: 'Nodes can be colored to match the groups they belong to.',
         important: true,
         selected: false,
-        component: <NodeColor />
+        component: <NodeColor subsettingId="node-color" />
       }
     ]
   },
@@ -67,6 +71,7 @@ const settingList: SettingItem[] = [
       {
         id: 'remove-isolated-nodes',
         name: 'remove isolated nodes',
+        details: 'Isolated nodes can be removed',
         important: false,
         selected: false,
         component: <IsolatedNodes />
