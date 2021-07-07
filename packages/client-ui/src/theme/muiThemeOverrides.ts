@@ -130,7 +130,8 @@ export default {
   },
   MuiTooltip: {
     tooltip: {
-      backgroundColor: defaultTheme.palette.grey[200]
+      backgroundColor: defaultTheme.palette.grey[200],
+      color: defaultTheme.palette.text.primary
     },
     arrow: {
       color: defaultTheme.palette.grey[200]

@@ -48,7 +48,7 @@ export const featureList: IFeature[] = [
   },
   {
     id: featureIds.documentation,
-    label: 'Guide',
+    label: 'Help',
     tooltip: 'See Documentation',
     icon: <LibraryBooksIcon />,
     content: null

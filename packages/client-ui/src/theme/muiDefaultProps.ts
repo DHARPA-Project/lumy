@@ -16,9 +16,6 @@ export default {
   MuiList: {
     disablePadding: true
   },
-  MuiListItem: {
-    disableRipple: true
-  },
   MuiNativeSelect: {
     disableUnderline: true
   },

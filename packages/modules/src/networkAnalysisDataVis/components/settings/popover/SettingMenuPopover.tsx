@@ -28,7 +28,7 @@ const SettingMenuPopover = ({
   return (
     <Popover
       className={classes.popover}
-      id={isVisible ? 'simple-popover' : undefined}
+      id={isVisible ? 'setting-menu-popover' : undefined}
       open={isVisible}
       anchorEl={anchorEl}
       onClose={handleClose}

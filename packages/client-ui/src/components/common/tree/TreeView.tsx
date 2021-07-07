@@ -77,6 +77,7 @@ const CustomTreeView = ({
   }
 
   const collapseTree = () => {
+    setSelected([])
     setExpanded([])
   }
 

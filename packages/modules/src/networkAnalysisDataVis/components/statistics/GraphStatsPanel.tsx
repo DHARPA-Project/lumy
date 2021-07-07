@@ -27,7 +27,7 @@ const TableCell = ({ children }: TableCellProps): JSX.Element => {
 export const GraphStatsPanel = ({ graphStats }: GraphStatsPanelProps): JSX.Element => {
   const classes = useStyles()
 
-  const [expanded, setExpanded] = useState<boolean>(false)
+  const [expanded, setExpanded] = useState<boolean>(true)
 
   return (
     <div className={classes.statContainer}>
