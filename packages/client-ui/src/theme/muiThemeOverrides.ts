@@ -81,6 +81,20 @@ export default {
       minWidth: defaultTheme.spacing(4)
     }
   },
+  MuiNativeSelect: {
+    root: {
+      borderWidth: '1px',
+      borderStyle: 'solid',
+      borderColor: defaultTheme.palette.divider,
+      borderRadius: defaultTheme.shape.borderRadius
+    },
+    select: {
+      borderRadius: defaultTheme.shape.borderRadius,
+      '&:focus': {
+        borderRadius: defaultTheme.shape.borderRadius
+      }
+    }
+  },
   MuiOutlinedInput: {
     inputMarginDense: {
       paddingTop: defaultTheme.spacing(1),

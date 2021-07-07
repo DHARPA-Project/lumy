@@ -19,6 +19,9 @@ export default {
   MuiListItem: {
     disableRipple: true
   },
+  MuiNativeSelect: {
+    disableUnderline: true
+  },
   MuiPaper: {
     variant: 'outlined',
     elevation: 0
