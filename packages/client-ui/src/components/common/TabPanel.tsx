@@ -9,6 +9,7 @@ type TabPanelProps = {
   children: React.ReactNode
   value: number
   index: number
+  id?: string
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -19,7 +20,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   }
 }))
 
-const TabPanel = ({ children, value, index, ...other }: TabPanelProps): JSX.Element => {
+const TabPanel = ({ children, value, index, id, ...other }: TabPanelProps): JSX.Element => {
   const classes = useStyles()
 
   return (
@@ -27,7 +28,7 @@ const TabPanel = ({ children, value, index, ...other }: TabPanelProps): JSX.Elem
       className={classes.tabPanel}
       role="tabpanel"
       hidden={value !== index}
-      id={`scrollable-auto-tabpanel-${index}`}
+      id={id ? id : `scrollable-auto-tabpanel-${index}`}
       aria-labelledby={`scrollable-auto-tab-${index}`}
       {...other}
     >

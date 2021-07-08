@@ -13,8 +13,13 @@ import {
   getNodeScalerParameters,
   NodeScalerParameters
 } from './graphDataMethods'
+import initialSettingList, { SettingItem } from './settingList'
 
 export type NetworkGraphContextType = {
+  settingList: SettingItem[]
+  setSettingList: React.Dispatch<React.SetStateAction<SettingItem[]>>
+  highlightedDocItem: string
+  setHighlightedDocItem: React.Dispatch<React.SetStateAction<string>>
   colorCodeNodes: boolean
   graphBoxSize: DOMRect
   graphContainerRef: React.Ref<HTMLDivElement>
@@ -44,7 +49,10 @@ const NetworkGraphContextProvider = ({
   pageDetails: { id: stepId },
   children
 }: NetworkGraphContextProviderProps): JSX.Element => {
-  /* 1. Get read only module input values */
+  const [settingList, setSettingList] = useState<SettingItem[]>(initialSettingList)
+  const [highlightedDocItem, setHighlightedDocItem] = useState('')
+
+  /* Get read only module input values */
   const [nodes] = useStepInputValue<InputValues['nodes']>(stepId, 'nodes', { fullValue: true })
   const [edges] = useStepInputValue<InputValues['edges']>(stepId, 'edges', { fullValue: true })
 
@@ -56,10 +64,9 @@ const NetworkGraphContextProvider = ({
   //   nodesFilter
   // )
 
-  /* 2. Get input values that we can control */
+  /* Get input values that we can control */
 
   // ID of the node we will get direct neighbours for
-
   // TODO: replace react state variable with backend state variable when
   // reapplying force on update is sorted out
   // const [selectedNodeId, setSelectedNodeId] = useStepInputValue<InputValues['selectedNodeId']>(
@@ -68,7 +75,7 @@ const NetworkGraphContextProvider = ({
   // )
   const [selectedNodeId, setSelectedNodeId] = useState<InputValues['selectedNodeId']>()
 
-  /* 3. Get output values */
+  /* Get output values */
   const [graphData] = useStepOutputValue<OutputValues['graphData']>(stepId, 'graphData', {
     fullValue: true
   })
@@ -78,12 +85,12 @@ const NetworkGraphContextProvider = ({
   //const [shortestPath] = useStepOutputValue<string[]>(step.stepId, 'shortestPath')
   const [graphStats] = useStepOutputValue<OutputValues['graphStats']>(stepId, 'graphStats')
 
-  /* 4. Graph and its container reference - for getting container size */
+  /* Graph and its container reference - for getting container size */
   const graphRef = useRef<NetworkForce>(null)
   const graphContainerRef = useRef()
   const graphBoxSize = useBoxSize(graphContainerRef)
 
-  /* 5. local state variables, mostly for navigation */
+  /* local state variables, mostly for navigation */
 
   const [nodeScalingMethod, setNodeScalingMethod] = useState<ScalingMethod>('degree')
   const [isDisplayLabels, setIsDisplayLabels] = useState(false)
@@ -92,7 +99,7 @@ const NetworkGraphContextProvider = ({
   const [labelNodeSizeThreshold, setLabelNodeSizeThreshold] = useState<number>(0.8)
   const [colorCodeNodes, setColorCodeNodes] = useState(true)
 
-  /* 6. handlers for graph node hover */
+  /* handlers for graph node hover */
   const handleGraphNodeMouseMove = (event: CustomEvent<NodeMouseEventDetails>) => {
     setGraphTooltipInfo(event.detail)
   }
@@ -113,7 +120,7 @@ const NetworkGraphContextProvider = ({
     console.log(`Direct connections of node ${selectedNodeId}: ${selectedNodeDirectConnections}`)
   }, [selectedNodeDirectConnections])
 
-  /* 7. Handle changes in nodes, edges, graph data and graph parameters:
+  /* Handle changes in nodes, edges, graph data and graph parameters:
         construct new force graph data structures and pass them to the graph
   */
   useEffect(() => {
@@ -132,12 +139,16 @@ const NetworkGraphContextProvider = ({
   useElementEventCallback(graphRef.current, 'node-mousemove', handleGraphNodeMouseMove)
   useElementEventCallback(graphRef.current, 'node-hovered-out', handleGraphNodeHoveredOut)
 
-  /* 8. local variables */
+  /* local variables */
   const nodeScalerParams = getNodeScalerParameters(graphData, nodeScalingMethod)
 
   return (
     <NetworkGraphContext.Provider
       value={{
+        settingList,
+        setSettingList,
+        highlightedDocItem,
+        setHighlightedDocItem,
         colorCodeNodes,
         graphBoxSize,
         graphContainerRef,

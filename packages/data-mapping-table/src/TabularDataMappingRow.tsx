@@ -12,6 +12,7 @@ import InputLabel from '@material-ui/core/InputLabel'
 import FormHelperText from '@material-ui/core/FormHelperText'
 import Collapse from '@material-ui/core/Collapse'
 import Tooltip from '@material-ui/core/Tooltip'
+import Popover from '@material-ui/core/Popover'
 
 import { LoadingIndicator, TableView } from '@dharpa-vre/client-ui'
 import { useDataRepositoryItemValue } from '@dharpa-vre/client-core'
@@ -52,6 +53,7 @@ const TabularDataMappingRow = ({
   ] = useDataRepositoryItemValue(rowId, { pageSize: 5}) // prettier-ignore
 
   const [errorMessage, setErrorMessage] = useState<string>('')
+  const [popoverAnchorEl, setPopoverAnchorEl] = useState<HTMLElement | null>(null)
 
   // When the user toggles the checkbox that marks the current resource as a source of required data...
   // (e.g. when the user selects this resource as a source of nodes or edges for network analysis)
@@ -78,21 +80,46 @@ const TabularDataMappingRow = ({
     setColumnMappedToField(rowId, fieldName, selectedColumn)
   }
 
+  const handleOpenPopover = (event: React.MouseEvent<HTMLElement>) => {
+    setPopoverAnchorEl(event.currentTarget)
+  }
+
+  const handleClosePopover = () => {
+    setPopoverAnchorEl(null)
+  }
+
+  const isPopoverOpen = Boolean(popoverAnchorEl)
+  const popoverId = isPopoverOpen ? 'data-source-content-preview-popover' : undefined
+
   return (
     <>
       <TableRow className={classes.row}>
-        <Tooltip
-          arrow
-          title={
-            dataSourceContentTable ? (
+        <TableCell className={classes.tableCell}>
+          <Tooltip arrow title="click to open content preview">
+            <span onClick={handleOpenPopover}>{rowName}</span>
+          </Tooltip>
+
+          <Popover
+            anchorEl={popoverAnchorEl}
+            open={isPopoverOpen}
+            id={popoverId}
+            onClose={handleClosePopover}
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'left'
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'left'
+            }}
+          >
+            {dataSourceContentTable ? (
               <TableView table={dataSourceContentTable} tableStats={dataSourceContentMetadata} />
             ) : (
               <LoadingIndicator />
-            )
-          }
-        >
-          <TableCell className={classes.tableCell}>{rowName}</TableCell>
-        </Tooltip>
+            )}
+          </Popover>
+        </TableCell>
 
         {requiredDataSets.map(dataSet => (
           <TableCell className={classes.tableCell} key={dataSet.name}>
