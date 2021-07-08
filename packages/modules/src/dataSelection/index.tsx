@@ -18,7 +18,8 @@ import {
   useDataRepository,
   DataRepositoryItemStructure,
   DataRepositoryItemsTable,
-  arrowUtils
+  arrowUtils,
+  MockProcessorResult
 } from '@dharpa-vre/client-core'
 
 import useStyles from './DataSelection.styles'
@@ -26,7 +27,6 @@ import useStyles from './DataSelection.styles'
 import DataSourceRow from './DataSourceRow'
 
 interface InputValues {
-  repositoryItems?: ArrowTable<DataRepositoryItemStructure>
   selectedItemsIds?: string[]
   metadataFields?: string[]
 }
@@ -124,7 +124,7 @@ type KnownMetadataFields = keyof DataRepositoryItemStructure
 const mockProcessor = (
   { selectedItemsIds = [], metadataFields }: InputValues,
   dataRepositoryTable?: DataRepositoryItemsTable
-): OutputValues => {
+): MockProcessorResult<InputValues, OutputValues> => {
   if (dataRepositoryTable == null) return
 
   const fields = new Set(
@@ -134,7 +134,7 @@ const mockProcessor = (
   const selectedItems = arrowUtils.filterTable(dataRepositoryTable.select(...fields), row =>
     selectedItemsIds.includes(row.id)
   )
-  return { selectedItems }
+  return { outputs: { selectedItems } }
 }
 
 export default withMockProcessor(DataSelection, mockProcessor)

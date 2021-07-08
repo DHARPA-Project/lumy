@@ -1,6 +1,7 @@
 import React from 'react'
 import { Table, Utf8Vector, Utf8, List, Field, ListVector } from 'apache-arrow'
 import {
+  MockProcessorResult,
   ModuleProps,
   useAddFilesToRepository,
   useStepInputValue,
@@ -57,7 +58,7 @@ const DataUpload = ({ pageDetails: { id: stepId } }: ModuleProps): JSX.Element =
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const mockProcessor = (_inputValues: InputValues): OutputValues => {
+const mockProcessor = (_inputValues: InputValues): MockProcessorResult<InputValues, OutputValues> => {
   const testTableNumbers = [...Array(30).keys()]
 
   const testTable = Table.new({
@@ -70,7 +71,7 @@ const mockProcessor = (_inputValues: InputValues): OutputValues => {
     })
   })
 
-  return { repositoryItems: testTable }
+  return { outputs: { repositoryItems: testTable } }
 }
 
 export default withMockProcessor(DataUpload, mockProcessor)

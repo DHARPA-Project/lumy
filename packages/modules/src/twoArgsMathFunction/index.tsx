@@ -1,5 +1,10 @@
 import React from 'react'
-import { ModuleProps, useStepInputValue, withMockProcessor } from '@dharpa-vre/client-core'
+import {
+  MockProcessorResult,
+  ModuleProps,
+  useStepInputValue,
+  withMockProcessor
+} from '@dharpa-vre/client-core'
 
 interface InputValues {
   operator?: string
@@ -95,7 +100,7 @@ const TwoArgsMathFunction = ({ pageDetails: { id: stepId } }: ModuleProps): JSX.
   )
 }
 
-const mockProcessor = (inputValues: InputValues): OutputValues => {
+const mockProcessor = (inputValues: InputValues): MockProcessorResult<InputValues, OutputValues> => {
   const { a = 0, b = 0, operator = 'add' } = inputValues
   let c = 0
   try {
@@ -117,7 +122,7 @@ const mockProcessor = (inputValues: InputValues): OutputValues => {
         break
     }
   } finally {
-    return { c }
+    return { outputs: { c } }
   }
 }
 

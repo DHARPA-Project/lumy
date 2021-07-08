@@ -3,11 +3,16 @@ import { DataRepositoryItemsTable } from '../hooks'
 import { ModuleViewProvider } from './modules'
 import { WorkflowPageComponent, WorkflowPageDetails } from './types'
 
-type DefaultIO = { [key: string]: unknown }
-
-export type MockProcessor<I, O> = (inputValues: I, dataRepositoryTable?: DataRepositoryItemsTable) => O
+export type MockProcessorResult<I, O> = { inputs?: Partial<I>; outputs?: Partial<O> }
+export type MockProcessor<I, O> = (
+  inputValues: I,
+  dataRepositoryTable?: DataRepositoryItemsTable
+) => MockProcessorResult<I, O>
 
 const noOpMockProcessor: MockProcessor<unknown, unknown> = () => ({})
+
+type DefaultIO = { [key: string]: unknown }
+export type DataProcessorResult = MockProcessorResult<DefaultIO, DefaultIO>
 
 // https://github.com/facebook/react/blob/5aa0c5671fdddc46092d46420fff84a82df558ac/packages/react/src/ReactLazy.js#L45
 interface LazyResult<I, O> {
@@ -76,15 +81,10 @@ export const getMockProcessor = async <I, O>(
   return component?.mockProcessor ?? noOpMockProcessor
 }
 
-export type DataProcessorResult<I = DefaultIO, O = DefaultIO> = {
-  inputs: I
-  outputs: O
-}
-
-export type DataProcessor<I = DataProcessorResult['inputs'], O = DataProcessorResult['outputs']> = (
+export type DataProcessor<I = DefaultIO, O = DefaultIO> = (
   pageDetails: WorkflowPageDetails,
   inputValues: I
-) => Promise<DataProcessorResult<I, O>>
+) => Promise<MockProcessorResult<I, O>>
 
 export const mockDataProcessorFactory = (
   viewProvider: ModuleViewProvider,
@@ -92,22 +92,19 @@ export const mockDataProcessorFactory = (
 ) => {
   return async function (
     pageDetails: WorkflowPageDetails,
-    inputValues: DataProcessorResult['inputs']
-  ): Promise<DataProcessorResult> {
+    inputValues: Record<string, unknown>
+  ): Promise<MockProcessorResult<unknown, unknown>> {
     console.debug(
       `Mock processing for workflow page "${pageDetails?.id}" using module "${pageDetails?.component?.id}" with values`,
       inputValues
     )
 
-    const processor = await getMockProcessor<DataProcessorResult['inputs'], DataProcessorResult['outputs']>(
-      viewProvider,
-      pageDetails?.component
-    )
+    const processor = await getMockProcessor<unknown, unknown>(viewProvider, pageDetails?.component)
 
-    const outputs = processor(inputValues, dataRepositoryTable)
+    const { inputs = {}, outputs = {} } = processor(inputValues, dataRepositoryTable)
 
     return {
-      inputs: inputValues,
+      inputs: { ...inputValues, ...inputs },
       outputs
     }
   }

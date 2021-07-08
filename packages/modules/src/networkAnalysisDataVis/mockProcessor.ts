@@ -1,5 +1,6 @@
-import { Table, Bool, Float32Vector, Vector, BoolVector } from 'apache-arrow'
-import { GraphDataStructure, InputValues, OutputValues } from './structure'
+import { Table, Bool, Float32Vector, Vector, BoolVector, Utf8Vector, Int32Vector } from 'apache-arrow'
+import { MockProcessorResult } from '@dharpa-vre/client-core'
+import { EdgesStructure, GraphDataStructure, InputValues, NodesStructure, OutputValues } from './structure'
 
 type NodeValues = Record<keyof GraphDataStructure, unknown>
 
@@ -27,13 +28,58 @@ const fakeGraphStats: OutputValues['graphStats'] = {
   averageShortestPathLength: Math.random()
 }
 
+const generateNodesAndEdges = () => {
+  const numNodes = 123
+  const nums = [...new Array(numNodes).keys()]
+  const numConnections = numNodes * 2
+  const cnums = [...new Array(numConnections).keys()]
+
+  const groups = ['groupA', 'groupB', 'groupC']
+  const getRandomGroup = () => {
+    const idx = Math.floor(Math.random() * groups.length)
+    return groups[idx]
+  }
+
+  const getRandomNodeId = () => {
+    const idx = Math.floor(Math.random() * numNodes * 0.9)
+    return String(nums[idx])
+  }
+
+  const maxWeight = 30
+  const getRandomWeight = () => Math.floor(Math.random() * maxWeight)
+
+  const nodes = Table.new<NodesStructure>(
+    [
+      Utf8Vector.from(nums.map(i => String(i))),
+      Utf8Vector.from(nums.map(i => `Node ${i}`)),
+      Utf8Vector.from(nums.map(() => getRandomGroup()))
+    ],
+    ['id', 'label', 'group']
+  )
+  const edges = Table.new<EdgesStructure>(
+    [
+      Utf8Vector.from(cnums.map(() => getRandomNodeId())),
+      Utf8Vector.from(cnums.map(() => getRandomNodeId())),
+      Int32Vector.from(cnums.map(() => getRandomWeight()))
+    ],
+    ['srcId', 'tgtId', 'weight']
+  )
+  return { nodes, edges }
+}
+
 export const mockProcessor = ({
   nodes,
   edges,
   selectedNodeId,
   shortestPathSource,
   shortestPathTarget
-}: InputValues): OutputValues => {
+}: InputValues): MockProcessorResult<InputValues, OutputValues> => {
+  if (nodes == null || edges == null) {
+    const generated = generateNodesAndEdges()
+    nodes = generated.nodes
+    edges = generated.edges
+  }
+
   const ids = [...nodes.getColumn('id')]
 
   const notIsolatedNodesIds = new Set([...edges.getColumn('srcId')].concat([...edges.getColumn('tgtId')]))
@@ -67,9 +113,15 @@ export const mockProcessor = ({
   }
 
   return {
-    graphData,
-    shortestPath,
-    directConnections,
-    graphStats: fakeGraphStats
+    inputs: {
+      nodes,
+      edges
+    },
+    outputs: {
+      graphData,
+      shortestPath,
+      directConnections,
+      graphStats: fakeGraphStats
+    }
   }
 }

@@ -26,8 +26,7 @@ import {
   DataSortingMethod,
   DataFilterCondtion,
   WorkflowExecutionStatus,
-  LumyWorkflow,
-  workflowUtils
+  LumyWorkflow
 } from '@dharpa-vre/client-core'
 import { viewProvider } from '@dharpa-vre/modules'
 
@@ -155,22 +154,29 @@ interface IOValueStoreValue {
   value: unknown
 }
 
+interface PageIOValues<T> {
+  [ioId: string]: T
+}
+
+interface MockPageValueDetails<T> {
+  inputs?: PageIOValues<T>
+  outputs?: PageIOValues<T>
+}
+
+interface MockValueStore<T> {
+  [pageId: string]: MockPageValueDetails<T>
+}
+
 class IOValuesStore {
   private _store: Storage
-  private _workflowStructure: LumyWorkflow
   private _storeKey: string
-  private _values: Record<string, unknown>
-  private _outputValues: Record<string, unknown>
+  private _values: MockValueStore<unknown>
 
-  private _keySeparator = '♨️'
-
-  constructor(workflowStructure: LumyWorkflow, storeKey = '__dharpa_mock_input_values') {
+  constructor(workflowStructure: LumyWorkflow, storeKey = '__dharpa_mock_values') {
     this._store = window.localStorage
-    this._workflowStructure = workflowStructure
     this._storeKey = storeKey
 
     this.loadFromStore()
-    this._outputValues = {}
   }
 
   private serializeValue(value: unknown): IOValueStoreValue {
@@ -183,7 +189,7 @@ class IOValuesStore {
     return deserialize(value.value, undefined, value.type)[0]
   }
 
-  private getSerializedFromStore(): Record<string, IOValueStoreValue> {
+  private getSerializedFromStore(): MockValueStore<IOValueStoreValue> {
     this._values = {}
     const storeDataString: string | undefined = this._store.getItem(this._storeKey)
     try {
@@ -199,49 +205,59 @@ class IOValuesStore {
   private loadFromStore() {
     const values = this.getSerializedFromStore()
     this._values = Object.entries(values).reduce(
-      (acc, [k, v]) => ({ ...acc, [k]: this.deserializeValue(v) }),
-      {} as Record<string, unknown>
+      (acc, [pageId, { inputs = {}, outputs = {} }]) => ({
+        ...acc,
+        [pageId]: {
+          inputs: Object.entries(inputs).reduce(
+            (acc, [inputId, value]) => ({
+              ...acc,
+              [inputId]: this.deserializeValue(value)
+            }),
+            {}
+          ),
+          outputs: Object.entries(outputs).reduce(
+            (acc, [outputId, value]) => ({
+              ...acc,
+              [outputId]: this.deserializeValue(value)
+            }),
+            {}
+          )
+        }
+      }),
+      {} as MockValueStore<unknown>
     )
   }
 
   private saveToStore() {
     const values = Object.entries(this._values).reduce(
-      (acc, [k, v]) => ({ ...acc, [k]: this.serializeValue(v) }),
-      {} as Record<string, unknown>
+      (acc, [pageId, { inputs = {}, outputs = {} }]) => ({
+        ...acc,
+        [pageId]: {
+          inputs: Object.entries(inputs).reduce(
+            (acc, [inputId, value]) => ({
+              ...acc,
+              [inputId]: this.serializeValue(value)
+            }),
+            {}
+          ),
+          outputs: Object.entries(outputs).reduce(
+            (acc, [outputId, value]) => ({
+              ...acc,
+              [outputId]: this.serializeValue(value)
+            }),
+            {}
+          )
+        }
+      }),
+      {} as MockValueStore<IOValueStoreValue>
     )
     this._store.setItem(this._storeKey, JSON.stringify(values))
   }
 
-  private asKey(stepId: string, inputId: string): string {
-    return [stepId, this._keySeparator, inputId].join('')
-  }
-
-  private getCorrespondingInput(stepId: string, outputId: string): [string, string] {
-    const connections = workflowUtils.getConnectedInputs(this._workflowStructure, stepId, outputId)
-
-    if (connections.length === 0) return [undefined, undefined]
-    // NOTE: even though more than one input can be connected to an output,
-    // for the mock context we just pick the first one.
-    return connections[0]
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private getDefaultValue<T = unknown>(pageId: string, inputId: string): T | undefined {
-    return undefined
-    // NOTE: with Lumy Workflow this is not possible anymore
-    // const stepInput = this._workflowStructure.ui.pages.find(page => page.id === pageId)
-    // const defaultValue = stepInput?.values?.[inputId]?.valueSchema?.default
-    // if (defaultValue == null) return undefined
-    // return (defaultValue as unknown) as T
-  }
-
-  private getValue<T = unknown>(stepId: string, ioId: string, isInput: boolean): T | undefined {
-    const [actualStepId, inputId] = isInput ? [stepId, ioId] : this.getCorrespondingInput(stepId, ioId)
-    if ((actualStepId == null || inputId == null) && !isInput)
-      return this._outputValues[this.asKey(stepId, ioId)] as T
-
-    const value = this._values[this.asKey(actualStepId, inputId)] as T
-    return value ?? this.getDefaultValue(actualStepId, inputId)
+  private getValue<T = unknown>(pageId: string, ioId: string, isInput: boolean): T | undefined {
+    const pageDetails = this._values[pageId]
+    const values = isInput ? pageDetails?.inputs : pageDetails?.outputs
+    return values?.[ioId] as T
   }
 
   getInputValue<T = unknown>(stepId: string, inputId: string): T | undefined {
@@ -253,10 +269,9 @@ class IOValuesStore {
   }
 
   getInputValues(pageId: string, inputIds?: string[]): { [inputId: string]: unknown } {
-    const inputsMapping = this._workflowStructure.ui.pages?.find(page => page.id === pageId)?.mapping?.inputs
+    const availableInputIds = Object.keys(this._values[pageId]?.inputs ?? {})
 
-    const allInputIds = Object.keys(inputsMapping ?? {})
-    const actualInputIds = inputIds ?? allInputIds
+    const actualInputIds = inputIds ?? availableInputIds
     return actualInputIds.reduce((acc, inputId) => {
       const value = this.getInputValue(pageId, inputId)
       return value == null ? acc : { ...acc, [inputId]: value }
@@ -264,11 +279,8 @@ class IOValuesStore {
   }
 
   getOutputValues(pageId: string, outputIds?: string[]): { [outputId: string]: unknown } {
-    const outputsMapping = this._workflowStructure.ui.pages?.find(page => page.id === pageId)?.mapping
-      ?.outputs
-
-    const allOutputIds = Object.keys(outputsMapping ?? {})
-    const actualOutputIds = outputIds ?? allOutputIds
+    const availableOutputIds = Object.keys(this._values[pageId]?.outputs ?? {})
+    const actualOutputIds = outputIds ?? availableOutputIds
 
     return actualOutputIds.reduce((acc, outputId) => {
       const value = this.getOutputValue(pageId, outputId)
@@ -276,14 +288,19 @@ class IOValuesStore {
     }, {} as { [outputId: string]: unknown })
   }
 
-  private setValue<T = unknown>(stepId: string, ioId: string, value: T, isInput: boolean) {
-    const [actualStepId, inputId] = isInput ? [stepId, ioId] : this.getCorrespondingInput(stepId, ioId)
-    if ((actualStepId == null || inputId == null) && !isInput) {
-      this._outputValues[this.asKey(stepId, ioId)] = value
+  private setValue<T = unknown>(pageId: string, ioId: string, value: T, isInput: boolean) {
+    const pageDetails = this._values[pageId] ?? {}
+    const values = (isInput ? pageDetails?.inputs : pageDetails?.outputs) ?? {}
+    values[ioId] = value
+
+    if (isInput) {
+      pageDetails.inputs = values
     } else {
-      this._values[this.asKey(actualStepId, inputId)] = value
-      this.saveToStore()
+      pageDetails.outputs = values
     }
+
+    this._values[pageId] = pageDetails
+    this.saveToStore()
   }
 
   setInputValue<T = unknown>(stepId: string, inputId: string, value: T) {
@@ -388,6 +405,8 @@ export class MockContext implements IBackEndContext {
   private _mockDataRepository: DataRepositoryItemsTable
   private _mockNotesStore: NotesStore
 
+  private _firstExecutionFlag: Record<string, boolean> = {}
+
   constructor(parameters: MockContextParameters) {
     this._mockDataRepository = getMockDataRepositoryTable()
     this._processData =
@@ -488,6 +507,13 @@ export class MockContext implements IBackEndContext {
     }
   }
 
+  private async _tryExecutePageProcessor(pageId: string) {
+    if (!this._firstExecutionFlag[pageId]) {
+      await this._processStepData(pageId)
+      this._firstExecutionFlag[pageId] = true
+    }
+  }
+
   private async _handleModuleIO(_: MockContext, msg: ME<unknown>): Promise<ME<unknown> | undefined | void> {
     switch (msg.action) {
       case Messages.ModuleIO.codec.GetPreview.action:
@@ -496,6 +522,7 @@ export class MockContext implements IBackEndContext {
         })(msg)
       case Messages.ModuleIO.codec.GetInputValue.action:
         return adapter(Messages.ModuleIO.codec.GetInputValue.decode, async ({ stepId, inputId, filter }) => {
+          await this._tryExecutePageProcessor(stepId)
           const storeValue = this._store.getInputValue(stepId, inputId)
 
           const [value, stats] = getFilteredValue(storeValue, filter)
@@ -513,6 +540,8 @@ export class MockContext implements IBackEndContext {
         return adapter(
           Messages.ModuleIO.codec.GetOutputValue.decode,
           async ({ stepId, outputId, filter }) => {
+            await this._tryExecutePageProcessor(stepId)
+
             const storeValue = this._store.getOutputValue(stepId, outputId)
 
             const [value, stats] = getFilteredValue(storeValue, filter)
@@ -665,15 +694,22 @@ export class MockContext implements IBackEndContext {
         )
       })
 
+      Object.entries(data?.inputs ?? {}).forEach(([inputId, value]) => {
+        if (value != null) this._store.setInputValue(pageId, inputId, value)
+      })
+
       Object.entries(data?.outputs ?? {}).forEach(([outputId, value]) => {
         if (value != null) this._store.setOutputValue(pageId, outputId, value)
       })
 
-      const response = Messages.ModuleIO.codec.PreviewUpdated.encode({ id: pageId, ...data })
+      const response = Messages.ModuleIO.codec.PreviewUpdated.encode({
+        id: pageId,
+        inputs: data.inputs ?? {},
+        outputs: data.outputs ?? {}
+      })
       this._signals[Target.ModuleIO].emit(response)
 
-      this.updateInputValuesForAllSteps()
-      this.updateOutputValuesForAllSteps()
+      this.updateOutputValuesForStep(pageId, Object.keys(data?.outputs ?? {}))
     } finally {
       this._signals[Target.Activity].emit(
         Messages.Activity.codec.ExecutionState.encode({ state: State.Idle })
@@ -687,34 +723,37 @@ export class MockContext implements IBackEndContext {
     }
   }
 
-  private updateInputValuesForStep(stepId: string, inputIdsOnly: string[] = []) {
-    const allInputIds = Object.keys(this._store.getInputValues(stepId))
+  private updateInputValuesForStep(pageId: string, inputIdsOnly: string[] = []) {
+    const pageDetails = this._currentWorkflow.ui.pages.find(page => page.id === pageId)
+    const allInputIds = Object.keys(pageDetails.mapping?.inputs ?? {})
+
+    const inputIds = inputIdsOnly.length > 0 ? inputIdsOnly : allInputIds
+
+    if (inputIds.length === 0) return
 
     const response = Messages.ModuleIO.codec.InputValuesUpdated.encode({
-      stepId,
-      inputIds: allInputIds.filter(([k]) => (inputIdsOnly.length > 0 ? inputIdsOnly.includes(k) : true))
+      stepId: pageId,
+      inputIds
     })
 
     this._signals[Target.ModuleIO].emit(response)
   }
 
-  private updateOutputValuesForStep(stepId: string, outputIdsOnly: string[] = []) {
-    const allOutputIds = Object.keys(this._store.getOutputValues(stepId))
+  private updateOutputValuesForStep(pageId: string, outputIdsOnly: string[] = []) {
+    const pageDetails = this._currentWorkflow.ui.pages.find(page => page.id === pageId)
+    const allOutputIds = Object.keys(pageDetails?.mapping?.outputs ?? {})
+
+    const outputIds = outputIdsOnly.length > 0 ? outputIdsOnly : allOutputIds
+
+    if (outputIds.length === 0) return
 
     const msg: Messages.ModuleIO.OutputValuesUpdated = {
-      stepId,
-      outputIds: allOutputIds.filter(([k]) => (outputIdsOnly.length > 0 ? outputIdsOnly.includes(k) : true))
+      stepId: pageId,
+      outputIds
     }
     const response = Messages.ModuleIO.codec.OutputValuesUpdated.encode(msg)
 
     this._signals[Target.ModuleIO].emit(response)
-  }
-
-  private updateInputValuesForAllSteps(): void {
-    this._currentWorkflow.ui.pages.forEach(page => this.updateInputValuesForStep(page.id))
-  }
-  private updateOutputValuesForAllSteps(): void {
-    this._currentWorkflow.ui.pages.forEach(page => this.updateOutputValuesForStep(page.id))
   }
 
   async sendMessage<T, U = void>(target: Target, msg: MessageEnvelope<T>): Promise<U> {
