@@ -120,27 +120,8 @@ const newMockDataRepositoryTable = (numItems = 30): DataRepositoryItemsTable => 
     label: Utf8Vector.from(rowNumbers.map(n => `Item #${n}`)),
     type: Utf8Vector.from(isTableType.map(isTable => (isTable ? 'table' : 'string'))),
     columnNames: ListVector.from({
-      values: isTableType.map((isTable, idx) =>
-        isTable
-          ? [
-              `a${idx}`,
-              `b${idx}`,
-              `c${idx}`,
-              `d${idx}`,
-              `e${idx}`,
-              `f${idx}`,
-              `g${idx}`,
-              `h${idx}`,
-              `i${idx}`,
-              `j${idx}`,
-              `k${idx}`,
-              `l${idx}`,
-              `m${idx}`,
-              `n${idx}`,
-              `o${idx}`,
-              `p${idx}`
-            ]
-          : null
+      values: isTableType.map(isTable =>
+        isTable ? Array.from({ length: 15 }, (_, i) => `${String.fromCharCode(97 + i)}${i}`) : null
       ),
       type: new List(Field.new({ name: 0, type: new Utf8() })),
       highWaterMark: 1 // NOTE: working around a stride serialisation bug in arrowjs
