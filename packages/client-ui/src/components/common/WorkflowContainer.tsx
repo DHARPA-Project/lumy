@@ -63,7 +63,7 @@ const WorkflowContainer = (): JSX.Element => {
 
   const {
     setFeatureTabIndex,
-    projectSteps,
+    workflowPages,
     activeStep,
     direction,
     setActiveStep,
@@ -169,7 +169,7 @@ const WorkflowContainer = (): JSX.Element => {
   const handleNextStepClick = () => {
     setActiveStep(([prevActiveStep, prevDirection]) => {
       const nextStep = prevActiveStep + 1
-      if (nextStep >= projectSteps.length) return [prevActiveStep, prevDirection]
+      if (nextStep >= workflowPages.length) return [prevActiveStep, prevDirection]
       return [nextStep, 1]
     })
   }
@@ -182,14 +182,14 @@ const WorkflowContainer = (): JSX.Element => {
     })
   }
 
-  if (!projectSteps?.length) return <LoadingIndicator />
+  if (workflowPages?.length === 0) return <LoadingIndicator />
 
   return (
     <>
       <div className={classes.workflowContainer}>
         <VerticalStepIndicator
-          steps={projectSteps.map(projectStep => ({
-            name: projectStep.step.moduleType
+          steps={workflowPages?.map(workflowPage => ({
+            name: workflowPage.meta?.label ?? `Page ${workflowPage.id}`
           }))}
           activeStep={activeStep}
           handleNext={handleNextStepClick}
@@ -215,7 +215,7 @@ const WorkflowContainer = (): JSX.Element => {
             }}
           >
             <section className={classes.mainPane} ref={mainPaneRef}>
-              <WorkflowStep projectSteps={projectSteps} activeStep={activeStep} />
+              <WorkflowStep workflowPages={workflowPages} activeStep={activeStep} />
             </section>
 
             {isAdditionalPaneVisible && (

@@ -1,6 +1,7 @@
 import React from 'react'
 import { DataRepositoryItemsTable } from '../hooks'
 import { ModuleViewProvider } from './modules'
+import { WorkflowPageComponent, WorkflowPageDetails } from './types'
 
 type DefaultIO = { [key: string]: unknown }
 
@@ -35,10 +36,11 @@ const isLazyComponent = <I, O>(c: unknown): c is IntrospectedLazyComponent<I, O>
  */
 export const getMockProcessor = async <I, O>(
   viewProvider: ModuleViewProvider,
-  moduleId: string
+  pageComponent: WorkflowPageComponent
 ): Promise<MockProcessor<I, O>> => {
+  if (pageComponent == null) return noOpMockProcessor as MockProcessor<I, O>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const component = (viewProvider.getModulePanel(moduleId) as unknown) as any
+  const component = (viewProvider.getModulePanel(pageComponent) as unknown) as any
   if (isLazyComponent<I, O>(component)) {
     const status = component._payload._status
     // ready
@@ -49,13 +51,13 @@ export const getMockProcessor = async <I, O>(
     // rejected
     if (status === 2) {
       console.warn(
-        `Could not load mock processor for module ${moduleId}. Loading of the lazy component has been rejected`
+        `Could not load mock processor for page component ${pageComponent.id}. Loading of the lazy component has been rejected`
       )
       return noOpMockProcessor as MockProcessor<I, O>
     }
     // pending
     if (status === 0) {
-      console.debug(`Lazy component for ${moduleId} is still loading`)
+      console.debug(`Lazy component for page component ${pageComponent.id} is still loading`)
       return noOpMockProcessor as MockProcessor<I, O>
     }
     // uninitialized
@@ -80,8 +82,7 @@ export type DataProcessorResult<I = DefaultIO, O = DefaultIO> = {
 }
 
 export type DataProcessor<I = DataProcessorResult['inputs'], O = DataProcessorResult['outputs']> = (
-  stepId: string,
-  moduleId: string,
+  pageDetails: WorkflowPageDetails,
   inputValues: I
 ) => Promise<DataProcessorResult<I, O>>
 
@@ -90,18 +91,17 @@ export const mockDataProcessorFactory = (
   dataRepositoryTable?: DataRepositoryItemsTable
 ) => {
   return async function (
-    stepId: string,
-    moduleId: string,
+    pageDetails: WorkflowPageDetails,
     inputValues: DataProcessorResult['inputs']
   ): Promise<DataProcessorResult> {
     console.debug(
-      `Mock processing for workflow step "${stepId}" using module "${moduleId}" with values`,
+      `Mock processing for workflow page "${pageDetails?.id}" using module "${pageDetails?.component?.id}" with values`,
       inputValues
     )
 
     const processor = await getMockProcessor<DataProcessorResult['inputs'], DataProcessorResult['outputs']>(
       viewProvider,
-      moduleId
+      pageDetails?.component
     )
 
     const outputs = processor(inputValues, dataRepositoryTable)

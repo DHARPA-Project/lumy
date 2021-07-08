@@ -3,21 +3,24 @@ import {
   InputData,
   JSONSchemaInput,
   FetchingJSONSchemaStore,
-  JSONSchemaSourceData,
-  readFromFileOrURL
+  JSONSchemaSourceData
+  // readFromFileOrURL
 } from 'quicktype-core'
-import { compile as compileToTs } from 'json-schema-to-typescript'
+// import { compile as compileToTs } from 'json-schema-to-typescript'
 import { readFile, writeFile, readdir, stat } from 'fs/promises'
 import path from 'path'
 import prettier from 'prettier'
-import { camelCase } from 'quicktype-core/dist/support/Strings'
+// import { camelCase } from 'quicktype-core/dist/support/Strings'
 
+/*
 const isObj = (obj: unknown): obj is { [k: string]: unknown } =>
   typeof obj === 'object' && !(obj instanceof Array)
 
 const isArr = (obj: unknown): obj is unknown[] => obj instanceof Array
 const isStr = (obj: unknown): obj is string => typeof obj === 'string'
+*/
 
+/*
 function camelCaseProps<T>(obj: T, key: string = undefined): T {
   if (isObj(obj)) {
     const processKey = key === 'properties' ? camelCase : (v: string) => v
@@ -34,6 +37,7 @@ function camelCaseProps<T>(obj: T, key: string = undefined): T {
   }
   return obj
 }
+*/
 
 async function getFilesRecursively(dir: string): Promise<string[]> {
   const files = await Promise.all(
@@ -254,6 +258,11 @@ async function main() {
 
   // kiara is treated separately with a different code generator because `quickcode`
   // has bugs that make it fail to generate complex structures.
+
+  // NOTE: we have a Lumy Workflow now which hides the actual Kiara pipeline.
+  // There is no need to expose Kiara pipeline to the front end at the moment.
+  // If it is needed again - uncomment the code below.
+  /*
   const kiaraSchemaUrl = 'https://dharpa.org/kiara/development/entities/modules/PipelineState.json'
   const kiaraSchema = camelCaseProps(JSON.parse(await readFromFileOrURL(kiaraSchemaUrl)))
   const kiaraGeneratedFilename = `${clientCorePath}/types/kiaraGenerated.ts`
@@ -264,6 +273,7 @@ async function main() {
     const formattedTs = prettier.format(ts, { ...prettierConfig, parser: 'typescript' })
     writeFile(kiaraGeneratedFilename, formattedTs)
   })
+  */
 }
 
 main().catch(console.error)

@@ -1,12 +1,14 @@
 import React, { useContext, useEffect } from 'react'
 import { useParams } from 'react-router'
-import { useCurrentWorkflow, useSystemInfo, workflowUtils } from '@dharpa-vre/client-core'
+import { LumyWorkflow, useCurrentWorkflow, useSystemInfo } from '@dharpa-vre/client-core'
 import { WorkflowContext } from '../../context/workflowContext'
 
 interface WorkflowStepSynchroniserProps {
   stepParameterName: string
   onStepUpdated: (stepId: string) => void
 }
+
+const getStepIds = (workflow: LumyWorkflow): string[] => workflow?.ui?.pages?.map(page => page.id)
 
 /**
  * Synchronise workflow steps between the workflow context and
@@ -34,7 +36,7 @@ export const WorkflowStepSynchroniser = ({
   useEffect(() => {
     if (currentWorkflow == null) return
     // when the page is created, the source of truth is parameters.
-    const stepIds = workflowUtils.getOrderedStepIds(currentWorkflow)
+    const stepIds = getStepIds(currentWorkflow)
     const stepIndex = stepIds.indexOf(stepId)
     if (stepIndex >= 0) setActiveStep([stepIndex, 0])
     else setActiveStep([0, 0])
@@ -43,7 +45,7 @@ export const WorkflowStepSynchroniser = ({
   useEffect(() => {
     if (currentWorkflow == null) return
 
-    const stepIds = workflowUtils.getOrderedStepIds(currentWorkflow)
+    const stepIds = getStepIds(currentWorkflow)
     const stepIndex = stepIds.indexOf(stepId)
     if (stepIndex != activeStep) setActiveStep([stepIndex, 0])
   }, [stepId])
@@ -51,7 +53,7 @@ export const WorkflowStepSynchroniser = ({
   useEffect(() => {
     if (currentWorkflow == null) return
 
-    const stepIds = workflowUtils.getOrderedStepIds(currentWorkflow)
+    const stepIds = getStepIds(currentWorkflow)
     const stepIndex = stepIds.indexOf(stepId)
     if (stepIndex != activeStep) {
       onStepUpdated(stepIds[activeStep])

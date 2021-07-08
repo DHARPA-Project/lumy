@@ -31,8 +31,6 @@ interface OutputValues {
   edges: EdgeTable
 }
 
-type Props = ModuleProps<InputValues, OutputValues>
-
 const dataMappingTableCaption =
   'Map data sources to data sets required for this workflow. The first column lists the names of the (re)sources from which you can extract data. The headings of the other columns are the names of the data sets required for this workflow. The labels of the selection fields are the names of the required data fields. The options on the drop-down list correspond to columns found in your data (re)source.'
 
@@ -50,15 +48,15 @@ const networkAnalysisDataSets: IRequiredDataSetProp[] = [
   }
 ]
 
-const NetworkAnalysisDataMapping = ({ step }: Props): JSX.Element => {
-  const [corpusPage] = useStepInputValue<CorpusTableType>(step.stepId, 'corpus', { fullValue: true })
+const NetworkAnalysisDataMapping = ({ pageDetails: { id: stepId } }: ModuleProps): JSX.Element => {
+  const [corpusPage] = useStepInputValue<CorpusTableType>(stepId, 'corpus', { fullValue: true })
   const [nodeMappingTable, setNodeMappingTable] = useStepInputValue<MappingTable>(
-    step.stepId,
+    stepId,
     'nodesMappingTable',
     { fullValue: true }
   )
   const [edgeMappingTable, setEdgeMappingTable] = useStepInputValue<MappingTable>(
-    step.stepId,
+    stepId,
     'edgesMappingTable',
     { fullValue: true }
   )

@@ -1,7 +1,6 @@
 import React, { useState, createContext, Dispatch, SetStateAction } from 'react'
 
-import { useCurrentWorkflow, workflowUtils } from '@dharpa-vre/client-core'
-import { StepDesc } from '@dharpa-vre/client-core/src/common/types/kiaraGenerated'
+import { useCurrentWorkflow, WorkflowPageDetails } from '@dharpa-vre/client-core'
 
 import sampleJupyterNotebook from '../data/notebook.ipynb'
 
@@ -12,7 +11,7 @@ export type WorkflowType = {
   setIsSideDrawerOpen: Dispatch<SetStateAction<boolean>>
   featureTabIndex: number
   setFeatureTabIndex: Dispatch<SetStateAction<number>>
-  projectSteps: StepDesc[]
+  workflowPages: WorkflowPageDetails[]
   activeStep: number
   direction: number
   setActiveStep: Dispatch<SetStateAction<[number, number]>>
@@ -43,9 +42,10 @@ const WorkflowContextProvider = ({ children }: WorkflowProviderProps): JSX.Eleme
   const [mainPaneHeight, setMainPaneHeight] = useState<number>(0)
   const [mainPaneWidth, setMainPaneWidth] = useState<number>(0)
 
-  const stepIds = workflowUtils.getOrderedStepIds(currentWorkflow)
+  const workflowPages: WorkflowPageDetails[] = currentWorkflow?.ui?.pages ?? []
+  const stepIds = workflowPages.map(page => page.id)
   const idCurrentStep = stepIds[activeStep]
-  const projectSteps: StepDesc[] = stepIds.map(stepId => currentWorkflow?.steps?.[stepId])
+
   const workflowCode = JSON.parse(sampleJupyterNotebook)
 
   return (
@@ -57,7 +57,7 @@ const WorkflowContextProvider = ({ children }: WorkflowProviderProps): JSX.Eleme
         setIsSideDrawerOpen,
         featureTabIndex,
         setFeatureTabIndex,
-        projectSteps,
+        workflowPages,
         activeStep,
         direction,
         setActiveStep,

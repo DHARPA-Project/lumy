@@ -8,7 +8,7 @@ import { IDecode, MessageEnvelope } from './types'
  */
 export enum Target {
   /**
-   * All messages related to core functionality of the VRE:
+   * All messages related to core functionality of Lumy:
    * errors, status, etc..
    */
   Activity = 'activity',
@@ -51,7 +51,7 @@ export interface IBackEndContext {
 }
 
 export const BackEndContext = createContext<IBackEndContext>(null)
-BackEndContext.displayName = 'VREBackEndContext'
+BackEndContext.displayName = 'LumyBackEndContext'
 
 export const BackEndContextProvider = BackEndContext.Provider
 

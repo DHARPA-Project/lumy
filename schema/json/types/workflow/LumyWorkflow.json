@@ -37,7 +37,7 @@
     "workflowPage": {
       "type": "object",
       "additionalProperties": false,
-      "title": "WorkflowPage",
+      "title": "WorkflowPageDetails",
       "description": "All details needed to render a page (step) of the workflow.",
       "properties": {
         "id": {
@@ -92,6 +92,19 @@
               }
             }
           }
+        },
+        "meta": {
+          "type": "object",
+          "title": "LumyWorkflowPageMetadata",
+          "description": "Workflow page metadata",
+          "additionalProperties": false,
+          "properties": {
+            "label": {
+              "type": "string",
+              "description": "Human readable name of the page."
+            }
+          },
+          "required": []
         }
       },
       "required": [
@@ -183,7 +196,7 @@
         "workflow"
       ]
     },
-    "rendering": {
+    "ui": {
       "type": "object",
       "title": "RenderingSection",
       "additionalProperties": false,
@@ -197,10 +210,26 @@
           }
         }
       }
+    },
+    "meta": {
+      "type": "object",
+      "title": "LumyWorkflowMetadata",
+      "description": "Workflow metadata",
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Human readable name of the workflow."
+        }
+      },
+      "required": [
+        "label"
+      ]
     }
   },
   "required": [
     "processing",
-    "rendering"
+    "ui",
+    "meta"
   ]
 }

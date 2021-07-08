@@ -1,15 +1,13 @@
 import { useContext, useEffect, useState } from 'react'
 import { BackEndContext, handlerAdapter, Target } from '../common/context'
-import { Messages, PipelineStructure } from '../common/types'
+import { Messages, LumyWorkflow } from '../common/types'
 
-export const useCurrentWorkflow = (): [PipelineStructure] => {
+export const useCurrentWorkflow = (): [LumyWorkflow] => {
   const context = useContext(BackEndContext)
-  const [workflow, setWorkflow] = useState<PipelineStructure>()
+  const [workflow, setWorkflow] = useState<LumyWorkflow>()
 
   useEffect(() => {
-    const handler = handlerAdapter(Messages.Workflow.codec.Updated.decode, msg =>
-      setWorkflow((msg?.workflow as unknown) as PipelineStructure)
-    )
+    const handler = handlerAdapter(Messages.Workflow.codec.Updated.decode, msg => setWorkflow(msg.workflow))
     context.subscribe(Target.Workflow, handler)
 
     // get the most recent data on first use

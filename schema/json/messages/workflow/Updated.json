@@ -2,12 +2,11 @@
   "$schema": "http://json-schema.org/schema",
   "type": "object",
   "title": "MsgWorkflowUpdated",
-  "description": "Contains current workflow.",
+  "description": "Workflow currently loaded into the app.",
   "additionalProperties": false,
   "properties": {
     "workflow": {
-      "type": "object",
-      "description": "Current workflow state. Type: PipelineState from https://dharpa.org/kiara/development/entities/modules/PipelineState.json .\nNot using it as a reference because of a code generation bug."
+      "$ref": "https://dharpa.org/schema/types/workflow/LumyWorkflow.json"
     }
   },
   "required": []

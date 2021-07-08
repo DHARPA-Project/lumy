@@ -1,10 +1,10 @@
 import React from 'react'
-import { ModuleViewFactory, PipelineStructure, StepDesc } from '@dharpa-vre/client-core'
+import { ModuleViewFactory, LumyWorkflow, WorkflowPageDetails } from '@dharpa-vre/client-core'
 import { Paper, Grid, Typography, Box, Collapse } from '@material-ui/core'
 
 export interface WorkflowPreviewProps {
-  workflow: PipelineStructure
-  onStepSelected?: (step: StepDesc) => void
+  workflow: LumyWorkflow
+  onStepSelected?: (pageDetails: WorkflowPageDetails) => void
 }
 
 export const WorkflowPreview = ({ workflow, onStepSelected }: WorkflowPreviewProps): JSX.Element => {
@@ -19,28 +19,24 @@ export const WorkflowPreview = ({ workflow, onStepSelected }: WorkflowPreviewPro
     <Grid container direction="column" wrap="nowrap">
       <Grid container justify="center">
         <Typography variant="h5" component="h1">
-          {workflow.pipelineId}
+          {workflow.meta.label}
         </Typography>
       </Grid>
       <Grid container direction="column" spacing={1} wrap="nowrap" style={{ overflowY: 'auto' }}>
-        {Object.values(workflow.steps).map(stepDesc => (
-          <Grid item key={stepDesc.step.stepId}>
-            <Paper onClick={() => onStepSelected?.(stepDesc)} elevation={0} variant="outlined">
+        {workflow.ui.pages?.map(pageDetails => (
+          <Grid item key={pageDetails.id}>
+            <Paper onClick={() => onStepSelected?.(pageDetails)} elevation={0} variant="outlined">
               <Box
                 bgcolor="primary.main"
                 color="primary.contrastText"
                 p={1}
-                onClick={() => toggleCollapse(stepDesc.step.stepId)}
+                onClick={() => toggleCollapse(pageDetails.id)}
               >
-                {stepDesc.step.moduleType} [{stepDesc.step.stepId}]
+                {pageDetails.id}
               </Box>
-              <Collapse in={!collapsedStepIds.includes(stepDesc.step.stepId)}>
+              <Collapse in={!collapsedStepIds.includes(pageDetails.id)}>
                 <Box m={1}>
-                  <ModuleViewFactory
-                    step={stepDesc.step}
-                    inputConnections={stepDesc.inputConnections}
-                    outputConnections={stepDesc.outputConnections}
-                  />
+                  <ModuleViewFactory pageDetails={pageDetails} />
                 </Box>
               </Collapse>
             </Paper>

@@ -736,25 +736,10 @@ export enum Status {
  * Target: "workflow"
  * Message type: "Updated"
  *
- * Contains current workflow.
+ * Workflow currently loaded into the app.
  */
 export interface MsgWorkflowUpdated {
-  /**
-   * Current workflow state. Type: PipelineState from
-   * https://dharpa.org/kiara/development/entities/modules/PipelineState.json .
-   * Not using it as a reference because of a code generation bug.
-   */
-  workflow?: { [key: string]: unknown }
-}
-
-/**
- * Stats object for arrow table
- */
-export interface TableStats {
-  /**
-   * Number of rows.
-   */
-  rowsCount: number
+  workflow?: LumyWorkflow
 }
 
 /**
@@ -764,13 +749,27 @@ export interface TableStats {
  */
 export interface LumyWorkflow {
   /**
+   * Workflow metadata
+   */
+  meta: LumyWorkflowMetadata
+  /**
    * Workflow processing configuration details
    */
   processing: ProcessingSection
   /**
    * Workflow rendering definitions
    */
-  rendering: RenderingSection
+  ui: RenderingSection
+}
+
+/**
+ * Workflow metadata
+ */
+export interface LumyWorkflowMetadata {
+  /**
+   * Human readable name of the workflow.
+   */
+  label: string
 }
 
 /**
@@ -825,13 +824,13 @@ export interface RenderingSection {
   /**
    * List of pages that comprise the workflow UI part.
    */
-  pages?: WorkflowPage[]
+  pages?: WorkflowPageDetails[]
 }
 
 /**
  * All details needed to render a page (step) of the workflow.
  */
-export interface WorkflowPage {
+export interface WorkflowPageDetails {
   /**
    * Details of the component that renders this page
    */
@@ -849,6 +848,10 @@ export interface WorkflowPage {
    * inputs/outputs
    */
   mapping?: WorkflowPageMappingDetails
+  /**
+   * Workflow page metadata
+   */
+  meta?: LumyWorkflowPageMetadata
 }
 
 /**
@@ -911,6 +914,26 @@ export interface WorkflowPageMapping {
    * of the pipeline input/outputs.
    */
   workflowStepId?: string
+}
+
+/**
+ * Workflow page metadata
+ */
+export interface LumyWorkflowPageMetadata {
+  /**
+   * Human readable name of the page.
+   */
+  label?: string
+}
+
+/**
+ * Stats object for arrow table
+ */
+export interface TableStats {
+  /**
+   * Number of rows.
+   */
+  rowsCount: number
 }
 
 /**

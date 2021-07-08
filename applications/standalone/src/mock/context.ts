@@ -16,8 +16,6 @@ import {
   deserializeDataValue,
   DataProcessorResult,
   TabularDataFilter,
-  PipelineState,
-  workflowUtils,
   DataType,
   deserialize,
   TableStats,
@@ -27,7 +25,9 @@ import {
   Note,
   DataSortingMethod,
   DataFilterCondtion,
-  WorkflowExecutionStatus
+  WorkflowExecutionStatus,
+  LumyWorkflow,
+  workflowUtils
 } from '@dharpa-vre/client-core'
 import { viewProvider } from '@dharpa-vre/modules'
 
@@ -157,14 +157,14 @@ interface IOValueStoreValue {
 
 class IOValuesStore {
   private _store: Storage
-  private _workflowStructure: PipelineState
+  private _workflowStructure: LumyWorkflow
   private _storeKey: string
   private _values: Record<string, unknown>
   private _outputValues: Record<string, unknown>
 
   private _keySeparator = '♨️'
 
-  constructor(workflowStructure: PipelineState, storeKey = '__dharpa_mock_input_values') {
+  constructor(workflowStructure: LumyWorkflow, storeKey = '__dharpa_mock_input_values') {
     this._store = window.localStorage
     this._workflowStructure = workflowStructure
     this._storeKey = storeKey
@@ -225,12 +225,14 @@ class IOValuesStore {
     return connections[0]
   }
 
-  private getDefaultValue<T = unknown>(stepId: string, inputId: string): T | undefined {
-    const stepInput = this._workflowStructure.stepInputs[stepId]
-
-    const defaultValue = stepInput?.values?.[inputId]?.valueSchema?.default
-    if (defaultValue == null) return undefined
-    return (defaultValue as unknown) as T
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  private getDefaultValue<T = unknown>(pageId: string, inputId: string): T | undefined {
+    return undefined
+    // NOTE: with Lumy Workflow this is not possible anymore
+    // const stepInput = this._workflowStructure.ui.pages.find(page => page.id === pageId)
+    // const defaultValue = stepInput?.values?.[inputId]?.valueSchema?.default
+    // if (defaultValue == null) return undefined
+    // return (defaultValue as unknown) as T
   }
 
   private getValue<T = unknown>(stepId: string, ioId: string, isInput: boolean): T | undefined {
@@ -250,23 +252,26 @@ class IOValuesStore {
     return this.getValue(stepId, inputId, false)
   }
 
-  getInputValues(stepId: string, inputIds?: string[]): { [inputId: string]: unknown } {
-    const stepDesc = this._workflowStructure.structure.steps[stepId]
-    const allInputIds = Object.keys(stepDesc?.inputConnections ?? {})
+  getInputValues(pageId: string, inputIds?: string[]): { [inputId: string]: unknown } {
+    const inputsMapping = this._workflowStructure.ui.pages?.find(page => page.id === pageId)?.mapping?.inputs
+
+    const allInputIds = Object.keys(inputsMapping ?? {})
     const actualInputIds = inputIds ?? allInputIds
     return actualInputIds.reduce((acc, inputId) => {
-      const value = this.getInputValue(stepId, inputId)
+      const value = this.getInputValue(pageId, inputId)
       return value == null ? acc : { ...acc, [inputId]: value }
     }, {} as { [inputId: string]: unknown })
   }
 
-  getOutputValues(stepId: string, outputIds?: string[]): { [outputId: string]: unknown } {
-    const stepDesc = this._workflowStructure.structure.steps[stepId]
-    const allOutputIds = Object.keys(stepDesc?.outputConnections ?? {})
+  getOutputValues(pageId: string, outputIds?: string[]): { [outputId: string]: unknown } {
+    const outputsMapping = this._workflowStructure.ui.pages?.find(page => page.id === pageId)?.mapping
+      ?.outputs
+
+    const allOutputIds = Object.keys(outputsMapping ?? {})
     const actualOutputIds = outputIds ?? allOutputIds
 
     return actualOutputIds.reduce((acc, outputId) => {
-      const value = this.getOutputValue(stepId, outputId)
+      const value = this.getOutputValue(pageId, outputId)
       return value == null ? acc : { ...acc, [outputId]: value }
     }, {} as { [outputId: string]: unknown })
   }
@@ -363,7 +368,7 @@ class NotesStore {
 
 export interface MockContextParameters {
   processData?: DataProcessor
-  currentWorkflow: PipelineState
+  currentWorkflow: LumyWorkflow
   startupDelayMs?: number
 }
 
@@ -375,7 +380,7 @@ export class MockContext implements IBackEndContext {
   private _isReady = false
   private _statusChangedSignal = new Signal<MockContext, boolean>(this)
 
-  private _currentWorkflow: PipelineState
+  private _currentWorkflow: LumyWorkflow
 
   private _signals: Record<Target, Signal<MockContext, ME<unknown>>>
   private _callbacks = new WeakMap()
@@ -431,11 +436,6 @@ export class MockContext implements IBackEndContext {
     this._isDisposed = true
   }
 
-  private _getModuleIdForStep(stepId: string): string {
-    const stepDesc = this._currentWorkflow.structure.steps[stepId]
-    return stepDesc?.step?.moduleType
-  }
-
   private async _handleActivity(_: MockContext, msg: ME<unknown>): Promise<ME<unknown> | undefined | void> {
     switch (msg.action) {
       case Messages.Activity.codec.GetSystemInfo.action:
@@ -458,7 +458,7 @@ export class MockContext implements IBackEndContext {
       case Messages.Workflow.codec.GetCurrent.action:
         return adapter(Messages.Workflow.codec.GetCurrent.decode, async () => {
           const msg = Messages.Workflow.codec.Updated.encode({
-            workflow: (this._currentWorkflow.structure as unknown) as { [key: string]: unknown }
+            workflow: this._currentWorkflow
           })
           this._signals[Target.Workflow].emit(msg)
         })(msg)
@@ -612,7 +612,7 @@ export class MockContext implements IBackEndContext {
     switch (msg.action) {
       case Messages.Notes.codec.GetNotes.action:
         return adapter(Messages.Notes.codec.GetNotes.decode, async ({ stepId }) => {
-          const notes = this._mockNotesStore.getNotes(this._currentWorkflow.structure.pipelineId, stepId)
+          const notes = this._mockNotesStore.getNotes(this._currentWorkflow.meta.label, stepId)
           return Messages.Notes.codec.Notes.encode({
             stepId,
             notes
@@ -620,8 +620,8 @@ export class MockContext implements IBackEndContext {
         })(msg)
       case Messages.Notes.codec.Add.action:
         return adapter(Messages.Notes.codec.Add.decode, async ({ stepId, note }) => {
-          this._mockNotesStore.addOrUpdateNote(this._currentWorkflow.structure.pipelineId, stepId, note)
-          const notes = this._mockNotesStore.getNotes(this._currentWorkflow.structure.pipelineId, stepId)
+          this._mockNotesStore.addOrUpdateNote(this._currentWorkflow.meta.label, stepId, note)
+          const notes = this._mockNotesStore.getNotes(this._currentWorkflow.meta.label, stepId)
           return Messages.Notes.codec.Notes.encode({
             stepId,
             notes
@@ -629,8 +629,8 @@ export class MockContext implements IBackEndContext {
         })(msg)
       case Messages.Notes.codec.Update.action:
         return adapter(Messages.Notes.codec.Update.decode, async ({ stepId, note }) => {
-          this._mockNotesStore.addOrUpdateNote(this._currentWorkflow.structure.pipelineId, stepId, note)
-          const notes = this._mockNotesStore.getNotes(this._currentWorkflow.structure.pipelineId, stepId)
+          this._mockNotesStore.addOrUpdateNote(this._currentWorkflow.meta.label, stepId, note)
+          const notes = this._mockNotesStore.getNotes(this._currentWorkflow.meta.label, stepId)
           return Messages.Notes.codec.Notes.encode({
             stepId,
             notes
@@ -638,8 +638,8 @@ export class MockContext implements IBackEndContext {
         })(msg)
       case Messages.Notes.codec.Delete.action:
         return adapter(Messages.Notes.codec.Delete.decode, async ({ stepId, noteId }) => {
-          this._mockNotesStore.deleteNote(this._currentWorkflow.structure.pipelineId, stepId, noteId)
-          const notes = this._mockNotesStore.getNotes(this._currentWorkflow.structure.pipelineId, stepId)
+          this._mockNotesStore.deleteNote(this._currentWorkflow.meta.label, stepId, noteId)
+          const notes = this._mockNotesStore.getNotes(this._currentWorkflow.meta.label, stepId)
           return Messages.Notes.codec.Notes.encode({
             stepId,
             notes
@@ -650,7 +650,7 @@ export class MockContext implements IBackEndContext {
     }
   }
 
-  private async _processStepData(stepId: string): Promise<void> {
+  private async _processStepData(pageId: string): Promise<void> {
     if (this._processData == null) return
 
     try {
@@ -658,18 +658,18 @@ export class MockContext implements IBackEndContext {
         Messages.Activity.codec.ExecutionState.encode({ state: State.Busy })
       )
 
-      const moduleId = this._getModuleIdForStep(stepId)
+      const pageDetails = this._currentWorkflow.ui.pages.find(page => page.id === pageId)
       const data = await new Promise<DataProcessorResult>((res, rej) => {
         setTimeout(() =>
-          this._processData(stepId, moduleId, this._store.getInputValues(stepId)).then(res).catch(rej)
+          this._processData(pageDetails, this._store.getInputValues(pageId)).then(res).catch(rej)
         )
       })
 
       Object.entries(data?.outputs ?? {}).forEach(([outputId, value]) => {
-        if (value != null) this._store.setOutputValue(stepId, outputId, value)
+        if (value != null) this._store.setOutputValue(pageId, outputId, value)
       })
 
-      const response = Messages.ModuleIO.codec.PreviewUpdated.encode({ id: stepId, ...data })
+      const response = Messages.ModuleIO.codec.PreviewUpdated.encode({ id: pageId, ...data })
       this._signals[Target.ModuleIO].emit(response)
 
       this.updateInputValuesForAllSteps()
@@ -682,8 +682,8 @@ export class MockContext implements IBackEndContext {
   }
 
   private async _processAllWorkflow(): Promise<void> {
-    for (const stepId in this._currentWorkflow.structure.steps) {
-      await this._processStepData(stepId)
+    for (const pageId in this._currentWorkflow.ui.pages) {
+      await this._processStepData(pageId)
     }
   }
 
@@ -711,14 +711,10 @@ export class MockContext implements IBackEndContext {
   }
 
   private updateInputValuesForAllSteps(): void {
-    Object.keys(this._currentWorkflow.structure.steps).forEach(stepId =>
-      this.updateInputValuesForStep(stepId)
-    )
+    this._currentWorkflow.ui.pages.forEach(page => this.updateInputValuesForStep(page.id))
   }
   private updateOutputValuesForAllSteps(): void {
-    Object.keys(this._currentWorkflow.structure.steps).forEach(stepId =>
-      this.updateOutputValuesForStep(stepId)
-    )
+    this._currentWorkflow.ui.pages.forEach(page => this.updateOutputValuesForStep(page.id))
   }
 
   async sendMessage<T, U = void>(target: Target, msg: MessageEnvelope<T>): Promise<U> {

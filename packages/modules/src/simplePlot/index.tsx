@@ -1,16 +1,14 @@
 import React from 'react'
 import { ModuleProps, useStepInputValue } from '@dharpa-vre/client-core'
 
-interface InputValues {
-  x?: number | number[]
-  y?: number | number[]
-}
+// interface InputValues {
+//   x?: number | number[]
+//   y?: number | number[]
+// }
 
-type Props = ModuleProps<InputValues, unknown>
-
-const SimplePlot = ({ step }: Props): JSX.Element => {
-  const [x] = useStepInputValue<number>(step.stepId, 'x')
-  const [y] = useStepInputValue<number>(step.stepId, 'y')
+const SimplePlot = ({ pageDetails: { id: stepId } }: ModuleProps): JSX.Element => {
+  const [x] = useStepInputValue<number>(stepId, 'x')
+  const [y] = useStepInputValue<number>(stepId, 'y')
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>

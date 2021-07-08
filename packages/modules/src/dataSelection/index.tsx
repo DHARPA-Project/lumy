@@ -35,21 +35,16 @@ interface OutputValues {
   selectedItems?: ArrowTable<Partial<DataRepositoryItemStructure>>
 }
 
-type Props = ModuleProps<InputValues, OutputValues>
-
 const defaultNumberRowsPerPage = 5
 
-const DataSelection = ({ step }: Props): JSX.Element => {
+const DataSelection = ({ pageDetails: { id: stepId } }: ModuleProps): JSX.Element => {
   const classes = useStyles()
 
   const [repositoryItemsFilter, setRepositoryItemsFilter] = React.useState<DataRepositoryItemsFilter>({
     pageSize: defaultNumberRowsPerPage,
     types: ['table']
   })
-  const [selectedItemsIds = [], setSelectedItemsIds] = useStepInputValue<string[]>(
-    step.stepId,
-    'selectedItemsIds'
-  )
+  const [selectedItemsIds = [], setSelectedItemsIds] = useStepInputValue<string[]>(stepId, 'selectedItemsIds')
   const [repositoryItemsBatch, repositoryStats] = useDataRepository(repositoryItemsFilter)
 
   const updateRepositoryItemsFilter = (filter: DataRepositoryItemsFilter) =>
@@ -78,7 +73,7 @@ const DataSelection = ({ step }: Props): JSX.Element => {
   }
 
   return (
-    <section className={classes.section} key={step.stepId}>
+    <section className={classes.section} key={stepId}>
       {repositoryItemsBatch != null && repositoryStats != null && (
         <Paper variant="outlined" className={classes.paperWrapper}>
           <TableContainer className={classes.tableContainer}>

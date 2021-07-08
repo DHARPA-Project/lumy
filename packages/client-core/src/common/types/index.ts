@@ -11,7 +11,10 @@ export type {
   DataTabularDataFilterItem as DataFilterItem,
   DataTabularDataSortingMethod as DataSortingMethod,
   DataRepositoryItemsFilter,
-  Note
+  Note,
+  LumyWorkflow,
+  WorkflowPageDetails,
+  WorkflowPageComponent
 } from './generated'
 export {
   State,
@@ -22,4 +25,3 @@ export {
 } from './generated'
 export * as Messages from './messages'
 export * from './base'
-export type { PipelineState, PipelineStep, Structure as PipelineStructure, StepDesc } from './kiaraGenerated'

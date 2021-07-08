@@ -1,6 +1,5 @@
 import React from 'react'
 import { ModuleProps, useStepInputValue, withMockProcessor } from '@dharpa-vre/client-core'
-import { getStepsConnections } from '@dharpa-vre/client-core/src/common/utils/workflow'
 
 interface InputValues {
   operator?: string
@@ -12,8 +11,6 @@ interface OutputValues {
   c?: number
 }
 
-type Props = ModuleProps<InputValues, OutputValues>
-
 const SupportedFunctions = {
   add: 'Add',
   sub: 'Subtract',
@@ -22,10 +19,10 @@ const SupportedFunctions = {
   pow: 'Power'
 }
 
-const TwoArgsMathFunction = ({ step, inputConnections }: Props): JSX.Element => {
-  const [a, setA] = useStepInputValue<number>(step.stepId, 'a')
-  const [b, setB] = useStepInputValue<number>(step.stepId, 'b')
-  const [operator = 'add', setOperator] = useStepInputValue<string>(step.stepId, 'operator')
+const TwoArgsMathFunction = ({ pageDetails: { id: stepId } }: ModuleProps): JSX.Element => {
+  const [a, setA] = useStepInputValue<number>(stepId, 'a')
+  const [b, setB] = useStepInputValue<number>(stepId, 'b')
+  const [operator = 'add', setOperator] = useStepInputValue<string>(stepId, 'operator')
 
   // const [inputValues, setInputValues] = useStepInputValues<InputValues>(step.stepId)
   const [aStr, setAStr] = React.useState<string>('')
@@ -48,8 +45,10 @@ const TwoArgsMathFunction = ({ step, inputConnections }: Props): JSX.Element => 
     if (!isNaN(v) && v !== b) setB(v)
   }, [bStr])
 
-  const isConnected = (inputId: keyof InputValues): boolean =>
-    getStepsConnections(inputConnections, inputId).length > 0
+  // TODO: connection state is not provided by Lumy Workflow but
+  // it may be resolved by middleware later.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const isConnected = (inputId: keyof InputValues): boolean => false
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
