@@ -121,7 +121,26 @@ const newMockDataRepositoryTable = (numItems = 30): DataRepositoryItemsTable => 
     type: Utf8Vector.from(isTableType.map(isTable => (isTable ? 'table' : 'string'))),
     columnNames: ListVector.from({
       values: isTableType.map((isTable, idx) =>
-        isTable ? [`a${idx}`, `b${idx}`, `c${idx}`, `d${idx}`, `e${idx}`, `f${idx}`] : null
+        isTable
+          ? [
+              `a${idx}`,
+              `b${idx}`,
+              `c${idx}`,
+              `d${idx}`,
+              `e${idx}`,
+              `f${idx}`,
+              `g${idx}`,
+              `h${idx}`,
+              `i${idx}`,
+              `j${idx}`,
+              `k${idx}`,
+              `l${idx}`,
+              `m${idx}`,
+              `n${idx}`,
+              `o${idx}`,
+              `p${idx}`
+            ]
+          : null
       ),
       type: new List(Field.new({ name: 0, type: new Utf8() })),
       highWaterMark: 1 // NOTE: working around a stride serialisation bug in arrowjs
@@ -580,7 +599,14 @@ export class MockContext implements IBackEndContext {
           if (row.type === 'table') {
             const rowNumbers = [...Array(20).keys()]
             const tableStructure = [...row.columnNames].reduce((acc, colName) => {
-              return { ...acc, [colName]: Utf8Vector.from(rowNumbers.map(n => `${colName} : ${n}`)) }
+              return {
+                ...acc,
+                [colName]: Utf8Vector.from(
+                  rowNumbers.map(
+                    n => `${colName}-lorem-ipsum : ${n}-dolor-sit-amet-consectetur-adipisicing-elit`
+                  )
+                )
+              }
             }, {})
             const tableValue = Table.new(tableStructure)
             const [value, meta] = getFilteredValue(tableValue, filter)

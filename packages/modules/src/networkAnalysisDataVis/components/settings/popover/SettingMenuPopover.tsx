@@ -27,7 +27,6 @@ const SettingMenuPopover = ({
 
   return (
     <Popover
-      className={classes.popover}
       id={isVisible ? 'setting-menu-popover' : undefined}
       open={isVisible}
       anchorEl={anchorEl}
