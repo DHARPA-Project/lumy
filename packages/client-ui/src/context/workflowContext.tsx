@@ -191,7 +191,7 @@ const WorkflowContextProvider = ({ children }: WorkflowProviderProps): JSX.Eleme
   const proceedToNextStep = () => {
     setActiveStep(([prevActiveStep, prevDirection]) => {
       const nextStep = prevActiveStep + 1
-      if (nextStep >= projectSteps.length) return [prevActiveStep, prevDirection]
+      if (nextStep >= workflowPages.length) return [prevActiveStep, prevDirection]
       return [nextStep, 1]
     })
   }
