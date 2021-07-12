@@ -14,14 +14,16 @@ export type {
   Note,
   LumyWorkflow,
   WorkflowPageDetails,
-  WorkflowPageComponent
+  WorkflowPageComponent,
+  DataPreviewLayoutMetadataItem
 } from './generated'
 export {
   State,
   DataType,
   Operator as DataFilterCondtionOperator,
   Direction as DataSortingDirection,
-  Status as WorkflowExecutionStatus
+  Status as WorkflowExecutionStatus,
+  InputOrOutput
 } from './generated'
 export * as Messages from './messages'
 export * from './base'

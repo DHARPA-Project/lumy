@@ -1,14 +1,22 @@
 import React, { useContext } from 'react'
-import { Table as ArrowTable, Int32, Utf8 } from 'apache-arrow'
+import { Table } from 'apache-arrow'
 import { makeStyles } from '@material-ui/core/styles'
 
-import { TableStats, TabularDataFilter, useStepInputValue } from '@dharpa-vre/client-core'
+import {
+  TableStats,
+  TabularDataFilter,
+  useStepInputValue,
+  useStepOutputValue,
+  DataPreviewLayoutMetadataItem,
+  InputOrOutput
+} from '@dharpa-vre/client-core'
 import { DataGrid } from '@dharpa-vre/arrow-data-grid'
 
 import { WorkflowContext } from '../../context/workflowContext'
 
 import Typography from '@material-ui/core/Typography'
 import Card from '@material-ui/core/Card'
+import { CircularProgress, Grid } from '@material-ui/core'
 
 const useStyles = makeStyles(theme => ({
   card: {
@@ -17,35 +25,55 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
-export type EdgeStructure = {
-  srcId: Utf8
-  tgtId: Utf8
-  weight: Int32
+interface DataPreviewContainerProps {
+  pageId: string
+  item: DataPreviewLayoutMetadataItem
 }
 
-export type NodeStructure = {
-  id: Utf8
-  label: Utf8
-  group: Utf8
+interface DataPreviewRendererProps {
+  value: unknown
+  stats: unknown
+  filter: unknown
+  setFilter: (v: unknown) => void
 }
 
-type NodeTable = ArrowTable<NodeStructure>
-type EdgeTable = ArrowTable<EdgeStructure>
+const DataPreviewRenderer = ({ value, stats, filter, setFilter }: DataPreviewRendererProps): JSX.Element => {
+  if (value == null) return <CircularProgress size="sm" />
+  if (value instanceof Table)
+    return (
+      <DataGrid
+        data={value as Table}
+        stats={stats as TableStats}
+        filter={filter}
+        onFiltering={setFilter}
+        condensed
+        sortingEnabled
+        filteringEnabled
+      />
+    )
+  // TODO: handle other types when ready
+  return <pre>{value.toString()}</pre>
+}
+
+const InputDataPreviewContainer = ({ item, pageId }: DataPreviewContainerProps): JSX.Element => {
+  const [tableFilter, setTableFilter] = React.useState<TabularDataFilter>({ pageSize: 10 })
+  const [value, , stats] = useStepInputValue<unknown, unknown>(pageId, item.id, tableFilter)
+  return <DataPreviewRenderer value={value} stats={stats} filter={tableFilter} setFilter={setTableFilter} />
+}
+
+const OutputDataPreviewContainer = ({ item, pageId }: DataPreviewContainerProps): JSX.Element => {
+  const [tableFilter, setTableFilter] = React.useState<TabularDataFilter>({ pageSize: 10 })
+  const [value, stats] = useStepOutputValue<unknown, unknown>(pageId, item.id, tableFilter)
+  return <DataPreviewRenderer value={value} stats={stats} filter={tableFilter} setFilter={setTableFilter} />
+}
 
 const DataPreview = (): JSX.Element => {
   const classes = useStyles()
-  const { idCurrentStep } = useContext(WorkflowContext)
+  const { currentPageDetails } = useContext(WorkflowContext)
 
-  const [nodes] = useStepInputValue<NodeTable>(idCurrentStep, 'nodes', { fullValue: true })
-  const [edges] = useStepInputValue<EdgeTable>(idCurrentStep, 'edges', { fullValue: true })
-  const [nodesFilter, setNodeFilter] = React.useState<TabularDataFilter>({ pageSize: 10 })
-  const [nodesPage, , nodesStats] = useStepInputValue<NodeTable, TableStats>(
-    idCurrentStep,
-    'nodes',
-    nodesFilter
-  )
+  const dataPreviewItems = currentPageDetails?.layout?.dataPreview ?? []
 
-  if (!nodes && !edges)
+  if (dataPreviewItems.length == 0)
     return (
       <Card className={classes.card}>
         <Typography variant="h5" component="h1" align="center">
@@ -55,17 +83,17 @@ const DataPreview = (): JSX.Element => {
     )
 
   return (
-    <>
-      <DataGrid
-        data={nodesPage}
-        stats={nodesStats}
-        filter={nodesFilter}
-        onFiltering={setNodeFilter}
-        condensed
-        sortingEnabled
-        filteringEnabled
-      />
-    </>
+    <Grid container direction="column" spacing={2}>
+      {dataPreviewItems.map((item, idx) => (
+        <Grid item key={idx}>
+          {item.type === InputOrOutput.Input ? (
+            <InputDataPreviewContainer item={item} pageId={currentPageDetails?.id} />
+          ) : (
+            <OutputDataPreviewContainer item={item} pageId={currentPageDetails?.id} />
+          )}
+        </Grid>
+      ))}
+    </Grid>
   )
 }
 

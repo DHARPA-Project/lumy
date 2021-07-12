@@ -35,6 +35,7 @@ const WorkflowContainer = (): JSX.Element => {
     workflowPages,
     workflowMeta,
     currentPageIndex,
+    currentPageDetails,
     direction,
     isAdditionalPaneVisible,
     stepContainerRef,
@@ -87,10 +88,7 @@ const WorkflowContainer = (): JSX.Element => {
             }}
           >
             <section className={classes.mainPane} ref={mainPaneRef}>
-              <WorkflowStep
-                pageDetails={workflowPages?.[currentPageIndex]}
-                workflowLabel={workflowMeta.label}
-              />
+              <WorkflowStep pageDetails={currentPageDetails} workflowLabel={workflowMeta.label} />
             </section>
 
             <div

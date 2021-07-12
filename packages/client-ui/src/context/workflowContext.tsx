@@ -17,9 +17,9 @@ export type WorkflowType = {
   workflowMeta: LumyWorkflow['meta']
   workflowPages: WorkflowPageDetails[]
   currentPageIndex: number
+  currentPageDetails?: WorkflowPageDetails
   direction: number
   setCurrentPageIndexAndDirection: Dispatch<SetStateAction<[number, number]>>
-  idCurrentStep: string
   mainPaneWidth: number
   setMainPaneWidth: Dispatch<SetStateAction<number>>
   mainPaneHeight: number
@@ -83,8 +83,7 @@ const WorkflowContextProvider = ({ children }: WorkflowProviderProps): JSX.Eleme
 
   const workflowMeta = currentWorkflow?.meta
   const workflowPages: WorkflowPageDetails[] = currentWorkflow?.ui?.pages ?? []
-  const stepIds = workflowPages.map(page => page.id)
-  const idCurrentStep = stepIds[currentPageIndex]
+  const currentPageDetails = workflowPages[currentPageIndex]
 
   const workflowCode = JSON.parse(sampleJupyterNotebook)
 
@@ -218,9 +217,9 @@ const WorkflowContextProvider = ({ children }: WorkflowProviderProps): JSX.Eleme
         workflowMeta,
         workflowPages,
         currentPageIndex,
+        currentPageDetails,
         direction,
         setCurrentPageIndexAndDirection,
-        idCurrentStep,
         mainPaneWidth,
         setMainPaneWidth,
         mainPaneHeight,
