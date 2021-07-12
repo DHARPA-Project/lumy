@@ -33,6 +33,7 @@ const variants = {
 const WorkflowContainer = (): JSX.Element => {
   const {
     workflowPages,
+    workflowMeta,
     activeStep,
     direction,
     isAdditionalPaneVisible,
@@ -86,7 +87,7 @@ const WorkflowContainer = (): JSX.Element => {
             }}
           >
             <section className={classes.mainPane} ref={mainPaneRef}>
-              <WorkflowStep workflowPages={workflowPages} activeStep={activeStep} />
+              <WorkflowStep pageDetails={workflowPages?.[activeStep]} workflowLabel={workflowMeta.label} />
             </section>
 
             <div

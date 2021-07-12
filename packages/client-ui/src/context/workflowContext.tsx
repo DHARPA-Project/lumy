@@ -3,7 +3,7 @@ import React, { createContext, Dispatch, SetStateAction, useEffect, useRef, useS
 import VerticalSplitIcon from '@material-ui/icons/VerticalSplit'
 import HorizontalSplitIcon from '@material-ui/icons/HorizontalSplit'
 
-import { useCurrentWorkflow, WorkflowPageDetails } from '@dharpa-vre/client-core'
+import { LumyWorkflow, useCurrentWorkflow, WorkflowPageDetails } from '@dharpa-vre/client-core'
 
 import sampleJupyterNotebook from '../data/notebook.ipynb'
 
@@ -14,6 +14,7 @@ export type WorkflowType = {
   setIsSideDrawerOpen: Dispatch<SetStateAction<boolean>>
   featureTabIndex: number
   setFeatureTabIndex: Dispatch<SetStateAction<number>>
+  workflowMeta: LumyWorkflow['meta']
   workflowPages: WorkflowPageDetails[]
   activeStep: number
   direction: number
@@ -80,6 +81,7 @@ const WorkflowContextProvider = ({ children }: WorkflowProviderProps): JSX.Eleme
   const [mainPaneHeight, setMainPaneHeight] = useState<number>(0)
   const [mainPaneWidth, setMainPaneWidth] = useState<number>(0)
 
+  const workflowMeta = currentWorkflow?.meta
   const workflowPages: WorkflowPageDetails[] = currentWorkflow?.ui?.pages ?? []
   const stepIds = workflowPages.map(page => page.id)
   const idCurrentStep = stepIds[activeStep]
@@ -213,6 +215,7 @@ const WorkflowContextProvider = ({ children }: WorkflowProviderProps): JSX.Eleme
         setIsSideDrawerOpen,
         featureTabIndex,
         setFeatureTabIndex,
+        workflowMeta,
         workflowPages,
         activeStep,
         direction,
