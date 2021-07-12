@@ -11,18 +11,18 @@ interface IStepData {
 
 type VerticalStepIndicatorProps = {
   steps: IStepData[]
-  activeStep: number
+  currentPageIndex: number
   handleNext: () => void
   handleBack: () => void
 }
 
 const VerticalStepIndicator = ({
   steps,
-  activeStep,
+  currentPageIndex,
   handleNext,
   handleBack
 }: VerticalStepIndicatorProps): JSX.Element => {
-  const classes = useStyles(activeStep)
+  const classes = useStyles(currentPageIndex)
 
   return (
     <div className={classes.stepBarContainer}>
@@ -30,7 +30,7 @@ const VerticalStepIndicator = ({
         <NavigationIcon
           onClick={handleBack}
           className={
-            classes.workflowNavArrow + ' ' + classes.previous + (activeStep === 0 ? ' disabled' : '')
+            classes.workflowNavArrow + ' ' + classes.previous + (currentPageIndex === 0 ? ' disabled' : '')
           }
           color="primary"
           aria-label="previous-step"
@@ -38,8 +38,8 @@ const VerticalStepIndicator = ({
 
         <ul className={classes.indicators}>
           {steps.map((step, index) => {
-            const isActiveStep = index === activeStep
-            const isCompleted = index < activeStep
+            const isActiveStep = index === currentPageIndex
+            const isCompleted = index < currentPageIndex
 
             return (
               <StepDetailTooltip
@@ -65,7 +65,7 @@ const VerticalStepIndicator = ({
             classes.workflowNavArrow +
             ' ' +
             classes.next +
-            (activeStep === steps.length - 1 ? ' disabled' : '')
+            (currentPageIndex === steps.length - 1 ? ' disabled' : '')
           }
           color="primary"
           aria-label="previous-step"

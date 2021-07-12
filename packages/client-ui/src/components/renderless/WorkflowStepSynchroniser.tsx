@@ -18,7 +18,7 @@ export const WorkflowStepSynchroniser = ({
   stepParameterName,
   onStepUpdated
 }: WorkflowStepSynchroniserProps): JSX.Element => {
-  const { activeStep, setActiveStep } = useContext(WorkflowContext)
+  const { currentPageIndex, setCurrentPageIndexAndDirection } = useContext(WorkflowContext)
   const systemInfo = useSystemInfo()
   const params = useParams<{ [key: string]: string }>()
   const stepId = params[stepParameterName]
@@ -38,8 +38,8 @@ export const WorkflowStepSynchroniser = ({
     // when the page is created, the source of truth is parameters.
     const stepIds = getStepIds(currentWorkflow)
     const stepIndex = stepIds.indexOf(stepId)
-    if (stepIndex >= 0) setActiveStep([stepIndex, 0])
-    else setActiveStep([0, 0])
+    if (stepIndex >= 0) setCurrentPageIndexAndDirection([stepIndex, 0])
+    else setCurrentPageIndexAndDirection([0, 0])
   }, [currentWorkflow])
 
   useEffect(() => {
@@ -47,7 +47,7 @@ export const WorkflowStepSynchroniser = ({
 
     const stepIds = getStepIds(currentWorkflow)
     const stepIndex = stepIds.indexOf(stepId)
-    if (stepIndex != activeStep) setActiveStep([stepIndex, 0])
+    if (stepIndex != currentPageIndex) setCurrentPageIndexAndDirection([stepIndex, 0])
   }, [stepId])
 
   useEffect(() => {
@@ -55,10 +55,10 @@ export const WorkflowStepSynchroniser = ({
 
     const stepIds = getStepIds(currentWorkflow)
     const stepIndex = stepIds.indexOf(stepId)
-    if (stepIndex != activeStep) {
-      onStepUpdated(stepIds[activeStep])
+    if (stepIndex != currentPageIndex) {
+      onStepUpdated(stepIds[currentPageIndex])
     }
-  }, [activeStep])
+  }, [currentPageIndex])
 
   return <></>
 }

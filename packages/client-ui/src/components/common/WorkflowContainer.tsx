@@ -34,7 +34,7 @@ const WorkflowContainer = (): JSX.Element => {
   const {
     workflowPages,
     workflowMeta,
-    activeStep,
+    currentPageIndex,
     direction,
     isAdditionalPaneVisible,
     stepContainerRef,
@@ -63,7 +63,7 @@ const WorkflowContainer = (): JSX.Element => {
           steps={workflowPages?.map(workflowPage => ({
             name: workflowPage.meta?.label ?? `Page ${workflowPage.id}`
           }))}
-          activeStep={activeStep}
+          currentPageIndex={currentPageIndex}
           handleNext={proceedToNextStep}
           handleBack={returnToPreviousStep}
         />
@@ -75,7 +75,7 @@ const WorkflowContainer = (): JSX.Element => {
           <motion.div
             className={classes.stepContainer + ` ${splitDirection}`}
             ref={stepContainerRef}
-            key={activeStep}
+            key={currentPageIndex}
             variants={variants}
             initial="before"
             animate="ready"
@@ -87,7 +87,10 @@ const WorkflowContainer = (): JSX.Element => {
             }}
           >
             <section className={classes.mainPane} ref={mainPaneRef}>
-              <WorkflowStep pageDetails={workflowPages?.[activeStep]} workflowLabel={workflowMeta.label} />
+              <WorkflowStep
+                pageDetails={workflowPages?.[currentPageIndex]}
+                workflowLabel={workflowMeta.label}
+              />
             </section>
 
             <div

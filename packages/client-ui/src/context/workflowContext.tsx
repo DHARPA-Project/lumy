@@ -16,9 +16,9 @@ export type WorkflowType = {
   setFeatureTabIndex: Dispatch<SetStateAction<number>>
   workflowMeta: LumyWorkflow['meta']
   workflowPages: WorkflowPageDetails[]
-  activeStep: number
+  currentPageIndex: number
   direction: number
-  setActiveStep: Dispatch<SetStateAction<[number, number]>>
+  setCurrentPageIndexAndDirection: Dispatch<SetStateAction<[number, number]>>
   idCurrentStep: string
   mainPaneWidth: number
   setMainPaneWidth: Dispatch<SetStateAction<number>>
@@ -76,7 +76,7 @@ const WorkflowContextProvider = ({ children }: WorkflowProviderProps): JSX.Eleme
   const [isRightSideBarVisible, setIsRightSideBarVisible] = useState(false)
   const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(false)
   const [featureTabIndex, setFeatureTabIndex] = useState(0)
-  const [[activeStep, direction], setActiveStep] = useState([0, 0])
+  const [[currentPageIndex, direction], setCurrentPageIndexAndDirection] = useState([0, 0])
   const [isAdditionalPaneVisible, setIsAdditionalPaneVisible] = useState<boolean>(false)
   const [mainPaneHeight, setMainPaneHeight] = useState<number>(0)
   const [mainPaneWidth, setMainPaneWidth] = useState<number>(0)
@@ -84,7 +84,7 @@ const WorkflowContextProvider = ({ children }: WorkflowProviderProps): JSX.Eleme
   const workflowMeta = currentWorkflow?.meta
   const workflowPages: WorkflowPageDetails[] = currentWorkflow?.ui?.pages ?? []
   const stepIds = workflowPages.map(page => page.id)
-  const idCurrentStep = stepIds[activeStep]
+  const idCurrentStep = stepIds[currentPageIndex]
 
   const workflowCode = JSON.parse(sampleJupyterNotebook)
 
@@ -191,18 +191,18 @@ const WorkflowContextProvider = ({ children }: WorkflowProviderProps): JSX.Eleme
   }
 
   const proceedToNextStep = () => {
-    setActiveStep(([prevActiveStep, prevDirection]) => {
-      const nextStep = prevActiveStep + 1
-      if (nextStep >= workflowPages.length) return [prevActiveStep, prevDirection]
-      return [nextStep, 1]
+    setCurrentPageIndexAndDirection(([prevPageIndex, prevDirection]) => {
+      const nextPageIndex = prevPageIndex + 1
+      if (nextPageIndex >= workflowPages.length) return [prevPageIndex, prevDirection]
+      return [nextPageIndex, 1]
     })
   }
 
   const returnToPreviousStep = () => {
-    setActiveStep(([prevActiveStep, prevDirection]) => {
-      const nextStep = prevActiveStep - 1
-      if (nextStep < 0) return [prevActiveStep, prevDirection]
-      return [nextStep, -1]
+    setCurrentPageIndexAndDirection(([prevPageIndex, prevDirection]) => {
+      const nextPageIndex = prevPageIndex - 1
+      if (nextPageIndex < 0) return [prevPageIndex, prevDirection]
+      return [nextPageIndex, -1]
     })
   }
 
@@ -217,9 +217,9 @@ const WorkflowContextProvider = ({ children }: WorkflowProviderProps): JSX.Eleme
         setFeatureTabIndex,
         workflowMeta,
         workflowPages,
-        activeStep,
+        currentPageIndex,
         direction,
-        setActiveStep,
+        setCurrentPageIndexAndDirection,
         idCurrentStep,
         mainPaneWidth,
         setMainPaneWidth,
