@@ -1,0 +1,22 @@
+processing:
+  workflow:
+    name: test
+ui:
+  pages:
+    - id: dataSelection
+      component:
+        id: dataSelection
+      meta:
+        label: Data Selection
+    - id: dataMapping
+      component:
+        id: networkAnalysisDataMapping
+      meta:
+        label: Data mapping
+    - id: datavis
+      component:
+        id: networkAnalysisDataVis
+      meta:
+        label: Data visualisation
+meta:
+  label: Mock workflow

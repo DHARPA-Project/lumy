@@ -18,7 +18,8 @@ import {
   useDataRepository,
   DataRepositoryItemStructure,
   DataRepositoryItemsTable,
-  arrowUtils
+  arrowUtils,
+  MockProcessorResult
 } from '@dharpa-vre/client-core'
 
 import useStyles from './DataSelection.styles'
@@ -26,7 +27,6 @@ import useStyles from './DataSelection.styles'
 import DataSourceRow from './DataSourceRow'
 
 interface InputValues {
-  repositoryItems?: ArrowTable<DataRepositoryItemStructure>
   selectedItemsIds?: string[]
   metadataFields?: string[]
 }
@@ -35,21 +35,16 @@ interface OutputValues {
   selectedItems?: ArrowTable<Partial<DataRepositoryItemStructure>>
 }
 
-type Props = ModuleProps<InputValues, OutputValues>
-
 const defaultNumberRowsPerPage = 5
 
-const DataSelection = ({ step }: Props): JSX.Element => {
+const DataSelection = ({ pageDetails: { id: stepId } }: ModuleProps): JSX.Element => {
   const classes = useStyles()
 
   const [repositoryItemsFilter, setRepositoryItemsFilter] = React.useState<DataRepositoryItemsFilter>({
     pageSize: defaultNumberRowsPerPage,
     types: ['table']
   })
-  const [selectedItemsIds = [], setSelectedItemsIds] = useStepInputValue<string[]>(
-    step.stepId,
-    'selectedItemsIds'
-  )
+  const [selectedItemsIds = [], setSelectedItemsIds] = useStepInputValue<string[]>(stepId, 'selectedItemsIds')
   const [repositoryItemsBatch, repositoryStats] = useDataRepository(repositoryItemsFilter)
 
   const updateRepositoryItemsFilter = (filter: DataRepositoryItemsFilter) =>
@@ -78,7 +73,7 @@ const DataSelection = ({ step }: Props): JSX.Element => {
   }
 
   return (
-    <section className={classes.section} key={step.stepId}>
+    <section className={classes.section} key={stepId}>
       {repositoryItemsBatch != null && repositoryStats != null && (
         <Paper variant="outlined" className={classes.paperWrapper}>
           <TableContainer className={classes.tableContainer}>
@@ -129,7 +124,7 @@ type KnownMetadataFields = keyof DataRepositoryItemStructure
 const mockProcessor = (
   { selectedItemsIds = [], metadataFields }: InputValues,
   dataRepositoryTable?: DataRepositoryItemsTable
-): OutputValues => {
+): MockProcessorResult<InputValues, OutputValues> => {
   if (dataRepositoryTable == null) return
 
   const fields = new Set(
@@ -139,7 +134,7 @@ const mockProcessor = (
   const selectedItems = arrowUtils.filterTable(dataRepositoryTable.select(...fields), row =>
     selectedItemsIds.includes(row.id)
   )
-  return { selectedItems }
+  return { outputs: { selectedItems } }
 }
 
 export default withMockProcessor(DataSelection, mockProcessor)

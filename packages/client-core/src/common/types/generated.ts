@@ -736,15 +736,194 @@ export enum Status {
  * Target: "workflow"
  * Message type: "Updated"
  *
- * Contains current workflow.
+ * Workflow currently loaded into the app.
  */
 export interface MsgWorkflowUpdated {
+  workflow?: LumyWorkflow
+}
+
+/**
+ * Lumy workflow configuration.
+ * Contains all details needed for Lumy to load, install dependencies, render and run Kiara
+ * workflow.
+ */
+export interface LumyWorkflow {
   /**
-   * Current workflow state. Type: PipelineState from
-   * https://dharpa.org/kiara/development/entities/modules/PipelineState.json .
-   * Not using it as a reference because of a code generation bug.
+   * Workflow metadata
    */
-  workflow?: { [key: string]: unknown }
+  meta: LumyWorkflowMetadata
+  /**
+   * Workflow processing configuration details
+   */
+  processing: ProcessingSection
+  /**
+   * Workflow rendering definitions
+   */
+  ui: RenderingSection
+}
+
+/**
+ * Workflow metadata
+ */
+export interface LumyWorkflowMetadata {
+  /**
+   * Human readable name of the workflow.
+   */
+  label: string
+}
+
+/**
+ * Workflow processing configuration details
+ */
+export interface ProcessingSection {
+  dependencies?: ProcessingDependenciesSection
+  workflow: ProcessingWorkflowSection
+}
+
+export interface ProcessingDependenciesSection {
+  pythonPackages?: PackageDependency[]
+}
+
+export interface PackageDependency {
+  /**
+   * Version modifier
+   */
+  modifier?: Modifier
+  /**
+   * Package name
+   */
+  name: string
+  /**
+   * Package version
+   */
+  version?: string
+}
+
+/**
+ * Version modifier
+ */
+export enum Modifier {
+  Eq = 'eq',
+  Gt = 'gt',
+  Gte = 'gte',
+  LTE = 'lte',
+  Lt = 'lt'
+}
+
+export interface ProcessingWorkflowSection {
+  /**
+   * Name of the kiara workflow.
+   */
+  name: string
+}
+
+/**
+ * Workflow rendering definitions
+ */
+export interface RenderingSection {
+  /**
+   * List of pages that comprise the workflow UI part.
+   */
+  pages?: WorkflowPageDetails[]
+}
+
+/**
+ * All details needed to render a page (step) of the workflow.
+ */
+export interface WorkflowPageDetails {
+  /**
+   * Details of the component that renders this page
+   */
+  component: WorkflowPageComponent
+  /**
+   * ID (slug) of the page. Must be unique within this workflow.
+   */
+  id: string
+  /**
+   * Layout metadata
+   */
+  layout?: WorkflowPageLayoutMetadata
+  /**
+   * Details of mapping between page inputs/outputs and processing workflow steps
+   * inputs/outputs
+   */
+  mapping?: WorkflowPageMappingDetails
+  /**
+   * Workflow page metadata
+   */
+  meta?: LumyWorkflowPageMetadata
+}
+
+/**
+ * Details of the component that renders this page
+ */
+export interface WorkflowPageComponent {
+  /**
+   * ID of the component
+   */
+  id: string
+}
+
+/**
+ * Layout metadata
+ */
+export interface WorkflowPageLayoutMetadata {
+  dataPreview?: DataPreviewLayoutMetadataItem[]
+}
+
+/**
+ * Input or output that has to be rendered in the data preview section for this step context.
+ */
+export interface DataPreviewLayoutMetadataItem {
+  /**
+   * ID of the input or output to render
+   */
+  id?: string
+  type?: InputOrOutput
+}
+
+export enum InputOrOutput {
+  Input = 'input',
+  Output = 'output'
+}
+
+/**
+ * Details of mapping between page inputs/outputs and processing workflow steps
+ * inputs/outputs
+ */
+export interface WorkflowPageMappingDetails {
+  inputs?: WorkflowPageMapping[]
+  outputs?: WorkflowPageMapping[]
+}
+
+/**
+ * Mapping of a single input/output outlet between the processing pipeline and the workflow
+ * page.
+ */
+export interface WorkflowPageMapping {
+  /**
+   * ID of the input/output on the page
+   */
+  pageIoId: string
+  /**
+   * ID of the input/output on the processing side
+   */
+  workflowIoId: string
+  /**
+   * ID of the step of the pipeline. If not provided, the input output is considered to be one
+   * of the pipeline input/outputs.
+   */
+  workflowStepId?: string
+}
+
+/**
+ * Workflow page metadata
+ */
+export interface LumyWorkflowPageMetadata {
+  /**
+   * Human readable name of the page.
+   */
+  label?: string
 }
 
 /**

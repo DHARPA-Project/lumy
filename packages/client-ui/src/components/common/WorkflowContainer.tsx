@@ -32,8 +32,9 @@ const variants = {
 
 const WorkflowContainer = (): JSX.Element => {
   const {
-    projectSteps,
-    activeStep,
+    workflowPages,
+    workflowMeta,
+    currentPageIndex,
     direction,
     isAdditionalPaneVisible,
     stepContainerRef,
@@ -53,16 +54,16 @@ const WorkflowContainer = (): JSX.Element => {
 
   const classes = useStyles()
 
-  if (!projectSteps?.length) return <LoadingIndicator />
+  if (workflowPages?.length === 0) return <LoadingIndicator />
 
   return (
     <>
       <div className={classes.workflowContainer}>
         <VerticalStepIndicator
-          steps={projectSteps.map(projectStep => ({
-            name: projectStep.step.moduleType
+          steps={workflowPages?.map(workflowPage => ({
+            name: workflowPage.meta?.label ?? `Page ${workflowPage.id}`
           }))}
-          activeStep={activeStep}
+          currentPageIndex={currentPageIndex}
           handleNext={proceedToNextStep}
           handleBack={returnToPreviousStep}
         />
@@ -74,7 +75,7 @@ const WorkflowContainer = (): JSX.Element => {
           <motion.div
             className={classes.stepContainer + ` ${splitDirection}`}
             ref={stepContainerRef}
-            key={activeStep}
+            key={currentPageIndex}
             variants={variants}
             initial="before"
             animate="ready"
@@ -86,7 +87,10 @@ const WorkflowContainer = (): JSX.Element => {
             }}
           >
             <section className={classes.mainPane} ref={mainPaneRef}>
-              <WorkflowStep projectSteps={projectSteps} activeStep={activeStep} />
+              <WorkflowStep
+                pageDetails={workflowPages?.[currentPageIndex]}
+                workflowLabel={workflowMeta.label}
+              />
             </section>
 
             <div

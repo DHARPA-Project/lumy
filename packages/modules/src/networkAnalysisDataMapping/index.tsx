@@ -1,8 +1,10 @@
 import React from 'react'
-import { Table, Utf8Vector, Int32Vector } from 'apache-arrow'
+import { Table } from 'apache-arrow'
 
 import {
+  DataRepositoryItemsTable,
   DataRepositoryItemStructure,
+  MockProcessorResult,
   ModuleProps,
   useStepInputValue,
   withMockProcessor
@@ -10,28 +12,17 @@ import {
 import { IRequiredDataSetProp, TabularDataMappingForm } from '@dharpa-vre/data-mapping-table'
 
 import { MappingTableStructure, toObject, fromObject } from './mappingTable'
-import { EdgesStructure, NodesStructure } from '../networkAnalysisDataVis/structure'
 
 type CorpusStructure = DataRepositoryItemStructure
 
 export type CorpusTableType = Table<CorpusStructure>
 type MappingTable = Table<MappingTableStructure>
 
-type NodeTable = Table<NodesStructure>
-type EdgeTable = Table<EdgesStructure>
-
 interface InputValues {
   corpus: CorpusTableType
   nodesMappingTable: MappingTable
   edgesMappingTable: MappingTable
 }
-
-interface OutputValues {
-  nodes: NodeTable
-  edges: EdgeTable
-}
-
-type Props = ModuleProps<InputValues, OutputValues>
 
 const dataMappingTableCaption =
   'Map data sources to data sets required for this workflow. The first column lists the names of the (re)sources from which you can extract data. The headings of the other columns are the names of the data sets required for this workflow. The labels of the selection fields are the names of the required data fields. The options on the drop-down list correspond to columns found in your data (re)source.'
@@ -50,15 +41,15 @@ const networkAnalysisDataSets: IRequiredDataSetProp[] = [
   }
 ]
 
-const NetworkAnalysisDataMapping = ({ step }: Props): JSX.Element => {
-  const [corpusPage] = useStepInputValue<CorpusTableType>(step.stepId, 'corpus', { fullValue: true })
+const NetworkAnalysisDataMapping = ({ pageDetails: { id: stepId } }: ModuleProps): JSX.Element => {
+  const [corpusPage] = useStepInputValue<CorpusTableType>(stepId, 'corpus', { fullValue: true })
   const [nodeMappingTable, setNodeMappingTable] = useStepInputValue<MappingTable>(
-    step.stepId,
+    stepId,
     'nodesMappingTable',
     { fullValue: true }
   )
   const [edgeMappingTable, setEdgeMappingTable] = useStepInputValue<MappingTable>(
-    step.stepId,
+    stepId,
     'edgesMappingTable',
     { fullValue: true }
   )
@@ -166,44 +157,12 @@ const NetworkAnalysisDataMapping = ({ step }: Props): JSX.Element => {
   )
 }
 
-const mockProcessor = ({}: InputValues): OutputValues => {
-  const numNodes = 123
-  const nums = [...new Array(numNodes).keys()]
-  const numConnections = numNodes * 2
-  const cnums = [...new Array(numConnections).keys()]
-
-  const groups = ['groupA', 'groupB', 'groupC']
-  const getRandomGroup = () => {
-    const idx = Math.floor(Math.random() * groups.length)
-    return groups[idx]
-  }
-
-  const getRandomNodeId = () => {
-    const idx = Math.floor(Math.random() * numNodes * 0.9)
-    return String(nums[idx])
-  }
-
-  const maxWeight = 30
-  const getRandomWeight = () => Math.floor(Math.random() * maxWeight)
-
-  const nodes = Table.new<NodesStructure>(
-    [
-      Utf8Vector.from(nums.map(i => String(i))),
-      Utf8Vector.from(nums.map(i => `Node ${i}`)),
-      Utf8Vector.from(nums.map(() => getRandomGroup()))
-    ],
-    ['id', 'label', 'group']
-  )
-  const edges = Table.new<EdgesStructure>(
-    [
-      Utf8Vector.from(cnums.map(() => getRandomNodeId())),
-      Utf8Vector.from(cnums.map(() => getRandomNodeId())),
-      Int32Vector.from(cnums.map(() => getRandomWeight()))
-    ],
-    ['srcId', 'tgtId', 'weight']
-  )
-
-  return { nodes, edges }
+const mockProcessor = (
+  { corpus }: InputValues,
+  dataRepositoryTable?: DataRepositoryItemsTable
+): MockProcessorResult<InputValues, unknown> => {
+  const defaultCorpus = dataRepositoryTable?.slice(0, 2)
+  return { inputs: { corpus: corpus ?? defaultCorpus } }
 }
 
 export default withMockProcessor(NetworkAnalysisDataMapping, mockProcessor)

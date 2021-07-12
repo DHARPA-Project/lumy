@@ -1,0 +1,235 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "LumyWorkflow",
+  "description": "Lumy workflow configuration.\nContains all details needed for Lumy to load, install dependencies, render and run Kiara workflow.",
+  "definitions": {
+    "packageDependency": {
+      "title": "PackageDependency",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Package name"
+        },
+        "version": {
+          "type": "string",
+          "description": "Package version"
+        },
+        "modifier": {
+          "type": "string",
+          "description": "Version modifier",
+          "enum": [
+            "lt",
+            "lte",
+            "eq",
+            "gte",
+            "gt"
+          ]
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "workflowPage": {
+      "type": "object",
+      "additionalProperties": false,
+      "title": "WorkflowPageDetails",
+      "description": "All details needed to render a page (step) of the workflow.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "ID (slug) of the page. Must be unique within this workflow."
+        },
+        "component": {
+          "type": "object",
+          "additionalProperties": false,
+          "title": "WorkflowPageComponent",
+          "description": "Details of the component that renders this page",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "ID of the component"
+            }
+          },
+          "required": [
+            "id"
+          ]
+        },
+        "mapping": {
+          "type": "object",
+          "additionalProperties": false,
+          "title": "WorkflowPageMappingDetails",
+          "description": "Details of mapping between page inputs/outputs and processing workflow steps inputs/outputs",
+          "properties": {
+            "inputs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/workflowPageIoMapping"
+              }
+            },
+            "outputs": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/workflowPageIoMapping"
+              }
+            }
+          }
+        },
+        "layout": {
+          "type": "object",
+          "title": "WorkflowPageLayoutMetadata",
+          "additionalProperties": false,
+          "description": "Layout metadata",
+          "properties": {
+            "dataPreview": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/dataPreviewLayoutMetadataItem"
+              }
+            }
+          }
+        },
+        "meta": {
+          "type": "object",
+          "title": "LumyWorkflowPageMetadata",
+          "description": "Workflow page metadata",
+          "additionalProperties": false,
+          "properties": {
+            "label": {
+              "type": "string",
+              "description": "Human readable name of the page."
+            }
+          },
+          "required": []
+        }
+      },
+      "required": [
+        "id",
+        "component"
+      ]
+    },
+    "dataPreviewLayoutMetadataItem": {
+      "type": "object",
+      "title": "DataPreviewLayoutMetadataItem",
+      "description": "Input or output that has to be rendered in the data preview section for this step context.",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "title": "InputOrOutput",
+          "type": "string",
+          "enum": [
+            "input",
+            "output"
+          ]
+        },
+        "id": {
+          "type": "string",
+          "description": "ID of the input or output to render"
+        }
+      }
+    },
+    "workflowPageIoMapping": {
+      "type": "object",
+      "additionalProperties": false,
+      "title": "WorkflowPageMapping",
+      "description": "Mapping of a single input/output outlet between the processing pipeline and the workflow page.",
+      "properties": {
+        "workflowStepId": {
+          "type": "string",
+          "description": "ID of the step of the pipeline. If not provided, the input output is considered to be one of the pipeline input/outputs."
+        },
+        "workflowIoId": {
+          "type": "string",
+          "description": "ID of the input/output on the processing side"
+        },
+        "pageIoId": {
+          "type": "string",
+          "description": "ID of the input/output on the page"
+        }
+      },
+      "required": [
+        "workflowIoId",
+        "pageIoId"
+      ]
+    }
+  },
+  "properties": {
+    "processing": {
+      "title": "ProcessingSection",
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Workflow processing configuration details",
+      "properties": {
+        "workflow": {
+          "type": "object",
+          "additionalProperties": false,
+          "title": "ProcessingWorkflowSection",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the kiara workflow."
+            }
+          },
+          "required": [
+            "name"
+          ]
+        },
+        "dependencies": {
+          "type": "object",
+          "additionalProperties": false,
+          "title": "ProcessingDependenciesSection",
+          "properties": {
+            "pythonPackages": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/packageDependency"
+              }
+            }
+          }
+        }
+      },
+      "required": [
+        "workflow"
+      ]
+    },
+    "ui": {
+      "type": "object",
+      "title": "RenderingSection",
+      "additionalProperties": false,
+      "description": "Workflow rendering definitions",
+      "properties": {
+        "pages": {
+          "type": "array",
+          "description": "List of pages that comprise the workflow UI part.",
+          "items": {
+            "$ref": "#/definitions/workflowPage"
+          }
+        }
+      }
+    },
+    "meta": {
+      "type": "object",
+      "title": "LumyWorkflowMetadata",
+      "description": "Workflow metadata",
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Human readable name of the workflow."
+        }
+      },
+      "required": [
+        "label"
+      ]
+    }
+  },
+  "required": [
+    "processing",
+    "ui",
+    "meta"
+  ]
+}

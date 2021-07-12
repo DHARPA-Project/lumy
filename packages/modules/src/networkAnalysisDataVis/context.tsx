@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useRef, useState } from 'react'
 
-import { PipelineStep, useStepInputValue, useStepOutputValue } from '@dharpa-vre/client-core'
+import { useStepInputValue, useStepOutputValue, WorkflowPageDetails } from '@dharpa-vre/client-core'
 
 import { ScalingMethod, InputValues, OutputValues } from './structure'
 
@@ -39,19 +39,22 @@ export type NetworkGraphContextType = {
 }
 
 type NetworkGraphContextProviderProps = {
-  step: PipelineStep
+  pageDetails: WorkflowPageDetails
   children?: React.ReactNode
 }
 
 export const NetworkGraphContext = createContext<NetworkGraphContextType>(null)
 
-const NetworkGraphContextProvider = ({ step, children }: NetworkGraphContextProviderProps): JSX.Element => {
+const NetworkGraphContextProvider = ({
+  pageDetails: { id: stepId },
+  children
+}: NetworkGraphContextProviderProps): JSX.Element => {
   const [settingList, setSettingList] = useState<SettingItem[]>(initialSettingList)
   const [highlightedDocItem, setHighlightedDocItem] = useState('')
 
   /* Get read only module input values */
-  const [nodes] = useStepInputValue<InputValues['nodes']>(step.stepId, 'nodes', { fullValue: true })
-  const [edges] = useStepInputValue<InputValues['edges']>(step.stepId, 'edges', { fullValue: true })
+  const [nodes] = useStepInputValue<InputValues['nodes']>(stepId, 'nodes', { fullValue: true })
+  const [edges] = useStepInputValue<InputValues['edges']>(stepId, 'edges', { fullValue: true })
 
   // nodes page + filter for table view
   // const [nodesFilter, setNodesFilter] = useState<TabularDataFilter>({ pageSize: 10 })
@@ -73,14 +76,14 @@ const NetworkGraphContextProvider = ({ step, children }: NetworkGraphContextProv
   const [selectedNodeId, setSelectedNodeId] = useState<InputValues['selectedNodeId']>()
 
   /* Get output values */
-  const [graphData] = useStepOutputValue<OutputValues['graphData']>(step.stepId, 'graphData', {
+  const [graphData] = useStepOutputValue<OutputValues['graphData']>(stepId, 'graphData', {
     fullValue: true
   })
 
   // a list of direct connections of the `selectedNodeId` node
-  const [selectedNodeDirectConnections] = useStepOutputValue(step.stepId, 'directConnections')
+  const [selectedNodeDirectConnections] = useStepOutputValue(stepId, 'directConnections')
   //const [shortestPath] = useStepOutputValue<string[]>(step.stepId, 'shortestPath')
-  const [graphStats] = useStepOutputValue<OutputValues['graphStats']>(step.stepId, 'graphStats')
+  const [graphStats] = useStepOutputValue<OutputValues['graphStats']>(stepId, 'graphStats')
 
   /* Graph and its container reference - for getting container size */
   const graphRef = useRef<NetworkForce>(null)
