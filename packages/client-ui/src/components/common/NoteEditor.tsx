@@ -25,8 +25,8 @@ const useStyles = makeStyles(theme => ({
 const NoteEditor = (): JSX.Element => {
   const classes = useStyles()
 
-  const { idCurrentStep } = useContext(WorkflowContext)
-  const { notes, addNote, deleteNote, updateNote } = useStepNotes(idCurrentStep)
+  const { currentPageDetails } = useContext(WorkflowContext)
+  const { notes, addNote, deleteNote, updateNote } = useStepNotes(currentPageDetails?.id)
   const [selectedNote, setSelectedNote] = useState<NoteType | EditedNoteType>()
 
   return (
@@ -56,7 +56,7 @@ const NoteEditor = (): JSX.Element => {
             startIcon={<AddIcon />}
             onClick={() => setSelectedNote({ content: '' })}
             style={{ width: '100%' }}
-            disabled={idCurrentStep == null}
+            disabled={currentPageDetails == null}
           >
             new note
           </Button>

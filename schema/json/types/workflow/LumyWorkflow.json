@@ -130,7 +130,11 @@
           "type": "string",
           "description": "ID of the input or output to render"
         }
-      }
+      },
+      "required": [
+        "type",
+        "id"
+      ]
     },
     "workflowPageIoMapping": {
       "type": "object",

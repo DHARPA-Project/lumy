@@ -18,5 +18,11 @@ ui:
         id: networkAnalysisDataVis
       meta:
         label: Data visualisation
+      layout:
+        dataPreview:
+          - type: input
+            id: nodes
+          - type: output
+            id: directConnections
 meta:
   label: Mock workflow

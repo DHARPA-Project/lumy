@@ -878,8 +878,8 @@ export interface DataPreviewLayoutMetadataItem {
   /**
    * ID of the input or output to render
    */
-  id?: string
-  type?: InputOrOutput
+  id: string
+  type: InputOrOutput
 }
 
 export enum InputOrOutput {
