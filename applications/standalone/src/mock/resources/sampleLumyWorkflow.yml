@@ -17,6 +17,6 @@ ui:
       component:
         id: networkAnalysisDataVis
       meta:
-        label: Data visusalisation
+        label: Data visualisation
 meta:
   label: Mock workflow
