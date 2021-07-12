@@ -29,6 +29,7 @@ class ApplicationUpdater {
     autoUpdater.autoDownload = false
     autoUpdater.autoInstallOnAppQuit = true
     autoUpdater.allowPrerelease = true
+    autoUpdater.allowDowngrade = true
 
     this.setState(UpdateState.NotAvailable)
     autoUpdater.on('checking-for-update', () => this.setState(UpdateState.Checking))
