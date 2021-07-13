@@ -1,72 +1,15 @@
-import React, { createContext, Dispatch, SetStateAction, useEffect, useRef, useState } from 'react'
+import React, { createContext, useEffect, useRef, useState } from 'react'
 
-import VerticalSplitIcon from '@material-ui/icons/VerticalSplit'
-import HorizontalSplitIcon from '@material-ui/icons/HorizontalSplit'
-
-import { LumyWorkflow, useCurrentWorkflow, WorkflowPageDetails } from '@dharpa-vre/client-core'
+import { useCurrentWorkflow, WorkflowPageDetails } from '@dharpa-vre/client-core'
 
 import sampleJupyterNotebook from '../data/notebook.ipynb'
-
-export type WorkflowType = {
-  isRightSideBarVisible: boolean
-  setIsRightSideBarVisible: Dispatch<SetStateAction<boolean>>
-  isSideDrawerOpen: boolean
-  setIsSideDrawerOpen: Dispatch<SetStateAction<boolean>>
-  featureTabIndex: number
-  setFeatureTabIndex: Dispatch<SetStateAction<number>>
-  workflowMeta: LumyWorkflow['meta']
-  workflowPages: WorkflowPageDetails[]
-  currentPageIndex: number
-  currentPageDetails?: WorkflowPageDetails
-  direction: number
-  setCurrentPageIndexAndDirection: Dispatch<SetStateAction<[number, number]>>
-  mainPaneWidth: number
-  setMainPaneWidth: Dispatch<SetStateAction<number>>
-  mainPaneHeight: number
-  setMainPaneHeight: Dispatch<SetStateAction<number>>
-  isAdditionalPaneVisible: boolean
-  setIsAdditionalPaneVisible: Dispatch<SetStateAction<boolean>>
-  workflowCode: Record<string, unknown>
-  stepContainerRef: React.MutableRefObject<HTMLDivElement>
-  mainPaneRef: React.MutableRefObject<HTMLDivElement>
-  additionalPaneRef: React.MutableRefObject<HTMLDivElement>
-  splitDirection: screenSplitDirectionType
-  setSplitDirection: React.Dispatch<React.SetStateAction<screenSplitDirectionType>>
-  screenSplitOptions: screenSplitOption[]
-  proceedToNextStep: () => void
-  returnToPreviousStep: () => void
-  onMouseDown: (event: React.MouseEvent) => void
-  closeAdditionalPane: () => void
-  openFeatureTab: (tabIndex: number) => void
-}
-
-type WorkflowProviderProps = {
-  children?: React.ReactNode
-}
-
-export type screenSplitDirectionType = 'horizontal' | 'vertical'
-
-type screenSplitOption = {
-  name: screenSplitDirectionType
-  icon: JSX.Element
-  tooltipText: string
-  direction: string
-}
-
-const screenSplitOptions: screenSplitOption[] = [
-  {
-    name: 'horizontal',
-    icon: <HorizontalSplitIcon />,
-    tooltipText: 'split: top / bottom',
-    direction: 'vertical'
-  },
-  {
-    name: 'vertical',
-    icon: <VerticalSplitIcon />,
-    tooltipText: 'split: left / right',
-    direction: 'horizontal'
-  }
-]
+import {
+  WorkflowType,
+  WorkflowProviderProps,
+  screenSplitDirectionType,
+  IWorkflowLayout
+} from './workflowContext.types'
+import { screenSplitOptions, workflowLayoutLocalStorageKey } from './workflowContext.const'
 
 export const WorkflowContext = createContext<WorkflowType>(null)
 
@@ -93,6 +36,60 @@ const WorkflowContextProvider = ({ children }: WorkflowProviderProps): JSX.Eleme
   const dividerPosition = useRef<{ x?: number; y?: number }>(null)
 
   const [splitDirection, setSplitDirection] = useState<screenSplitDirectionType>('horizontal')
+
+  // load previously saved workflow layout context values from local storage
+  useEffect(() => {
+    try {
+      const localStorageData = window.localStorage.getItem(workflowLayoutLocalStorageKey)
+
+      if (localStorageData != null) {
+        const workflowLayout: IWorkflowLayout = JSON.parse(localStorageData)
+
+        if (workflowLayout.isRightSideBarVisible)
+          setIsRightSideBarVisible(workflowLayout.isRightSideBarVisible)
+        if (workflowLayout.isSideDrawerOpen) setIsSideDrawerOpen(workflowLayout.isSideDrawerOpen)
+        if (workflowLayout.featureTabIndex) setFeatureTabIndex(workflowLayout.featureTabIndex)
+        if (workflowLayout.currentPageIndex && workflowLayout.direction)
+          setCurrentPageIndexAndDirection([workflowLayout.currentPageIndex, workflowLayout.direction])
+        if (workflowLayout.isAdditionalPaneVisible)
+          setIsAdditionalPaneVisible(workflowLayout.isAdditionalPaneVisible)
+        if (workflowLayout.mainPaneHeight) setMainPaneHeight(workflowLayout.mainPaneHeight)
+        if (workflowLayout.mainPaneWidth) setMainPaneWidth(workflowLayout.mainPaneWidth)
+      }
+    } catch (error) {
+      console.error('retrieving workflow layout data from local storage failed: ', error)
+    }
+  }, [])
+
+  // save workflow layout data to local storage on every state update
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(
+        workflowLayoutLocalStorageKey,
+        JSON.stringify({
+          isRightSideBarVisible,
+          isSideDrawerOpen,
+          featureTabIndex,
+          currentPageIndex,
+          direction,
+          isAdditionalPaneVisible,
+          mainPaneHeight,
+          mainPaneWidth
+        })
+      )
+    } catch (error) {
+      console.error('saving workflow layout data to local storage failed: ', error)
+    }
+  }, [
+    isRightSideBarVisible,
+    isSideDrawerOpen,
+    featureTabIndex,
+    currentPageIndex,
+    direction,
+    isAdditionalPaneVisible,
+    mainPaneHeight,
+    mainPaneWidth
+  ])
 
   useEffect(() => {
     document.addEventListener('mouseup', onMouseUp)
