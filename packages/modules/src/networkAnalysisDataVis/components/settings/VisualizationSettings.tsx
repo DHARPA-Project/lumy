@@ -14,6 +14,7 @@ import { NetworkGraphContext } from '../../context'
 
 import { NavigationPanel, NavigationPanelSection } from '../common/NavigationPanel'
 import SettingMenuPopover from './popover/SettingMenuPopover'
+import { settingComponentInventory } from '../../settingList'
 
 const VisualizationSettings = (): JSX.Element => {
   const classes = useStyles()
@@ -67,7 +68,7 @@ const VisualizationSettings = (): JSX.Element => {
                       subsetting =>
                         subsetting.selected && (
                           <Grid item className="subsetting-grid-item" key={subsetting.name}>
-                            {subsetting.component}
+                            {settingComponentInventory[subsetting.id]}
                           </Grid>
                         )
                     )}
