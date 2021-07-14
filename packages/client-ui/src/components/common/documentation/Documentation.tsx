@@ -11,7 +11,8 @@ type DocumentationProps = {
 
 const useStyles = makeStyles(theme => ({
   documentationContainer: {
-    padding: theme.spacing(1),
+    paddingRight: theme.spacing(1),
+    paddingLeft: theme.spacing(1),
     backgroundColor: theme.palette.background.paper
   }
 }))

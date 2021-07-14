@@ -20,7 +20,6 @@ import { CircularProgress, Grid } from '@material-ui/core'
 
 const useStyles = makeStyles(theme => ({
   card: {
-    margin: theme.spacing(5),
     padding: theme.spacing(2)
   }
 }))
@@ -76,7 +75,7 @@ const DataPreview = (): JSX.Element => {
   if (dataPreviewItems.length == 0)
     return (
       <Card className={classes.card}>
-        <Typography variant="h5" component="h1" align="center">
+        <Typography variant="subtitle1" component="h3" align="center">
           No data available for this step
         </Typography>
       </Card>

@@ -92,12 +92,7 @@ const WorkflowContainer = (): JSX.Element => {
               <WorkflowStep pageDetails={currentPageDetails} workflowLabel={workflowMeta.label} />
             </section>
 
-            <div
-              className={
-                classes.paneDivider + (isAdditionalPaneVisible ? '' : ' invisible') + ` ${splitDirection}`
-              }
-              onMouseDown={onMouseDown}
-            />
+            <div className={classes.paneDivider + ` ${splitDirection}`} onMouseDown={onMouseDown} />
 
             <section
               className={classes.additionalPane + (isAdditionalPaneVisible ? '' : ' invisible')}

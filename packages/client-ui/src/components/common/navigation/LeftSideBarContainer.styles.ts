@@ -7,9 +7,8 @@ export default makeStyles(theme => ({
     width: theme.layout.sideBarFullWidth,
     display: 'flex',
     flexDirection: 'column',
-    backgroundColor: theme.palette.background.default,
+    backgroundColor: theme.palette.background.paper,
     color: theme.palette.text.primary,
-    borderRight: `1px solid ${theme.palette.divider}`,
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.standard

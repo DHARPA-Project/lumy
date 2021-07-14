@@ -14,8 +14,11 @@ type TabPanelProps = {
 
 const useStyles = makeStyles((theme: Theme) => ({
   tabPanel: {
-    marginTop: theme.spacing(6),
-    height: `calc(100% - ${theme.spacing(5)}px)`,
+    height: `calc(100% - ${theme.layout.tabHeight}px)`,
+    marginTop: theme.layout.tabHeight,
+    paddingTop: theme.spacing(1.5),
+    paddingRight: theme.spacing(1),
+    paddingLeft: theme.spacing(1),
     overflow: 'overlay'
   }
 }))

@@ -1,11 +1,16 @@
-import { makeStyles } from '@material-ui/core/styles'
+import { makeStyles, Theme } from '@material-ui/core/styles'
 
-export default makeStyles(() => ({
+export default makeStyles((theme: Theme) => ({
   codeViewContainer: {
-    padding: '0.5rem 1rem'
+    '& .jupyter-viewer .block .cell-row .cell-content.source-markdown': {
+      fontFamily: theme.typography.fontFamily
+    }
   },
   top: {
+    position: 'sticky',
+    top: 0,
     display: 'flex',
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-end',
+    padding: theme.spacing(0, 1)
   }
 }))

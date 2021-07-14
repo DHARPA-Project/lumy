@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles'
 
 export default makeStyles(theme => ({
-  root: {
+  noteList: {
     '& .MuiListItem-root': {
       margin: theme.spacing(1, 0),
       '&:first-child': {
@@ -11,5 +11,8 @@ export default makeStyles(theme => ({
         marginBottom: 0
       }
     }
+  },
+  card: {
+    padding: theme.spacing(2)
   }
 }))
