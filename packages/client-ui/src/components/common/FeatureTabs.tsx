@@ -1,6 +1,4 @@
-import React, { useContext, useEffect, useRef } from 'react'
-
-import { makeStyles, useTheme } from '@material-ui/core/styles'
+import React, { useContext, useRef } from 'react'
 
 import AppBar from '@material-ui/core/AppBar'
 import Tabs from '@material-ui/core/Tabs'
@@ -8,53 +6,17 @@ import Tab from '@material-ui/core/Tab'
 
 import { featureList } from '../../const/features'
 import { WorkflowContext } from '../../context/workflowContext'
+import useStyles from './FeatureTabs.styles'
 
 import TabPanel from './TabPanel'
 
-const useStyles = makeStyles(theme => ({
-  featureContainer: {
-    height: '100%',
-    width: '100%',
-    flexGrow: 1,
-    backgroundColor: theme.palette.background.paper
-  },
-  tabList: {
-    '& .MuiTab-labelIcon': {
-      minHeight: theme.spacing(5)
-    },
-    '& .MuiTab-wrapper': {
-      flexDirection: 'row',
-      '& .MuiSvgIcon-root': {
-        marginBottom: 0,
-        marginRight: theme.spacing(1)
-      }
-    }
-  },
-  tabItem: {
-    minWidth: 100,
-    flex: 1
-  }
-}))
-
 const FeatureTabs = (): JSX.Element => {
   const classes = useStyles()
-  const theme = useTheme()
 
   const containerRef = useRef(null)
   const tabActionRef = useRef(null)
 
   const { featureTabIndex, setFeatureTabIndex } = useContext(WorkflowContext)
-
-  // update MUI tab indicator to correct its misplacement after tab width change
-  useEffect(() => {
-    const indicatorUpdateTimeout = setTimeout(() => {
-      tabActionRef.current.updateIndicator()
-    }, theme.transitions.duration.standard)
-
-    return () => {
-      clearTimeout(indicatorUpdateTimeout)
-    }
-  }, [containerRef.current?.getBoundingClientRect()?.width, theme])
 
   return (
     <div className={classes.featureContainer} ref={containerRef}>
@@ -64,8 +26,6 @@ const FeatureTabs = (): JSX.Element => {
           value={featureTabIndex}
           onChange={(event, newTabIndex) => setFeatureTabIndex(newTabIndex)}
           action={tabActionRef}
-          indicatorColor="primary"
-          textColor="primary"
           variant="scrollable"
           scrollButtons="off"
           aria-label="scrollable auto icon tabs"
@@ -75,8 +35,8 @@ const FeatureTabs = (): JSX.Element => {
               className={classes.tabItem}
               label={label}
               icon={icon}
-              id={`simple-tab-${id}`}
-              aria-controls={`simple-tabpanel-${id}`}
+              id={`feature-pane-tab-${id}`}
+              aria-controls={`feature-pane-tab-${id}`}
               key={id}
             />
           ))}

@@ -1,6 +1,6 @@
-import defaultTheme from './muiDefaultTheme'
+import { Theme } from '@material-ui/core/styles'
 
-export default {
+const getMuiThemeOverrides = (theme: Theme): unknown => ({
   MuiCssBaseline: {
     '@global': {
       '*': {
@@ -8,14 +8,14 @@ export default {
         'scrollbar-color': 'rgba(0,0,0,0.1) transparent' // 'thumb track'
       },
       '*::-webkit-scrollbar': {
-        width: defaultTheme?.layout?.scrollBarWidth,
-        height: defaultTheme?.layout?.scrollBarWidth
+        width: theme.layout.scrollBarWidth,
+        height: theme.layout.scrollBarWidth
       },
       '*::-webkit-scrollbar-track': {
         backgroundColor: 'transparent'
       },
       '*::-webkit-scrollbar-thumb': {
-        borderRadius: defaultTheme?.layout?.scrollBarWidth,
+        borderRadius: theme.layout.scrollBarWidth,
         backgroundColor: 'rgba(0,0,0,0.1)',
         '&:hover': {
           backgroundColor: 'rgba(0,0,0,0.15)'
@@ -29,22 +29,22 @@ export default {
   MuiAccordionDetails: {
     root: {
       paddingTop: 0,
-      paddingRight: defaultTheme.spacing(1),
-      paddingBottom: defaultTheme.spacing(1),
-      paddingLeft: defaultTheme.spacing(1)
+      paddingRight: theme.spacing(1),
+      paddingBottom: theme.spacing(1),
+      paddingLeft: theme.spacing(1)
     }
   },
   MuiAccordionSummary: {
     root: {
-      minHeight: defaultTheme.spacing(4),
+      minHeight: theme.spacing(4),
       '&.Mui-expanded': {
-        minHeight: defaultTheme.spacing(4)
+        minHeight: theme.spacing(4)
       }
     },
     content: {
-      margin: defaultTheme.spacing(1, 0),
+      margin: theme.spacing(1, 0),
       '&.Mui-expanded': {
-        margin: defaultTheme.spacing(1, 0)
+        margin: theme.spacing(1, 0)
       }
     }
   },
@@ -67,57 +67,70 @@ export default {
   },
   MuiIconButton: {
     root: {
-      padding: defaultTheme.spacing(1)
+      padding: theme.spacing(1)
     }
   },
   MuiListItem: {
     root: {
-      paddingTop: defaultTheme.spacing(0),
-      paddingBottom: defaultTheme.spacing(0)
+      paddingTop: theme.spacing(0),
+      paddingBottom: theme.spacing(0)
     }
   },
   MuiListItemIcon: {
     root: {
-      minWidth: defaultTheme.spacing(4)
+      minWidth: theme.spacing(4)
     }
   },
   MuiNativeSelect: {
     root: {
       borderWidth: '1px',
       borderStyle: 'solid',
-      borderColor: defaultTheme.palette.divider,
-      borderRadius: defaultTheme.shape.borderRadius
+      borderColor: theme.palette.divider,
+      borderRadius: theme.shape.borderRadius
     },
     select: {
-      borderRadius: defaultTheme.shape.borderRadius,
+      borderRadius: theme.shape.borderRadius,
       '&:focus': {
-        borderRadius: defaultTheme.shape.borderRadius
+        borderRadius: theme.shape.borderRadius
       }
     }
   },
   MuiOutlinedInput: {
     inputMarginDense: {
-      paddingTop: defaultTheme.spacing(1),
-      paddingBottom: defaultTheme.spacing(1)
+      paddingTop: theme.spacing(1),
+      paddingBottom: theme.spacing(1)
     }
   },
   MuiTab: {
     root: {
-      fontSize: '0.8125rem'
+      padding: theme.spacing(0, 1),
+      backgroundColor: theme.palette.grey[100],
+      fontSize: '0.8125rem',
+      textTransform: 'none',
+      '&:hover': {
+        backgroundColor: theme.palette.grey[300]
+      },
+      '&$selected': {
+        color: theme.palette.primary.main,
+        backgroundColor: theme.palette.background.paper
+      }
     },
     labelIcon: {
-      minHeight: defaultTheme.spacing(5),
-      paddingTop: '6px'
+      minHeight: theme.layout.tabHeight,
+      paddingTop: 0
     }
   },
   MuiTabs: {
     root: {
-      minHeight: defaultTheme.spacing(5)
+      minHeight: theme.layout.tabHeight
+    },
+    indicator: {
+      display: 'none'
     }
   },
   MuiTableCell: {
     root: {
-      padding: defaultTheme.spacing(0.5)
+      padding: theme.spacing(0.5)
     }
   },
   MuiTablePagination: {
@@ -130,16 +143,16 @@ export default {
   },
   MuiTooltip: {
     tooltip: {
-      backgroundColor: defaultTheme.palette.grey[200],
-      color: defaultTheme.palette.text.primary
+      backgroundColor: theme.palette.grey[200],
+      color: theme.palette.text.primary
     },
     arrow: {
-      color: defaultTheme.palette.grey[200]
+      color: theme.palette.grey[200]
     }
   },
   MuiTreeItem: {
     iconContainer: {
-      color: defaultTheme.palette.grey[500]
+      color: theme.palette.grey[500]
     }
   },
   MuiTreeView: {
@@ -149,7 +162,9 @@ export default {
   },
   PrivateSwitchBase: {
     root: {
-      padding: defaultTheme.spacing(1)
+      padding: theme.spacing(1)
     }
   }
-}
+})
+
+export default getMuiThemeOverrides

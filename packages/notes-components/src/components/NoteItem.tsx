@@ -15,7 +15,7 @@ export const NoteItem = ({ note, onClick }: NoteItemProps): JSX.Element => {
   if (note == null) return <></>
   return (
     <ListItem
-      className={classes.root}
+      className={classes.noteItem}
       button={onClick != null ? true : undefined}
       classes={{ button: classes.buttonItem }}
       onClick={() => onClick?.(note)}

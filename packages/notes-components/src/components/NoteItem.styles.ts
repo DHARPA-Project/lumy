@@ -5,20 +5,16 @@ const getLinearGradientBreakpoints = (color: string, breakpoints = [0, 0.8, 1.0]
   breakpoints.map(o => fade(color, o))
 
 export default makeStyles(theme => ({
-  root: {
-    backgroundColor: theme.palette.background.paper
+  noteItem: {
+    padding: theme.spacing(2),
+    borderRadius: theme.shape.borderRadius,
+    border: `1px solid ${theme.palette.divider}`
   },
   noteContentContainer: {
     display: 'flex',
     flexDirection: 'column',
     '& > *': {
-      margin: theme.spacing(1, 0),
-      '&:first-child': {
-        marginTop: 0
-      },
-      '&:last-child': {
-        marginBottom: 0
-      }
+      margin: theme.spacing(1, 0)
     }
   },
   noteItemContainer: {

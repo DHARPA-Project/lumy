@@ -5,11 +5,12 @@ export default makeStyles(theme => ({
     height: '100%',
     width: '100%',
     flexShrink: 1,
-    padding: theme.spacing(2),
+    padding: theme.layout.pagePadding,
     backgroundColor: theme.palette.background.paper,
     color: theme.palette.text.primary
   },
   header: {
+    height: theme.layout.pageHeaderHeight,
     padding: theme.spacing(1, 0)
   },
   headline: {

@@ -1,9 +1,9 @@
 import { createMuiTheme, Theme } from '@material-ui/core/styles'
 import { PaletteType, ThemeOptions } from '@material-ui/core'
+import '@fontsource/roboto'
 
-import defaultTheme from './muiDefaultTheme'
 import muiDefaultProps from './muiDefaultProps'
-import muiThemeOverrides from './muiThemeOverrides'
+import getMuiThemeOverrides from './muiThemeOverrides'
 
 declare module '@material-ui/core/styles/createMuiTheme' {
   export interface Theme {
@@ -14,9 +14,12 @@ declare module '@material-ui/core/styles/createMuiTheme' {
       toolBarWidth: React.CSSProperties['width']
       navBarTop: React.CSSProperties['height']
       navBarBottom: React.CSSProperties['height']
+      pageHeaderHeight: React.CSSProperties['height']
       pagePadding: React.CSSProperties['padding']
       toolContainerWidth: React.CSSProperties['width']
       scrollBarWidth: React.CSSProperties['width']
+      tabHeight: React.CSSProperties['width']
+      paneDividerWidth: React.CSSProperties['width']
     }
   }
   // allow configuration using `createMuiTheme`
@@ -28,25 +31,58 @@ declare module '@material-ui/core/styles/createMuiTheme' {
       toolBarWidth: React.CSSProperties['width']
       navBarTop: React.CSSProperties['height']
       navBarBottom: React.CSSProperties['height']
+      pageHeaderHeight: React.CSSProperties['height']
       pagePadding: React.CSSProperties['padding']
       toolContainerWidth: React.CSSProperties['width']
       scrollBarWidth: React.CSSProperties['width']
+      tabHeight: React.CSSProperties['width']
+      paneDividerWidth: React.CSSProperties['width']
     }
   }
 }
 
+// the default/base Material UI theme object
+const muiThemeBase = createMuiTheme()
+
+/**
+ * Generate new custom theme properties to extend the default MUI theme
+ * @param theme base Material UI theme object
+ * @returns object representing custom properties that do not exist on the default MUI theme
+ */
+const getCustomThemeProperties = (theme: Theme) => ({
+  layout: {
+    sideBarFullWidth: '200px',
+    sideBarCollapsedWidth: '40px',
+    navLinkTextWidth: 90,
+    toolBarWidth: '50px',
+    navBarTop: '20vh',
+    navBarBottom: '10vh',
+    pageHeaderHeight: theme.spacing(9),
+    pagePadding: theme.spacing(2),
+    toolContainerWidth: '50vw',
+    scrollBarWidth: theme.spacing(0.5),
+    tabHeight: theme.spacing(4),
+    paneDividerWidth: '4px'
+  }
+})
+
 /**
  * Shallow-merge additional options on top of default options to create custom MUI themes
- * @param extendedOptions object containing default Material UI theme options
+ * @param additionalOptions object containing default Material UI theme options
  * @returns extended Material UI theme object
  */
-export const createCustomTheme = (extendedOptions?: ThemeOptions, darkModeEnabled?: boolean): Theme =>
+export const createCustomTheme = (
+  additionalOptions?: ThemeOptions,
+  darkModeEnabled?: boolean,
+  defaultMuiTheme: Theme = muiThemeBase
+): Theme =>
   createMuiTheme({
     palette: {
       type: darkModeEnabled ? ('dark' as PaletteType) : ('light' as PaletteType),
-      secondary: defaultTheme.palette.primary
+      secondary: defaultMuiTheme.palette.primary
     },
     typography: {
+      fontFamily: ['Roboto', 'Helvetica', 'Arial', 'sans-serif'].join(','),
       body1: {
         fontSize: '0.75rem',
         lineHeight: 1.35
@@ -69,17 +105,7 @@ export const createCustomTheme = (extendedOptions?: ThemeOptions, darkModeEnable
       }
     },
     props: muiDefaultProps,
-    layout: {
-      sideBarFullWidth: '200px',
-      sideBarCollapsedWidth: '40px',
-      navLinkTextWidth: 90,
-      toolBarWidth: '50px',
-      navBarTop: '20vh',
-      navBarBottom: '10vh',
-      pagePadding: '1.5rem',
-      toolContainerWidth: '50vw',
-      scrollBarWidth: '4px'
-    },
-    overrides: muiThemeOverrides,
-    ...extendedOptions
+    overrides: getMuiThemeOverrides({ ...defaultMuiTheme, ...getCustomThemeProperties(defaultMuiTheme) }),
+    ...getCustomThemeProperties(defaultMuiTheme),
+    ...additionalOptions
   })
