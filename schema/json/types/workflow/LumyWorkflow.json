@@ -189,7 +189,7 @@
           "properties": {
             "name": {
               "type": "string",
-              "description": "Name of the Kiara pipeline to use."
+              "description": "Name of the Kiara pipeline to use.\nThe pipeline must have one input: 'source' and one output: 'target'."
             }
           },
           "required": [
