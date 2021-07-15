@@ -3,8 +3,8 @@ import { Table, Int32, Utf8, Float32, Bool } from 'apache-arrow'
 type NodeId = string
 
 export type EdgesStructure = {
-  srcId: Utf8
-  tgtId: Utf8
+  source: Utf8
+  target: Utf8
   weight: Int32
 }
 

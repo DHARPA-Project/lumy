@@ -37,8 +37,8 @@ export function buildGraphNodes(
 export function buildGraphEdges(edges: InputValues['edges']): EdgeMetadata[] | undefined {
   if (edges == null) return undefined
   return [...edges.toArray()].map(edge => ({
-    sourceId: String(edge.srcId),
-    targetId: String(edge.tgtId)
+    sourceId: String(edge.source),
+    targetId: String(edge.target)
   }))
 }
 

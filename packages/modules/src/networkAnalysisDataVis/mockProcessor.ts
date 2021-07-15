@@ -62,7 +62,7 @@ const generateNodesAndEdges = () => {
       Utf8Vector.from(cnums.map(() => getRandomNodeId())),
       Int32Vector.from(cnums.map(() => getRandomWeight()))
     ],
-    ['srcId', 'tgtId', 'weight']
+    ['source', 'target', 'weight']
   )
   return { nodes, edges }
 }
@@ -82,7 +82,7 @@ export const mockProcessor = ({
 
   const ids = [...nodes.getColumn('id')]
 
-  const notIsolatedNodesIds = new Set([...edges.getColumn('srcId')].concat([...edges.getColumn('tgtId')]))
+  const notIsolatedNodesIds = new Set([...edges.getColumn('source')].concat([...edges.getColumn('target')]))
   const isIsolated = [...nodes.getColumn('id')].map(id => !notIsolatedNodesIds.has(id))
 
   const graphData = Table.new<GraphDataStructure>(
@@ -103,8 +103,10 @@ export const mockProcessor = ({
   if (selectedNodeId != null) {
     const id = selectedNodeId.toString()
     directConnections = ([...edges]
-      .filter(row => row.srcId === id || row.tgtId === id)
-      .map(row => (row.srcId === id ? row.tgtId : row.srcId)) as unknown) as OutputValues['directConnections']
+      .filter(row => row.source === id || row.target === id)
+      .map(row =>
+        row.source === id ? row.target : row.source
+      ) as unknown) as OutputValues['directConnections']
   }
 
   let shortestPath: OutputValues['shortestPath'] = []
