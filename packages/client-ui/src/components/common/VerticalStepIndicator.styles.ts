@@ -6,7 +6,7 @@ export default makeStyles(theme => ({
     display: 'grid',
     placeItems: 'center',
     padding: theme.spacing(2, 0),
-    borderRight: `1px solid ${theme.palette.divider}`
+    backgroundColor: theme.palette.grey[100]
   },
   stepBarContent: {
     position: 'relative',

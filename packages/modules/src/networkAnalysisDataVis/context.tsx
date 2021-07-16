@@ -71,8 +71,32 @@ const NetworkGraphContextProvider = ({
   pageDetails: { id: stepId },
   children
 }: NetworkGraphContextProviderProps): JSX.Element => {
-  const [settingList, setSettingList] = useState<SettingItem[]>(initialSettingList)
+  const settingListLocalStorageKey = `lumy-${stepId}-settings`
+
+  const [settingList, setSettingList] = useState<SettingItem[]>(() => {
+    let list
+    try {
+      const localStorageData = window.localStorage.getItem(settingListLocalStorageKey)
+      if (localStorageData != null) list = JSON.parse(localStorageData)
+    } catch (error) {
+      console.error('retrieving setting list from local storage failed: ', error)
+    }
+    return list ?? initialSettingList
+  })
   const [highlightedDocItem, setHighlightedDocItem] = useState('')
+
+  // save setting list to local storage on every state update
+  //
+  // **TODO**: Shouldn't this be abstracted as a Lumy core interface rather than
+  // being called here? If not, the local storage key is not unique. It may
+  // clash with a step of a similar name from another workflow.
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(settingListLocalStorageKey, JSON.stringify(settingList))
+    } catch (error) {
+      console.error('saving setting list to local storage failed: ', error)
+    }
+  }, [settingList])
 
   /* Get output values */
   const [nodes] = useStepOutputValue<OutputValues['nodes']>(stepId, 'nodes', { fullValue: true })

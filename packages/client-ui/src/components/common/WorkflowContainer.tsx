@@ -5,7 +5,8 @@ import SpeedDial from '@material-ui/lab/SpeedDial'
 import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon'
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction'
 
-import { WorkflowContext, screenSplitDirectionType } from '../../context/workflowContext'
+import { WorkflowContext } from '../../context/workflowContext'
+import { screenSplitDirectionType } from '../../context/workflowContext.types'
 import { featureList } from '../../const/features'
 import useStyles from './WorkflowContainer.styles'
 
@@ -91,12 +92,7 @@ const WorkflowContainer = (): JSX.Element => {
               <WorkflowStep pageDetails={currentPageDetails} workflowLabel={workflowMeta.label} />
             </section>
 
-            <div
-              className={
-                classes.paneDivider + (isAdditionalPaneVisible ? '' : ' invisible') + ` ${splitDirection}`
-              }
-              onMouseDown={onMouseDown}
-            />
+            <div className={classes.paneDivider + ` ${splitDirection}`} onMouseDown={onMouseDown} />
 
             <section
               className={classes.additionalPane + (isAdditionalPaneVisible ? '' : ' invisible')}

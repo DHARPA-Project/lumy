@@ -59,18 +59,24 @@ export default makeStyles(theme => ({
     }
   },
   paneDivider: {
-    visibility: 'visible',
+    height: 0,
+    width: 0,
+    visibility: 'hidden',
+    backgroundColor: theme.palette.grey[100],
+    '&:hover': {
+      backgroundColor: theme.palette.primary.main
+    },
     '&.horizontal': {
-      borderRight: `2px solid ${theme.palette.divider}`,
+      visibility: 'visible',
+      height: '100%',
+      width: theme.layout.paneDividerWidth,
       cursor: 'col-resize'
     },
     '&.vertical': {
-      borderBottom: `2px solid ${theme.palette.divider}`,
+      visibility: 'visible',
+      height: theme.layout.paneDividerWidth,
+      width: '100%',
       cursor: 'row-resize'
-    },
-    '&.invisible': {
-      border: 'none',
-      visibility: 'hidden'
     }
   }
 }))

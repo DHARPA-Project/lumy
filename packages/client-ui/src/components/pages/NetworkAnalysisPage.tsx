@@ -1,27 +1,61 @@
-import React from 'react'
-import { useHistory } from 'react-router-dom'
+import React, { useState } from 'react'
+import { Redirect } from 'react-router-dom'
 
 import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
-import Button from '@material-ui/core/Button'
 import Container from '@material-ui/core/Container'
 import Skeleton from '@material-ui/lab/Skeleton'
-import Card from '@material-ui/core/Card'
-import CardActionArea from '@material-ui/core/CardActionArea'
-import CardActions from '@material-ui/core/CardActions'
-import CardContent from '@material-ui/core/CardContent'
-import Divider from '@material-ui/core/Divider'
 
 import useStyles from './NetworkAnalysisPage.styles'
 
 import SampleNetworkGraph from '../../assets/svgs/SampleNetworkGraph'
 import ForceDirectedNetworkGraph from '../../assets/svgs/DirectedNetworkGraph'
 import MultiGraphNetworkGraph from '../../assets/svgs/MultiGraphNetworkGraph'
+import OptionCard from '../common/OptionCard'
 
 const NetworkAnalysisPage: React.FC = () => {
   const classes = useStyles()
 
-  const history = useHistory()
+  // are all nodes homogeneous (e.g. only people, only books) or heterogeneous (e.g. soldiers and their units, professors and universities)
+  const [nodeHomogeneity, setNodeHomogeneity] = useState<'one-mode' | 'multi-mode'>(null)
+  // does the direction of the node connection matter (e.g. sending or receiving, following and being followed) or not
+  const [connectionDirection, setConnectionDirection] = useState<'directed' | 'undirected'>(null)
+
+  const homogeneityOptions = (
+    <>
+      <OptionCard
+        title="One-mode Network"
+        subtitle="A network consiting of only homogeneous nodes (e.g. only people or only books)."
+        image={<SampleNetworkGraph />}
+        clickHandler={() => setNodeHomogeneity('one-mode')}
+      />
+
+      <OptionCard
+        title="Multi-mode Network"
+        subtitle="A network consisting of heterogeneous nodes (e.g. connections among soldiers and their units or among students, professors, and their universities."
+        image={<MultiGraphNetworkGraph />}
+        clickHandler={() => setNodeHomogeneity('multi-mode')}
+      />
+    </>
+  )
+
+  const directionOptions = (
+    <>
+      <OptionCard
+        title="Directed"
+        subtitle="Visualize directed network graphs assembled from raw data."
+        image={<ForceDirectedNetworkGraph />}
+        clickHandler={() => setConnectionDirection('directed')}
+      />
+
+      <OptionCard
+        title="Undirected"
+        subtitle="Visualize undirected network graphs assembled from raw data."
+        image={<SampleNetworkGraph />}
+        clickHandler={() => setConnectionDirection('undirected')}
+      />
+    </>
+  )
 
   return (
     <div className={classes.naPageContainer}>
@@ -31,107 +65,27 @@ const NetworkAnalysisPage: React.FC = () => {
 
       <Container className={classes.content}>
         <Paper className={`${classes.block} ${classes.description}`}>
-          <div className={classes.paragraphPlaceholder}>
-            <Skeleton animation={false} />
-            <Skeleton animation={false} />
-            <Skeleton animation={false} />
-            <Skeleton animation={false} />
-            <Skeleton animation={false} />
-            <Skeleton animation={false} />
-            <Skeleton animation={false} />
-            <Skeleton animation={false} />
-            <Skeleton animation={false} />
-            <Skeleton animation={false} />
+          <div>
+            {Array.from({ length: 10 }).map((_, index) => (
+              <Skeleton animation={false} key={index} />
+            ))}
           </div>
-          <div className={classes.paragraphPlaceholder}>
-            <Skeleton animation={false} />
-            <Skeleton animation={false} />
-            <Skeleton animation={false} />
-            <Skeleton animation={false} />
-            <Skeleton animation={false} />
-            <Skeleton animation={false} />
-            <Skeleton animation={false} />
-            <Skeleton animation={false} />
-            <Skeleton animation={false} />
-            <Skeleton animation={false} />
+          <div>
+            {Array.from({ length: 10 }).map((_, index) => (
+              <Skeleton animation={false} key={index} />
+            ))}
           </div>
         </Paper>
       </Container>
 
       <div className={classes.workflowTypes}>
-        <Card className={classes.cardWrapper}>
-          {/* <CardActionArea onClick={() => history.push('/workflows/network-analysis/undirected')}> */}
-          <CardActionArea onClick={() => console.log('navigate to undirected')}>
-            <CardContent>
-              <Typography gutterBottom variant="h6" component="h2" align="center">
-                Undirected
-              </Typography>
-              <Typography variant="body2" color="textSecondary" component="p" align="center">
-                Visualize undirected network graphs assembled from raw data.
-              </Typography>
-            </CardContent>
-            <div className={classes.cardImage}>
-              <SampleNetworkGraph />
-            </div>
-          </CardActionArea>
-
-          <Divider />
-
-          <CardActions className={classes.cardActions}>
-            <Button size="small" color="primary">
-              Learn More
-            </Button>
-          </CardActions>
-        </Card>
-
-        <Card className={classes.cardWrapper}>
-          <CardActionArea onClick={() => history.push('/workflows/network-analysis/directed')}>
-            <CardContent>
-              <Typography gutterBottom variant="h6" component="h2" align="center">
-                Directed
-              </Typography>
-              <Typography variant="body2" color="textSecondary" component="p" align="center">
-                Visualize directed network graphs assembled from raw data.
-              </Typography>
-            </CardContent>
-            <div className={classes.cardImage}>
-              <ForceDirectedNetworkGraph />
-            </div>
-          </CardActionArea>
-
-          <Divider />
-
-          <CardActions className={classes.cardActions}>
-            <Button size="small" color="primary">
-              Learn More
-            </Button>
-          </CardActions>
-        </Card>
-
-        <Card className={classes.cardWrapper}>
-          {/* <CardActionArea onClick={() => history.push('/workflows/network-analysis/multigraph')}> */}
-          <CardActionArea onClick={() => console.log('navigate to multigraph')}>
-            <CardContent>
-              <Typography gutterBottom variant="h6" component="h2" align="center">
-                Multi-graph
-              </Typography>
-              <Typography variant="body2" color="textSecondary" component="p" align="center">
-                Visualize multi-graph network graphs assembled from raw data.
-              </Typography>
-            </CardContent>
-            <div className={classes.cardImage}>
-              <MultiGraphNetworkGraph />
-            </div>
-          </CardActionArea>
-
-          <Divider />
-
-          <CardActions className={classes.cardActions}>
-            <Button size="small" color="primary">
-              Learn More
-            </Button>
-          </CardActions>
-        </Card>
+        {nodeHomogeneity === 'one-mode' && connectionDirection === 'directed' ? (
+          <Redirect to="/workflows/network-analysis/directed" />
+        ) : nodeHomogeneity === 'one-mode' && connectionDirection !== 'directed' ? (
+          directionOptions
+        ) : (
+          homogeneityOptions
+        )}
       </div>
     </div>
   )

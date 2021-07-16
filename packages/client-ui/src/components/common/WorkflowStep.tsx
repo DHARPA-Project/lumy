@@ -20,11 +20,15 @@ const WorkflowStep = ({ pageDetails, workflowLabel }: WorkflowStepProps): JSX.El
     <div className={classes.mainWrapper}>
       <header className={classes.header}>
         <Typography className={classes.headline} variant="h6" component="h1" align="left">
-          <Typography color="textPrimary">{workflowLabel}</Typography>
+          {workflowLabel}
         </Typography>
 
         <Breadcrumbs aria-label="breadcrumb" className={classes.breadcrumbs}>
-          <Typography color="textPrimary">{pageDetails.meta?.label ?? `Page ${pageDetails.id}`}</Typography>
+          {[workflowLabel, pageDetails.meta?.label ?? `Page ${pageDetails.id}`].map((path, index) => (
+            <Typography color="textPrimary" key={index}>
+              {path}
+            </Typography>
+          ))}
         </Breadcrumbs>
         <Divider />
       </header>
