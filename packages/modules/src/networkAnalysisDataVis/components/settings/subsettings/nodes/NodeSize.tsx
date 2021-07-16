@@ -7,7 +7,9 @@ import { NetworkGraphContext } from '../../../../context'
 const scalingMethodLabels: Record<ScalingMethod, string> = {
   degree: 'most connections to other nodes (hubs)',
   betweenness: 'bridges between groups of nodes (brokers)',
-  eigenvector: 'best connected to hubs'
+  eigenvector: 'best connected to hubs',
+  indegree: 'In degree',
+  outdegree: 'Out degree'
 }
 const scalingMethodValues: Option[] = [{ value: undefined, label: 'equal' }].concat(
   Object.entries(scalingMethodLabels).map(([value, label]) => ({ value, label }))

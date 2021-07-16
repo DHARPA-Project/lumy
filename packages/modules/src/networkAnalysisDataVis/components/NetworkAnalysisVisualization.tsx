@@ -48,7 +48,7 @@ const NetworkAnalysisVisualizationContainer = (): JSX.Element => {
             }}
             label={graphTooltipInfo.nodeMetadata.label}
             scalingMethod={nodeScalingMethod}
-            scalingValue={graphTooltipInfo.nodeMetadata.scaler}
+            scalingValue={graphTooltipInfo.nodeMetadata.scalerActualValue}
             group={graphTooltipInfo.nodeMetadata.group}
           />
         )}

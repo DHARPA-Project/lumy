@@ -1,27 +1,35 @@
-import { Table, Bool, Float32Vector, Vector, BoolVector, Utf8Vector, Int32Vector } from 'apache-arrow'
+import { Table, Float32Vector, BoolVector, Utf8Vector, Int32Vector } from 'apache-arrow'
 import { MockProcessorResult } from '@dharpa-vre/client-core'
-import { EdgesStructure, GraphDataStructure, InputValues, NodesStructure, OutputValues } from './structure'
+import {
+  EdgesStructure,
+  CentralityMeasures,
+  InputValues,
+  OutputValues,
+  GraphStats,
+  FullNodesStructure
+} from './structure'
 
-type NodeValues = Record<keyof GraphDataStructure, unknown>
+type NodeCentralityMeasures = Record<keyof CentralityMeasures, unknown>
 
-const fakeNodesValues: { [nodeId: string]: NodeValues } = {}
+const fakeNodesValues: { [nodeId: string]: Omit<NodeCentralityMeasures, 'isolated'> } = {}
 
-const getNodeValues = (nodeId: string): NodeValues => {
+const getNodeValues = (nodeId: string): Omit<NodeCentralityMeasures, 'isolated'> => {
   if (fakeNodesValues[nodeId] == null) {
     fakeNodesValues[nodeId] = {
-      degree: Math.random(),
+      degree: Math.random() * 90,
       eigenvector: Math.random(),
       betweenness: Math.random(),
-      isLarge: Math.random() > 0.5 ? true : null,
-      isIsolated: false
+      indegree: Math.random() * 90,
+      outdegree: Math.random() * 90
     }
   }
   return fakeNodesValues[nodeId]
 }
 
-const fakeGraphStats: OutputValues['graphStats'] = {
+const fakeGraphStats: GraphStats = {
   nodesCount: Math.random() * 100,
   edgesCount: Math.random() * 100,
+  averageDegree: Math.random(),
   averageInDegree: Math.random(),
   averageOutDegree: Math.random(),
   density: Math.random(),
@@ -48,63 +56,55 @@ const generateNodesAndEdges = () => {
   const maxWeight = 30
   const getRandomWeight = () => Math.floor(Math.random() * maxWeight)
 
-  const nodes = Table.new<NodesStructure>(
-    [
-      Utf8Vector.from(nums.map(i => String(i))),
-      Utf8Vector.from(nums.map(i => `Node ${i}`)),
-      Utf8Vector.from(nums.map(() => getRandomGroup()))
-    ],
-    ['id', 'label', 'group']
-  )
+  const nodeIds = nums.map(String)
+
   const edges = Table.new<EdgesStructure>(
     [
       Utf8Vector.from(cnums.map(() => getRandomNodeId())),
       Utf8Vector.from(cnums.map(() => getRandomNodeId())),
       Int32Vector.from(cnums.map(() => getRandomWeight()))
     ],
-    ['srcId', 'tgtId', 'weight']
+    ['source', 'target', 'weight']
+  )
+
+  const notIsolatedNodesIds = new Set([...edges.getColumn('source')].concat([...edges.getColumn('target')]))
+  const isIsolated = nodeIds.map(id => !notIsolatedNodesIds.has(id))
+
+  const nodes = Table.new<FullNodesStructure>(
+    [
+      Utf8Vector.from(nodeIds),
+      Utf8Vector.from(nodeIds.map(i => `Node ${i}`)),
+      Utf8Vector.from(nodeIds.map(() => getRandomGroup())),
+
+      Float32Vector.from(nodeIds.map(id => getNodeValues(id).degree)),
+      Float32Vector.from(nodeIds.map(id => getNodeValues(id).eigenvector)),
+      Float32Vector.from(nodeIds.map(id => getNodeValues(id).betweenness)),
+      Float32Vector.from(nodeIds.map(id => getNodeValues(id).indegree)),
+      Float32Vector.from(nodeIds.map(id => getNodeValues(id).outdegree)),
+      BoolVector.from(isIsolated)
+    ],
+    ['id', 'label', 'group', 'degree', 'eigenvector', 'betweenness', 'indegree', 'outdegree', 'isolated']
   )
   return { nodes, edges }
 }
 
 export const mockProcessor = ({
-  nodes,
-  edges,
   selectedNodeId,
   shortestPathSource,
   shortestPathTarget
 }: InputValues): MockProcessorResult<InputValues, OutputValues> => {
-  if (nodes == null || edges == null) {
-    const generated = generateNodesAndEdges()
-    nodes = generated.nodes
-    edges = generated.edges
-  }
-
-  const ids = [...nodes.getColumn('id')]
-
-  const notIsolatedNodesIds = new Set([...edges.getColumn('srcId')].concat([...edges.getColumn('tgtId')]))
-  const isIsolated = [...nodes.getColumn('id')].map(id => !notIsolatedNodesIds.has(id))
-
-  const graphData = Table.new<GraphDataStructure>(
-    [
-      Float32Vector.from(ids.map(id => getNodeValues(id).degree)),
-      Float32Vector.from(ids.map(id => getNodeValues(id).eigenvector)),
-      Float32Vector.from(ids.map(id => getNodeValues(id).betweenness)),
-      Vector.from({
-        values: ids.map(id => getNodeValues(id).isLarge),
-        type: new Bool()
-      }),
-      BoolVector.from(isIsolated)
-    ],
-    ['degree', 'eigenvector', 'betweenness', 'isLarge', 'isIsolated']
-  )
+  const generated = generateNodesAndEdges()
+  const nodes = generated.nodes
+  const edges = generated.edges
 
   let directConnections: OutputValues['directConnections'] = []
   if (selectedNodeId != null) {
     const id = selectedNodeId.toString()
     directConnections = ([...edges]
-      .filter(row => row.srcId === id || row.tgtId === id)
-      .map(row => (row.srcId === id ? row.tgtId : row.srcId)) as unknown) as OutputValues['directConnections']
+      .filter(row => row.source === id || row.target === id)
+      .map(row =>
+        row.source === id ? row.target : row.source
+      ) as unknown) as OutputValues['directConnections']
   }
 
   let shortestPath: OutputValues['shortestPath'] = []
@@ -113,15 +113,13 @@ export const mockProcessor = ({
   }
 
   return {
-    inputs: {
-      nodes,
-      edges
-    },
+    inputs: {},
     outputs: {
-      graphData,
+      nodes,
+      edges,
       shortestPath,
       directConnections,
-      graphStats: fakeGraphStats
+      ...fakeGraphStats
     }
   }
 }

@@ -12,11 +12,11 @@ import Divider from '@material-ui/core/Divider'
 
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 
-import { OutputValues } from '../../structure'
+import { GraphStats } from '../../structure'
 import useStyles from './GraphStatsPanel.styles'
 
 export interface GraphStatsPanelProps {
-  graphStats: OutputValues['graphStats']
+  graphStats: Partial<GraphStats>
 }
 
 const TableCell = ({ children }: TableCellProps): JSX.Element => {
@@ -41,27 +41,27 @@ export const GraphStatsPanel = ({ graphStats }: GraphStatsPanelProps): JSX.Eleme
             <TableBody>
               <TableRow>
                 <TableCell>Number of nodes:</TableCell>
-                <TableCell>{graphStats?.nodesCount.toFixed(0)}</TableCell>
+                <TableCell>{graphStats?.nodesCount?.toFixed(0)}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>Number of edges:</TableCell>
-                <TableCell>{graphStats?.edgesCount.toFixed(0)}</TableCell>
+                <TableCell>{graphStats?.edgesCount?.toFixed(0)}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>Density:</TableCell>
-                <TableCell>{graphStats?.density.toFixed(2)}</TableCell>
+                <TableCell>{graphStats?.density?.toFixed(2)}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>Avg. in degree:</TableCell>
-                <TableCell>{graphStats?.averageInDegree.toFixed(2)}</TableCell>
+                <TableCell>{graphStats?.averageInDegree?.toFixed(2)}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>Avg. out degree:</TableCell>
-                <TableCell>{graphStats?.averageOutDegree.toFixed(2)}</TableCell>
+                <TableCell>{graphStats?.averageOutDegree?.toFixed(2)}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>Avg. shortest path length:</TableCell>
-                <TableCell>{graphStats?.averageShortestPathLength.toFixed(2)}</TableCell>
+                <TableCell>{graphStats?.averageShortestPathLength?.toFixed(2)}</TableCell>
               </TableRow>
             </TableBody>
           </Table>

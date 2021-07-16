@@ -776,8 +776,45 @@ export interface LumyWorkflowMetadata {
  * Workflow processing configuration details
  */
 export interface ProcessingSection {
+  data?: DataProcessingDetailsSection
   dependencies?: ProcessingDependenciesSection
   workflow: ProcessingWorkflowSection
+}
+
+export interface DataProcessingDetailsSection {
+  transformations?: DataTransformationDescriptor[]
+}
+
+/**
+ * Data type transformation method details.
+ */
+export interface DataTransformationDescriptor {
+  /**
+   * If set to 'true', this transformation will be used for this particular type by default if
+   * more than one transformation is available and no view is provided.
+   */
+  default?: boolean
+  pipeline: DataTransformationItemPipelineDetails
+  /**
+   * Name of source Kiara data type to apply transformation to.
+   */
+  sourceType: string
+  /**
+   * Name of target Kiara data type to apply transformation to.
+   */
+  targetType: string
+  /**
+   * Name of the view which serves as an additional hint which transformation to choose if
+   * there is more than one available
+   */
+  view?: string
+}
+
+export interface DataTransformationItemPipelineDetails {
+  /**
+   * Name of the Kiara pipeline to use.
+   */
+  name: string
 }
 
 export interface ProcessingDependenciesSection {
@@ -905,6 +942,15 @@ export interface WorkflowPageMapping {
    * ID of the input/output on the page
    */
   pageIoId: string
+  /**
+   * Specifies type the input is expected to be in.
+   * A respective data transformation method will be used.
+   */
+  type?: string
+  /**
+   * Name of the view transformation to use for the expected type.
+   */
+  view?: string
   /**
    * ID of the input/output on the processing side
    */

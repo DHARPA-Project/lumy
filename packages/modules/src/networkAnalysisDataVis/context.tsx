@@ -1,12 +1,11 @@
 import React, { createContext, useEffect, useRef, useState } from 'react'
 
-import { useStepInputValue, useStepOutputValue, WorkflowPageDetails } from '@dharpa-vre/client-core'
+import { useStepOutputValue, WorkflowPageDetails } from '@dharpa-vre/client-core'
 
-import { ScalingMethod, InputValues, OutputValues } from './structure'
+import { ScalingMethod, InputValues, OutputValues, GraphStats } from './structure'
 
 import { NetworkForce, NodeMouseEventDetails } from '@dharpa-vre/datavis-components'
 import { useBoxSize } from '../hooks/useBoxSize'
-import { useElementEventCallback } from './hooks'
 import {
   buildGraphEdges,
   buildGraphNodes,
@@ -24,7 +23,7 @@ export type NetworkGraphContextType = {
   graphBoxSize: DOMRect
   graphContainerRef: React.Ref<HTMLDivElement>
   graphRef: React.MutableRefObject<NetworkForce>
-  graphStats: OutputValues['graphStats']
+  graphStats: Partial<GraphStats>
   graphTooltipInfo: NodeMouseEventDetails
   isDisplayIsolated: boolean
   isDisplayLabels: boolean
@@ -45,6 +44,29 @@ type NetworkGraphContextProviderProps = {
 
 export const NetworkGraphContext = createContext<NetworkGraphContextType>(null)
 
+const useGraphStats = (stepId: string): Partial<GraphStats> => {
+  const [nodesCount] = useStepOutputValue<GraphStats['nodesCount']>(stepId, 'nodesCount')
+  const [edgesCount] = useStepOutputValue<GraphStats['edgesCount']>(stepId, 'edgesCount')
+  const [density] = useStepOutputValue<GraphStats['density']>(stepId, 'density')
+  const [averageShortestPathLength] = useStepOutputValue<GraphStats['averageShortestPathLength']>(
+    stepId,
+    'averageShortestPathLength'
+  )
+  const [averageDegree] = useStepOutputValue<GraphStats['averageDegree']>(stepId, 'averageDegree')
+  const [averageInDegree] = useStepOutputValue<GraphStats['averageInDegree']>(stepId, 'averageInDegree')
+  const [averageOutDegree] = useStepOutputValue<GraphStats['averageOutDegree']>(stepId, 'averageOutDegree')
+
+  return {
+    nodesCount,
+    edgesCount,
+    density,
+    averageShortestPathLength,
+    averageDegree,
+    averageInDegree,
+    averageOutDegree
+  }
+}
+
 const NetworkGraphContextProvider = ({
   pageDetails: { id: stepId },
   children
@@ -64,6 +86,10 @@ const NetworkGraphContextProvider = ({
   const [highlightedDocItem, setHighlightedDocItem] = useState('')
 
   // save setting list to local storage on every state update
+  //
+  // **TODO**: Shouldn't this be abstracted as a Lumy core interface rather than
+  // being called here? If not, the local storage key is not unique. It may
+  // clash with a step of a similar name from another workflow.
   useEffect(() => {
     try {
       window.localStorage.setItem(settingListLocalStorageKey, JSON.stringify(settingList))
@@ -72,9 +98,9 @@ const NetworkGraphContextProvider = ({
     }
   }, [settingList])
 
-  /* Get read only module input values */
-  const [nodes] = useStepInputValue<InputValues['nodes']>(stepId, 'nodes', { fullValue: true })
-  const [edges] = useStepInputValue<InputValues['edges']>(stepId, 'edges', { fullValue: true })
+  /* Get output values */
+  const [nodes] = useStepOutputValue<OutputValues['nodes']>(stepId, 'nodes', { fullValue: true })
+  const [edges] = useStepOutputValue<OutputValues['edges']>(stepId, 'edges', { fullValue: true })
 
   // nodes page + filter for table view
   // const [nodesFilter, setNodesFilter] = useState<TabularDataFilter>({ pageSize: 10 })
@@ -95,15 +121,11 @@ const NetworkGraphContextProvider = ({
   // )
   const [selectedNodeId, setSelectedNodeId] = useState<InputValues['selectedNodeId']>()
 
-  /* Get output values */
-  const [graphData] = useStepOutputValue<OutputValues['graphData']>(stepId, 'graphData', {
-    fullValue: true
-  })
-
   // a list of direct connections of the `selectedNodeId` node
   const [selectedNodeDirectConnections] = useStepOutputValue(stepId, 'directConnections')
   //const [shortestPath] = useStepOutputValue<string[]>(step.stepId, 'shortestPath')
-  const [graphStats] = useStepOutputValue<OutputValues['graphStats']>(stepId, 'graphStats')
+
+  const graphStats = useGraphStats(stepId)
 
   /* Graph and its container reference - for getting container size */
   const graphRef = useRef<NetworkForce>(null)
@@ -119,22 +141,6 @@ const NetworkGraphContextProvider = ({
   const [labelNodeSizeThreshold, setLabelNodeSizeThreshold] = useState<number>(0.8)
   const [colorCodeNodes, setColorCodeNodes] = useState(true)
 
-  /* handlers for graph node hover */
-  const handleGraphNodeMouseMove = (event: CustomEvent<NodeMouseEventDetails>) => {
-    setGraphTooltipInfo(event.detail)
-  }
-
-  const handleGraphNodeHovered = (event: CustomEvent<NodeMouseEventDetails>) => {
-    setGraphTooltipInfo(event.detail)
-    const nodeId = event.detail.nodeMetadata.id
-    if (nodeId != null) setSelectedNodeId(nodeId)
-  }
-
-  const handleGraphNodeHoveredOut = () => {
-    setGraphTooltipInfo(undefined)
-    setSelectedNodeId(null)
-  }
-
   useEffect(() => {
     // TODO: handle updated direct connections of currently selected node.
     console.log(`Direct connections of node ${selectedNodeId}: ${selectedNodeDirectConnections}`)
@@ -145,9 +151,9 @@ const NetworkGraphContextProvider = ({
   */
   useEffect(() => {
     if (graphRef.current == null) return
-    const graphNodes = buildGraphNodes(nodes, graphData, isDisplayIsolated, nodeScalingMethod)
+    const graphNodes = buildGraphNodes(nodes, isDisplayIsolated, nodeScalingMethod)
     if (graphNodes != null) graphRef.current.nodes = graphNodes
-  }, [nodes, nodeScalingMethod, graphData, graphRef.current, isDisplayIsolated])
+  }, [nodes, nodeScalingMethod, graphRef.current, isDisplayIsolated])
 
   useEffect(() => {
     if (graphRef.current == null) return
@@ -155,12 +161,36 @@ const NetworkGraphContextProvider = ({
     if (graphEdges != null) graphRef.current.edges = graphEdges
   }, [edges, graphRef.current])
 
-  useElementEventCallback(graphRef.current, 'node-hovered', handleGraphNodeHovered)
-  useElementEventCallback(graphRef.current, 'node-mousemove', handleGraphNodeMouseMove)
-  useElementEventCallback(graphRef.current, 'node-hovered-out', handleGraphNodeHoveredOut)
+  React.useEffect(() => {
+    const graphElement = graphRef.current
+
+    const handleEnter = (enterEvent: CustomEvent<NodeMouseEventDetails>) => {
+      const nodeId = enterEvent.detail.nodeMetadata.id
+      setSelectedNodeId(nodeId)
+      setGraphTooltipInfo(enterEvent.detail)
+    }
+
+    const handleMove = (moveEvent: CustomEvent<NodeMouseEventDetails>) => {
+      setGraphTooltipInfo(moveEvent.detail)
+    }
+    const handleLeave = () => {
+      setGraphTooltipInfo(undefined)
+      setSelectedNodeId(null)
+    }
+
+    graphElement?.addEventListener('node-hovered', handleEnter as EventListener)
+    graphElement?.addEventListener('node-mousemove', handleMove as EventListener)
+    graphElement?.addEventListener('node-hovered-out', handleLeave as EventListener)
+
+    return () => {
+      graphElement?.removeEventListener('node-hovered', handleEnter as EventListener)
+      graphElement?.removeEventListener('node-mousemove', handleMove as EventListener)
+      graphElement?.removeEventListener('node-hovered-out', handleLeave as EventListener)
+    }
+  }, [graphRef])
 
   /* local variables */
-  const nodeScalerParams = getNodeScalerParameters(graphData, nodeScalingMethod)
+  const nodeScalerParams = getNodeScalerParameters(nodes, nodeScalingMethod)
 
   return (
     <NetworkGraphContext.Provider

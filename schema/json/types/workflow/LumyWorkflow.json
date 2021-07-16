@@ -153,11 +153,62 @@
         "pageIoId": {
           "type": "string",
           "description": "ID of the input/output on the page"
+        },
+        "type": {
+          "type": "string",
+          "description": "Specifies type the input is expected to be in.\nA respective data transformation method will be used."
+        },
+        "view": {
+          "type": "string",
+          "description": "Name of the view transformation to use for the expected type."
         }
       },
       "required": [
         "workflowIoId",
         "pageIoId"
+      ]
+    },
+    "dataTransformationItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "title": "DataTransformationDescriptor",
+      "description": "Data type transformation method details.",
+      "properties": {
+        "sourceType": {
+          "type": "string",
+          "description": "Name of source Kiara data type to apply transformation to."
+        },
+        "targetType": {
+          "type": "string",
+          "description": "Name of target Kiara data type to apply transformation to."
+        },
+        "pipeline": {
+          "type": "object",
+          "additionalProperties": false,
+          "title": "DataTransformationItemPipelineDetails",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Name of the Kiara pipeline to use.\nThe pipeline must have one input: 'source' and one output: 'target'."
+            }
+          },
+          "required": [
+            "name"
+          ]
+        },
+        "view": {
+          "type": "string",
+          "description": "Name of the view which serves as an additional hint which transformation to choose if there is more than one available"
+        },
+        "default": {
+          "type": "boolean",
+          "description": "If set to 'true', this transformation will be used for this particular type by default if more than one transformation is available and no view is provided."
+        }
+      },
+      "required": [
+        "sourceType",
+        "targetType",
+        "pipeline"
       ]
     }
   },
@@ -191,6 +242,19 @@
               "type": "array",
               "items": {
                 "$ref": "#/definitions/packageDependency"
+              }
+            }
+          }
+        },
+        "data": {
+          "type": "object",
+          "additionalProperties": false,
+          "title": "DataProcessingDetailsSection",
+          "properties": {
+            "transformations": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/dataTransformationItem"
               }
             }
           }

@@ -3,8 +3,8 @@ import { Table, Int32, Utf8, Float32, Bool } from 'apache-arrow'
 type NodeId = string
 
 export type EdgesStructure = {
-  srcId: Utf8
-  tgtId: Utf8
+  source: Utf8
+  target: Utf8
   weight: Int32
 }
 
@@ -14,19 +14,20 @@ export type NodesStructure = {
   group: Utf8
 }
 
-export type GraphDataStructure = {
+export type CentralityMeasures = {
   degree: Float32
   eigenvector: Float32
   betweenness: Float32
-  isLarge: Bool
-  isIsolated: Bool
+  indegree: Float32
+  outdegree: Float32
+  isolated: Bool
 }
 
-export type ScalingMethod = keyof Omit<GraphDataStructure, 'isLarge' | 'isIsolated'>
+export type FullNodesStructure = NodesStructure & CentralityMeasures
 
-type GraphDataTable = Table<GraphDataStructure>
+export type ScalingMethod = keyof Omit<CentralityMeasures, 'isolated'>
 
-type NodesTable = Table<NodesStructure>
+type NodesTable = Table<FullNodesStructure>
 type EdgesTable = Table<EdgesStructure>
 
 enum ShortestPathMethod {
@@ -34,33 +35,34 @@ enum ShortestPathMethod {
   NotWeighted = 'notWeighted'
 }
 
-enum GraphType {
-  Directed = 'directed',
-  Undirected = 'undirected'
-}
+// enum GraphType {
+//   Directed = 'directed',
+//   Undirected = 'undirected'
+// }
 
-interface GraphStats {
+export interface GraphStats {
   nodesCount: number
   edgesCount: number
+  averageDegree: number
   averageInDegree: number
   averageOutDegree: number
   density: number
   averageShortestPathLength: number
+  // graphType: GraphType
 }
 
 export interface InputValues {
-  nodes: NodesTable
-  edges: EdgesTable
   shortestPathSource: NodeId
   shortestPathTarget: NodeId
   shortestPathMethod: ShortestPathMethod
-  graphType: GraphType
   selectedNodeId: NodeId
 }
 
-export interface OutputValues {
-  graphData: GraphDataTable
+interface BaseOutputValues {
+  nodes: NodesTable
+  edges: EdgesTable
   shortestPath: NodeId[]
   directConnections: NodeId[]
-  graphStats: GraphStats
 }
+
+export type OutputValues = BaseOutputValues & GraphStats
