@@ -9,7 +9,7 @@ export interface NodeMetadata {
   group: string
   scaler?: number
   label: string
-  [key: string]: unknown
+  scalerActualValue?: number
 }
 
 export interface EdgeMetadata {

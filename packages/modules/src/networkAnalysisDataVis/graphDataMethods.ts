@@ -1,9 +1,9 @@
 import { EdgeMetadata, NodeMetadata } from '@dharpa-vre/datavis-components'
-import { InputValues, OutputValues, ScalingMethod } from './structure'
+import { OutputValues, ScalingMethod } from './structure'
 import { normalizeNumbers } from './utils'
 
-function filterOutIsolatedNodes(nodes: NodeMetadata[], graphData: OutputValues['graphData']): NodeMetadata[] {
-  const isIsolated = [...(graphData.getColumn('isIsolated') ?? [])]
+function filterOutIsolatedNodes(nodes: NodeMetadata[], nodesTable: OutputValues['nodes']): NodeMetadata[] {
+  const isIsolated = [...(nodesTable.getColumn('isolated') ?? [])]
   return nodes.filter((_, idx) => !isIsolated[idx])
 }
 
@@ -11,30 +11,31 @@ function filterOutIsolatedNodes(nodes: NodeMetadata[], graphData: OutputValues['
  * Build nodes list in the format 'network-force' graph understands.
  */
 export function buildGraphNodes(
-  nodes: InputValues['nodes'],
-  graphData: OutputValues['graphData'],
+  nodes: OutputValues['nodes'],
   displayIsolatedNodes: boolean,
   nodeScalingMethod: ScalingMethod
 ): NodeMetadata[] | undefined {
   if (nodes == null) return undefined
 
-  const scalerColumn = graphData?.getColumn(nodeScalingMethod)
-  const normalizedScalerColumn = normalizeNumbers([...(scalerColumn?.toArray() ?? [])])
+  const scalerColumn = nodes?.getColumn(nodeScalingMethod)
+  const scalerColumnValues = [...(scalerColumn?.toArray() ?? [])]
+  const normalizedScalerColumn = normalizeNumbers(scalerColumnValues)
 
   const graphNodes: NodeMetadata[] = [...nodes.toArray()].map((node, idx) => ({
     id: String(node.id),
     group: node.group,
     label: node.label,
-    scaler: normalizedScalerColumn?.[idx]
+    scaler: normalizedScalerColumn?.[idx],
+    scalerActualValue: scalerColumnValues?.[idx]
   }))
 
-  return displayIsolatedNodes ? graphNodes : filterOutIsolatedNodes(graphNodes, graphData)
+  return displayIsolatedNodes ? graphNodes : filterOutIsolatedNodes(graphNodes, nodes)
 }
 
 /**
  * Build edges list in the format 'network-force' graph understands.
  */
-export function buildGraphEdges(edges: InputValues['edges']): EdgeMetadata[] | undefined {
+export function buildGraphEdges(edges: OutputValues['edges']): EdgeMetadata[] | undefined {
   if (edges == null) return undefined
   return [...edges.toArray()].map(edge => ({
     sourceId: String(edge.source),
@@ -49,10 +50,10 @@ export interface NodeScalerParameters {
 }
 
 export function getNodeScalerParameters(
-  graphData: OutputValues['graphData'],
+  nodes: OutputValues['nodes'],
   scalingMethod: ScalingMethod
 ): NodeScalerParameters {
-  const groupValues = [...(graphData?.getColumn(scalingMethod) ?? [])]
+  const groupValues = [...(nodes?.getColumn(scalingMethod) ?? [])]
   const groupValuesMin = Math.min(...groupValues)
   const groupValuesMax = Math.max(...groupValues)
 
