@@ -94,10 +94,10 @@ export const mockDataProcessorFactory = (
     pageDetails: WorkflowPageDetails,
     inputValues: Record<string, unknown>
   ): Promise<MockProcessorResult<unknown, unknown>> {
-    console.debug(
-      `Mock processing for workflow page "${pageDetails?.id}" using module "${pageDetails?.component?.id}" with values`,
-      inputValues
-    )
+    // console.debug(
+    //   `Mock processing for workflow page "${pageDetails?.id}" using module "${pageDetails?.component?.id}" with values`,
+    //   inputValues
+    // )
 
     const processor = await getMockProcessor<unknown, unknown>(viewProvider, pageDetails?.component)
 

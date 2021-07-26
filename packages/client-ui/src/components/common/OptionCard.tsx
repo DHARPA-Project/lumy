@@ -22,7 +22,7 @@ const OptionCard = ({ title, subtitle, image, clickHandler }: OptionCardProps): 
 
   return (
     <Card className={classes.cardWrapper}>
-      <CardActionArea onClick={clickHandler}>
+      <CardActionArea className={classes.cardTop} onClick={clickHandler}>
         <CardContent>
           <Typography gutterBottom variant="h6" component="h2" align="center">
             {title}
@@ -32,10 +32,10 @@ const OptionCard = ({ title, subtitle, image, clickHandler }: OptionCardProps): 
           </Typography>
         </CardContent>
         <div className={classes.cardImage}>{image}</div>
+        <Divider className={classes.cardDivider} />
       </CardActionArea>
 
-      <CardActions className={classes.cardActions}>
-        <Divider className={classes.bottomDivider} />
+      <CardActions className={classes.cardBottom}>
         <Button className={classes.bottomButton} size="small" color="primary">
           Learn More
         </Button>

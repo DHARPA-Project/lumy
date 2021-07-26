@@ -12,12 +12,20 @@ export default makeStyles(theme => ({
     position: 'absolute',
     top: theme.spacing(3),
     right: theme.spacing(3),
-    backgroundColor: theme.palette.secondary.light,
+    padding: 0,
+    backgroundColor: 'transparent',
+    border: `1px solid ${theme.palette.error.main}`,
     '&.MuiButton-root': {
       minWidth: 'auto'
     },
     '& .MuiButton-label': {
-      color: theme.palette.secondary.dark
+      color: theme.palette.error.main
+    },
+    '&:hover': {
+      backgroundColor: theme.palette.error.main,
+      '& .MuiButton-label': {
+        color: theme.palette.common.white
+      }
     }
   }
 }))

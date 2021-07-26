@@ -10,7 +10,7 @@ const methods: ItemCreationMethod[] = ['table.from_csv', 'onboarding.file.import
 const AddDataRegistryItemPage = (): JSX.Element => {
   const classes = useStyles()
   const [sessionId, setSessionId] = React.useState(uuid())
-  const [status, addItem, errorMessage] = useDataRepositoryItemCreator(sessionId)
+  const [status, errorMessage, addItem] = useDataRepositoryItemCreator(sessionId)
   const [method, setMethod] = React.useState<ItemCreationMethod>('table.from_csv')
   const [filePath, setFilePath] = React.useState<string>('')
   const [alias, setAlias] = React.useState<string>('')

@@ -102,12 +102,34 @@ const getFilteredValue = <T = unknown, S = { [key: string]: unknown }>(
     const stats = getValueStats(sortedTable)
 
     const offset = filter?.offset ?? 0
-    const pageSize = filter?.pageSize ?? 5
-    const tablePage = sortedTable.slice(offset, offset + pageSize)
+    const pageSize = filter?.pageSize
+    const tablePage = pageSize ? sortedTable.slice(offset, offset + pageSize) : sortedTable.slice(offset)
 
     return [(tablePage as unknown) as T, (stats as unknown) as S]
   }
   return [value, undefined]
+}
+
+const getMockTags = () => {
+  const tags = ['raw', 'processed', 'confidential', 'scraped', 'important']
+  const number = Math.floor(Math.random() * tags.length)
+  return tags
+    .sort(() => (Math.random() >= 0.5 ? 1 : -1))
+    .slice(0, number)
+    .join(', ')
+}
+
+const getMockNotes = () => {
+  const notes = [
+    'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
+    'Dolorum quia hic magnam provident ducimus veritatis ab cumque sit.',
+    'Distinctio, doloremque assumenda molestias sed vero adipisci qui exercitationem.',
+    'Eligendi recusandae distinctio voluptas deleniti possimus dolorum impedit.',
+    'Alias ipsum id incidunt nihil natus maxime eaque.',
+    'Nesciunt aut voluptatum tempore sunt facere consequuntur explicabo reprehenderit.'
+  ]
+
+  return Math.random() >= 0.5 ? notes[Math.floor(Math.random() * notes.length)] : ''
 }
 
 const newMockDataRepositoryTable = (numItems = 30): DataRepositoryItemsTable => {
@@ -131,7 +153,9 @@ const newMockDataRepositoryTable = (numItems = 30): DataRepositoryItemsTable => 
       ),
       type: new List(Field.new({ name: 0, type: new Utf8() })),
       highWaterMark: 1 // NOTE: working around a stride serialisation bug in arrowjs
-    })
+    }),
+    tags: Utf8Vector.from(rowNumbers.map(_ => getMockTags())),
+    notes: Utf8Vector.from(rowNumbers.map(_ => getMockNotes()))
   }) as DataRepositoryItemsTable
 }
 
@@ -580,13 +604,13 @@ export class MockContext implements IBackEndContext {
           const repositoryTable = this._mockDataRepository
 
           const filteredTable =
-            filter.types == null
+            filter?.types == null
               ? repositoryTable
               : arrowUtils.filterTable(repositoryTable, row => filter.types?.includes(row.type))
 
-          const offset = filter.offset ?? 0
-          const pageSize = filter.pageSize ?? 5
-          const page = filteredTable.slice(offset, offset + pageSize)
+          const offset = filter?.offset ?? 0
+          const pageSize = filter?.pageSize
+          const page = pageSize ? filteredTable.slice(offset, offset + pageSize) : filteredTable.slice(offset)
 
           const serializedTable = serialize(page)
           const stats: DataRepositoryItemsStats = {

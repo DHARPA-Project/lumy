@@ -15,7 +15,9 @@ import ToyVrePage from './pages/ToyVrePage'
 import LabPage from './pages/LabPage'
 import PlaygroundPage from './pages/PlaygroundPage'
 import WorkflowProjectPage from './pages/WorkflowProjectPage'
+import DataRegistryPage from './pages/DataRegistryPage'
 import AddDataRegistryItemPage from './pages/AddDataRegistryItemPage'
+import DataRegistryFormModal from './common/registry/DataRegistryFormModal'
 
 const WorkflowUrlPrefix = '/workflows/network-analysis/directed'
 
@@ -26,22 +28,25 @@ export const App = (): JSX.Element => {
         <ProjectContextProvider>
           <Router>
             <TopPageLayout>
-              <Switch>
-                <Redirect from="/" exact to="/home" />
-                <Route path="/home" exact component={HomePage} />
-                <Route path="/workflows/network-analysis" exact component={NetworkAnalysisPage} />
-                <Route
-                  path={`${WorkflowUrlPrefix}/:stepId?`}
-                  exact
-                  component={() => <WorkflowProjectPage pageUrlPrefix={WorkflowUrlPrefix} />}
-                />
-                {/* <Route path="/intro" exact component={IntroPage} /> */}
-                {/* <Route path="/projects/:id" exact component={ProjectPage} /> */}
-                <Route path="/toy" exact component={ToyVrePage} />
-                <Route path="/lab" exact component={LabPage} />
-                <Route path="/playground" exact component={PlaygroundPage} />
-                <Route path="/dataregistry/add" exact component={AddDataRegistryItemPage} />
-              </Switch>
+              {/* <Switch> */}
+              <Route path="/workflows/network-analysis" exact component={NetworkAnalysisPage} />
+              <Route
+                path={`${WorkflowUrlPrefix}/:stepId?`}
+                exact
+                component={() => <WorkflowProjectPage pageUrlPrefix={WorkflowUrlPrefix} />}
+              />
+              {/* <Route path="/intro" exact component={IntroPage} /> */}
+              {/* <Route path="/projects/:id" exact component={ProjectPage} /> */}
+              <Route path="/dataregistry" component={DataRegistryPage} />
+              <Route path="/dataregistry/add" exact component={DataRegistryFormModal} />
+              <Route path="/dataregistry/edit/:id" exact component={DataRegistryFormModal} />
+              <Route path="/dataregistry/test" exact component={AddDataRegistryItemPage} />
+              <Route path="/playground" exact component={PlaygroundPage} />
+              <Route path="/toy" exact component={ToyVrePage} />
+              <Route path="/lab" exact component={LabPage} />
+              <Route path="/home" exact component={HomePage} />
+              {/* <Redirect to="/home" /> */}
+              {/* </Switch> */}
             </TopPageLayout>
           </Router>
         </ProjectContextProvider>

@@ -13,10 +13,10 @@ type DialogModalProps = {
   title: string
   children: React.ReactNode
   isModalOpen: boolean
-  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>
+  onCloseModalClick: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const DialogModal = ({ title, children, isModalOpen, setIsModalOpen }: DialogModalProps): JSX.Element => {
+const DialogModal = ({ title, children, isModalOpen, onCloseModalClick }: DialogModalProps): JSX.Element => {
   const classes = useStyles()
 
   return (
@@ -26,7 +26,7 @@ const DialogModal = ({ title, children, isModalOpen, setIsModalOpen }: DialogMod
         size="small"
         className={classes.closeButton}
         onClick={() => {
-          setIsModalOpen(false)
+          onCloseModalClick(false)
         }}
       >
         <CloseIcon />

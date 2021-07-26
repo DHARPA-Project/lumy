@@ -11,6 +11,8 @@ export type DataRepositoryItemStructure = {
   type: Utf8
   columnNames?: List<Utf8>
   columnTypes?: List<Utf8>
+  tags?: Utf8
+  notes?: Utf8
 }
 
 export type DataRepositoryItemsTable = Table<DataRepositoryItemStructure>

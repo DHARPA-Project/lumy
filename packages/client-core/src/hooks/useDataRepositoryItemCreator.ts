@@ -2,6 +2,12 @@ import { useContext, useState, useEffect } from 'react'
 import { BackEndContext, handlerAdapter, Target } from '../common/context'
 import { Messages, WorkflowExecutionStatus } from '../common/types'
 
+type DataRegistryItemDescription = {
+  name: string
+  tags: string
+  notes: string
+}
+
 type ItemStatus = 'new' | 'creating' | 'created' | 'error'
 export type ItemCreationMethod = 'table.from_csv' | 'onboarding.file.import'
 
@@ -13,10 +19,12 @@ const inputsBuilders: Record<ItemCreationMethod, InputBuilderFn> = {
 }
 
 type AddItemFn = (method: ItemCreationMethod, filePath: string, workflowId: string) => void
+type UpdateItemFn = (itemId: string, itemValues: DataRegistryItemDescription) => void
+type RemoveItemFn = (itemId: string) => void
 
-export const useDataRepositoryItemCreator = (
-  requestId: string
-): [ItemStatus, AddItemFn, string | undefined] => {
+type ReturnType = [ItemStatus, string | undefined, AddItemFn, UpdateItemFn, RemoveItemFn]
+
+export const useDataRepositoryItemCreator = (requestId: string): ReturnType => {
   const context = useContext(BackEndContext)
   const [status, setStatus] = useState<ItemStatus>('new')
   const [lastErrorMessage, setLastErrorMessage] = useState<string>(undefined)
@@ -60,5 +68,13 @@ export const useDataRepositoryItemCreator = (
     setStatus('creating')
   }
 
-  return [status, addItem, lastErrorMessage]
+  const updateItem: UpdateItemFn = (itemId: string, itemValues: DataRegistryItemDescription) => {
+    console.log(`updating data registry item ${itemId}`)
+  }
+
+  const removeItem: RemoveItemFn = (itemId: string) => {
+    console.log(`removing data registry item ${itemId}`)
+  }
+
+  return [status, lastErrorMessage, addItem, updateItem, removeItem]
 }
