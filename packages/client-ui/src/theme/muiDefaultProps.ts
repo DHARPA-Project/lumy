@@ -2,7 +2,9 @@ import { ComponentsProps } from '@material-ui/core/styles/props'
 
 export default {
   MuiButton: {
-    disableElevation: true
+    disableElevation: true,
+    color: 'default',
+    size: 'small'
   },
   MuiCard: {
     variant: 'outlined'

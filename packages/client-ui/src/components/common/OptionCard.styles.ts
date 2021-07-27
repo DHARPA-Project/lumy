@@ -9,16 +9,22 @@ export default makeStyles(theme => ({
     flexDirection: 'column',
     justifyContent: 'space-between'
   },
+  cardTop: {
+    display: 'flex',
+    flexDirection: 'column',
+    flexGrow: 1
+  },
   cardImage: {
+    flexGrow: 1,
     display: 'grid',
     placeItems: 'center',
     aspectRatio: '1/1'
   },
-  cardActions: {
+  cardBottom: {
     display: 'flex',
     flexDirection: 'column'
   },
-  bottomDivider: {
+  cardDivider: {
     width: '100%'
   },
   bottomButton: {
