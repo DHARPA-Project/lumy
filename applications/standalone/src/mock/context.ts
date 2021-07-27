@@ -29,7 +29,7 @@ import {
   LumyWorkflow,
   DynamicModuleViewProvider
 } from '@dharpa-vre/client-core'
-import { DefaultModuleComponentPanel } from '@dharpa-vre/client-ui'
+import { DefaultModuleComponentPanel, setUpDynamicModulesSupport } from '@dharpa-vre/client-ui'
 import { registerTestModules } from '@dharpa-vre/modules'
 
 registerTestModules()
@@ -438,12 +438,14 @@ export class MockContext implements IBackEndContext {
     this._signals[Target.Activity].connect(this._handleActivity, this)
 
     // TODO: This will be gone soon.
-    // const script = document.createElement('script')
-    // script.type = 'text/javascript'
-    // script.async = true
-    // script.src = '/modules-package'
-    // script.onload = () => console.log('Loaded modules package')
-    // document.getElementsByTagName('head')[0].appendChild(script)
+    setUpDynamicModulesSupport()
+    //
+    const script = document.createElement('script')
+    script.type = 'text/javascript'
+    script.async = true
+    script.src = '/modules-package'
+    script.onload = () => console.log('Loaded modules package')
+    document.getElementsByTagName('head')[0].appendChild(script)
 
     setTimeout(() => {
       this._isReady = true

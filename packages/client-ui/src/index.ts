@@ -10,6 +10,8 @@ import { WorkflowContext } from './context/workflowContext'
 
 import { featureIds, featureList } from './const/features'
 
+import { setUpDynamicModulesSupport } from './utils/dynamicModules'
+
 export {
   App,
   DialogModal,
@@ -20,5 +22,6 @@ export {
   DefaultModuleComponentPanel,
   WorkflowContext,
   featureIds,
-  featureList
+  featureList,
+  setUpDynamicModulesSupport
 }
