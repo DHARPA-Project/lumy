@@ -26,9 +26,13 @@ import {
   DataSortingMethod,
   DataFilterCondtion,
   WorkflowExecutionStatus,
-  LumyWorkflow
+  LumyWorkflow,
+  DynamicModuleViewProvider
 } from '@dharpa-vre/client-core'
-import { viewProvider } from '@dharpa-vre/modules'
+import { DefaultModuleComponentPanel } from '@dharpa-vre/client-ui'
+import { registerTestModules } from '@dharpa-vre/modules'
+
+registerTestModules()
 
 function getRandomId(): string {
   const uint32 = window.crypto.getRandomValues(new Uint32Array(1))[0]
@@ -407,10 +411,13 @@ export class MockContext implements IBackEndContext {
 
   private _firstExecutionFlag: Record<string, boolean> = {}
 
+  private _moduleViewProvider: DynamicModuleViewProvider
+
   constructor(parameters: MockContextParameters) {
+    this._moduleViewProvider = new DynamicModuleViewProvider(DefaultModuleComponentPanel)
     this._mockDataRepository = getMockDataRepositoryTable()
     this._processData =
-      parameters?.processData ?? mockDataProcessorFactory(viewProvider, this._mockDataRepository)
+      parameters?.processData ?? mockDataProcessorFactory(this._moduleViewProvider, this._mockDataRepository)
     this._currentWorkflow = parameters?.currentWorkflow
 
     this._store = new IOValuesStore(this._currentWorkflow)
@@ -429,6 +436,14 @@ export class MockContext implements IBackEndContext {
     this._signals[Target.DataRepository].connect(this._handleDataRepository, this)
     this._signals[Target.Notes].connect(this._handleNotes, this)
     this._signals[Target.Activity].connect(this._handleActivity, this)
+
+    // TODO: This will be gone soon.
+    // const script = document.createElement('script')
+    // script.type = 'text/javascript'
+    // script.async = true
+    // script.src = '/modules-package'
+    // script.onload = () => console.log('Loaded modules package')
+    // document.getElementsByTagName('head')[0].appendChild(script)
 
     setTimeout(() => {
       this._isReady = true
@@ -797,7 +812,7 @@ export class MockContext implements IBackEndContext {
   }
 
   get moduleViewProvider(): ModuleViewProvider {
-    return viewProvider
+    return this._moduleViewProvider
   }
 
   onAvailabilityChanged(callback: (isAvailable: boolean) => void): void {

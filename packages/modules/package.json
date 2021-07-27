@@ -15,7 +15,7 @@
     "watch": "tsc -w",
     "eslint": "eslint src --ext .ts,.tsx,.js,.jsx --fix",
     "eslint:check": "eslint src --ext .ts,.tsx,.js,.jsx",
-    "build:lib": "tsc"
+    "build": "webpack build -c webpack.config.js"
   },
   "dependencies": {
     "@dharpa-vre/datavis-components": "*"
@@ -27,15 +27,24 @@
     "@material-ui/core": "*"
   },
   "devDependencies": {
+    "@babel/core": "7",
+    "@babel/plugin-proposal-class-properties": "7",
+    "@babel/plugin-proposal-decorators": "7",
+    "@babel/plugin-transform-runtime": "7",
+    "@babel/preset-env": "7",
+    "@babel/preset-react": "7",
+    "@babel/preset-typescript": "7",
     "@types/node": "14",
     "@types/react": "17",
     "@typescript-eslint/eslint-plugin": "4",
     "@typescript-eslint/parser": "4",
+    "babel-loader": "8",
     "eslint": "7",
     "eslint-config-prettier": "7",
     "eslint-plugin-prettier": "3",
     "eslint-plugin-react": "7",
     "prettier": "2",
-    "typescript": "4"
+    "typescript": "4",
+    "webpack": "5"
   }
 }

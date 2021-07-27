@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-const path = require('path')
 const webpack = require('webpack')
-const HTMLWebPackPlugin = require('html-webpack-plugin')
 
 const package = require('./package.json')
 
@@ -16,8 +14,7 @@ function getBuildHash() {
 
 module.exports = {
   entry: {
-    index: './src/index.tsx',
-    splash: './src/splash/index.tsx'
+    index: './src/index.ts'
   },
   devtool: 'source-map',
   // stats: 'detailed',
@@ -26,12 +23,13 @@ module.exports = {
     historyApiFallback: true,
     hot: true,
     compress: true,
-    disableHostCheck: true,
-    before: app => {
-      app.get('/modules-package', function (req, res) {
-        res.sendFile(path.resolve('../../packages/modules/dist/index.js'))
-      })
-    }
+    disableHostCheck: true
+  },
+  externals: {
+    react: '__lumy_react',
+    '@dharpa-vre/client-core': '__lumy_clientCore'
+    // '@material-ui/core': '__lumy_materialUiCore',
+    // '@material-ui/core/styles': '__lumy_materialUiCoreStyles'
   },
   module: {
     rules: [
@@ -94,20 +92,13 @@ module.exports = {
     extensions: ['.js', '.jsx', '.ts', '.tsx']
   },
   plugins: [
-    new HTMLWebPackPlugin({
-      filename: 'index.html',
-      template: path.join(__dirname, 'src', 'index.html'),
-      chunks: ['index']
-    }),
-    new HTMLWebPackPlugin({
-      filename: 'splash.html',
-      template: path.join(__dirname, 'src', 'splash', 'index.html'),
-      chunks: ['splash']
-    }),
     new webpack.DefinePlugin({
       'process.env.USE_JUPYTER_LAB': JSON.stringify(false),
       'process.env.LUMY_BUILD_HASH': JSON.stringify(getBuildHash()),
       'process.env.LUMY_VERSION': JSON.stringify(package.version)
+    }),
+    new webpack.optimize.LimitChunkCountPlugin({
+      maxChunks: 1
     })
   ]
 }

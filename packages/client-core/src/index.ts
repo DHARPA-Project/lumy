@@ -8,3 +8,4 @@ export * from './hooks'
 export * from './common/codec'
 
 export * as arrowUtils from './common/utils/arrow'
+export { registerLumyComponent, getLumyComponent } from './common/dynamicModules'

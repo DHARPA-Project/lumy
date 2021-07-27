@@ -4,6 +4,7 @@ import LoadingIndicator from './components/common/LoadingIndicator'
 import TableView from './components/common/TableView'
 import TreeView from './components/common/tree/TreeView'
 import DocumentationPortal from './components/common/documentation/Documentation'
+import DefaultModuleComponentPanel from './components/common/DefaultModuleComponentPanel'
 
 import { WorkflowContext } from './context/workflowContext'
 
@@ -16,6 +17,7 @@ export {
   LoadingIndicator,
   TableView,
   TreeView,
+  DefaultModuleComponentPanel,
   WorkflowContext,
   featureIds,
   featureList
