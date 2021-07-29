@@ -1,11 +1,11 @@
 {
-  "name": "@dharpa-vre/modules",
+  "name": "@dharpa-vre/app-ui-context",
   "version": "0.1.0",
-  "description": "Workflow modules collection",
+  "description": "Context for communication between workflow modules and the Lumy UI",
   "keywords": [
-    "dharpa",
-    "vre",
-    "modules"
+    "lumy",
+    "ui",
+    "components"
   ],
   "homepage": "https://dharpa.org",
   "main": "src/index.ts",
@@ -17,15 +17,9 @@
     "eslint:check": "eslint src --ext .ts,.tsx,.js,.jsx",
     "build:lib": "tsc"
   },
-  "dependencies": {
-    "@dharpa-vre/datavis-components": "*"
-  },
   "peerDependencies": {
     "react": "17",
-    "@dharpa-vre/client-core": "*",
-    "@dharpa-vre/common-ui-components": "*",
-    "apache-arrow": "4",
-    "@material-ui/core": "*"
+    "@dharpa-vre/client-core": "*"
   },
   "devDependencies": {
     "@types/node": "14",

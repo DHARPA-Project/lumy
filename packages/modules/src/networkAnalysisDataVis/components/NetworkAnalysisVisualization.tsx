@@ -1,7 +1,8 @@
 import React, { useContext } from 'react'
 
 import { useElement } from '@dharpa-vre/datavis-components'
-import { DocumentationPortal, TreeView } from '@dharpa-vre/client-ui'
+import { DocumentationPortal } from '@dharpa-vre/client-ui'
+import { TreeView } from '@dharpa-vre/common-ui-components'
 import { NetworkGraphContext } from '../context'
 import { normalizedValue } from '../utils'
 import useStyles from './NetworkAnalysisVisualization.styles'

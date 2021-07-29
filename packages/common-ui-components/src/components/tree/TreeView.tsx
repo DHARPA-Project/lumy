@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import TreeView from '@material-ui/lab/TreeView'
+import MuiTreeView from '@material-ui/lab/TreeView'
 import TreeItem from '@material-ui/lab/TreeItem'
 import Typography from '@material-ui/core/Typography'
 import IconButton from '@material-ui/core/IconButton'
@@ -13,7 +13,6 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 
 import useStyles from './TreeView.styles'
 import { ITreeItem, ITreeViewProps } from './TreeView.types'
-import { sampleTreeStructure } from './TreeView.data'
 import { getListSelectedNodes, getListAllNodes } from './TreeView.utils'
 
 /**
@@ -43,10 +42,7 @@ const renderTree = (treeNode: ITreeItem): JSX.Element => {
   )
 }
 
-const CustomTreeView = ({
-  treeStructure = sampleTreeStructure,
-  selectedItem
-}: ITreeViewProps): JSX.Element => {
+export const TreeView = ({ treeStructure, selectedItem }: ITreeViewProps): JSX.Element => {
   const classes = useStyles()
 
   const [expanded, setExpanded] = useState<string[]>([])
@@ -109,7 +105,7 @@ const CustomTreeView = ({
         </Tooltip>
       </div>
 
-      <TreeView
+      <MuiTreeView
         className={classes.treeContainer}
         defaultCollapseIcon={<ExpandMoreIcon />}
         defaultExpandIcon={<ChevronRightIcon />}
@@ -119,9 +115,7 @@ const CustomTreeView = ({
         onNodeSelect={handleSelect}
       >
         {treeStructure.map(treeNode => renderTree(treeNode))}
-      </TreeView>
+      </MuiTreeView>
     </>
   )
 }
-
-export default CustomTreeView

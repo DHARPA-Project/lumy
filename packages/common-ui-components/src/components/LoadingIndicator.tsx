@@ -7,7 +7,7 @@ type LoadingIndicatorProps = {
   size?: string
 }
 
-const LoadingIndicator = ({ color, size }: LoadingIndicatorProps): JSX.Element => {
+export const LoadingIndicator = ({ color, size }: LoadingIndicatorProps): JSX.Element => {
   const classes = useStyles({ color, size } as Record<string, string>)
 
   return (
@@ -29,5 +29,3 @@ const LoadingIndicator = ({ color, size }: LoadingIndicatorProps): JSX.Element =
     </div>
   )
 }
-
-export default LoadingIndicator

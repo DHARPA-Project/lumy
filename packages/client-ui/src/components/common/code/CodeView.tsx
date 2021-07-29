@@ -5,10 +5,10 @@ import Button from '@material-ui/core/Button'
 
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload'
 
+import { LoadingIndicator } from '@dharpa-vre/common-ui-components'
+
 import { WorkflowContext } from '../../../context/workflowContext'
 import useStyles from './CodeView.styles'
-
-import LoadingIndicator from '../LoadingIndicator'
 
 const CodeView = (): JSX.Element => {
   const classes = useStyles()
