@@ -6,8 +6,6 @@ import IconButton from '@material-ui/core/IconButton'
 
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined'
 
-import { WorkflowContext, featureIds, featureList } from '@dharpa-vre/client-ui'
-
 import useStyles from './OptionSelector.styles'
 import { NetworkGraphContext } from '../../context'
 
@@ -35,14 +33,11 @@ export const OptionSelector = ({
   const classes = useStyles()
 
   const { setHighlightedDocItem } = useContext(NetworkGraphContext)
-  const { openFeatureTab } = useContext(WorkflowContext)
 
   const openHelp = (helpItemId: string) => {
     if (!helpItemId) return console.warn('missing help item ID in OptionSelector')
 
     setHighlightedDocItem(helpItemId)
-    const documentationTabIndex = featureList.findIndex(feature => feature.id === featureIds.documentation)
-    if (documentationTabIndex >= 0) openFeatureTab(documentationTabIndex)
   }
 
   return (

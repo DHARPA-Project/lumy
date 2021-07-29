@@ -1,7 +1,7 @@
 {
-  "name": "@dharpa-vre/app-ui-context",
+  "name": "@dharpa-vre/common-ui-components",
   "version": "0.1.0",
-  "description": "Context for communication between workflow modules and the Lumy UI",
+  "description": "Common UI components used in Lumy",
   "keywords": [
     "lumy",
     "ui",
