@@ -1,6 +1,5 @@
 import React from 'react'
 import { Redirect, useHistory, useLocation } from 'react-router-dom'
-import URLSearchParams from '@ungap/url-search-params'
 
 import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
