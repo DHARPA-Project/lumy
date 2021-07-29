@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles'
 export default makeStyles(theme => ({
   cardWrapper: {
     maxWidth: theme.spacing(35),
+    minWidth: theme.spacing(30),
     margin: theme.spacing(2),
     textDecoration: 'none',
     display: 'flex',
@@ -14,11 +15,19 @@ export default makeStyles(theme => ({
     flexDirection: 'column',
     flexGrow: 1
   },
-  cardImage: {
+  imageContainer: {
+    width: '100%',
     flexGrow: 1,
     display: 'grid',
     placeItems: 'center',
     aspectRatio: '1/1'
+  },
+  backgroundImage: {
+    height: '90%',
+    width: '90%',
+    backgroundPosition: 'center',
+    backgroundSize: 'contain',
+    backgroundRepeat: 'no-repeat'
   },
   cardBottom: {
     display: 'flex',

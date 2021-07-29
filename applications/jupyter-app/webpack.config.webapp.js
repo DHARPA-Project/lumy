@@ -152,6 +152,7 @@ module.exports = {
       chunks: ['installer']
     }),
     new webpack.DefinePlugin({
+      URLSearchParams: ['URLSearchParams'],
       'process.env.USE_JUPYTER_LAB': JSON.stringify(false),
       'process.env.LUMY_BUILD_HASH': JSON.stringify(getBuildHash()),
       'process.env.LUMY_VERSION': JSON.stringify(package.version)

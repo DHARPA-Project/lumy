@@ -56,7 +56,7 @@ module.exports = {
           }
         ]
       },
-      { test: /\.(jpg|png|gif)$/, use: 'file-loader' },
+      { test: /\.(jpg|png|gif|svg)$/, use: 'file-loader' },
       {
         test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/,
         use: 'url-loader?limit=10000&mimetype=application/font-woff'
@@ -100,6 +100,7 @@ module.exports = {
       chunks: ['splash']
     }),
     new webpack.DefinePlugin({
+      URLSearchParams: ['URLSearchParams'],
       'process.env.USE_JUPYTER_LAB': JSON.stringify(false),
       'process.env.LUMY_BUILD_HASH': JSON.stringify(getBuildHash()),
       'process.env.LUMY_VERSION': JSON.stringify(package.version)

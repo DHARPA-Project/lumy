@@ -13,11 +13,18 @@ import useStyles from './OptionCard.styles'
 type OptionCardProps = {
   title: string
   subtitle: string
-  image: JSX.Element
+  image?: JSX.Element
+  backgroundImage?: string
   clickHandler: () => void
 }
 
-const OptionCard = ({ title, subtitle, image, clickHandler }: OptionCardProps): JSX.Element => {
+const OptionCard = ({
+  title,
+  subtitle,
+  image,
+  backgroundImage,
+  clickHandler
+}: OptionCardProps): JSX.Element => {
   const classes = useStyles()
 
   return (
@@ -31,7 +38,13 @@ const OptionCard = ({ title, subtitle, image, clickHandler }: OptionCardProps): 
             {subtitle}
           </Typography>
         </CardContent>
-        <div className={classes.cardImage}>{image}</div>
+        <div className={classes.imageContainer}>
+          {backgroundImage ? (
+            <div className={classes.backgroundImage} style={{ backgroundImage: `url(${backgroundImage})` }} />
+          ) : (
+            image
+          )}
+        </div>
         <Divider className={classes.cardDivider} />
       </CardActionArea>
 
