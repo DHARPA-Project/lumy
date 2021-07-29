@@ -70,6 +70,11 @@ const getMuiThemeOverrides = (theme: Theme): unknown => ({
       padding: theme.spacing(1)
     }
   },
+  MuiInputLabel: {
+    outlined: {
+      transform: `translate(${theme.spacing(1.75)}px, ${theme.spacing(1.25)}px) scale(1);`
+    }
+  },
   MuiListItem: {
     root: {
       paddingTop: theme.spacing(0),
@@ -96,6 +101,10 @@ const getMuiThemeOverrides = (theme: Theme): unknown => ({
     }
   },
   MuiOutlinedInput: {
+    input: {
+      paddingTop: theme.spacing(1),
+      paddingBottom: theme.spacing(1)
+    },
     inputMarginDense: {
       paddingTop: theme.spacing(1),
       paddingBottom: theme.spacing(1)
