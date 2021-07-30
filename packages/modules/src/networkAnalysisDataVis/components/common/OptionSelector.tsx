@@ -1,13 +1,11 @@
-import React, { useContext } from 'react'
+import React from 'react'
 
 import NativeSelect from '@material-ui/core/NativeSelect'
 import Typography from '@material-ui/core/Typography'
-import IconButton from '@material-ui/core/IconButton'
 
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined'
 
 import useStyles from './OptionSelector.styles'
-import { NetworkGraphContext } from '../../context'
 
 export interface Option {
   value: string
@@ -27,31 +25,15 @@ export const OptionSelector = ({
   label,
   value,
   options,
-  onValueChanged,
-  documentationId
+  onValueChanged
 }: OptionSelectorProps): JSX.Element => {
   const classes = useStyles()
-
-  const { setHighlightedDocItem } = useContext(NetworkGraphContext)
-
-  const openHelp = (helpItemId: string) => {
-    if (!helpItemId) return console.warn('missing help item ID in OptionSelector')
-
-    setHighlightedDocItem(helpItemId)
-  }
 
   return (
     <div className={classes.optionSelectorContainer}>
       <div>
         <Typography variant="caption">{label}</Typography>
-        <IconButton
-          onClick={() => openHelp(documentationId)}
-          color="primary"
-          size="small"
-          aria-label="expand"
-        >
-          <InfoOutlinedIcon color="disabled" fontSize="small" classes={{ root: classes.infoIcon }} />
-        </IconButton>
+        <InfoOutlinedIcon color="disabled" fontSize="small" classes={{ root: classes.infoIcon }} />
       </div>
 
       <NativeSelect
