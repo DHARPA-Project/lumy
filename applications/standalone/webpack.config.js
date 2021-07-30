@@ -29,7 +29,16 @@ module.exports = {
     disableHostCheck: true,
     before: app => {
       app.get('/modules-package', function (req, res) {
-        res.sendFile(path.resolve('../../packages/modules/dist/index.js'))
+        const { url } = req.query
+        if (url == null) return res.send('')
+
+        const urlObject = new URL(url)
+        if (urlObject.protocol === 'file:') {
+          console.log('Seinding file', url.replace(/^file:\/\//, ''))
+          res.sendFile(path.resolve(url.replace(/^file:\/\//, '')))
+        } else {
+          res.redirect(url)
+        }
       })
     }
   },

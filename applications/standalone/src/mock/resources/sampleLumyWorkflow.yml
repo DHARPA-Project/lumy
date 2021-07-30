@@ -6,16 +6,19 @@ ui:
     - id: dataSelection
       component:
         id: dataSelection
+        url: file://../../packages/modules/dist/index.js
       meta:
         label: Data Selection
     - id: dataMapping
       component:
         id: networkAnalysisDataMapping
+        url: file://../../packages/modules/dist/index.js
       meta:
         label: Data mapping
     - id: datavis
       component:
         id: networkAnalysisDataVis
+        url: file://../../packages/modules/dist/index.js
       meta:
         label: Data visualisation
       layout:

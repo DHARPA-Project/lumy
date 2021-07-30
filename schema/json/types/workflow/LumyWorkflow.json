@@ -53,6 +53,10 @@
             "id": {
               "type": "string",
               "description": "ID of the component"
+            },
+            "url": {
+              "type": "string",
+              "description": "URL of the package that contains this component.\nNOTE: This will likely be removed once package dependencies support is implemented."
             }
           },
           "required": [

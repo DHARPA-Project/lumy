@@ -813,6 +813,7 @@ export interface DataTransformationDescriptor {
 export interface DataTransformationItemPipelineDetails {
   /**
    * Name of the Kiara pipeline to use.
+   * The pipeline must have one input: 'source' and one output: 'target'.
    */
   name: string
 }
@@ -899,6 +900,11 @@ export interface WorkflowPageComponent {
    * ID of the component
    */
   id: string
+  /**
+   * URL of the package that contains this component.
+   * NOTE: This will likely be removed once package dependencies support is implemented.
+   */
+  url?: string
 }
 
 /**
