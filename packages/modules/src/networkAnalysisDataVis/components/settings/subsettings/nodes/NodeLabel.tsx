@@ -18,7 +18,7 @@ type NodeLabelProps = {
   subsettingId: string
 }
 
-const NodeLabel = ({ subsettingId }: NodeLabelProps): JSX.Element => {
+const NodeLabel = ({}: NodeLabelProps): JSX.Element => {
   const classes = useStyles()
 
   const {
@@ -34,7 +34,6 @@ const NodeLabel = ({ subsettingId }: NodeLabelProps): JSX.Element => {
       <OptionSelector
         value={String(isDisplayLabels)}
         onValueChanged={v => setIsDisplayLabels?.(v === String(true))}
-        documentationId={subsettingId}
         label="label"
         options={displayLabelValues}
       />

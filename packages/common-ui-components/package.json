@@ -1,11 +1,11 @@
 {
-  "name": "@dharpa-vre/modules",
+  "name": "@dharpa-vre/common-ui-components",
   "version": "0.1.0",
-  "description": "Workflow modules collection",
+  "description": "Common UI components used in Lumy",
   "keywords": [
-    "dharpa",
-    "vre",
-    "modules"
+    "lumy",
+    "ui",
+    "components"
   ],
   "homepage": "https://dharpa.org",
   "main": "src/index.ts",
@@ -17,15 +17,9 @@
     "eslint:check": "eslint src --ext .ts,.tsx,.js,.jsx",
     "build:lib": "tsc"
   },
-  "dependencies": {
-    "@dharpa-vre/datavis-components": "*"
-  },
   "peerDependencies": {
     "react": "17",
-    "@dharpa-vre/client-core": "*",
-    "@dharpa-vre/common-ui-components": "*",
-    "apache-arrow": "4",
-    "@material-ui/core": "*"
+    "@dharpa-vre/client-core": "*"
   },
   "devDependencies": {
     "@types/node": "14",

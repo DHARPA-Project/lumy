@@ -14,8 +14,8 @@ import Collapse from '@material-ui/core/Collapse'
 import Tooltip from '@material-ui/core/Tooltip'
 import Popover from '@material-ui/core/Popover'
 
-import { LoadingIndicator, TableView } from '@dharpa-vre/client-ui'
 import { useDataRepositoryItemValue } from '@dharpa-vre/client-core'
+import { LoadingIndicator, TableView } from '@dharpa-vre/common-ui-components'
 
 import useStyles from './TabularDataMappingRow.styles'
 
