@@ -12,14 +12,13 @@ type NodeColorProps = {
   subsettingId: string
 }
 
-const NodeColor = ({ subsettingId }: NodeColorProps): JSX.Element => {
+const NodeColor = ({}: NodeColorProps): JSX.Element => {
   const { colorCodeNodes, setColorCodeNodes } = useContext(NetworkGraphContext)
 
   return (
     <OptionSelector
       value={String(colorCodeNodes)}
       onValueChanged={v => setColorCodeNodes?.(v === String(true))}
-      documentationId={subsettingId}
       label="node color"
       options={colorCodeNodeValues}
     />

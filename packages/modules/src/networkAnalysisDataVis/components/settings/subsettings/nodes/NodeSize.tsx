@@ -19,14 +19,13 @@ type NodeSizeProps = {
   subsettingId: string
 }
 
-const NodeSize = ({ subsettingId }: NodeSizeProps): JSX.Element => {
+const NodeSize = ({}: NodeSizeProps): JSX.Element => {
   const { nodeScalingMethod, setNodeScalingMethod } = useContext(NetworkGraphContext)
 
   return (
     <OptionSelector
       value={nodeScalingMethod}
       onValueChanged={v => setNodeScalingMethod?.(v as ScalingMethod)}
-      documentationId={subsettingId}
       label="size"
       options={scalingMethodValues}
     />

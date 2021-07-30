@@ -13,16 +13,23 @@ import useStyles from './OptionCard.styles'
 type OptionCardProps = {
   title: string
   subtitle: string
-  image: JSX.Element
+  image?: JSX.Element
+  backgroundImage?: string
   clickHandler: () => void
 }
 
-const OptionCard = ({ title, subtitle, image, clickHandler }: OptionCardProps): JSX.Element => {
+const OptionCard = ({
+  title,
+  subtitle,
+  image,
+  backgroundImage,
+  clickHandler
+}: OptionCardProps): JSX.Element => {
   const classes = useStyles()
 
   return (
     <Card className={classes.cardWrapper}>
-      <CardActionArea onClick={clickHandler}>
+      <CardActionArea className={classes.cardTop} onClick={clickHandler}>
         <CardContent>
           <Typography gutterBottom variant="h6" component="h2" align="center">
             {title}
@@ -31,12 +38,18 @@ const OptionCard = ({ title, subtitle, image, clickHandler }: OptionCardProps): 
             {subtitle}
           </Typography>
         </CardContent>
-        <div className={classes.cardImage}>{image}</div>
+        <div className={classes.imageContainer}>
+          {backgroundImage ? (
+            <div className={classes.backgroundImage} style={{ backgroundImage: `url(${backgroundImage})` }} />
+          ) : (
+            image
+          )}
+        </div>
+        <Divider className={classes.cardDivider} />
       </CardActionArea>
 
-      <CardActions className={classes.cardActions}>
-        <Divider className={classes.bottomDivider} />
-        <Button className={classes.bottomButton} size="small" color="primary">
+      <CardActions className={classes.cardBottom}>
+        <Button className={classes.bottomButton} variant="text" size="small" color="primary">
           Learn More
         </Button>
       </CardActions>

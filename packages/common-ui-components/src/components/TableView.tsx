@@ -35,7 +35,7 @@ const defaultNumberRowsPerPage = 5
  * Just an example how to deal with Arrow Table.
  * https://observablehq.com/@theneuralbit/introduction-to-apache-arrow
  */
-const TableView = <S,>({
+export const TableView = <S,>({
   table,
   requiredFields,
   tableStats,
@@ -143,5 +143,3 @@ const TableView = <S,>({
     </Paper>
   )
 }
-
-export default TableView

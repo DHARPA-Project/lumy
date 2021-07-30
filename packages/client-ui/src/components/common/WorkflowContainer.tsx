@@ -5,6 +5,8 @@ import SpeedDial from '@material-ui/lab/SpeedDial'
 import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon'
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction'
 
+import { LoadingIndicator } from '@dharpa-vre/common-ui-components'
+
 import { WorkflowContext } from '../../context/workflowContext'
 import { screenSplitDirectionType } from '../../context/workflowContext.types'
 import { featureList } from '../../const/features'
@@ -13,7 +15,6 @@ import useStyles from './WorkflowContainer.styles'
 import FeatureTabs from './FeatureTabs'
 import VerticalStepIndicator from './VerticalStepIndicator'
 import WorkflowStep from './WorkflowStep'
-import LoadingIndicator from './LoadingIndicator'
 
 const positionOffset = '100vh'
 const variants = {

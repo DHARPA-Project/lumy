@@ -8,7 +8,7 @@ import Popover from '@material-ui/core/Popover'
 import Checkbox from '@material-ui/core/Checkbox'
 
 import { useDataRepositoryItemValue, DataRepositoryItemStructure } from '@dharpa-vre/client-core'
-import { LoadingIndicator, TableView } from '@dharpa-vre/client-ui'
+import { TableView, LoadingIndicator } from '@dharpa-vre/common-ui-components'
 
 import useStyles from './DataSourceRow.styles'
 

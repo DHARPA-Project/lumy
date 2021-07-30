@@ -61,7 +61,7 @@ module.exports = {
           }
         ]
       },
-      { test: /\.(jpg|png|gif)$/, use: 'file-loader' },
+      { test: /\.(jpg|png|gif|svg)$/, use: 'file-loader' },
       {
         test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/,
         use: 'url-loader?limit=10000&mimetype=application/font-woff'

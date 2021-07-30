@@ -1,16 +1,16 @@
 {
-  "name": "@dharpa-vre/data-mapping-table",
+  "name": "@dharpa-vre/common-ui-components",
   "version": "0.1.0",
-  "description": "Data mapping form for tabular data",
+  "description": "Common UI components used in Lumy",
   "keywords": [
-    "dharpa",
-    "vre",
-    "table",
-    "tabular",
-    "react"
+    "lumy",
+    "ui",
+    "components"
   ],
   "homepage": "https://dharpa.org",
   "main": "src/index.ts",
+  "license": "AGPL-3.0-only",
+  "author": "roman@kalyakin.com",
   "scripts": {
     "watch": "tsc -w",
     "eslint": "eslint src --ext .ts,.tsx,.js,.jsx --fix",
@@ -19,11 +19,7 @@
   },
   "peerDependencies": {
     "react": "17",
-    "@dharpa-vre/client-core": "*",
-    "@dharpa-vre/common-ui-components": "*",
-    "@material-ui/core": "4",
-    "@material-ui/icons": "4",
-    "apache-arrow": "4"
+    "@dharpa-vre/client-core": "*"
   },
   "devDependencies": {
     "@types/node": "14",

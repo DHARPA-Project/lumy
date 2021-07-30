@@ -28,5 +28,10 @@ export default makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'stretch'
+  },
+  buttons: {
+    display: 'grid',
+    placeItems: 'center',
+    padding: theme.spacing(2)
   }
 }))

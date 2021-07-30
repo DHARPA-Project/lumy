@@ -10,7 +10,6 @@ import Checkbox from '@material-ui/core/Checkbox'
 import useStyles from './PopoverSettingItem.styles'
 import { SettingItem } from '../../../settingList'
 import { NetworkGraphContext } from '../../../context'
-import { WorkflowContext, featureIds, featureList } from '@dharpa-vre/client-ui'
 
 import TextPill from '../../common/TextPill'
 
@@ -23,7 +22,6 @@ const PopoverSettingItem = ({ setting, setSettingList }: PopoverSettingItemProps
   const classes = useStyles()
 
   const { setHighlightedDocItem } = useContext(NetworkGraphContext)
-  const { openFeatureTab } = useContext(WorkflowContext)
 
   const handleSettingSelection = () => {
     setSettingList(prevSettingList =>
@@ -72,13 +70,7 @@ const PopoverSettingItem = ({ setting, setSettingList }: PopoverSettingItemProps
 
               <ListItemText
                 className={classes.itemTextContainer}
-                onClick={() => {
-                  setHighlightedDocItem(subsetting.id)
-                  const documentationTabIndex = featureList.findIndex(
-                    feature => feature.id === featureIds.documentation
-                  )
-                  if (documentationTabIndex >= 0) openFeatureTab(documentationTabIndex)
-                }}
+                onClick={() => setHighlightedDocItem(subsetting.id)}
               >
                 <span className={classes.itemTextContent}>{subsetting.name}</span>
                 {subsetting.important && <TextPill text="important" />}
