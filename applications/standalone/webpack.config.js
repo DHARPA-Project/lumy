@@ -29,7 +29,7 @@ module.exports = {
     disableHostCheck: true,
     before: app => {
       app.get('/modules-package', function (req, res) {
-        res.sendFile(path.resolve('../../../modules_network_analysis/dist/index.js'))
+        res.sendFile(path.resolve('../../packages/modules/dist/index.js'))
       })
     }
   },

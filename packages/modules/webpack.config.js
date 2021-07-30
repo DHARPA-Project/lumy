@@ -27,9 +27,10 @@ module.exports = {
   },
   externals: {
     react: '__lumy_react',
-    '@dharpa-vre/client-core': '__lumy_clientCore'
-    // '@material-ui/core': '__lumy_materialUiCore',
-    // '@material-ui/core/styles': '__lumy_materialUiCoreStyles'
+    '@dharpa-vre/client-core': '__lumy_clientCore',
+    '@material-ui/styles': '__lumy_materialUiStyles',
+    '@material-ui/core': '__lumy_materialUiCore',
+    '@material-ui/core/styles': '__lumy_materialUiCoreStyles'
   },
   module: {
     rules: [

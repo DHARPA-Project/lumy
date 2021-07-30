@@ -30,9 +30,6 @@ import {
   DynamicModuleViewProvider
 } from '@dharpa-vre/client-core'
 import { DefaultModuleComponentPanel, setUpDynamicModulesSupport } from '@dharpa-vre/client-ui'
-import { registerTestModules } from '@dharpa-vre/modules'
-
-registerTestModules()
 
 function getRandomId(): string {
   const uint32 = window.crypto.getRandomValues(new Uint32Array(1))[0]
