@@ -34,8 +34,9 @@ module.exports = {
 
         const urlObject = new URL(url)
         if (urlObject.protocol === 'file:') {
-          console.log('Seinding file', url.replace(/^file:\/\//, ''))
-          res.sendFile(path.resolve(url.replace(/^file:\/\//, '')))
+          const filePath = url.replace(/^file:\/\//, '')
+          console.log('Seinding file', filePath)
+          res.sendFile(path.resolve(filePath))
         } else {
           res.redirect(url)
         }
