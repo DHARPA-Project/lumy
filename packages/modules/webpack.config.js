@@ -1,24 +1,20 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const webpack = require('webpack')
 
-const package = require('./package.json')
+const isProduction = process.env.NODE_ENV === 'production' ? true : false
 
-function getBuildHash() {
-  if (process.env.BUILD_HASH != null) return process.env.BUILD_HASH
-  try {
-    return require('child_process').execSync('git rev-parse --short HEAD').toString().replace('\n', '')
-  } catch (e) {
-    return 'N/A'
-  }
-}
+console.log(`Building for production: ${isProduction}`)
 
 module.exports = {
   entry: {
     index: './src/index.ts'
   },
-  devtool: 'source-map',
+  devtool: isProduction ? undefined : 'source-map', // 'inline-source-map'
+  optimization: {
+    minimize: isProduction
+  },
   // stats: 'detailed',
-  mode: 'development',
+  mode: isProduction ? 'production' : 'development',
   devServer: {
     historyApiFallback: true,
     hot: true,
@@ -93,11 +89,6 @@ module.exports = {
     extensions: ['.js', '.jsx', '.ts', '.tsx']
   },
   plugins: [
-    new webpack.DefinePlugin({
-      'process.env.USE_JUPYTER_LAB': JSON.stringify(false),
-      'process.env.LUMY_BUILD_HASH': JSON.stringify(getBuildHash()),
-      'process.env.LUMY_VERSION': JSON.stringify(package.version)
-    }),
     new webpack.optimize.LimitChunkCountPlugin({
       maxChunks: 1
     })

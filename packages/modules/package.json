@@ -1,11 +1,11 @@
 {
-  "name": "@dharpa-vre/modules",
+  "name": "@lumy/network-analysis-modules",
   "version": "0.1.0",
-  "description": "Workflow modules collection",
+  "description": "Network analysis workflow modules collection",
   "keywords": [
-    "dharpa",
-    "vre",
-    "modules"
+    "lumy",
+    "modules",
+    "network analysis"
   ],
   "homepage": "https://dharpa.org",
   "main": "src/index.ts",
@@ -21,11 +21,11 @@
     "@dharpa-vre/datavis-components": "*"
   },
   "peerDependencies": {
-    "react": "17",
     "@dharpa-vre/client-core": "*",
     "@dharpa-vre/common-ui-components": "*",
+    "@material-ui/core": "*",
     "apache-arrow": "4",
-    "@material-ui/core": "*"
+    "react": "17"
   },
   "devDependencies": {
     "@babel/core": "7",
