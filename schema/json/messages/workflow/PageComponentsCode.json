@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "type": "object",
+  "title": "MsgWorkflowPageComponentsCode",
+  "description": "Javascript code that renders pages of the workflow.",
+  "additionalProperties": false,
+  "properties": {
+    "code": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique ID of this code snippet"
+          },
+          "content": {
+            "type": "string",
+            "description": "Actual JS code"
+          }
+        },
+        "required": [
+          "id",
+          "content"
+        ]
+      }
+    }
+  },
+  "required": [
+    "code"
+  ]
+}

@@ -15,7 +15,8 @@ export type {
   LumyWorkflow,
   WorkflowPageDetails,
   WorkflowPageComponent,
-  DataPreviewLayoutMetadataItem
+  DataPreviewLayoutMetadataItem,
+  Code as PageComponentsCode
 } from './generated'
 export {
   State,

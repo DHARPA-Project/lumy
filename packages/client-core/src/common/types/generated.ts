@@ -734,6 +734,27 @@ export enum Status {
 
 /**
  * Target: "workflow"
+ * Message type: "PageComponentsCode"
+ *
+ * Javascript code that renders pages of the workflow.
+ */
+export interface MsgWorkflowPageComponentsCode {
+  code: Code[]
+}
+
+export interface Code {
+  /**
+   * Actual JS code
+   */
+  content: string
+  /**
+   * Unique ID of this code snippet
+   */
+  id: string
+}
+
+/**
+ * Target: "workflow"
  * Message type: "Updated"
  *
  * Workflow currently loaded into the app.

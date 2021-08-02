@@ -19,8 +19,7 @@
   },
   "dependencies": {
     "@dharpa-vre/client-core": "*",
-    "@dharpa-vre/client-ui": "*",
-    "@dharpa-vre/modules": "*"
+    "@dharpa-vre/client-ui": "*"
   },
   "peerDependencies": {
     "react": "17"

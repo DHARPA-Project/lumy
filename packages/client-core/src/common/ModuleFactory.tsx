@@ -10,7 +10,7 @@ export const ModuleViewFactory = (props: Props): JSX.Element => {
   const [View, setView] = React.useState<React.FC<ModuleProps>>(undefined)
 
   React.useEffect(() => {
-    provider.getModulePanel(props.pageDetails.component).then(setView)
+    provider.getModulePanel(props.pageDetails.component).then(v => setView(() => v))
   }, [])
 
   if (View == null) return <pre>...</pre>
