@@ -1,7 +1,5 @@
 import React from 'react'
-import { registerLumyComponent } from '../../client-core/src'
-// import { SimpleModuleViewProvider } from '@dharpa-vre/client-core'
-// const Default = React.lazy(() => import('./Default'))
+import { registerLumyComponent } from '@dharpa-vre/client-core'
 
 const modules = [
   'twoArgsMathFunction',
@@ -12,18 +10,7 @@ const modules = [
   'networkAnalysisDataVis'
 ]
 
-// export const viewProvider = new SimpleModuleViewProvider(
-//   modules.reduce(
-//     (acc, moduleId) => ({
-//       ...acc,
-//       [moduleId]: React.lazy(() => import(`./${moduleId}`))
-//     }),
-//     {} as { [key: string]: ReturnType<typeof React.lazy> }
-//   ),
-//   Default
-// )
-
-export function registerTestModules(): void {
+function registerModules(): void {
   modules.forEach(moduleId => {
     registerLumyComponent(
       moduleId,
@@ -32,4 +19,4 @@ export function registerTestModules(): void {
   })
 }
 
-registerTestModules()
+registerModules()
