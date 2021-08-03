@@ -2,7 +2,6 @@ import json
 import os
 
 import setuptools
-from lumy_middleware import __version__
 
 CURRENT_DIR = os.path.abspath(os.path.dirname(__file__))
 
