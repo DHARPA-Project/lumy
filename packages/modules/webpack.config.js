@@ -29,6 +29,7 @@ module.exports = {
   externals: {
     react: '__lumy_react',
     '@dharpa-vre/client-core': '__lumy_clientCore',
+    'apache-arrow': '__lumy_apacheArrow',
     '@material-ui/styles': '__lumy_materialUiStyles',
     '@material-ui/core': '__lumy_materialUiCore',
     '@material-ui/core/styles': '__lumy_materialUiCoreStyles'
