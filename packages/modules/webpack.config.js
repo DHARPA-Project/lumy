@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
+const path = require('path')
 const webpack = require('webpack')
 
 const isProduction = process.env.NODE_ENV === 'production' ? true : false
@@ -8,6 +9,10 @@ console.log(`Building for production: ${isProduction}`)
 module.exports = {
   entry: {
     index: './src/index.ts'
+  },
+  output: {
+    clean: true,
+    path: path.join(__dirname, 'pkg/lumy_modules/network_analysis/resources')
   },
   devtool: isProduction ? undefined : 'source-map', // 'inline-source-map'
   optimization: {
