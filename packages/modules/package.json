@@ -21,7 +21,7 @@
     "@dharpa-vre/datavis-components": "*",
     "@dharpa-vre/client-core": "*",
     "@dharpa-vre/common-ui-components": "*",
-    "@material-ui/core": "*",
+    "@material-ui/core": "4.11",
     "apache-arrow": "4",
     "react": "17"
   },
