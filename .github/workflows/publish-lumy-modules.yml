@@ -16,6 +16,9 @@ jobs:
     env:
         GEMFURY_PUSH_TOKEN: ${{ secrets.GEMFURY_PUSH_TOKEN }}
         NODE_ENV: production
+    defaults:
+      run:
+        working-directory: packages/modules
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v2
@@ -25,22 +28,16 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - name: Install dependencies using Node.js ${{ matrix.node-version }}
-      working-directory: packages/modules
       run: yarn install
-    - name: Install dependencies using Node.js ${{ matrix.node-version }}
-      working-directory: packages/modules
+    - name: Building JS code using Node.js ${{ matrix.node-version }}
       run: yarn build
     - name: Preapre Python code
-      working-directory: packages/modules
       run: pip install --extra-index-url https://pypi.fury.io/dharpa/ -e .
     - name: install 'wheel' package
       run: pip install -U wheel
     - name: create packages
-      working-directory: packages/modules
       run: python setup.py sdist bdist_wheel
     - name: upload source package
-      working-directory: packages/modules
       run: curl -F package=@$(ls dist/lumy-modules.*.tar.gz) https://${GEMFURY_PUSH_TOKEN}@dharpa.fury.land:443/pypi/
     - name: upload wheel
-      working-directory: packages/modules
       run: curl -F package=@$(ls dist/lumy_modules.*.whl) https://${GEMFURY_PUSH_TOKEN}@dharpa.fury.land:443/pypi/

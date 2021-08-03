@@ -18,9 +18,7 @@
     "build": "webpack build -c webpack.config.js"
   },
   "dependencies": {
-    "@dharpa-vre/datavis-components": "*"
-  },
-  "peerDependencies": {
+    "@dharpa-vre/datavis-components": "*",
     "@dharpa-vre/client-core": "*",
     "@dharpa-vre/common-ui-components": "*",
     "@material-ui/core": "*",
