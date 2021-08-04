@@ -15,7 +15,7 @@
     "watch": "tsc -w",
     "eslint": "eslint src --ext .ts,.tsx,.js,.jsx --fix",
     "eslint:check": "eslint src --ext .ts,.tsx,.js,.jsx",
-    "build": "webpack build -c webpack.config.js",
+    "build": "NODE_ENV=production webpack build -c webpack.config.js",
     "start": "webpack serve -c webpack.config.js"
   },
   "dependencies": {
