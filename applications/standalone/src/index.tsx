@@ -3,13 +3,14 @@ import { render } from 'react-dom'
 import YAML from 'js-yaml'
 
 import { BackEndContextProvider, LumyWorkflow, useBackendIsReady } from '@dharpa-vre/client-core'
-import { App } from '@dharpa-vre/client-ui'
+import { App, DefaultModuleComponentPanel } from '@dharpa-vre/client-ui'
 
-import { MockContext } from './mock/context'
+import { SandboxContext } from '@lumy/module-sandbox'
 
 import './index.scss'
 
 import currentWorkflowData from './mock/resources/sampleLumyWorkflow.yml'
+import { DynamicModuleViewProviderWithLoader } from './mock/dynamicModuleViewLoader'
 
 const currentWorkflow: LumyWorkflow = YAML.load(currentWorkflowData)
 
@@ -23,9 +24,11 @@ const BackEndAvailabilityScreen = (): JSX.Element => {
 
 const StandaloneApp = (): JSX.Element => {
   const context = React.useRef(
-    new MockContext({
+    new SandboxContext({
       currentWorkflow,
-      startupDelayMs: 500
+      startupDelayMs: 500,
+      defaultModuleComponent: DefaultModuleComponentPanel,
+      moduleProvider: new DynamicModuleViewProviderWithLoader()
     })
   )
 

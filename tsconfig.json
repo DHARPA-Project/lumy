@@ -3,7 +3,8 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@dharpa-vre/*": ["packages/*/src", "applications/*/src"]
+      "@dharpa-vre/*": ["packages/*/src", "applications/*/src"],
+      "@lumy/*": ["packages/*/src"]
     },
     "jsx": "react",
     "esModuleInterop": true,

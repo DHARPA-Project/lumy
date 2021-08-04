@@ -2,15 +2,19 @@ import React from 'react'
 import * as LumyClientCore from '@dharpa-vre/client-core'
 import * as apacheArrow from 'apache-arrow'
 
-class DynamicComponentsRegistry {
+export class DynamicComponentsRegistry {
   private registry: Record<string, React.FC> = {}
 
-  register(id: string, component: React.FC) {
+  register(id: string, component: React.FC): void {
     this.registry[id] = component
   }
 
   get(id: string): React.FC | undefined {
     return this.registry[id]
+  }
+
+  get ids(): string[] {
+    return Object.keys(this.registry)
   }
 }
 

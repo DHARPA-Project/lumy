@@ -1,10 +1,27 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path')
 const webpack = require('webpack')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 const isProduction = process.env.NODE_ENV === 'production' ? true : false
 
 console.log(`Building for production: ${isProduction}`)
+
+const plugins = [
+  new webpack.DefinePlugin({
+    'process.env.NODE_ENV': JSON.stringify(isProduction ? 'production' : 'development')
+  })
+]
+
+if (!isProduction) {
+  plugins.push(new HtmlWebpackPlugin())
+} else {
+  plugins.push(
+    new webpack.optimize.LimitChunkCountPlugin({
+      maxChunks: 1
+    })
+  )
+}
 
 module.exports = {
   entry: {
@@ -26,14 +43,19 @@ module.exports = {
     compress: true,
     disableHostCheck: true
   },
-  externals: {
-    react: '__lumy_react',
-    '@dharpa-vre/client-core': '__lumy_clientCore',
-    'apache-arrow': '__lumy_apacheArrow',
-    '@material-ui/styles': '__lumy_materialUiStyles',
-    '@material-ui/core': '__lumy_materialUiCore',
-    '@material-ui/core/styles': '__lumy_materialUiCoreStyles'
+  watchOptions: {
+    poll: 1000
   },
+  externals: isProduction
+    ? {
+        react: '__lumy_react',
+        '@dharpa-vre/client-core': '__lumy_clientCore',
+        'apache-arrow': '__lumy_apacheArrow',
+        '@material-ui/styles': '__lumy_materialUiStyles',
+        '@material-ui/core': '__lumy_materialUiCore',
+        '@material-ui/core/styles': '__lumy_materialUiCoreStyles'
+      }
+    : {},
   module: {
     rules: [
       {
@@ -62,7 +84,7 @@ module.exports = {
           }
         ]
       },
-      { test: /\.(jpg|png|gif)$/, use: 'file-loader' },
+      { test: /\.(jpg|png|gif|svg)$/, use: 'file-loader' },
       {
         test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/,
         use: 'url-loader?limit=10000&mimetype=application/font-woff'
@@ -94,9 +116,5 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx']
   },
-  plugins: [
-    new webpack.optimize.LimitChunkCountPlugin({
-      maxChunks: 1
-    })
-  ]
+  plugins
 }

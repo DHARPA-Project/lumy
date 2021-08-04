@@ -20,6 +20,7 @@
     "@dharpa-vre/client-core": "*",
     "@dharpa-vre/client-ui": "*",
     "@dharpa-vre/common-ui-components": "*",
+    "@lumy/module-sandbox": "*",
     "@lumino/signaling": "1",
     "apache-arrow": "4",
     "js-yaml": "4",

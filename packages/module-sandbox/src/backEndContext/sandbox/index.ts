@@ -26,9 +26,10 @@ import {
   DataSortingMethod,
   DataFilterCondtion,
   WorkflowExecutionStatus,
-  LumyWorkflow
+  LumyWorkflow,
+  DynamicModuleViewProvider,
+  ModuleProps
 } from '@dharpa-vre/client-core'
-import { DynamicModuleViewProviderWithLoader } from './dynamicModuleViewLoader'
 
 function getRandomId(): string {
   const uint32 = window.crypto.getRandomValues(new Uint32Array(1))[0]
@@ -383,23 +384,25 @@ class NotesStore {
   }
 }
 
-export interface MockContextParameters {
-  processData?: DataProcessor
+export interface SandboxContextParameters {
   currentWorkflow: LumyWorkflow
+  defaultModuleComponent: React.FC<ModuleProps>
+  processData?: DataProcessor
   startupDelayMs?: number
+  moduleProvider?: ModuleViewProvider
 }
 
-export class MockContext implements IBackEndContext {
+export class SandboxContext implements IBackEndContext {
   private _isDisposed = false
   private _store: IOValuesStore
   private _processData: DataProcessor
 
   private _isReady = false
-  private _statusChangedSignal = new Signal<MockContext, boolean>(this)
+  private _statusChangedSignal = new Signal<SandboxContext, boolean>(this)
 
   private _currentWorkflow: LumyWorkflow
 
-  private _signals: Record<Target, Signal<MockContext, ME<unknown>>>
+  private _signals: Record<Target, Signal<SandboxContext, ME<unknown>>>
   private _callbacks = new WeakMap()
 
   private _mockDataRepository: DataRepositoryItemsTable
@@ -407,10 +410,14 @@ export class MockContext implements IBackEndContext {
 
   private _firstExecutionFlag: Record<string, boolean> = {}
 
-  private _moduleViewProvider: DynamicModuleViewProviderWithLoader
+  private _moduleViewProvider: ModuleViewProvider
 
-  constructor(parameters: MockContextParameters) {
-    this._moduleViewProvider = new DynamicModuleViewProviderWithLoader()
+  constructor(parameters: SandboxContextParameters) {
+    this._moduleViewProvider =
+      parameters.moduleProvider != null
+        ? parameters.moduleProvider
+        : new DynamicModuleViewProvider(parameters.defaultModuleComponent)
+
     this._mockDataRepository = getMockDataRepositoryTable()
     this._processData =
       parameters?.processData ?? mockDataProcessorFactory(this._moduleViewProvider, this._mockDataRepository)
@@ -420,11 +427,11 @@ export class MockContext implements IBackEndContext {
     this._mockNotesStore = new NotesStore()
 
     this._signals = {
-      [Target.Activity]: new Signal<MockContext, ME<unknown>>(this),
-      [Target.Workflow]: new Signal<MockContext, ME<unknown>>(this),
-      [Target.ModuleIO]: new Signal<MockContext, ME<unknown>>(this),
-      [Target.DataRepository]: new Signal<MockContext, ME<unknown>>(this),
-      [Target.Notes]: new Signal<MockContext, ME<unknown>>(this)
+      [Target.Activity]: new Signal<SandboxContext, ME<unknown>>(this),
+      [Target.Workflow]: new Signal<SandboxContext, ME<unknown>>(this),
+      [Target.ModuleIO]: new Signal<SandboxContext, ME<unknown>>(this),
+      [Target.DataRepository]: new Signal<SandboxContext, ME<unknown>>(this),
+      [Target.Notes]: new Signal<SandboxContext, ME<unknown>>(this)
     }
 
     this._signals[Target.Workflow].connect(this._handleWorkflow, this)
@@ -458,7 +465,10 @@ export class MockContext implements IBackEndContext {
     this._isDisposed = true
   }
 
-  private async _handleActivity(_: MockContext, msg: ME<unknown>): Promise<ME<unknown> | undefined | void> {
+  private async _handleActivity(
+    _: SandboxContext,
+    msg: ME<unknown>
+  ): Promise<ME<unknown> | undefined | void> {
     switch (msg.action) {
       case Messages.Activity.codec.GetSystemInfo.action:
         return adapter(Messages.Activity.codec.GetSystemInfo.decode, async () => {
@@ -475,7 +485,10 @@ export class MockContext implements IBackEndContext {
     }
   }
 
-  private async _handleWorkflow(_: MockContext, msg: ME<unknown>): Promise<ME<unknown> | undefined | void> {
+  private async _handleWorkflow(
+    _: SandboxContext,
+    msg: ME<unknown>
+  ): Promise<ME<unknown> | undefined | void> {
     switch (msg.action) {
       case Messages.Workflow.codec.GetCurrent.action:
         return adapter(Messages.Workflow.codec.GetCurrent.decode, async () => {
@@ -517,7 +530,10 @@ export class MockContext implements IBackEndContext {
     }
   }
 
-  private async _handleModuleIO(_: MockContext, msg: ME<unknown>): Promise<ME<unknown> | undefined | void> {
+  private async _handleModuleIO(
+    _: SandboxContext,
+    msg: ME<unknown>
+  ): Promise<ME<unknown> | undefined | void> {
     switch (msg.action) {
       case Messages.ModuleIO.codec.GetPreview.action:
         return adapter(Messages.ModuleIO.codec.GetPreview.decode, async ({ id }) => {
@@ -574,7 +590,7 @@ export class MockContext implements IBackEndContext {
   }
 
   private async _handleDataRepository(
-    _: MockContext,
+    _: SandboxContext,
     msg: ME<unknown>
   ): Promise<ME<unknown> | undefined | void> {
     switch (msg.action) {
@@ -647,7 +663,7 @@ export class MockContext implements IBackEndContext {
     }
   }
 
-  private async _handleNotes(_: MockContext, msg: ME<unknown>): Promise<ME<unknown> | undefined | void> {
+  private async _handleNotes(_: SandboxContext, msg: ME<unknown>): Promise<ME<unknown> | undefined | void> {
     switch (msg.action) {
       case Messages.Notes.codec.GetNotes.action:
         return adapter(Messages.Notes.codec.GetNotes.decode, async ({ stepId }) => {
@@ -786,7 +802,7 @@ export class MockContext implements IBackEndContext {
   }
 
   subscribe<T>(target: Target, callback: (ctx: IBackEndContext, msg: MessageEnvelope<T>) => void): void {
-    const cb = (_: MockContext, msg: ME<unknown>) => callback(undefined, msg as ME<T>)
+    const cb = (_: SandboxContext, msg: ME<unknown>) => callback(undefined, msg as ME<T>)
     this._callbacks.set(callback, cb)
     this._signals[target].connect(cb)
   }
@@ -804,7 +820,7 @@ export class MockContext implements IBackEndContext {
   }
 
   onAvailabilityChanged(callback: (isAvailable: boolean) => void): void {
-    this._statusChangedSignal.connect((ctx: MockContext, isAvailable: boolean) => callback(isAvailable))
+    this._statusChangedSignal.connect((_: SandboxContext, isAvailable: boolean) => callback(isAvailable))
   }
 
   addFilesToRepository(files: File[]): Promise<void> {
