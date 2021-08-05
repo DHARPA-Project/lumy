@@ -1,6 +1,5 @@
 import { Signal } from '@lumino/signaling'
-import { FinishMessage, ISplashScreenContext } from '@dharpa-vre/splash-screen'
-import { StreamMessage } from '../../../../packages/splash-screen/src/context'
+import { FinishMessage, ISplashScreenContext, StreamMessage } from '@dharpa-vre/splash-screen'
 
 const lipsum = `Lorem, ipsum dolor sit amet consectetur
 adipisicing elit. Alias hic consequuntur commodi possimus
