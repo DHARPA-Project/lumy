@@ -25,7 +25,6 @@ const SandboxApp = (): JSX.Element => {
   const setCurrentModuleId = (moduleId: string) => {
     history.push(`/${moduleId}`)
   }
-  console.log('***', currentModuleId)
 
   React.useEffect(() => setContext(buildContext(currentModuleId)), [currentModuleId])
 
