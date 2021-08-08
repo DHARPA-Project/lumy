@@ -69,7 +69,7 @@ const PopoverSettingItem = ({ setting, setSettingList }: PopoverSettingItemProps
               </ListItemIcon>
 
               <ListItemText
-                className={classes.itemTextContainer}
+                classes={{ primary: classes.itemTextContainerPrimary }}
                 onClick={() => setHighlightedDocItem(subsetting.id)}
               >
                 <span className={classes.itemTextContent}>{subsetting.name}</span>
