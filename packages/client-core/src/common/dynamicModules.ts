@@ -2,14 +2,14 @@ import React from 'react'
 import * as LumyClientCore from '@dharpa-vre/client-core'
 import * as apacheArrow from 'apache-arrow'
 
-export class DynamicComponentsRegistry {
-  private registry: Record<string, React.FC> = {}
+export class DynamicComponentsRegistry<T = unknown> {
+  private registry: Record<string, React.FC<T>> = {}
 
-  register(id: string, component: React.FC): void {
+  register(id: string, component: React.FC<T>): void {
     this.registry[id] = component
   }
 
-  get(id: string): React.FC | undefined {
+  get(id: string): React.FC<T> | undefined {
     return this.registry[id]
   }
 
@@ -33,8 +33,8 @@ if (window.__lumy_apacheArrow == null) window.__lumy_apacheArrow = apacheArrow
 if (window.__lumy_dynamicComponentsRegistry == null)
   window.__lumy_dynamicComponentsRegistry = new DynamicComponentsRegistry()
 
-export function registerLumyComponent(id: string, component: React.FC): void {
-  window.__lumy_dynamicComponentsRegistry.register(id, component)
+export function registerLumyComponent<T>(id: string, component: React.FC<T>): void {
+  window.__lumy_dynamicComponentsRegistry.register(id, component as React.FC<unknown>)
 }
 
 export function getLumyComponent(id: string): React.FC | undefined {
