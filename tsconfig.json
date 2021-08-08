@@ -13,9 +13,14 @@
     },
     "jsx": "react",
     "esModuleInterop": true,
-    "skipLibCheck": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "skipLibCheck": true
   },
+  "include": [
+    "packages",
+    "applications",
+    "tools"
+  ],
   "exclude": [
     "node_modules",
     "dist",

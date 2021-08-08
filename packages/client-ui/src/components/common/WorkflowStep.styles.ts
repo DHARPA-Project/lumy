@@ -1,6 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles'
+import { Theme } from '@lumy/styles'
 
-export default makeStyles(theme => ({
+export default makeStyles<Theme>(theme => ({
   mainWrapper: {
     height: '100%',
     width: '100%',

@@ -1,4 +1,4 @@
-import { Theme } from '@material-ui/core/styles'
+import { LumyTheme as Theme } from './theme'
 
 const getMuiThemeOverrides = (theme: Theme): unknown => ({
   MuiCssBaseline: {

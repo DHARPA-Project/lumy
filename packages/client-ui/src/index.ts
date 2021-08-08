@@ -8,8 +8,6 @@ import { featureIds, featureList } from './const/features'
 
 import { setUpDynamicModulesSupport } from './utils/dynamicModules'
 
-import './modules.d'
-
 export {
   App,
   DialogModal,
@@ -20,3 +18,5 @@ export {
   setUpDynamicModulesSupport,
   DefaultModuleComponentPanel
 }
+
+import './@types/assets'

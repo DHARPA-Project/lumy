@@ -1,6 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles'
+import { Theme } from '@lumy/styles'
 
-export default makeStyles(theme => ({
+export default makeStyles<Theme>(theme => ({
   workflowContainer: {
     minHeight: '100vh',
     width: '100%',
