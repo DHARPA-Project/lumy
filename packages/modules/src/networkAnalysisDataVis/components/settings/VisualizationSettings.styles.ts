@@ -14,13 +14,6 @@ export default makeStyles((theme: Theme) => ({
     padding: 0,
     '&:last-child': {
       padding: 0
-    },
-    '& .MuiPaper-outlined': {
-      borderRight: 'none',
-      borderBottom: 'none',
-      borderLeft: 'none',
-      borderTopLeftRadius: 0,
-      borderTopRightRadius: 0
     }
   }
 }))
