@@ -1,7 +1,7 @@
 import React from 'react'
 import { Switch, Route, HashRouter as Router, Redirect } from 'react-router-dom'
+import { ThemeContextProvider } from '@lumy/styles'
 
-import ThemeContextProvider from '../context/themeContext'
 import PageLayoutContextProvider from '../context/pageLayoutContext'
 import ProjectContextProvider from '../context/projectContext'
 

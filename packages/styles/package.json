@@ -1,10 +1,12 @@
 {
-  "name": "@lumy/module-sandbox",
+  "name": "@lumy/styles",
   "version": "0.1.0",
-  "description": "Tools for developing a Lumy UI module.",
+  "description": "Styles and themes for Lumy",
   "keywords": [
     "lumy",
-    "module"
+    "ui",
+    "style",
+    "theme"
   ],
   "homepage": "https://dharpa.org",
   "main": "src/index.ts",
@@ -16,13 +18,9 @@
     "eslint:check": "eslint src --ext .ts,.tsx,.js,.jsx",
     "build:lib": "tsc"
   },
-  "dependencies": {
-    "@lumino/signaling": "1",
-    "apache-arrow": "4",
+  "peerDependencies": {
     "react": "17",
-    "react-dom": "17",
-    "@dharpa-vre/client-ui": "*",
-    "@lumy/styles": "*"
+    "@material-ui/core": "*"
   },
   "devDependencies": {
     "@types/node": "14",
