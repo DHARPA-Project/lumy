@@ -19,4 +19,4 @@ export {
   DefaultModuleComponentPanel
 }
 
-import './@types/assets'
+import './@types/assets/index.d.ts'
