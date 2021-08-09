@@ -16,5 +16,7 @@
   "python.linting.pylintUseMinimalCheckers": true,
   "python.linting.flake8Enabled": true,
   "python.linting.flake8Path": ".venv/bin/flake8",
-  "python.analysis.useLibraryCodeForTypes": false
+  "python.analysis.useLibraryCodeForTypes": false,
+  "typescript.format.enable": true,
+  "json.format.enable": true
 }

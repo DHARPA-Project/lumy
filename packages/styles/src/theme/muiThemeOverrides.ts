@@ -36,11 +36,11 @@ const getMuiThemeOverrides = (theme: Theme): unknown => ({
   },
   MuiAccordionSummary: {
     root: {
-      minHeight: theme.spacing(4)
-    },
-    expanded: {
       minHeight: theme.spacing(4),
-      margin: theme.spacing(1, 0)
+      '&$expanded': {
+        minHeight: theme.spacing(4),
+        margin: theme.spacing(1, 0)
+      }
     },
     content: {
       margin: theme.spacing(1, 0)
@@ -50,11 +50,11 @@ const getMuiThemeOverrides = (theme: Theme): unknown => ({
     colorPrimary: {
       '&:hover': {
         backgroundColor: 'transparent'
-      }
-    },
-    checked: {
-      '&:hover': {
-        backgroundColor: 'transparent'
+      },
+      '&$checked': {
+        '&:hover': {
+          backgroundColor: 'transparent'
+        }
       }
     }
   },

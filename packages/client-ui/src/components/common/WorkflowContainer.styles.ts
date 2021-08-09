@@ -27,6 +27,10 @@ export default makeStyles<Theme>(theme => ({
   },
   toolAreaToggle: {
     position: 'absolute',
+    // TODO: Even though the "Mui" prefixed are unlikely
+    // to have an extra prefix in the Lumy app (as
+    // opposed to dynamic modules), it's still better to refactor
+    // this and use class rules
     '&.MuiFab-root': {
       bottom: theme.spacing(2),
       right: theme.spacing(1)
