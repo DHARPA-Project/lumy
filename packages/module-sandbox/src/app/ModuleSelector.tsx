@@ -16,7 +16,6 @@ export const ModuleSelector = ({ moduleId, setModuleId, ...rest }: ModuleSelecto
         label="Module"
         value={moduleId ?? ''}
         onChange={e => setModuleId(e.target.value as string)}
-        // helperText="Select module"
         variant="outlined"
       >
         {moduleIds.map(id => (
