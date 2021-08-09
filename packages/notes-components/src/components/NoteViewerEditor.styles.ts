@@ -5,14 +5,14 @@ export default makeStyles(theme => ({
   titleField: {
     flexGrow: 1,
     justifyContent: 'center',
-    '& .MuiInput-underline:before': {
+    '& :before': {
       borderBottom: 'none',
       transition: 'none'
     },
-    '& .MuiInput-underline:hover:before': {
-      borderBottom: 'none'
+    '& :hover:before': {
+      borderBottom: 'none !important'
     },
-    '& .MuiInput-underline.Mui-focused:after': {
+    '& :after': {
       transition: 'none',
       borderBottom: 'none',
       transform: 'scaleX(0)'
