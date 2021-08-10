@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 
-import { useElement } from '@dharpa-vre/datavis-components'
+import { NetworkForce } from '@dharpa-vre/datavis-components'
 import { NetworkGraphContext } from '../context'
 import { normalizedValue } from '../utils'
 import useStyles from './NetworkAnalysisVisualization.styles'
@@ -9,7 +9,7 @@ import { NodeTooltip } from './NodeTooltip'
 import { GraphStatsPanel } from './statistics/GraphStatsPanel'
 import VisualizationSettings from './settings/VisualizationSettings'
 
-useElement('network-force')
+console.debug(`Registering visualisation component: ${NetworkForce}`)
 
 const NetworkAnalysisVisualizationContainer = (): JSX.Element => {
   const classes = useStyles()

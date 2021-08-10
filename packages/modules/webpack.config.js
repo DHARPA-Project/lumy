@@ -50,6 +50,7 @@ module.exports = {
     ? {
         react: '__lumy_react',
         '@dharpa-vre/client-core': '__lumy_clientCore',
+        '@lumy/styles': '__lumy_styles',
         'apache-arrow': '__lumy_apacheArrow',
         '@material-ui/styles': '__lumy_materialUiStyles',
         '@material-ui/core': '__lumy_materialUiCore',

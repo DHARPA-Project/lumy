@@ -1,6 +1,7 @@
 import * as muiStyles from '@material-ui/styles'
 import * as muiCoreStyles from '@material-ui/core/styles'
 import * as muiCore from '@material-ui/core'
+import * as lumyStyles from '@lumy/styles'
 
 /**
  * Dependencies that should be available in the global variable space
@@ -20,6 +21,7 @@ declare global {
        modules developers a chance to make their module file
        smaller by not bundling it with the MUI core code. */
     __lumy_materialUiCore: typeof muiCore
+    __lumy_styles: typeof lumyStyles
   }
 }
 
@@ -27,4 +29,5 @@ export function setUpDynamicModulesSupport(): void {
   window['__lumy_materialUiStyles'] = muiStyles
   window['__lumy_materialUiCore'] = muiCore
   window['__lumy_materialUiCoreStyles'] = muiCoreStyles
+  window['__lumy_styles'] = lumyStyles
 }
