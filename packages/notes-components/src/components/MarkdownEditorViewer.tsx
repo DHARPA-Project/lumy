@@ -45,8 +45,16 @@ export const MarkdownEditorViewer = ({ text, onChanged, defaultTab = 'view' }: P
           indicatorColor="primary"
           scrollButtons="off"
         >
-          <Tab label="Edit" icon={<EditIcon />} />
-          <Tab label="View" icon={<ViewIcon />} />
+          <Tab
+            label="Edit"
+            icon={<EditIcon classes={{ root: classes.tabLabelIcon }} />}
+            classes={{ root: classes.tabRoot, wrapper: classes.tabWrapper }}
+          />
+          <Tab
+            label="View"
+            icon={<ViewIcon classes={{ root: classes.tabLabelIcon }} />}
+            classes={{ root: classes.tabRoot, wrapper: classes.tabWrapper }}
+          />
         </Tabs>
       </Grid>
       <Grid item className={classes.mainSectionContainer}>

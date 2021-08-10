@@ -95,7 +95,7 @@ const CreateProjectForm = ({ workflowCategory, closeModal }: CreateProjectFormPr
         helperText={workflowNameError}
       />
 
-      <FormControl variant="outlined" size="small">
+      <FormControl variant="outlined" size="small" classes={{ root: classes.formControlRoot }}>
         <InputLabel>workflow type</InputLabel>
         <Select
           name="workflowType"

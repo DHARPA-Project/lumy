@@ -23,7 +23,7 @@ ui:
         label: Data visualisation
       layout:
         dataPreview:
-          - type: input
+          - type: output
             id: nodes
           - type: output
             id: directConnections

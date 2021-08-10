@@ -1,6 +1,21 @@
 import { LitElement, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
-import * as d3 from 'd3'
+import { scaleOrdinal, scaleLinear } from 'd3-scale'
+import { schemeTableau10 } from 'd3-scale-chromatic'
+import { drag as d3Drag, D3DragEvent } from 'd3-drag'
+import { select, pointer } from 'd3-selection'
+import {
+  forceSimulation,
+  forceLink,
+  forceManyBody,
+  forceCenter,
+  forceCollide,
+  forceX,
+  forceY,
+  SimulationNodeDatum,
+  SimulationLinkDatum,
+  Simulation
+} from 'd3-force'
 
 type MetadataId = string
 
@@ -25,18 +40,18 @@ export interface NodeMouseEventDetails {
   }
 }
 
-interface GraphNodeDatum extends d3.SimulationNodeDatum {
+interface GraphNodeDatum extends SimulationNodeDatum {
   metadata: NodeMetadata
 }
-interface GraphLinkDatum extends d3.SimulationLinkDatum<GraphNodeDatum> {
+interface GraphLinkDatum extends SimulationLinkDatum<GraphNodeDatum> {
   metadata: EdgeMetadata
 }
 
-type DragEvent = d3.D3DragEvent<Element, GraphNodeDatum, GraphNodeDatum>
+type DragEvent = D3DragEvent<Element, GraphNodeDatum, GraphNodeDatum>
 
-const colorScale = d3.scaleOrdinal(d3.schemeTableau10)
+const colorScale = scaleOrdinal(schemeTableau10)
 
-const drag = (simulation: d3.Simulation<GraphNodeDatum, GraphLinkDatum>) => {
+const drag = (simulation: Simulation<GraphNodeDatum, GraphLinkDatum>) => {
   function dragstarted(event: DragEvent) {
     if (!event.active) simulation.alphaTarget(0.3).restart()
     event.subject.fx = event.subject.x
@@ -54,7 +69,7 @@ const drag = (simulation: d3.Simulation<GraphNodeDatum, GraphLinkDatum>) => {
     event.subject.fy = null
   }
 
-  return d3.drag().on('start', dragstarted).on('drag', dragged).on('end', dragended)
+  return d3Drag().on('start', dragstarted).on('drag', dragged).on('end', dragended)
 }
 
 const mergeNodes = (
@@ -155,7 +170,7 @@ export class NetworkForce extends LitElement {
   }
 
   updated(): void {
-    const svg = d3.select(this.shadowRoot.lastElementChild)
+    const svg = select(this.shadowRoot.lastElementChild)
     const viewBox = [0, 0, this.width, this.height]
     svg.attr('viewBox', viewBox.join(' '))
 
@@ -166,9 +181,10 @@ export class NetworkForce extends LitElement {
     this.currentGraphNodes = mergeNodes(this.currentGraphNodes, this.nodes)
 
     // nodes scaler
-    const scaleNode = d3
-      .scaleLinear(this.currentGraphNodes.map(node => node.metadata.scaler ?? 0))
-      .range([5, 20])
+    const scaleNode = scaleLinear(this.currentGraphNodes.map(node => node.metadata.scaler ?? 0)).range([
+      5,
+      20
+    ])
     if (this.reapplySimulationOnUpdate) {
       this.currentGraphNodes = asGraphNodes(this.nodes)
       this.currentGraphLinks = asGraphLinks(this.edges)
@@ -177,24 +193,23 @@ export class NetworkForce extends LitElement {
       this.currentGraphLinks = mergeLinks(this.currentGraphLinks, this.edges)
     }
 
-    const simulation = d3
-      .forceSimulation(this.currentGraphNodes)
+    const simulation = forceSimulation(this.currentGraphNodes)
       .force(
         'link',
-        d3.forceLink<GraphNodeDatum, GraphLinkDatum>(this.currentGraphLinks).id(d => d.metadata.id)
+        forceLink<GraphNodeDatum, GraphLinkDatum>(this.currentGraphLinks).id(d => d.metadata.id)
       )
-      .force('charge', d3.forceManyBody())
-      .force('center', d3.forceCenter(this.width / 2, this.height / 2))
+      .force('charge', forceManyBody())
+      .force('center', forceCenter(this.width / 2, this.height / 2))
       /*.force(
         'collide',
         d3.forceCollide<GraphNodeDatum>(d => scaleNode(d.metadata.scaler ?? 0) * 1.3 ?? 5)
       )*/
       .force(
         'collide',
-        d3.forceCollide<GraphNodeDatum>(d => scaleNode(d.metadata.scaler ?? 0) ?? 5)
+        forceCollide<GraphNodeDatum>(d => scaleNode(d.metadata.scaler ?? 0) ?? 5)
       )
-      .force('x', this.displayIsolatedNodes ? null : d3.forceX())
-      .force('y', this.displayIsolatedNodes ? null : d3.forceY())
+      .force('x', this.displayIsolatedNodes ? null : forceX())
+      .force('y', this.displayIsolatedNodes ? null : forceY())
 
     const shortestPathIsProvided = this.shortestPath?.length > 0
 
@@ -236,7 +251,7 @@ export class NetworkForce extends LitElement {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .call((drag(simulation) as unknown) as any)
       .on('mouseover', (e: MouseEvent, nodeDatum: GraphNodeDatum) => {
-        const [x, y] = d3.pointer(e)
+        const [x, y] = pointer(e)
         this.dispatchEvent(
           new CustomEvent<NodeMouseEventDetails>('node-hovered', {
             detail: {
@@ -247,7 +262,7 @@ export class NetworkForce extends LitElement {
         )
       })
       .on('mousemove', (e: MouseEvent, nodeDatum: GraphNodeDatum) => {
-        const [x, y] = d3.pointer(e)
+        const [x, y] = pointer(e)
         this.dispatchEvent(
           new CustomEvent<NodeMouseEventDetails>('node-mousemove', {
             detail: {

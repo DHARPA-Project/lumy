@@ -5,41 +5,7 @@ import '@fontsource/roboto'
 import muiDefaultProps from './muiDefaultProps'
 import getMuiThemeOverrides from './muiThemeOverrides'
 
-declare module '@material-ui/core/styles/createMuiTheme' {
-  export interface Theme {
-    layout: {
-      sideBarFullWidth: React.CSSProperties['width']
-      sideBarCollapsedWidth: React.CSSProperties['width']
-      navLinkTextWidth: React.CSSProperties['width']
-      toolBarWidth: React.CSSProperties['width']
-      navBarTop: React.CSSProperties['height']
-      navBarBottom: React.CSSProperties['height']
-      pageHeaderHeight: React.CSSProperties['height']
-      pagePadding: React.CSSProperties['padding']
-      toolContainerWidth: React.CSSProperties['width']
-      scrollBarWidth: React.CSSProperties['width']
-      tabHeight: React.CSSProperties['width']
-      paneDividerWidth: React.CSSProperties['width']
-    }
-  }
-  // allow configuration using `createMuiTheme`
-  export interface ThemeOptions {
-    layout?: {
-      sideBarFullWidth?: React.CSSProperties['width']
-      sideBarCollapsedWidth?: React.CSSProperties['width']
-      navLinkTextWidth: React.CSSProperties['width']
-      toolBarWidth: React.CSSProperties['width']
-      navBarTop: React.CSSProperties['height']
-      navBarBottom: React.CSSProperties['height']
-      pageHeaderHeight: React.CSSProperties['height']
-      pagePadding: React.CSSProperties['padding']
-      toolContainerWidth: React.CSSProperties['width']
-      scrollBarWidth: React.CSSProperties['width']
-      tabHeight: React.CSSProperties['width']
-      paneDividerWidth: React.CSSProperties['width']
-    }
-  }
-}
+export type { LumyTheme, LumyThemeOptions } from './theme'
 
 // the default/base Material UI theme object
 const muiThemeBase = createMuiTheme()

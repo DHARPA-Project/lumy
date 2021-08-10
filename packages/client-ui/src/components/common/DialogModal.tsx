@@ -24,7 +24,7 @@ const DialogModal = ({ title, children, isModalOpen, setIsModalOpen }: DialogMod
       <Button
         color="secondary"
         size="small"
-        className={classes.closeButton}
+        classes={{ root: classes.closeButtonRoot, label: classes.closeButtonLabel }}
         onClick={() => {
           setIsModalOpen(false)
         }}

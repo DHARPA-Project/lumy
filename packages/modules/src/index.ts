@@ -1,5 +1,5 @@
-import React from 'react'
-import { registerLumyComponent } from '@dharpa-vre/client-core'
+import { lazy } from 'react'
+import { lumyComponent } from '@lumy/module-core'
 
 const modules = [
   'twoArgsMathFunction',
@@ -11,12 +11,7 @@ const modules = [
 ]
 
 function registerModules(): void {
-  modules.forEach(moduleId => {
-    registerLumyComponent(
-      moduleId,
-      React.lazy(() => import(`./${moduleId}`))
-    )
-  })
+  modules.forEach(moduleId => lumyComponent(moduleId)(lazy(() => import(`./${moduleId}`))))
 }
 
 registerModules()

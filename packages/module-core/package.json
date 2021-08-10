@@ -1,11 +1,10 @@
 {
-  "name": "@dharpa-vre/datavis-components",
+  "name": "@lumy/module-core",
   "version": "0.1.0",
-  "description": "Web components for data visualisation",
+  "description": "Core package for developing workflow UI moules.",
   "keywords": [
-    "dharpa",
-    "vre",
-    "datavis"
+    "lumy",
+    "module"
   ],
   "homepage": "https://dharpa.org",
   "main": "src/index.ts",
@@ -17,17 +16,13 @@
     "eslint:check": "eslint src --ext .ts,.tsx,.js,.jsx",
     "build:lib": "tsc"
   },
-  "dependencies": {
-    "d3-scale": "4",
-    "d3-scale-chromatic": "3",
-    "d3-drag": "3",
-    "d3-selection": "3",
-    "d3-force": "3",
-    "lit": "2.0.0-rc.1"
+  "peerDependencies": {
+    "@lumy/styles": "*",
+    "@lumy/client-core": "*",
+    "react": "17",
+    "react-dom": "17"
   },
-  "peerDependencies": {},
   "devDependencies": {
-    "@types/d3": "6",
     "@types/node": "14",
     "@types/react": "17",
     "@typescript-eslint/eslint-plugin": "4",

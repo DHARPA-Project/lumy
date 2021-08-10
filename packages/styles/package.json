@@ -1,11 +1,12 @@
 {
-  "name": "@dharpa-vre/datavis-components",
+  "name": "@lumy/styles",
   "version": "0.1.0",
-  "description": "Web components for data visualisation",
+  "description": "Styles and themes for Lumy",
   "keywords": [
-    "dharpa",
-    "vre",
-    "datavis"
+    "lumy",
+    "ui",
+    "style",
+    "theme"
   ],
   "homepage": "https://dharpa.org",
   "main": "src/index.ts",
@@ -17,17 +18,11 @@
     "eslint:check": "eslint src --ext .ts,.tsx,.js,.jsx",
     "build:lib": "tsc"
   },
-  "dependencies": {
-    "d3-scale": "4",
-    "d3-scale-chromatic": "3",
-    "d3-drag": "3",
-    "d3-selection": "3",
-    "d3-force": "3",
-    "lit": "2.0.0-rc.1"
+  "peerDependencies": {
+    "react": "17",
+    "@material-ui/core": "*"
   },
-  "peerDependencies": {},
   "devDependencies": {
-    "@types/d3": "6",
     "@types/node": "14",
     "@types/react": "17",
     "@typescript-eslint/eslint-plugin": "4",
@@ -38,6 +33,5 @@
     "eslint-plugin-react": "7",
     "prettier": "2",
     "typescript": "4"
-  },
-  "sideEffects": false
+  }
 }

@@ -8,7 +8,14 @@ export default makeStyles(theme => ({
   noteItem: {
     padding: theme.spacing(2),
     borderRadius: theme.shape.borderRadius,
-    border: `1px solid ${theme.palette.divider}`
+    border: `1px solid ${theme.palette.divider}`,
+    margin: theme.spacing(1, 0),
+    '&:first-child': {
+      marginTop: 0
+    },
+    '&:last-child': {
+      marginBottom: 0
+    }
   },
   noteContentContainer: {
     display: 'flex',

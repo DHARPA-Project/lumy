@@ -4,11 +4,9 @@ export default makeStyles((theme: Theme) => ({
   nested: {
     paddingLeft: theme.spacing(4)
   },
-  itemTextContainer: {
-    '& .MuiTypography-displayBlock': {
-      display: 'flex',
-      alignItems: 'center'
-    }
+  itemTextContainerPrimary: {
+    display: 'flex',
+    alignItems: 'center'
   },
   itemTextContent: {
     '&:hover': {

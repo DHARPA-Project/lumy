@@ -22,7 +22,6 @@ const FeatureTabs = (): JSX.Element => {
     <div className={classes.featureContainer} ref={containerRef}>
       <AppBar position="absolute" color="default" variant="elevation" elevation={0}>
         <Tabs
-          className={classes.tabList}
           value={featureTabIndex}
           onChange={(event, newTabIndex) => setFeatureTabIndex(newTabIndex)}
           action={tabActionRef}
@@ -32,7 +31,7 @@ const FeatureTabs = (): JSX.Element => {
         >
           {featureList.map(({ id, label, icon }) => (
             <Tab
-              className={classes.tabItem}
+              classes={{ wrapper: classes.tabWrapper, root: classes.tabItem }}
               label={label}
               icon={icon}
               id={`feature-pane-tab-${id}`}

@@ -1,11 +1,10 @@
 {
   "name": "@dharpa-vre/client-ui",
   "version": "0.1.0",
-  "description": "DHARPA toy VRE",
+  "description": "Lumy application",
   "keywords": [
-    "dharpa",
-    "vre",
-    "toy"
+    "lumy",
+    "app"
   ],
   "homepage": "https://dharpa.org",
   "main": "src/index.ts",
@@ -20,6 +19,7 @@
   "peerDependencies": {
     "@dharpa-vre/client-core": "*",
     "@dharpa-vre/common-ui-components": "*",
+    "@lumy/styles": "*",
     "react": "17"
   },
   "devDependencies": {

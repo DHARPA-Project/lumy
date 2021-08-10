@@ -1,28 +1,7 @@
-import { makeStyles, Theme } from '@material-ui/core/styles'
+import { makeStyles } from '@material-ui/core/styles'
+import { Theme } from '@lumy/styles'
 
-/**
- * TODO: this is already declared in `client-ui`. Consider
- * moving theme handling to a separate package that can be referenced
- * here.
- */
-interface CustomTheme extends Theme {
-  layout: {
-    sideBarFullWidth: React.CSSProperties['width']
-    sideBarCollapsedWidth: React.CSSProperties['width']
-    navLinkTextWidth: React.CSSProperties['width']
-    toolBarWidth: React.CSSProperties['width']
-    navBarTop: React.CSSProperties['height']
-    navBarBottom: React.CSSProperties['height']
-    pageHeaderHeight: React.CSSProperties['height']
-    pagePadding: React.CSSProperties['padding']
-    toolContainerWidth: React.CSSProperties['width']
-    scrollBarWidth: React.CSSProperties['width']
-    tabHeight: React.CSSProperties['width']
-    paneDividerWidth: React.CSSProperties['width']
-  }
-}
-
-export default makeStyles((theme: CustomTheme) => ({
+export default makeStyles((theme: Theme) => ({
   visualizationContainer: {
     height: '100%',
     display: 'grid',

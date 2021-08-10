@@ -21,7 +21,8 @@
     "apache-arrow": "4",
     "react": "17",
     "react-dom": "17",
-    "@dharpa-vre/client-ui": "*"
+    "@dharpa-vre/client-ui": "*",
+    "@lumy/styles": "*"
   },
   "devDependencies": {
     "@types/node": "14",

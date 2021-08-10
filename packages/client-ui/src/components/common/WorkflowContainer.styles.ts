@@ -1,6 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles'
+import { Theme } from '@lumy/styles'
 
-export default makeStyles(theme => ({
+export default makeStyles<Theme>(theme => ({
   workflowContainer: {
     minHeight: '100vh',
     width: '100%',
@@ -26,6 +27,10 @@ export default makeStyles(theme => ({
   },
   toolAreaToggle: {
     position: 'absolute',
+    // TODO: Even though the "Mui" prefixed are unlikely
+    // to have an extra prefix in the Lumy app (as
+    // opposed to dynamic modules), it's still better to refactor
+    // this and use class rules
     '&.MuiFab-root': {
       bottom: theme.spacing(2),
       right: theme.spacing(1)
