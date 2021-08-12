@@ -5,10 +5,10 @@ export default makeStyles(theme => ({
     width: '100%',
     maxWidth: theme.breakpoints.width('sm'),
     margin: '0 auto',
-    padding: theme.spacing(2, 1),
-    '& .MuiTextField-root': {
-      width: '100%'
-    }
+    padding: theme.spacing(2, 1)
+  },
+  textField: {
+    width: '100%'
   },
   linkButton: {
     cursor: 'pointer',

@@ -1,0 +1,1 @@
+export { lumyComponent } from './lumyComponent'

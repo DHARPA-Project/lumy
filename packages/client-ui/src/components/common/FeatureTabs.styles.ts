@@ -7,13 +7,11 @@ export default makeStyles((theme: Theme) => ({
     flexGrow: 1,
     backgroundColor: theme.palette.background.paper
   },
-  tabList: {
-    '& .MuiTab-wrapper': {
-      flexDirection: 'row',
-      '& .MuiSvgIcon-root': {
-        marginBottom: 0,
-        marginRight: theme.spacing(1)
-      }
+  tabWrapper: {
+    flexDirection: 'row',
+    '&>:first-child': {
+      marginBottom: '0 !important',
+      marginRight: theme.spacing(1)
     }
   },
   tabItem: {

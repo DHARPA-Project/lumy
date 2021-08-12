@@ -1,0 +1,43 @@
+name: Publish Lumy modules Python package to fury.io
+
+on:
+  push:
+    # branches:
+    #   - master
+    tags:
+      - modules-*
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x]
+        python-version: [3.8]
+    env:
+        GEMFURY_PUSH_TOKEN: ${{ secrets.GEMFURY_PUSH_TOKEN }}
+        NODE_ENV: production
+    defaults:
+      run:
+        working-directory: packages/modules
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Install dependencies using Node.js ${{ matrix.node-version }}
+      run: yarn install --production=false
+    - name: Building JS code using Node.js ${{ matrix.node-version }}
+      run: yarn build
+    - name: Preapre Python code
+      run: pip install --extra-index-url https://pypi.fury.io/dharpa/ -e .
+    - name: install 'wheel' package
+      run: pip install -U wheel
+    - name: create packages
+      run: python setup.py sdist bdist_wheel
+    - name: upload source package
+      run: curl -F package=@$(ls dist/lumy-modules.*.tar.gz) https://${GEMFURY_PUSH_TOKEN}@dharpa.fury.land:443/pypi/
+    - name: upload wheel
+      run: curl -F package=@$(ls dist/lumy_modules.*.whl) https://${GEMFURY_PUSH_TOKEN}@dharpa.fury.land:443/pypi/

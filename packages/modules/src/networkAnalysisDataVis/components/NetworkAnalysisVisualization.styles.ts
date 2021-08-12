@@ -1,4 +1,5 @@
-import { makeStyles, Theme } from '@material-ui/core/styles'
+import { makeStyles } from '@material-ui/core/styles'
+import { Theme } from '@lumy/styles'
 
 export default makeStyles((theme: Theme) => ({
   visualizationContainer: {

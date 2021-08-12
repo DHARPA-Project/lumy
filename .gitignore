@@ -271,3 +271,5 @@ applications/**/electron_dist
 /tools/schema
 /tools/*.d.ts
 /tools/yarn.lock
+
+packages/modules/pkg/**/resources

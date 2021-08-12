@@ -1,9 +1,9 @@
 import React, { useContext } from 'react'
 
 import { ThemeProvider } from '@material-ui/core/styles'
+import { ThemeContext } from '@lumy/styles'
 
 import useStyles from './TopPageLayout.styles'
-import { ThemeContext } from '../../context/themeContext'
 import { PageLayoutContext } from '../../context/pageLayoutContext'
 
 import LeftSideBarContainer from './navigation/LeftSideBarContainer'

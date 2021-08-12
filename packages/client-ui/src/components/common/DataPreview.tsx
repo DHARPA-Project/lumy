@@ -1,6 +1,5 @@
 import React, { useContext } from 'react'
 import { Table } from 'apache-arrow'
-import { makeStyles } from '@material-ui/core/styles'
 
 import {
   TableStats,
@@ -18,11 +17,7 @@ import Typography from '@material-ui/core/Typography'
 import Card from '@material-ui/core/Card'
 import { CircularProgress, Grid } from '@material-ui/core'
 
-const useStyles = makeStyles(theme => ({
-  card: {
-    padding: theme.spacing(2)
-  }
-}))
+import useStyles from './DataPreview.styles'
 
 interface DataPreviewContainerProps {
   pageId: string
@@ -37,7 +32,9 @@ interface DataPreviewRendererProps {
 }
 
 const DataPreviewRenderer = ({ value, stats, filter, setFilter }: DataPreviewRendererProps): JSX.Element => {
-  if (value == null) return <CircularProgress size="sm" />
+  const classes = useStyles()
+
+  if (value == null) return <CircularProgress size="sm" classes={{ root: classes.progress }} />
   if (value instanceof Table)
     return (
       <DataGrid
@@ -84,7 +81,7 @@ const DataPreview = (): JSX.Element => {
   return (
     <Grid container direction="column" spacing={2}>
       {dataPreviewItems.map((item, idx) => (
-        <Grid item key={idx}>
+        <Grid item key={idx} classes={{ root: classes.gridItemRoot }}>
           {item.type === InputOrOutput.Input ? (
             <InputDataPreviewContainer item={item} pageId={currentPageDetails?.id} />
           ) : (

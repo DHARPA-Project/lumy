@@ -20,7 +20,7 @@
   "dependencies": {
     "@dharpa-vre/client-core": "*",
     "@dharpa-vre/client-ui": "*",
-    "@dharpa-vre/modules": "*"
+    "@lumy/styles": "*"
   },
   "peerDependencies": {
     "react": "17"

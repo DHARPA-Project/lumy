@@ -4,6 +4,5 @@ requires = [
   "jupyter-packaging~=0.7.12",
   "jupyterlab>=3.0.0rc15,==3.*",
   "setuptools>=40.8.0",
-  "wheel",
-  "lumy-middleware",
+  "wheel"
 ]

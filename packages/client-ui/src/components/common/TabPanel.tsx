@@ -1,6 +1,7 @@
 import React from 'react'
 
-import { makeStyles, Theme } from '@material-ui/core/styles'
+import { makeStyles } from '@material-ui/core/styles'
+import { Theme } from '@lumy/styles'
 
 import Box from '@material-ui/core/Box'
 import Fade from '@material-ui/core/Fade'

@@ -29,6 +29,7 @@ const AddDataRegistryItemPage = (): JSX.Element => {
     <Grid container direction="column" className={classes.root} spacing={1}>
       <Grid item>
         <TextField
+          classes={{ root: classes.textField }}
           select
           label="Method"
           value={method}
@@ -47,6 +48,7 @@ const AddDataRegistryItemPage = (): JSX.Element => {
       </Grid>
       <Grid item>
         <TextField
+          classes={{ root: classes.textField }}
           label="File path"
           variant="outlined"
           value={filePath}
@@ -54,7 +56,13 @@ const AddDataRegistryItemPage = (): JSX.Element => {
         />
       </Grid>
       <Grid item>
-        <TextField label="Alias" variant="outlined" value={alias} onChange={e => setAlias(e.target.value)} />
+        <TextField
+          classes={{ root: classes.textField }}
+          label="Alias"
+          variant="outlined"
+          value={alias}
+          onChange={e => setAlias(e.target.value)}
+        />
       </Grid>
       <Grid item>
         {status === 'created' && (

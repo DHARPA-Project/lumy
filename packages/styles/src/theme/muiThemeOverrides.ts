@@ -1,4 +1,4 @@
-import { Theme } from '@material-ui/core/styles'
+import { LumyTheme as Theme } from './theme'
 
 const getMuiThemeOverrides = (theme: Theme): unknown => ({
   MuiCssBaseline: {
@@ -37,21 +37,24 @@ const getMuiThemeOverrides = (theme: Theme): unknown => ({
   MuiAccordionSummary: {
     root: {
       minHeight: theme.spacing(4),
-      '&.Mui-expanded': {
-        minHeight: theme.spacing(4)
+      '&$expanded': {
+        minHeight: theme.spacing(4),
+        margin: theme.spacing(1, 0)
       }
     },
     content: {
-      margin: theme.spacing(1, 0),
-      '&.Mui-expanded': {
-        margin: theme.spacing(1, 0)
-      }
+      margin: theme.spacing(1, 0)
     }
   },
   MuiCheckbox: {
     colorPrimary: {
-      '&:hover, &.Mui-checked:hover': {
+      '&:hover': {
         backgroundColor: 'transparent'
+      },
+      '&$checked': {
+        '&:hover': {
+          backgroundColor: 'transparent'
+        }
       }
     }
   },

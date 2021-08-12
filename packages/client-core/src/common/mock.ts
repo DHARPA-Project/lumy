@@ -45,7 +45,7 @@ export const getMockProcessor = async <I, O>(
 ): Promise<MockProcessor<I, O>> => {
   if (pageComponent == null) return noOpMockProcessor as MockProcessor<I, O>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const component = (viewProvider.getModulePanel(pageComponent) as unknown) as any
+  const component = (await (viewProvider.getModulePanel(pageComponent) as unknown)) as any
   if (isLazyComponent<I, O>(component)) {
     const status = component._payload._status
     // ready

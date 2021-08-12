@@ -8,16 +8,14 @@ export default makeStyles(theme => ({
     textAlign: 'center',
     color: theme.palette.primary.main
   },
-  closeButton: {
+  closeButtonRoot: {
     position: 'absolute',
     top: theme.spacing(3),
     right: theme.spacing(3),
     backgroundColor: theme.palette.secondary.light,
-    '&.MuiButton-root': {
-      minWidth: 'auto'
-    },
-    '& .MuiButton-label': {
-      color: theme.palette.secondary.dark
-    }
+    minWidth: 'auto'
+  },
+  closeButtonLabel: {
+    color: theme.palette.secondary.dark
   }
 }))

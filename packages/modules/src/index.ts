@@ -1,6 +1,5 @@
-import React from 'react'
-import { SimpleModuleViewProvider } from '@dharpa-vre/client-core'
-const Default = React.lazy(() => import('./Default'))
+import { lazy } from 'react'
+import { lumyComponent } from '@lumy/module-core'
 
 const modules = [
   'twoArgsMathFunction',
@@ -11,13 +10,13 @@ const modules = [
   'networkAnalysisDataVis'
 ]
 
-export const viewProvider = new SimpleModuleViewProvider(
-  modules.reduce(
-    (acc, moduleId) => ({
-      ...acc,
-      [moduleId]: React.lazy(() => import(`./${moduleId}`))
-    }),
-    {} as { [key: string]: ReturnType<typeof React.lazy> }
-  ),
-  Default
-)
+function registerModules(): void {
+  modules.forEach(moduleId => lumyComponent(moduleId)(lazy(() => import(`./${moduleId}`))))
+}
+
+registerModules()
+
+if (process.env.NODE_ENV !== 'production') {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  require('@lumy/module-sandbox').sandbox()
+}

@@ -26,7 +26,22 @@ module.exports = {
     historyApiFallback: true,
     hot: true,
     compress: true,
-    disableHostCheck: true
+    disableHostCheck: true,
+    before: app => {
+      app.get('/modules-package', function (req, res) {
+        const { url } = req.query
+        if (url == null) return res.send('')
+
+        const urlObject = new URL(url)
+        if (urlObject.protocol === 'file:') {
+          const filePath = url.replace(/^file:\/\//, '')
+          console.log('Sending file', filePath)
+          res.sendFile(path.resolve(filePath))
+        } else {
+          res.redirect(url)
+        }
+      })
+    }
   },
   module: {
     rules: [

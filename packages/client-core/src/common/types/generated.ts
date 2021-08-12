@@ -734,6 +734,27 @@ export enum Status {
 
 /**
  * Target: "workflow"
+ * Message type: "PageComponentsCode"
+ *
+ * Javascript code that renders pages of the workflow.
+ */
+export interface MsgWorkflowPageComponentsCode {
+  code: Code[]
+}
+
+export interface Code {
+  /**
+   * Actual JS code
+   */
+  content: string
+  /**
+   * Unique ID of this code snippet
+   */
+  id: string
+}
+
+/**
+ * Target: "workflow"
  * Message type: "Updated"
  *
  * Workflow currently loaded into the app.
@@ -813,6 +834,7 @@ export interface DataTransformationDescriptor {
 export interface DataTransformationItemPipelineDetails {
   /**
    * Name of the Kiara pipeline to use.
+   * The pipeline must have one input: 'source' and one output: 'target'.
    */
   name: string
 }
@@ -899,6 +921,11 @@ export interface WorkflowPageComponent {
    * ID of the component
    */
   id: string
+  /**
+   * URL of the package that contains this component.
+   * NOTE: This will likely be removed once package dependencies support is implemented.
+   */
+  url?: string
 }
 
 /**

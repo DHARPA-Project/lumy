@@ -5,7 +5,7 @@ import { Signal } from '@lumino/signaling'
 import { IDisposable } from '@lumino/disposable'
 import { ReadinessProbe } from './readinessProbe'
 import { IBackEndContext, MessageEnvelope, ModuleViewProvider, Target } from '@dharpa-vre/client-core'
-import { viewProvider } from '@dharpa-vre/modules'
+import { DynamicModuleViewProviderWithLoader } from './dynamicModuleViewLoader'
 
 export class KernelModuleContext implements IBackEndContext, IDisposable {
   private _contextId: string
@@ -20,11 +20,14 @@ export class KernelModuleContext implements IBackEndContext, IDisposable {
   private _signals: Record<string, Signal<KernelModuleContext, MessageEnvelope<unknown>>> = {}
 
   private _services: ServiceManager.IManager
+  private _moduleViewProvider: DynamicModuleViewProviderWithLoader
 
   constructor(session: ISessionContext, serviceManager: ServiceManager.IManager) {
     this._contextId = UUID.uuid4()
     this._sessionContext = session
     this._probe = new ReadinessProbe(session)
+
+    this._moduleViewProvider = new DynamicModuleViewProviderWithLoader(this)
 
     this._probe.readinessChanged.connect((_, isReady) => {
       if (isReady) this._reinitialiseComms()
@@ -161,7 +164,7 @@ export class KernelModuleContext implements IBackEndContext, IDisposable {
   }
 
   get moduleViewProvider(): ModuleViewProvider {
-    return viewProvider
+    return this._moduleViewProvider
   }
 
   addFilesToRepository(files: File[]): Promise<void> {

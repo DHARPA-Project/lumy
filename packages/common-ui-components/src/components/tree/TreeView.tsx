@@ -28,7 +28,7 @@ const renderTree = (treeNode: ITreeItem): JSX.Element => {
       key={treeNode.id}
       nodeId={treeNode.id}
       label={treeNode.name}
-      classes={{ root: classes.treeItemSelected, label: classes.treeItemLabel }}
+      classes={{ selected: classes.treeItemSelected, label: classes.treeItemLabel }}
     >
       {treeNode.details && (
         <div className={classes.treeItemDescription}>

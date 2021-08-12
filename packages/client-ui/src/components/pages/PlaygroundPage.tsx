@@ -1,6 +1,7 @@
 import React from 'react'
 import { Box, Grid } from '@material-ui/core'
 import { NoteItem, NoteItemsList, NoteViewerEditor } from '@dharpa-vre/notes-components'
+import { getLumyComponent } from '@dharpa-vre/client-core'
 
 const PlaygroundPage = (): JSX.Element => {
   const testNotes = [
@@ -18,8 +19,12 @@ const PlaygroundPage = (): JSX.Element => {
       title: 'Note number two'
     }
   ]
+
+  const SuperRedComponent = getLumyComponent('SuperRedComponent')
+
   return (
     <div>
+      {SuperRedComponent ? <SuperRedComponent /> : ''}
       <Grid container spacing={2} wrap="nowrap">
         <Grid item>
           <Box width="30rem">
