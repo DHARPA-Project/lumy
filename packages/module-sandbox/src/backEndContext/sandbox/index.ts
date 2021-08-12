@@ -103,15 +103,15 @@ const getFilteredValue = <T = unknown, S = { [key: string]: unknown }>(
     const stats = getValueStats(sortedTable)
 
     const offset = filter?.offset ?? 0
-    const pageSize = filter?.pageSize ?? 5
-    const tablePage = sortedTable.slice(offset, offset + pageSize)
+    const pageSize = filter?.pageSize
+    const tablePage = pageSize ? sortedTable.slice(offset, offset + pageSize) : sortedTable.slice(offset)
 
     return [(tablePage as unknown) as T, (stats as unknown) as S]
   }
   return [value, undefined]
 }
 
-const newMockDataRepositoryTable = (numItems = 30): DataRepositoryItemsTable => {
+const newMockDataRepositoryTable = (numItems = 50): DataRepositoryItemsTable => {
   const rowNumbers = [...Array(numItems).keys()]
   const isTableType = rowNumbers.map(() => Math.random() >= 0.5)
 
@@ -599,13 +599,13 @@ export class SandboxContext implements IBackEndContext {
           const repositoryTable = this._mockDataRepository
 
           const filteredTable =
-            filter.types == null
+            filter?.types == null
               ? repositoryTable
               : arrowUtils.filterTable(repositoryTable, row => filter.types?.includes(row.type))
 
-          const offset = filter.offset ?? 0
-          const pageSize = filter.pageSize ?? 5
-          const page = filteredTable.slice(offset, offset + pageSize)
+          const offset = filter?.offset ?? 0
+          const pageSize = filter?.pageSize
+          const page = pageSize ? filteredTable.slice(offset, offset + pageSize) : filteredTable.slice(offset)
 
           const serializedTable = serialize(page)
           const stats: DataRepositoryItemsStats = {
