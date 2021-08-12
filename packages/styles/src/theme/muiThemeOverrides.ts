@@ -36,25 +36,20 @@ const getMuiThemeOverrides = (theme: Theme): unknown => ({
   },
   MuiAccordionSummary: {
     root: {
-      minHeight: theme.spacing(4),
-      '&$expanded': {
-        minHeight: theme.spacing(4),
-        margin: theme.spacing(1, 0)
+      '&, &$expanded': {
+        minHeight: theme.spacing(4)
       }
     },
     content: {
-      margin: theme.spacing(1, 0)
+      '&, &$expanded': {
+        margin: theme.spacing(1, 0)
+      }
     }
   },
   MuiCheckbox: {
     colorPrimary: {
-      '&:hover': {
+      '&:hover, &$checked:hover': {
         backgroundColor: 'transparent'
-      },
-      '&$checked': {
-        '&:hover': {
-          backgroundColor: 'transparent'
-        }
       }
     }
   },
@@ -71,6 +66,13 @@ const getMuiThemeOverrides = (theme: Theme): unknown => ({
   MuiIconButton: {
     root: {
       padding: theme.spacing(1)
+    }
+  },
+  MuiInputBase: {
+    root: {
+      '&$disabled': {
+        opacity: theme.palette.action.disabledOpacity
+      }
     }
   },
   MuiInputLabel: {

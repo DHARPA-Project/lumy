@@ -13,6 +13,7 @@ export default {
     disableRipple: true
   },
   MuiCheckbox: {
+    color: 'primary',
     disableRipple: true
   },
   MuiList: {
