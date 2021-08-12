@@ -5,6 +5,7 @@ import React from 'react'
 // import ToysIcon from '@material-ui/icons/Toys'
 import HomeIcon from '@material-ui/icons/Home'
 import BubbleChartIcon from '@material-ui/icons/BubbleChart'
+import StorageIcon from '@material-ui/icons/Storage'
 
 export enum NavItemType {
   'heading',
@@ -27,6 +28,13 @@ export const pageRoutes = [
     label: 'home',
     link: '/home',
     icon: <HomeIcon />,
+    nested: false
+  },
+  {
+    type: NavItemType.pageLink,
+    label: 'data registry',
+    link: '/dataregistry',
+    icon: <StorageIcon />,
     nested: false
   },
   {
