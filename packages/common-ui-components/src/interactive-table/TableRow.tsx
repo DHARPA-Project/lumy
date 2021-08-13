@@ -63,7 +63,7 @@ const InteractiveTableRow = ({
                 className={classes.button}
                 onClick={event => setPopoverAnchorEl(event.currentTarget)}
               >
-                <VisibilityIcon fontSize="small" />
+                <VisibilityIcon classes={{ root: classes.previewIcon }} />
               </IconButton>
             </Tooltip>
           )}

@@ -35,5 +35,8 @@ export default makeStyles((theme: Theme) => ({
   button: {
     minWidth: 0,
     margin: 0
+  },
+  previewIcon: {
+    fontSize: '1rem'
   }
 }))
