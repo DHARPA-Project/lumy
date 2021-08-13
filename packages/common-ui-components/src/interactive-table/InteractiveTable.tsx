@@ -39,8 +39,8 @@ interface IObjectListSortParams {
 const sortObjectList = ({ objectList, propertyToSortBy, isNumeric, sortingOrder }: IObjectListSortParams) => {
   const orderFactor = sortingOrder === 'asc' ? 1 : -1
   return [...objectList].sort((a, b) => {
-    const first = isNumeric ? parseFloat(a[propertyToSortBy]) : a[propertyToSortBy]
-    const second = isNumeric ? parseFloat(b[propertyToSortBy]) : b[propertyToSortBy]
+    const first = isNumeric ? parseFloat(a[propertyToSortBy]) : a[propertyToSortBy].trim().toLowerCase()
+    const second = isNumeric ? parseFloat(b[propertyToSortBy]) : b[propertyToSortBy].trim().toLowerCase()
     return first > second ? orderFactor : -orderFactor
   })
 }

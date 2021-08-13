@@ -64,7 +64,7 @@ const DataRegistryFormModal = (): JSX.Element => {
   const [selectedRegistryItem, setSelectedRegistryItem] = useState<RowLike<DataRepositoryItemStructure>>(null)
   const [sessionId, setSessionId] = useState(uuid())
   const [itemCreationStatus, addItem, errorMessage] = useDataRepositoryItemCreator(sessionId)
-  const [repositoryItems] = useDataRepository(null)
+  const [repositoryItems] = useDataRepository({ pageSize: 1000 })
 
   useEffect(() => {
     if (
@@ -97,7 +97,7 @@ const DataRegistryFormModal = (): JSX.Element => {
     } else if (itemCreationStatus === 'error') {
       setStatusMessage({
         severity: 'error',
-        text: 'Saving the registry item has failed! ' + errorMessage
+        text: 'Saving the registry item has failed! ' + (errorMessage ?? '')
       })
     } else {
       setStatusMessage(null)

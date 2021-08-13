@@ -72,7 +72,7 @@ const DataRegistryPage: React.FC = () => {
   const [isSnackBarVisible, setIsSnackBarVisible] = useState(false)
   const [snackbarMessage, setSnackbarMessage] = useState('')
 
-  const [repositoryItems] = useDataRepository(null)
+  const [repositoryItems] = useDataRepository({ pageSize: 1000 })
 
   const repositoryItemList = [...(repositoryItems ?? [])].map(item => {
     // early return if undefined/null or not iterable
