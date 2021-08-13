@@ -83,7 +83,7 @@ const NetworkAnalysisIntroPage: React.FC = () => {
       <DialogModal
         title="New Workflow Project"
         isModalOpen={isCreateProjectModalOpen}
-        setIsModalOpen={setIsCreateProjectModalOpen}
+        onCloseModalClick={setIsCreateProjectModalOpen}
       >
         <CreateProjectForm
           workflowCategory={currentWorkflowCategory}
