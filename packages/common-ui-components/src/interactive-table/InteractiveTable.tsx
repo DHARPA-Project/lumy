@@ -119,9 +119,9 @@ export const InteractiveTable = ({
     numRowsPerPage * (pageNumber + 1)
   )
 
-  const numFilteredItems = filteredList.length
-  const numSelectedItems = selectedItems.length
   const visibleColumns = tableColumns.filter(column => column.visible)
+  const numSelectedItems = selectedItems.length
+  const numFilteredItems = filteredList.length
 
   useEffect(() => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current)
@@ -161,7 +161,7 @@ export const InteractiveTable = ({
 
   const handleSelectAllClick = () => {
     setSelectedItems(prevSelected =>
-      prevSelected.length === filteredList.length ? [] : filteredList.map(item => item.id)
+      prevSelected.length === numFilteredItems ? [] : filteredList.map(item => item.id)
     )
   }
 
@@ -309,10 +309,10 @@ export const InteractiveTable = ({
       <TablePagination
         className={classes.pagination}
         component="div"
-        count={filteredList?.length ?? 0}
+        count={numFilteredItems ?? 0}
         page={pageNumber}
         rowsPerPage={numRowsPerPage}
-        rowsPerPageOptions={[5, 10, 25, { label: 'all', value: -1 }]}
+        rowsPerPageOptions={[5, 10, 25, { label: 'all', value: numFilteredItems }]}
         onChangePage={handlePageNumberChange}
         onChangeRowsPerPage={handleNumRowsPerPageChange}
       />
