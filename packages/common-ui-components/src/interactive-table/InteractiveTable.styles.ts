@@ -31,6 +31,11 @@ export default makeStyles((theme: Theme) => ({
   title: {
     flex: '1 1 100%'
   },
+  columnList: {
+    width: 'auto',
+    minWidth: theme.spacing(10),
+    backgroundColor: theme.palette.background.paper
+  },
   tableContainer: {
     maxHeight: `calc(100vh - ${theme.spacing(36)}px)`
   },

@@ -16,11 +16,18 @@ import Checkbox from '@material-ui/core/Checkbox'
 import Toolbar from '@material-ui/core/Toolbar'
 import Tooltip from '@material-ui/core/Tooltip'
 import IconButton from '@material-ui/core/IconButton'
+import Popover from '@material-ui/core/Popover'
+import ListSubheader from '@material-ui/core/ListSubheader'
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemIcon from '@material-ui/core/ListItemIcon'
+import ListItemText from '@material-ui/core/ListItemText'
 
 import BackupIcon from '@material-ui/icons/Backup'
 import Search from '@material-ui/icons/Search'
 import DeleteIcon from '@material-ui/icons/Delete'
 import CloseIcon from '@material-ui/icons/Close'
+import ViewWeekIcon from '@material-ui/icons/ViewWeek'
 // import FilterListIcon from '@material-ui/icons/FilterList'
 
 import useStyles from './InteractiveTable.styles'
@@ -88,13 +95,14 @@ export const InteractiveTable = ({
   const searchBarRef = useRef(null)
   const timeoutRef = useRef(null)
 
+  const [popoverAnchorEl, setPopoverAnchorEl] = useState<HTMLElement | null>(null)
+
   // value of search input field, as visible to the user
   const [searchInputValue, setSearchInputValue] = useState('')
   // trimmed and lowercased search query saved after (optional) debounce period
   const [isSearchBarVisible, setIsSearchBarVisible] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
-  // const [tableColumns, setTableColumns] = useState<ColumnMap[]>(columnMapList)
-  const [tableColumns] = useState<ColumnMap[]>(columnMapList)
+  const [tableColumns, setTableColumns] = useState<ColumnMap[]>(columnMapList)
   const [selectedItems, setSelectedItems] = useState<string[]>([])
   const [sortingOrder, setSortingOrder] = useState<Order>('asc')
   const [sortingColumn, setSortingColumn] = useState<string>(null)
@@ -128,7 +136,6 @@ export const InteractiveTable = ({
     timeoutRef.current = setTimeout(() => {
       setPageNumber(0)
       setSearchQuery(searchInputValue.trim().toLowerCase())
-      setPageNumber(0)
     }, searchDebounceDuration)
 
     return () => clearTimeout(timeoutRef.current)
@@ -150,6 +157,12 @@ export const InteractiveTable = ({
     setSortingOrder(sortingColumn === column.key && sortingOrder === 'asc' ? 'desc' : 'asc')
     setSortingColumn(column.key)
     setIsNumericSort(column.numeric)
+  }
+
+  const handleColumnToggle = (columnKey: string) => {
+    setTableColumns(prevColumns =>
+      prevColumns.map(column => (column.key === columnKey ? { ...column, visible: !column.visible } : column))
+    )
   }
 
   const handleSelectClick = (id: string) => {
@@ -234,6 +247,15 @@ export const InteractiveTable = ({
                 </IconButton>
               </Tooltip>
 
+              <Tooltip title="choose visible columns">
+                <IconButton
+                  onClick={event => setPopoverAnchorEl(event.currentTarget)}
+                  aria-label="choose visible columns"
+                >
+                  <ViewWeekIcon />
+                </IconButton>
+              </Tooltip>
+
               <Tooltip title="add new item">
                 <IconButton onClick={() => onAddItemClick()} aria-label="add new item">
                   <BackupIcon />
@@ -249,6 +271,42 @@ export const InteractiveTable = ({
           )}
         </div>
       </Toolbar>
+
+      <Popover
+        anchorEl={popoverAnchorEl}
+        open={!!popoverAnchorEl}
+        onClose={() => setPopoverAnchorEl(null)}
+        id={!!popoverAnchorEl ? 'interactive-table-column-list-popover' : null}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'right'
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right'
+        }}
+      >
+        <List
+          component="ul"
+          aria-labelledby="list-subheader"
+          subheader={<ListSubheader component="div">Choose visible columns</ListSubheader>}
+          className={classes.columnList}
+        >
+          {tableColumns.map((column, index) => (
+            <ListItem component="li" key={column.key ?? index}>
+              <ListItemIcon>
+                <Checkbox
+                  checked={column.visible}
+                  edge="start"
+                  tabIndex={-1}
+                  onClick={() => handleColumnToggle(column.key)}
+                />
+              </ListItemIcon>
+              <ListItemText primary={column.label} />
+            </ListItem>
+          ))}
+        </List>
+      </Popover>
 
       <TableContainer className={classes.tableContainer}>
         <Table className={classes.table} stickyHeader aria-label="table sticky">
