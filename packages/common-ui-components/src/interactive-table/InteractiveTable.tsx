@@ -125,10 +125,11 @@ export const InteractiveTable = ({
 
   useEffect(() => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current)
-    timeoutRef.current = setTimeout(
-      () => setSearchQuery(searchInputValue.trim().toLowerCase()),
-      searchDebounceDuration
-    )
+    timeoutRef.current = setTimeout(() => {
+      setPageNumber(0)
+      setSearchQuery(searchInputValue.trim().toLowerCase())
+      setPageNumber(0)
+    }, searchDebounceDuration)
 
     return () => clearTimeout(timeoutRef.current)
   }, [searchInputValue])
