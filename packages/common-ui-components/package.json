@@ -32,5 +32,8 @@
     "eslint-plugin-react": "7",
     "prettier": "2",
     "typescript": "4"
+  },
+  "dependencies": {
+    "react-window": "^1.8.6"
   }
 }

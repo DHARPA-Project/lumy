@@ -46,6 +46,13 @@ const getMuiThemeOverrides = (theme: Theme): unknown => ({
       }
     }
   },
+  MuiAutocomplete: {
+    root: {
+      '&$hasClearIcon$hasPopupIcon $inputRoot[class*="MuiOutlinedInput-root"]': {
+        paddingRight: theme.spacing(4)
+      }
+    }
+  },
   MuiCheckbox: {
     colorPrimary: {
       '&:hover, &$checked:hover': {
