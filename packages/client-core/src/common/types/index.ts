@@ -7,7 +7,7 @@ export type {
   DataValueContainer,
   TableStats,
   DataTabularDataFilter as TabularDataFilter,
-  DataTabularDataFilterCondition as DataFilterCondtion,
+  DataTabularDataFilterCondition as DataFilterCondition,
   DataTabularDataFilterItem as DataFilterItem,
   DataTabularDataSortingMethod as DataSortingMethod,
   DataRepositoryItemsFilter,
@@ -21,7 +21,7 @@ export type {
 export {
   State,
   DataType,
-  Operator as DataFilterCondtionOperator,
+  Operator as DataFilterConditionOperator,
   Direction as DataSortingDirection,
   MsgWorkflowExecutionResultStatus as WorkflowExecutionStatus,
   InputOrOutput

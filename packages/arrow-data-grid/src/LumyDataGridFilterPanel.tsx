@@ -11,17 +11,17 @@ import {
   GridApiContext,
   useGridState
 } from '@material-ui/data-grid'
-import { DataFilterCondtion, DataFilterCondtionOperator } from '@dharpa-vre/client-core'
+import { DataFilterCondition, DataFilterConditionOperator } from '@dharpa-vre/client-core'
 import {
   asDataFilterItem,
-  asDataFilterCondtionOperator,
+  asDataFilterConditionOperator,
   asGridFilterItem,
   asGridLinkOperator
 } from './util/converters'
 
 export interface FilterPanelProps {
-  condition?: DataFilterCondtion
-  onConditionUpdated?: (condition: DataFilterCondtion) => void
+  condition?: DataFilterCondition
+  onConditionUpdated?: (condition: DataFilterCondition) => void
 }
 
 export const LumyDataGridFilterPanel = ({ condition, onConditionUpdated }: FilterPanelProps): JSX.Element => {
@@ -32,25 +32,25 @@ export const LumyDataGridFilterPanel = ({ condition, onConditionUpdated }: Filte
   const { columns } = gridState
 
   const handleApplyFilterChanges = (item: GridFilterItem) => {
-    const updatedCondition: DataFilterCondtion = {
-      operator: condition?.operator ?? DataFilterCondtionOperator.And,
+    const updatedCondition: DataFilterCondition = {
+      operator: condition?.operator ?? DataFilterConditionOperator.And,
       items: [...(condition?.items ?? [])]
     }
     updatedCondition.items[item.id] = asDataFilterItem(item)
     onConditionUpdated?.(updatedCondition)
   }
   const handleDeleteFilter = (item: GridFilterItem) => {
-    const updatedCondition: DataFilterCondtion = {
-      operator: condition?.operator ?? DataFilterCondtionOperator.And,
+    const updatedCondition: DataFilterCondition = {
+      operator: condition?.operator ?? DataFilterConditionOperator.And,
       items: [...(condition?.items ?? [])]
     }
     updatedCondition.items.splice(item.id, 1)
     onConditionUpdated?.(updatedCondition)
   }
   const handleOperatorChanged = (operator: GridLinkOperator) => {
-    const updatedCondition: DataFilterCondtion = {
+    const updatedCondition: DataFilterCondition = {
       items: condition?.items ?? [],
-      operator: asDataFilterCondtionOperator(operator)
+      operator: asDataFilterConditionOperator(operator)
     }
     onConditionUpdated?.(updatedCondition)
   }
@@ -58,8 +58,8 @@ export const LumyDataGridFilterPanel = ({ condition, onConditionUpdated }: Filte
   const firstFilterableColumn = columns.all.find(column => columns.lookup[column].filterable)
 
   const handleAddNewFilter = () => {
-    const updatedCondition: DataFilterCondtion = {
-      operator: condition?.operator ?? DataFilterCondtionOperator.And,
+    const updatedCondition: DataFilterCondition = {
+      operator: condition?.operator ?? DataFilterConditionOperator.And,
       items: (condition?.items ?? []).concat({
         column: firstFilterableColumn,
         operator: 'equals',

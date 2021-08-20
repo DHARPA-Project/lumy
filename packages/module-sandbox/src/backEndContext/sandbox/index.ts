@@ -24,7 +24,7 @@ import {
   arrowUtils,
   Note,
   DataSortingMethod,
-  DataFilterCondtion,
+  DataFilterCondition,
   WorkflowExecutionStatus,
   LumyWorkflow,
   DynamicModuleViewProvider,
@@ -74,7 +74,7 @@ const sortTable = (table: Table, sortingMethod?: DataSortingMethod): Table => {
   })
 }
 
-const filterTable = (table: Table, condition?: DataFilterCondtion): Table => {
+const filterTable = (table: Table, condition?: DataFilterCondition): Table => {
   // NOTE: in mock implementation only doing 'contains' filtering
   let filteredTable = table
   for (const item of condition?.items ?? []) {
