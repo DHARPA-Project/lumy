@@ -734,6 +734,19 @@ export enum MsgWorkflowExecutionResultStatus {
 
 /**
  * Target: "workflow"
+ * Message type: "GetWorkflowList"
+ *
+ * Request a list of workflows available for the user.
+ */
+export interface MsgWorkflowGetWorkflowList {
+  /**
+   * If set to true, include workflow body.
+   */
+  includeWorkflow?: boolean
+}
+
+/**
+ * Target: "workflow"
  * Message type: "LoadLumyWorkflow"
  *
  * Load a Lumy workflow.
@@ -1035,6 +1048,28 @@ export interface Code {
  */
 export interface MsgWorkflowUpdated {
   workflow?: LumyWorkflow
+}
+
+/**
+ * Target: "workflow"
+ * Message type: "WorkflowList"
+ *
+ * A list of workflows available for the user.
+ */
+export interface MsgWorkflowWorkflowList {
+  workflows: WorkflowListItem[]
+}
+
+export interface WorkflowListItem {
+  body?: LumyWorkflow
+  /**
+   * Workflow name
+   */
+  name: string
+  /**
+   * URI of the workflow (file path or URL).
+   */
+  uri: string
 }
 
 /**

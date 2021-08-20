@@ -28,7 +28,9 @@ import {
   WorkflowExecutionStatus,
   LumyWorkflow,
   DynamicModuleViewProvider,
-  ModuleProps
+  ModuleProps,
+  WorkflowLoadProgressMessageType,
+  LumyWorkflowLoadStatus
 } from '@dharpa-vre/client-core'
 
 function getRandomId(): string {
@@ -516,6 +518,29 @@ export class SandboxContext implements IBackEndContext {
               test: '123'
             },
             errorMessage: 'With mock middleware only "table.from_csv" returns a successful response'
+          })
+        })(msg)
+      case Messages.Workflow.codec.GetWorkflowList.action:
+        return adapter(Messages.Workflow.codec.GetWorkflowList.decode, async () => {
+          return Messages.Workflow.codec.WorkflowList.encode({
+            workflows: [
+              {
+                name: 'Network Analysis',
+                uri: 'https://example.com/networkAnalysis.yml',
+                body: this._currentWorkflow
+              }
+            ]
+          })
+        })(msg)
+      case Messages.Workflow.codec.LoadLumyWorkflow.action:
+        return adapter(Messages.Workflow.codec.LoadLumyWorkflow.decode, async message => {
+          if (typeof message.workflow === 'string')
+            throw new Error('Cannot load workflow from a url in a sandbox context')
+          this._currentWorkflow = message.workflow
+          return Messages.Workflow.codec.LumyWorkflowLoadProgress.encode({
+            message: 'Done',
+            type: WorkflowLoadProgressMessageType.Info,
+            status: LumyWorkflowLoadStatus.Loaded
           })
         })(msg)
       default:

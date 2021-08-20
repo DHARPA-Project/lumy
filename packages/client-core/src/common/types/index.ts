@@ -16,7 +16,8 @@ export type {
   WorkflowPageDetails,
   WorkflowPageComponent,
   DataPreviewLayoutMetadataItem,
-  Code as PageComponentsCode
+  Code as PageComponentsCode,
+  WorkflowListItem
 } from './generated'
 export {
   State,
@@ -24,7 +25,9 @@ export {
   Operator as DataFilterConditionOperator,
   Direction as DataSortingDirection,
   MsgWorkflowExecutionResultStatus as WorkflowExecutionStatus,
-  InputOrOutput
+  InputOrOutput,
+  MsgWorkflowLumyWorkflowLoadProgressStatus as LumyWorkflowLoadStatus,
+  Type as WorkflowLoadProgressMessageType
 } from './generated'
 export * as Messages from './messages'
 export * from './base'
