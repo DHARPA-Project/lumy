@@ -724,43 +724,25 @@ export interface MsgWorkflowExecutionResult {
    * Result of the execution. Structure depends on the workflow. TBD.
    */
   result?: { [key: string]: unknown }
-  status: Status
+  status: MsgWorkflowExecutionResultStatus
 }
 
-export enum Status {
+export enum MsgWorkflowExecutionResultStatus {
   Error = 'error',
   Ok = 'ok'
 }
 
 /**
  * Target: "workflow"
- * Message type: "PageComponentsCode"
+ * Message type: "LoadLumyWorkflow"
  *
- * Javascript code that renders pages of the workflow.
+ * Load a Lumy workflow.
  */
-export interface MsgWorkflowPageComponentsCode {
-  code: Code[]
-}
-
-export interface Code {
+export interface MsgWorkflowLoadLumyWorkflow {
   /**
-   * Actual JS code
+   * A path to the workflow or the whole workflow structure
    */
-  content: string
-  /**
-   * Unique ID of this code snippet
-   */
-  id: string
-}
-
-/**
- * Target: "workflow"
- * Message type: "Updated"
- *
- * Workflow currently loaded into the app.
- */
-export interface MsgWorkflowUpdated {
-  workflow?: LumyWorkflow
+  workflow: LumyWorkflow | string
 }
 
 /**
@@ -990,6 +972,72 @@ export interface LumyWorkflowPageMetadata {
 }
 
 /**
+ * Target: "workflow"
+ * Message type: "LumyWorkflowLoadProgress"
+ *
+ * Progress status updates published when a Lumy workflow is being loaded.
+ * This is mostly needed to publish updates about installed dependencies
+ */
+export interface MsgWorkflowLumyWorkflowLoadProgress {
+  message: string
+  /**
+   * Status of the process
+   */
+  status: MsgWorkflowLumyWorkflowLoadProgressStatus
+  /**
+   * Message type
+   */
+  type: Type
+}
+
+/**
+ * Status of the process
+ */
+export enum MsgWorkflowLumyWorkflowLoadProgressStatus {
+  Loaded = 'loaded',
+  Loading = 'loading'
+}
+
+/**
+ * Message type
+ */
+export enum Type {
+  Error = 'error',
+  Info = 'info'
+}
+
+/**
+ * Target: "workflow"
+ * Message type: "PageComponentsCode"
+ *
+ * Javascript code that renders pages of the workflow.
+ */
+export interface MsgWorkflowPageComponentsCode {
+  code: Code[]
+}
+
+export interface Code {
+  /**
+   * Actual JS code
+   */
+  content: string
+  /**
+   * Unique ID of this code snippet
+   */
+  id: string
+}
+
+/**
+ * Target: "workflow"
+ * Message type: "Updated"
+ *
+ * Workflow currently loaded into the app.
+ */
+export interface MsgWorkflowUpdated {
+  workflow?: LumyWorkflow
+}
+
+/**
  * Stats object for arrow table
  */
 export interface TableStats {
@@ -1000,6 +1048,7 @@ export interface TableStats {
 }
 
 /**
+ * NOTE: deprecated, will be removed.
  * Represents a workflow.
  */
 export interface Workflow {
@@ -1020,6 +1069,7 @@ export interface Workflow {
 /**
  * Modular structure of the workflow.
  *
+ * NOTE: deprecated, will be removed.
  * Workflow structure. Contains all modules that are a part of the workflow.
  */
 export interface WorkflowStructure {
@@ -1030,6 +1080,7 @@ export interface WorkflowStructure {
 }
 
 /**
+ * NOTE: deprecated, will be removed.
  * A single Workflow step.
  */
 export interface WorkflowStep {

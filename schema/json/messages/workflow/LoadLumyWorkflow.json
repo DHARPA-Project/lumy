@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "MsgWorkflowLoadLumyWorkflow",
+  "description": "Load a Lumy workflow.",
+  "properties": {
+    "workflow": {
+      "description": "A path to the workflow or the whole workflow structure",
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "$ref": "https://dharpa.org/schema/types/workflow/LumyWorkflow.json"
+        }
+      ]
+    }
+  },
+  "required": [
+    "workflow"
+  ]
+}
