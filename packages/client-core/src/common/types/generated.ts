@@ -843,30 +843,15 @@ export interface ProcessingDependenciesSection {
   pythonPackages?: PackageDependency[]
 }
 
+/**
+ * Python package dependency.
+ */
 export interface PackageDependency {
   /**
-   * Version modifier
-   */
-  modifier?: Modifier
-  /**
-   * Package name
+   * Package name as a PEP508 string (https://www.python.org/dev/peps/pep-0508/). The standard
+   * pip requirement string.
    */
   name: string
-  /**
-   * Package version
-   */
-  version?: string
-}
-
-/**
- * Version modifier
- */
-export enum Modifier {
-  Eq = 'eq',
-  Gt = 'gt',
-  Gte = 'gte',
-  LTE = 'lte',
-  Lt = 'lt'
 }
 
 export interface ProcessingWorkflowSection {
@@ -880,10 +865,15 @@ export interface ProcessingWorkflowSection {
  * Workflow rendering definitions
  */
 export interface RenderingSection {
+  dependencies?: UIDependenciesSection
   /**
    * List of pages that comprise the workflow UI part.
    */
   pages?: WorkflowPageDetails[]
+}
+
+export interface UIDependenciesSection {
+  pythonPackages?: PackageDependency[]
 }
 
 /**
