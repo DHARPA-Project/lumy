@@ -23,7 +23,7 @@ export {
   DataType,
   Operator as DataFilterCondtionOperator,
   Direction as DataSortingDirection,
-  Status as WorkflowExecutionStatus,
+  MsgWorkflowExecutionResultStatus as WorkflowExecutionStatus,
   InputOrOutput
 } from './generated'
 export * as Messages from './messages'
