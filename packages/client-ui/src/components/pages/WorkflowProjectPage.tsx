@@ -36,7 +36,7 @@ const getWorkflow = (workflows: WorkflowListItem[], pageUrlPrefix: string): Lumy
 
 const WorkflowLoadingProgress = ({ progressMessages }: { progressMessages: LoadProgress[] }): JSX.Element => {
   return (
-    <Grid container>
+    <Grid container direction="row">
       <Grid item>
         <Typography variant="h4">Loading workflow</Typography>
       </Grid>
