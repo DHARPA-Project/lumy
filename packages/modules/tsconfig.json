@@ -4,8 +4,6 @@
     "outDir": "dist",
     "rootDir": "src",
     "experimentalDecorators": true,
-    "skipLibCheck": true,
-    "types": ["resize-observer-browser"]
-  },
-  "include": ["src/@types/index.d.ts"]
+    "skipLibCheck": true
+  }
 }
