@@ -3,15 +3,17 @@ import { Theme } from '@lumy/styles'
 
 export default makeStyles<Theme>(theme => ({
   mainWrapper: {
-    height: '100%',
     width: '100%',
-    flexShrink: 1,
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
     padding: theme.layout.pagePadding,
     backgroundColor: theme.palette.background.paper,
     color: theme.palette.text.primary
   },
   header: {
     height: theme.layout.pageHeaderHeight,
+    width: '100%',
     padding: theme.spacing(1, 0)
   },
   headline: {
@@ -22,7 +24,9 @@ export default makeStyles<Theme>(theme => ({
     marginBottom: theme.spacing(1)
   },
   mainContent: {
-    height: '100%',
+    flex: 1,
+    display: 'flex',
+    justifyContent: 'center',
     overflow: 'scroll'
   }
 }))

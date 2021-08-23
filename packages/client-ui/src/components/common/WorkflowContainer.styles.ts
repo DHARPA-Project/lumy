@@ -48,6 +48,8 @@ export default makeStyles<Theme>(theme => ({
     }
   },
   mainPane: {
+    width: '100%',
+    display: 'flex',
     flex: 1,
     overflow: 'hidden',
     transition: 'all 0.3s ease'

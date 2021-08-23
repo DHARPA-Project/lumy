@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Table as ArrowTable } from 'apache-arrow'
 
+import Container from '@material-ui/core/Container'
 import Paper from '@material-ui/core/Paper'
 import TableContainer from '@material-ui/core/TableContainer'
 import Table from '@material-ui/core/Table'
@@ -73,7 +74,7 @@ const DataSelection = ({ pageDetails: { id: stepId } }: ModuleProps): JSX.Elemen
   }
 
   return (
-    <section className={classes.section} key={stepId}>
+    <Container classes={{ root: classes.dataSelectionContainer }} maxWidth="lg">
       {repositoryItemsBatch != null && repositoryStats != null && (
         <Paper variant="outlined" className={classes.paperWrapper}>
           <TableContainer className={classes.tableContainer}>
@@ -115,7 +116,7 @@ const DataSelection = ({ pageDetails: { id: stepId } }: ModuleProps): JSX.Elemen
           />
         </Paper>
       )}
-    </section>
+    </Container>
   )
 }
 
