@@ -3,7 +3,7 @@
   "type": "object",
   "additionalProperties": false,
   "title": "WorkflowStructure",
-  "description": "Workflow structure. Contains all modules that are a part of the workflow.",
+  "description": "NOTE: deprecated, will be removed.\nWorkflow structure. Contains all modules that are a part of the workflow.",
   "properties": {
     "steps": {
       "type": "array",

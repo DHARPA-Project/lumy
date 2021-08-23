@@ -7,27 +7,13 @@
   "definitions": {
     "packageDependency": {
       "title": "PackageDependency",
+      "description": "Python package dependency.",
       "type": "object",
       "additionalProperties": false,
       "properties": {
         "name": {
           "type": "string",
-          "description": "Package name"
-        },
-        "version": {
-          "type": "string",
-          "description": "Package version"
-        },
-        "modifier": {
-          "type": "string",
-          "description": "Version modifier",
-          "enum": [
-            "lt",
-            "lte",
-            "eq",
-            "gte",
-            "gt"
-          ]
+          "description": "Package name as a PEP508 string (https://www.python.org/dev/peps/pep-0508/). The standard pip requirement string."
         }
       },
       "required": [
@@ -279,6 +265,19 @@
           "description": "List of pages that comprise the workflow UI part.",
           "items": {
             "$ref": "#/definitions/workflowPage"
+          }
+        },
+        "dependencies": {
+          "type": "object",
+          "additionalProperties": false,
+          "title": "UIDependenciesSection",
+          "properties": {
+            "pythonPackages": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/packageDependency"
+              }
+            }
           }
         }
       }

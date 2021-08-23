@@ -3,7 +3,7 @@
   "type": "object",
   "additionalProperties": false,
   "title": "WorkflowStep",
-  "description": "A single Workflow step.",
+  "description": "NOTE: deprecated, will be removed.\nA single Workflow step.",
   "properties": {
     "id": {
       "type": "string",
