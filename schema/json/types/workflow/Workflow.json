@@ -3,7 +3,7 @@
   "type": "object",
   "additionalProperties": false,
   "title": "Workflow",
-  "description": "Represents a workflow.",
+  "description": "NOTE: deprecated, will be removed.\nRepresents a workflow.",
   "properties": {
     "id": {
       "type": "string",

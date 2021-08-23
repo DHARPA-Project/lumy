@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "MsgWorkflowWorkflowList",
+  "description": "A list of workflows available for the user.",
+  "properties": {
+    "workflows": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/workflowListItem"
+      }
+    }
+  },
+  "required": [
+    "workflows"
+  ],
+  "definitions": {
+    "workflowListItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "uri": {
+          "type": "string",
+          "description": "URI of the workflow (file path or URL)."
+        },
+        "name": {
+          "type": "string",
+          "description": "Workflow name"
+        },
+        "body": {
+          "$ref": "https://dharpa.org/schema/types/workflow/LumyWorkflow.json"
+        }
+      },
+      "required": [
+        "uri",
+        "name"
+      ]
+    }
+  }
+}

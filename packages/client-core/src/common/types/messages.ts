@@ -30,7 +30,11 @@ import {
   MsgDataRepositoryGetItemValue,
   MsgWorkflowExecute,
   MsgWorkflowExecutionResult,
-  MsgWorkflowPageComponentsCode
+  MsgWorkflowPageComponentsCode,
+  MsgWorkflowLumyWorkflowLoadProgress,
+  MsgWorkflowLoadLumyWorkflow,
+  MsgWorkflowGetWorkflowList,
+  MsgWorkflowWorkflowList
 } from './generated'
 
 /**
@@ -55,6 +59,10 @@ export namespace Workflow {
   export type ExecutionResult = MsgWorkflowExecutionResult
   export type GetPageComponentsCode = void
   export type PageComponentsCode = MsgWorkflowPageComponentsCode
+  export type LumyWorkflowLoadProgress = MsgWorkflowLumyWorkflowLoadProgress
+  export type LoadLumyWorkflow = MsgWorkflowLoadLumyWorkflow
+  export type GetWorkflowList = MsgWorkflowGetWorkflowList
+  export type WorkflowList = MsgWorkflowWorkflowList
 
   export namespace codec {
     export const Updated = Codec<Updated>('Updated')
@@ -63,6 +71,10 @@ export namespace Workflow {
     export const ExecutionResult = Codec<ExecutionResult>('ExecutionResult')
     export const GetPageComponentsCode = Codec<GetPageComponentsCode>('GetPageComponentsCode')
     export const PageComponentsCode = Codec<PageComponentsCode>('PageComponentsCode')
+    export const LumyWorkflowLoadProgress = Codec<LumyWorkflowLoadProgress>('LumyWorkflowLoadProgress')
+    export const LoadLumyWorkflow = Codec<LoadLumyWorkflow>('LoadLumyWorkflow')
+    export const GetWorkflowList = Codec<GetWorkflowList>('GetWorkflowList')
+    export const WorkflowList = Codec<WorkflowList>('WorkflowList')
   }
 }
 

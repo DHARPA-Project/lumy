@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "MsgWorkflowLumyWorkflowLoadProgress",
+  "description": "Progress status updates published when a Lumy workflow is being loaded.\nThis is mostly needed to publish updates about installed dependencies",
+  "properties": {
+    "status": {
+      "type": "string",
+      "description": "Status of the process",
+      "enum": ["loading", "loaded"]
+    },
+    "type": {
+      "type": "string",
+      "description": "Message type",
+      "enum": ["info", "error"]
+    },
+    "message": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "status",
+    "type",
+    "message"
+  ]
+}

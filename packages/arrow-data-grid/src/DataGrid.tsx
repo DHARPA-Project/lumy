@@ -7,7 +7,7 @@ import {
   GridFooter,
   GridSortModelParams
 } from '@material-ui/data-grid'
-import { TableStats, TabularDataFilter, DataFilterCondtion } from '@dharpa-vre/client-core'
+import { TableStats, TabularDataFilter, DataFilterCondition } from '@dharpa-vre/client-core'
 import { useStyles, useHeights } from './DataGrid.styles'
 import { LumyDataGridFilterPanel, MultiFilterIconEnabler } from './LumyDataGridFilterPanel'
 import {
@@ -113,7 +113,7 @@ export const DataGrid = ({
     onFiltering?.(updatedFilter)
   }
 
-  const handleFilterConditionUpdated = (condition: DataFilterCondtion) => {
+  const handleFilterConditionUpdated = (condition: DataFilterCondition) => {
     const updatedFilter: TabularDataFilter = {
       ...filter,
       condition

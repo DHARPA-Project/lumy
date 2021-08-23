@@ -13,11 +13,11 @@ import {
   GridLinkOperator
 } from '@material-ui/data-grid'
 import {
-  DataFilterCondtion,
+  DataFilterCondition,
   DataSortingMethod,
   DataSortingDirection,
   DataFilterItem,
-  DataFilterCondtionOperator
+  DataFilterConditionOperator
 } from '@dharpa-vre/client-core'
 import { getFilterOperators } from '../filterOperators'
 import { getCellRenderer } from '../cellRenderers'
@@ -29,7 +29,7 @@ import { getHeaderRenderer } from '../headerRenderer'
  * Internally, `data-grid` uses GridFilterModelState to figure out if a column has
  * a filter applied. So we provide some fake filters here.
  */
-export const toGridFilterModelState = (condition: DataFilterCondtion | undefined): GridFilterModelState => ({
+export const toGridFilterModelState = (condition: DataFilterCondition | undefined): GridFilterModelState => ({
   items:
     condition?.items?.map(item => ({
       columnField: item.column,
@@ -102,12 +102,12 @@ export const asGridLinkOperator = (operator: DataFilterItem['operator'] | undefi
   }
 }
 
-export const asDataFilterCondtionOperator = (operator: GridLinkOperator): DataFilterCondtionOperator => {
+export const asDataFilterConditionOperator = (operator: GridLinkOperator): DataFilterConditionOperator => {
   switch (operator) {
     case GridLinkOperator.Or:
-      return DataFilterCondtionOperator.Or
+      return DataFilterConditionOperator.Or
     default:
-      return DataFilterCondtionOperator.And
+      return DataFilterConditionOperator.And
   }
 }
 
