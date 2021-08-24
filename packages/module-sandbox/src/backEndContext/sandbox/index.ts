@@ -808,21 +808,32 @@ export class SandboxContext implements IBackEndContext {
   }
 
   async sendMessage<T, U = void>(target: Target, msg: MessageEnvelope<T>): Promise<U> {
-    const response = await (async () => {
-      switch (target) {
-        case Target.Activity:
-          return this._handleActivity(undefined, msg).then(x => (x as unknown) as U)
-        case Target.ModuleIO:
-          return this._handleModuleIO(undefined, msg).then(x => (x as unknown) as U)
-        case Target.Workflow:
-          return this._handleWorkflow(undefined, msg).then(x => (x as unknown) as U)
-        case Target.DataRepository:
-          return this._handleDataRepository(undefined, msg).then(x => (x as unknown) as U)
-        case Target.Notes:
-          return this._handleNotes(undefined, msg).then(x => (x as unknown) as U)
-      }
-    })()
-    if (response != null) this._signals[target].emit((response as unknown) as ME<unknown>)
+    try {
+      const response = await (async () => {
+        switch (target) {
+          case Target.Activity:
+            return this._handleActivity(undefined, msg).then(x => (x as unknown) as U)
+          case Target.ModuleIO:
+            return this._handleModuleIO(undefined, msg).then(x => (x as unknown) as U)
+          case Target.Workflow:
+            return this._handleWorkflow(undefined, msg).then(x => (x as unknown) as U)
+          case Target.DataRepository:
+            return this._handleDataRepository(undefined, msg).then(x => (x as unknown) as U)
+          case Target.Notes:
+            return this._handleNotes(undefined, msg).then(x => (x as unknown) as U)
+        }
+      })()
+      if (response != null) this._signals[target].emit((response as unknown) as ME<unknown>)
+    } catch (e) {
+      this._signals[Target.Activity].emit(
+        Messages.Activity.codec.Error.encode({
+          id: getRandomId(),
+          message: (e as Error).message,
+          extendedMessage: (e as Error).stack
+        })
+      )
+      throw e
+    }
     return
   }
 
