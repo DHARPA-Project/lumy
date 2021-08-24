@@ -3,13 +3,13 @@ import { BackEndContext, handlerAdapter, Target } from '../common/context'
 import { Messages, WorkflowExecutionStatus } from '../common/types'
 
 type ItemStatus = 'new' | 'creating' | 'created' | 'error'
-export type ItemCreationMethod = 'table.from_csv' | 'onboarding.file.import'
+export type ItemCreationMethod = 'lumydev.table_from_file' | 'lumydev.table.local_file'
 
 type InputBuilderFn = (filePath: string) => Record<string, unknown>
 
 const inputsBuilders: Record<ItemCreationMethod, InputBuilderFn> = {
-  'table.from_csv': (path: string) => ({ path }),
-  'onboarding.file.import': (path: string) => ({ path })
+  'lumydev.table_from_file': (path: string) => ({ path }),
+  'lumydev.table.local_file': (path: string) => ({ path })
 }
 
 type AddItemFn = (method: ItemCreationMethod, filePath: string, workflowId: string) => void

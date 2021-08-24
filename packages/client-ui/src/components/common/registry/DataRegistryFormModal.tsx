@@ -29,7 +29,7 @@ type PageParams = {
   id?: string
 }
 
-const methods: ItemCreationMethod[] = ['table.from_csv', 'onboarding.file.import']
+const methods: ItemCreationMethod[] = ['lumydev.table_from_file', 'lumydev.table.local_file']
 
 type FormValues = {
   method: ItemCreationMethod
@@ -45,7 +45,7 @@ type StatusMessage = {
 }
 
 const initialFormValues: FormValues = {
-  method: 'table.from_csv',
+  method: 'lumydev.table_from_file',
   path: '',
   name: '',
   tags: '',
