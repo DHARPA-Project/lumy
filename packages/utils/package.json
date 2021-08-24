@@ -1,29 +1,25 @@
 {
-  "name": "@lumy/module-sandbox",
+  "name": "@lumy/utils",
   "version": "0.1.0",
-  "description": "Tools for developing a Lumy UI module.",
+  "description": "Lumy utility functions",
   "keywords": [
     "lumy",
-    "module"
+    "utility functions",
+    "helper functions",
+    "utilities",
+    "helpers"
   ],
   "homepage": "https://dharpa.org",
   "main": "src/index.ts",
   "license": "AGPL-3.0-only",
-  "author": "roman@kalyakin.com",
   "scripts": {
     "watch": "tsc -w",
     "eslint": "eslint src --ext .ts,.tsx,.js,.jsx --fix",
     "eslint:check": "eslint src --ext .ts,.tsx,.js,.jsx",
     "build:lib": "tsc"
   },
-  "dependencies": {
-    "@lumino/signaling": "1",
-    "apache-arrow": "4",
-    "react": "17",
-    "react-dom": "17",
-    "@dharpa-vre/client-ui": "*",
-    "@lumy/styles": "*",
-    "@lumy/utils": "*"
+  "peerDependencies": {
+    "react": "17"
   },
   "devDependencies": {
     "@types/node": "14",

@@ -24,6 +24,7 @@
     "@dharpa-vre/datavis-components": "*",
     "@lumy/module-core": "*",
     "@lumy/styles": "*",
+    "@lumy/utils": "*",
     "@material-ui/core": "^4.11.3",
     "apache-arrow": "4",
     "react": "17"

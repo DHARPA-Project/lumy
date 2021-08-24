@@ -20,6 +20,7 @@
     "@dharpa-vre/client-core": "*",
     "@dharpa-vre/common-ui-components": "*",
     "@lumy/styles": "*",
+    "@lumy/utils ": "*",
     "react": "17"
   },
   "devDependencies": {

@@ -23,6 +23,7 @@
     "@dharpa-vre/splash-screen": "*",
     "@lumy/module-sandbox": "*",
     "@lumy/styles": "*",
+    "@lumy/utils": "*",
     "@lumino/signaling": "1",
     "apache-arrow": "4",
     "js-yaml": "4",

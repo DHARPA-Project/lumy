@@ -18,6 +18,7 @@
   },
   "peerDependencies": {
     "@lumy/styles": "*",
+    "@lumy/utils": "*",
     "@lumy/client-core": "*",
     "react": "17",
     "react-dom": "17"
