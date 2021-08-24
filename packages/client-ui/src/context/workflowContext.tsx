@@ -3,13 +3,8 @@ import React, { createContext, useEffect, useRef, useState } from 'react'
 import { useCurrentWorkflow, WorkflowPageDetails } from '@dharpa-vre/client-core'
 
 import sampleJupyterNotebook from '../data/notebook.ipynb'
-import {
-  WorkflowType,
-  WorkflowProviderProps,
-  screenSplitDirectionType,
-  IWorkflowLayout
-} from './workflowContext.types'
-import { screenSplitOptions, workflowLayoutLocalStorageKey } from './workflowContext.const'
+import { WorkflowType, WorkflowProviderProps, screenSplitDirectionType } from './workflowContext.types'
+import { screenSplitOptions } from './workflowContext.const'
 
 export const WorkflowContext = createContext<WorkflowType>(null)
 
@@ -21,8 +16,8 @@ const WorkflowContextProvider = ({ children }: WorkflowProviderProps): JSX.Eleme
   const [featureTabIndex, setFeatureTabIndex] = useState(0)
   const [[currentPageIndex, direction], setCurrentPageIndexAndDirection] = useState([0, 0])
   const [isAdditionalPaneVisible, setIsAdditionalPaneVisible] = useState<boolean>(false)
-  const [mainPaneHeight, setMainPaneHeight] = useState<number>(0)
-  const [mainPaneWidth, setMainPaneWidth] = useState<number>(0)
+  const [mainPaneHeight, setMainPaneHeight] = useState<number | null>(null)
+  const [mainPaneWidth, setMainPaneWidth] = useState<number | null>(null)
 
   const workflowMeta = currentWorkflow?.meta
   const workflowPages: WorkflowPageDetails[] = currentWorkflow?.ui?.pages ?? []
@@ -36,60 +31,6 @@ const WorkflowContextProvider = ({ children }: WorkflowProviderProps): JSX.Eleme
   const dividerPosition = useRef<{ x?: number; y?: number }>(null)
 
   const [splitDirection, setSplitDirection] = useState<screenSplitDirectionType>('horizontal')
-
-  // load previously saved workflow layout context values from local storage
-  useEffect(() => {
-    try {
-      const localStorageData = window.localStorage.getItem(workflowLayoutLocalStorageKey)
-
-      if (localStorageData != null) {
-        const workflowLayout: IWorkflowLayout = JSON.parse(localStorageData)
-
-        if (workflowLayout.isRightSideBarVisible)
-          setIsRightSideBarVisible(workflowLayout.isRightSideBarVisible)
-        if (workflowLayout.isSideDrawerOpen) setIsSideDrawerOpen(workflowLayout.isSideDrawerOpen)
-        if (workflowLayout.featureTabIndex) setFeatureTabIndex(workflowLayout.featureTabIndex)
-        if (workflowLayout.currentPageIndex && workflowLayout.direction)
-          setCurrentPageIndexAndDirection([workflowLayout.currentPageIndex, workflowLayout.direction])
-        if (workflowLayout.isAdditionalPaneVisible)
-          setIsAdditionalPaneVisible(workflowLayout.isAdditionalPaneVisible)
-        if (workflowLayout.mainPaneHeight) setMainPaneHeight(workflowLayout.mainPaneHeight)
-        if (workflowLayout.mainPaneWidth) setMainPaneWidth(workflowLayout.mainPaneWidth)
-      }
-    } catch (error) {
-      console.error('retrieving workflow layout data from local storage failed: ', error)
-    }
-  }, [])
-
-  // save workflow layout data to local storage on every state update
-  useEffect(() => {
-    try {
-      window.localStorage.setItem(
-        workflowLayoutLocalStorageKey,
-        JSON.stringify({
-          isRightSideBarVisible,
-          isSideDrawerOpen,
-          featureTabIndex,
-          currentPageIndex,
-          direction,
-          isAdditionalPaneVisible,
-          mainPaneHeight,
-          mainPaneWidth
-        })
-      )
-    } catch (error) {
-      console.error('saving workflow layout data to local storage failed: ', error)
-    }
-  }, [
-    isRightSideBarVisible,
-    isSideDrawerOpen,
-    featureTabIndex,
-    currentPageIndex,
-    direction,
-    isAdditionalPaneVisible,
-    mainPaneHeight,
-    mainPaneWidth
-  ])
 
   useEffect(() => {
     document.addEventListener('mouseup', onMouseUp)
@@ -106,26 +47,36 @@ const WorkflowContextProvider = ({ children }: WorkflowProviderProps): JSX.Eleme
 
     if (splitDirection === 'horizontal') {
       setMainPaneWidth(getStepContainerWidth() / 2)
-      setMainPaneHeight(getStepContainerHeight())
+      setMainPaneHeight(null)
     } else if (splitDirection === 'vertical') {
-      setMainPaneWidth(getStepContainerWidth())
+      setMainPaneWidth(null)
       setMainPaneHeight(getStepContainerHeight() / 2)
     }
   }, [splitDirection])
 
   useEffect(() => {
-    if (!mainPaneWidth) return
+    if (!mainPaneRef.current) return
+
+    if (mainPaneWidth == null || typeof mainPaneWidth !== 'number') {
+      mainPaneRef.current.style.minWidth = '100%'
+      mainPaneRef.current.style.maxWidth = '100%'
+    }
 
     mainPaneRef.current.style.minWidth = mainPaneWidth + 'px'
     mainPaneRef.current.style.maxWidth = mainPaneWidth + 'px'
-  }, [mainPaneWidth])
+  }, [mainPaneWidth, mainPaneRef.current])
 
   useEffect(() => {
-    if (!mainPaneHeight) return
+    if (!mainPaneRef.current) return
+
+    if (mainPaneHeight == null || typeof mainPaneHeight !== 'number') {
+      mainPaneRef.current.style.minHeight = '100%'
+      mainPaneRef.current.style.maxHeight = '100%'
+    }
 
     mainPaneRef.current.style.minHeight = mainPaneHeight + 'px'
     mainPaneRef.current.style.maxHeight = mainPaneHeight + 'px'
-  }, [mainPaneHeight])
+  }, [mainPaneHeight, mainPaneRef.current])
 
   const getStepContainerWidth = () => stepContainerRef.current?.getBoundingClientRect()?.width
   const getStepContainerHeight = () => stepContainerRef.current?.getBoundingClientRect()?.height

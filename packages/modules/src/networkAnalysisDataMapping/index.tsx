@@ -1,6 +1,8 @@
 import React from 'react'
 import { Table } from 'apache-arrow'
 
+import Container from '@material-ui/core/Container'
+
 import {
   DataRepositoryItemsTable,
   DataRepositoryItemStructure,
@@ -145,15 +147,17 @@ const NetworkAnalysisDataMapping = ({ pageDetails: { id: stepId } }: ModuleProps
   }
 
   return (
-    <TabularDataMappingForm
-      corpusPage={corpusPage}
-      requiredDataSets={networkAnalysisDataSets}
-      isDataSetMappedInDataSource={isDataSetMappedInDataSource}
-      getColumnMappedToField={getColumnMappedToField}
-      clearMappingsForDataSet={clearMappingsForDataSet}
-      setColumnMappedToField={setColumnMappedToField}
-      tableCaption={dataMappingTableCaption}
-    />
+    <Container maxWidth="lg">
+      <TabularDataMappingForm
+        corpusPage={corpusPage}
+        requiredDataSets={networkAnalysisDataSets}
+        isDataSetMappedInDataSource={isDataSetMappedInDataSource}
+        getColumnMappedToField={getColumnMappedToField}
+        clearMappingsForDataSet={clearMappingsForDataSet}
+        setColumnMappedToField={setColumnMappedToField}
+        tableCaption={dataMappingTableCaption}
+      />
+    </Container>
   )
 }
 

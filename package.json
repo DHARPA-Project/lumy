@@ -19,5 +19,8 @@
     "compile-and-lint": "yarn tsc:check && yarn eslint:check",
     "typescript:check": "yarn compile-and-lint",
     "verify": "yarn typescript:check"
+  },
+  "resolutions": {
+    "typescript": "4"
   }
 }

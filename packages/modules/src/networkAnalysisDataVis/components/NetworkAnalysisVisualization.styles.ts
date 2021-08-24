@@ -1,14 +1,21 @@
 import { makeStyles } from '@material-ui/core/styles'
-import { Theme } from '@lumy/styles'
 
-export default makeStyles((theme: Theme) => ({
+export default makeStyles(() => ({
   visualizationContainer: {
-    height: '100%',
-    display: 'grid',
-    gridTemplateColumns: 'minmax(250px, 25%) auto'
+    flex: 1,
+    display: 'flex'
+  },
+  left: {
+    display: 'flex',
+    flexDirection: 'column',
+    overflow: 'scroll'
+  },
+  right: {
+    flex: 1,
+    display: 'flex'
   },
   graphContainer: {
-    height: `calc(100% - 2 * ${theme.layout.scrollBarWidth}px)`,
-    position: 'relative'
+    flex: 1,
+    overflow: 'hidden'
   }
 }))
