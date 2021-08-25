@@ -5,7 +5,7 @@ import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
 
 import { featureList } from '../../const/features'
-import { WorkflowContext } from '../../context/workflowContext'
+import { WorkflowContext } from '../../state'
 import useStyles from './FeatureTabs.styles'
 
 import TabPanel from './TabPanel'

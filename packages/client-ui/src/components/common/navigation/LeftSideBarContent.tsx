@@ -9,7 +9,7 @@ import Grow from '@material-ui/core/Grow'
 import ExploreIcon from '@material-ui/icons/Explore'
 
 // import { ProjectContext } from '../../../context/projectContext'
-import { PageLayoutContext } from '../../../context/pageLayoutContext'
+import { LayoutContext } from '../../../state'
 // import { pageRoutes, NavItemType } from '../../../const/routes'
 import { pageRoutes } from '../../../const/routes'
 import useStyles from './LeftSideBarContent.styles'
@@ -19,8 +19,8 @@ import NavItem from './NavItem'
 const LeftSideBarContent = (): JSX.Element => {
   const classes = useStyles()
 
-  // const { isLeftSideBarExpanded, setIsLeftSideBarExpanded } = useContext(PageLayoutContext)
-  const { isLeftSideBarExpanded } = useContext(PageLayoutContext)
+  // const { isLeftSideBarExpanded, setIsLeftSideBarExpanded } = useContext(LayoutContext)
+  const { isLeftSideBarExpanded } = useContext(LayoutContext)
 
   // const { projectList } = useContext(ProjectContext)
 

@@ -13,7 +13,7 @@ import {
 import { Note as NoteType, useStepNotes } from '@dharpa-vre/client-core'
 
 import useStyles from './NoteEditor.styles'
-import { WorkflowContext } from '../../context/workflowContext'
+import { WorkflowContext } from '../../state'
 
 const NoteEditor = (): JSX.Element => {
   const classes = useStyles()

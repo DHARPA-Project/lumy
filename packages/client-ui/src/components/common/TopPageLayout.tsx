@@ -4,7 +4,7 @@ import { ThemeProvider } from '@material-ui/core/styles'
 import { ThemeContext } from '@lumy/styles'
 
 import useStyles from './TopPageLayout.styles'
-import { PageLayoutContext } from '../../context/pageLayoutContext'
+import { LayoutContext } from '../../state'
 
 import LeftSideBarContainer from './navigation/LeftSideBarContainer'
 import LeftSideBarContent from './navigation/LeftSideBarContent'
@@ -17,7 +17,7 @@ const TopPageLayout = ({ children }: TopPageLayoutProps): JSX.Element => {
   const classes = useStyles()
 
   const { sidebarTheme } = useContext(ThemeContext)
-  const { isLeftSideBarExpanded } = useContext(PageLayoutContext)
+  const { isLeftSideBarExpanded } = useContext(LayoutContext)
 
   return (
     <div className={classes.pageContainer}>

@@ -4,7 +4,7 @@ import { Redirect, useRouteMatch } from 'react-router-dom'
 import Button from '@material-ui/core/Button'
 import DeleteIcon from '@material-ui/icons/Delete'
 
-import { ProjectContext } from '../../context/projectContext'
+import { ProjectContext } from '../../state'
 
 const ProjectPage = (): JSX.Element => {
   const match = useRouteMatch()

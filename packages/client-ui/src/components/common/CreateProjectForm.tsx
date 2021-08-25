@@ -10,7 +10,7 @@ import InputLabel from '@material-ui/core/InputLabel'
 
 import DoneIcon from '@material-ui/icons/Done'
 
-import { ProjectContext, workflowCategories } from '../../context/projectContext'
+import { ProjectContext, workflowCategories } from '../../state'
 import useStyles from './CreateProjectForm.styles'
 
 type CreateProjectFormProps = {

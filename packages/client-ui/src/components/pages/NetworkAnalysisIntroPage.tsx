@@ -9,7 +9,7 @@ import Container from '@material-ui/core/Container'
 
 import AddIcon from '@material-ui/icons/Add'
 
-import { ProjectContext, workflowCategories } from '../../context/projectContext'
+import { ProjectContext, workflowCategories } from '../../state'
 import useStyles from './NetworkAnalysisIntroPage.styles'
 
 import NavProjectLink from '../common/navigation/NavProjectLink'
