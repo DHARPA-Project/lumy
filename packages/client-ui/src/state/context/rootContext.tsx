@@ -2,6 +2,7 @@ import React from 'react'
 
 import { ThemeContextProvider as ThemeProvider } from '@lumy/styles'
 
+import { NotificationProvider } from './notificationContext'
 import { LayoutProvider } from './layoutContext'
 import { ProjectProvider } from './projectContext'
 
@@ -9,10 +10,12 @@ export const RootProvider = ({ children }: { children: React.ReactNode }): JSX.E
   return (
     <ThemeProvider>
       <LayoutProvider>
-        <ProjectProvider>
-          {children}
-          {/* prettier-ignore */}
-        </ProjectProvider>
+        <NotificationProvider>
+          <ProjectProvider>
+            {children}
+            {/* prettier-ignore */}
+          </ProjectProvider>
+        </NotificationProvider>
       </LayoutProvider>
     </ThemeProvider>
   )
