@@ -1,10 +1,21 @@
-# DHARPA VRE mono repo
+# Lumy
+
+- [Architecture overview](docs/architecture.md)
+- [Repository Structure](#structure)
+  - [Front end packages](#front-end-packages)
+  - [VSCode support](#vscode-support)
+  - [Code generation](#code-generation)
+  - [Code Health](#code-health-check)
+- [Running in dev mode](#running-in-development-mode)
+- [Workflow UI Modules](#workflow-ui-modules)
 
 ## Structure
 
 All front end Typescript packages are in `packages` directory, except the `jupyterlab-extension` package which is in `applications` directory.
 
 JSON schema files are in `schema/json`.
+
+<img width="1007" alt="Monorepo structure" src="https://user-images.githubusercontent.com/89853/111668423-05a09480-8816-11eb-92c4-6629dffe6ef9.png">
 
 ### Front end packages
 
@@ -110,10 +121,6 @@ yarn start
 
 The web app is available on [http://localhost:8080/](http://localhost:8080/).
 
-## Modules panels
+## Workflow UI Modules
 
 Modules panels components are in `packages/modules`. Generally one file per module, mapped to module by `id` in the `index.ts`.
-
-## Repository structure overview
-
-<img width="1007" alt="Screen Shot 2021-03-18 at 18 15 40" src="https://user-images.githubusercontent.com/89853/111668423-05a09480-8816-11eb-92c4-6629dffe6ef9.png">
