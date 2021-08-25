@@ -10,6 +10,7 @@ export function getMenu(props: MenuProps): Menu {
   const menuItems: (MenuItem | MenuItemConstructorOptions)[] = [
     getMainMenu(props),
     { role: 'fileMenu' },
+    { role: 'editMenu' },
     { role: 'viewMenu' },
     { role: 'windowMenu' },
     getHelpMenu(props)
