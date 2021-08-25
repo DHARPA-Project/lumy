@@ -1,5 +1,7 @@
 # Toy VRE
 
+**DEPRECATED**
+
 Playing around with core features of a VRE.
 
 ## Development
