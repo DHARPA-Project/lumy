@@ -1,10 +1,12 @@
-# VRE Client core
+# Lumy client core
 
-Core functionality for VRE client code.
+Core code for Lumy. It contains all the code dealing with communication with the backend as well as common code used in business logic.
+
+**NOTE**: This package is UI framework agnostic. UI elements should not be added here.
 
 ### Hooks
 
-This package provides a collection of React hooks for dealing with VRE state and workflow data.
+This package provides a collection of React hooks for dealing with Lumy state and workflow data.
 
 ## Development
 
