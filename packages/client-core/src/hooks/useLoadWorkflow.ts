@@ -5,21 +5,23 @@ import { Workflow } from '../common/types/messages'
 
 export type LoadProgress = Workflow.LumyWorkflowLoadProgress
 
-export const useLoadWorkflow = (workflow: LumyWorkflow | string): [LoadProgress[], boolean] => {
+export const useLoadWorkflow = (
+  workflow: LumyWorkflow | string
+): [LoadProgress[], LumyWorkflowLoadStatus] => {
   const context = useContext(BackEndContext)
-  const [isLoading, setIsLoading] = useState(false)
+  const [status, setStatus] = useState<LumyWorkflowLoadStatus>()
   const [messages, setMessages] = useState<LoadProgress[]>([])
 
   useEffect(() => {
     if (workflow == null) return
 
     const handler = handlerAdapter(Workflow.codec.LumyWorkflowLoadProgress.decode, msg => {
-      setIsLoading(msg.status == LumyWorkflowLoadStatus.Loading)
-      setMessages(messages.concat(msg))
+      setStatus(msg.status)
+      setMessages(messages => messages.concat(msg))
     })
 
     context.subscribe(Target.Workflow, handler)
-    setIsLoading(true)
+    setStatus(LumyWorkflowLoadStatus.Loading)
     setMessages([])
     context.sendMessage(
       Target.Workflow,
@@ -31,5 +33,5 @@ export const useLoadWorkflow = (workflow: LumyWorkflow | string): [LoadProgress[
     return () => context.unsubscribe(Target.Workflow, handler)
   }, [JSON.stringify(workflow)])
 
-  return [messages, isLoading]
+  return [messages, status]
 }

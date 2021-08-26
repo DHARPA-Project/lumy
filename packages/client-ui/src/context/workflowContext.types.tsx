@@ -13,6 +13,8 @@ export type WorkflowType = {
   workflowPages: WorkflowPageDetails[]
   currentPageIndex: number
   currentPageDetails?: WorkflowPageDetails
+  currentPageId?: WorkflowPageDetails['id']
+  setCurrentPageId: (id: WorkflowPageDetails['id']) => void
   direction: number
   setCurrentPageIndexAndDirection: Dispatch<SetStateAction<[number, number]>>
   mainPaneWidth: number
