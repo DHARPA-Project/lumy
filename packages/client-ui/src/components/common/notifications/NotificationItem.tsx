@@ -17,7 +17,7 @@ const NotificationItem = ({ notification, onCloseClick }: NIProps): JSX.Element 
 
   return (
     <ListItem className={classes.notificationListItem}>
-      <NotificationAlert notification={notification} onCloseClick={onCloseClick} />
+      <NotificationAlert notification={notification} onCloseClick={onCloseClick} variant="outlined" />
     </ListItem>
   )
 }

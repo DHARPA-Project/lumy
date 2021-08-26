@@ -12,17 +12,19 @@ import { INotification } from '../../../state'
 type NAProps = {
   notification: INotification
   onCloseClick?: (id: string) => void
+  variant?: 'standard' | 'filled' | 'outlined'
 }
 
 const NotificationAlert = React.forwardRef(
   (props: NAProps, ref): JSX.Element => {
     const classes = useStyles()
 
-    const { notification, onCloseClick } = props ?? {}
+    const { notification, onCloseClick, variant } = props ?? {}
 
     return (
       <Alert
         ref={ref}
+        variant={variant ? variant : 'standard'}
         severity={notification.type}
         classes={{ root: classes.alertRoot, icon: classes.alertIcon }}
         action={
