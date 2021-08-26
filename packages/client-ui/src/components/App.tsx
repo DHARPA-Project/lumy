@@ -15,6 +15,7 @@ import PlaygroundPage from './pages/PlaygroundPage'
 import WorkflowProjectPage from './pages/WorkflowProjectPage'
 import DataRegistryPage from './pages/DataRegistryPage'
 import DataRegistryFormModal from './common/registry/DataRegistryFormModal'
+import ToastContainer from './common/notifications/ToastContainer'
 
 const WorkflowUrlPrefix = '/workflows/network-analysis/directed'
 
@@ -43,6 +44,8 @@ export const App = (): JSX.Element => {
           <Route path="/dataregistry/add" exact component={DataRegistryFormModal} />
           <Route path="/dataregistry/edit/:id" exact component={DataRegistryFormModal} />
         </TopPageLayout>
+
+        <ToastContainer />
       </Router>
     </RootProvider>
   )
