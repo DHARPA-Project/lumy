@@ -4,7 +4,7 @@ export default makeStyles(theme => ({
   notificationButton: {
     position: 'absolute',
     top: theme.spacing(2),
-    right: theme.spacing(2),
+    left: theme.spacing(0.5),
     zIndex: theme.zIndex.speedDial
   },
   sizeSmall: {
@@ -12,10 +12,7 @@ export default makeStyles(theme => ({
     width: theme.spacing(4)
   },
   drawerPaper: {
-    width: '50%',
-    maxWidth: theme.spacing(100),
-    [theme.breakpoints.down('sm')]: {
-      minWidth: theme.spacing(40)
-    }
+    width: `clamp(${theme.spacing(40)}px, 50vw, ${theme.spacing(100)}px)`,
+    border: 'none'
   }
 }))

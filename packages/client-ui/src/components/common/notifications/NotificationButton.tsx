@@ -8,46 +8,41 @@ import NotificationsIcon from '@material-ui/icons/Notifications'
 
 import useStyles from './NotificationButton.styles'
 import { NotificationContext } from '../../../state'
-import NotificationList from './NotificationList'
+import NotificationContainer from './NotificationContainer'
 
 const NotificationButton: React.FC = () => {
   const classes = useStyles()
 
   const { notifications } = useContext(NotificationContext)
 
-  const [isNotificationListOpen, setIsNotificationListOpen] = useState(false)
+  const [isNotificationContainerOpen, setIsNotificationContainerOpen] = useState(false)
 
   return (
     <>
+      <Fab
+        color="default"
+        size="small"
+        aria-label="edit"
+        classes={{
+          root: classes.notificationButton,
+          sizeSmall: classes.sizeSmall
+        }}
+        onClick={() => setIsNotificationContainerOpen(true)}
+      >
+        <Badge badgeContent={notifications.length} color="error">
+          <NotificationsIcon />
+        </Badge>
+      </Fab>
+
       <Drawer
         variant="temporary"
-        anchor="right"
-        open={isNotificationListOpen}
-        onClose={() => setIsNotificationListOpen(false)}
+        anchor="left"
+        open={isNotificationContainerOpen}
+        onClose={() => setIsNotificationContainerOpen(false)}
         classes={{ paper: classes.drawerPaper }}
       >
-        <NotificationList />
+        <NotificationContainer />
       </Drawer>
-
-      {!isNotificationListOpen && (
-        <Fab
-          color="default"
-          size="small"
-          aria-label="edit"
-          classes={{
-            root: classes.notificationButton,
-            sizeSmall: classes.sizeSmall
-          }}
-          onClick={() => {
-            console.log('notification button clicked!')
-            setIsNotificationListOpen(true)
-          }}
-        >
-          <Badge badgeContent={notifications.length} color="error">
-            <NotificationsIcon />
-          </Badge>
-        </Fab>
-      )}
     </>
   )
 }
