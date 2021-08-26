@@ -39,7 +39,9 @@ const WorkflowsPage = (): JSX.Element => {
   const [workflows, isLoading] = useWorkflowList()
   const [, currentWorkflowMeta] = useCurrentWorkflow()
   const [newWorkflow, setNewWorkflow] = React.useState<WorkflowListItem>()
-  const [workflowLoadingProgressMessages, workflowLoadingStatus] = useLoadWorkflow(newWorkflow?.body)
+  const [workflowLoadingProgressMessages, workflowLoadingStatus] = useLoadWorkflow(
+    newWorkflow?.body ?? newWorkflow?.uri
+  )
 
   const classes = useTheme()
 
