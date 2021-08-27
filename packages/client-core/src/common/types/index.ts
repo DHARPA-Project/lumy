@@ -13,6 +13,7 @@ export type {
   DataRepositoryItemsFilter,
   Note,
   LumyWorkflow,
+  Metadata as WorkflowMetadata,
   WorkflowPageDetails,
   WorkflowPageComponent,
   DataPreviewLayoutMetadataItem,

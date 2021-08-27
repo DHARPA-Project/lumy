@@ -7,6 +7,16 @@
   "properties": {
     "workflow": {
       "$ref": "https://dharpa.org/schema/types/workflow/LumyWorkflow.json"
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "uri": {
+          "type": "string",
+          "description": "URI of the file the workflow was loaded from."
+        }
+      }
     }
   },
   "required": []

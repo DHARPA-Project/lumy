@@ -33,6 +33,8 @@ import {
   LumyWorkflowLoadStatus
 } from '@dharpa-vre/client-core'
 
+const MockWorkflowUri = 'https://example.com/networkAnalysis.yml'
+
 function getRandomId(): string {
   const uint32 = window.crypto.getRandomValues(new Uint32Array(1))[0]
   return uint32.toString(16)
@@ -495,7 +497,10 @@ export class SandboxContext implements IBackEndContext {
       case Messages.Workflow.codec.GetCurrent.action:
         return adapter(Messages.Workflow.codec.GetCurrent.decode, async () => {
           const msg = Messages.Workflow.codec.Updated.encode({
-            workflow: this._currentWorkflow
+            workflow: this._currentWorkflow,
+            metadata: {
+              uri: MockWorkflowUri
+            }
           })
           this._signals[Target.Workflow].emit(msg)
         })(msg)
@@ -526,7 +531,12 @@ export class SandboxContext implements IBackEndContext {
             workflows: [
               {
                 name: 'Network Analysis',
-                uri: 'https://example.com/networkAnalysis.yml',
+                uri: MockWorkflowUri,
+                body: this._currentWorkflow
+              },
+              {
+                name: 'Network Analysis Clone',
+                uri: MockWorkflowUri.concat('-1'),
                 body: this._currentWorkflow
               }
             ]
@@ -536,6 +546,21 @@ export class SandboxContext implements IBackEndContext {
         return adapter(Messages.Workflow.codec.LoadLumyWorkflow.decode, async message => {
           if (typeof message.workflow === 'string')
             throw new Error('Cannot load workflow from a url in a sandbox context')
+
+          for (const i in [...Array(10).keys()]) {
+            await new Promise(res => setTimeout(res, 100))
+            this._signals[Target.Workflow].emit(
+              Messages.Workflow.codec.LumyWorkflowLoadProgress.encode({
+                message: [...Array(10).keys()].map(() => `Loading ${i}...`).join(' '),
+                type:
+                  Math.random() > 0.5
+                    ? WorkflowLoadProgressMessageType.Info
+                    : WorkflowLoadProgressMessageType.Error,
+                status: LumyWorkflowLoadStatus.Loading
+              })
+            )
+          }
+
           this._currentWorkflow = message.workflow
           return Messages.Workflow.codec.LumyWorkflowLoadProgress.encode({
             message: 'Done',
