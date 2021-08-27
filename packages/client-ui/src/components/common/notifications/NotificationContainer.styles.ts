@@ -4,7 +4,11 @@ import { Theme } from '@lumy/styles'
 export default makeStyles((theme: Theme) => ({
   notificationListContainer: {
     position: 'relative',
-    width: '100%'
+    height: '100%',
+    width: '100%',
+    display: 'flex',
+    flexGrow: 1,
+    flexDirection: 'column'
   },
   notificationToolbar: {
     minHeight: theme.spacing(6)
@@ -18,17 +22,14 @@ export default makeStyles((theme: Theme) => ({
     flexGrow: 1,
     marginLeft: theme.spacing(1)
   },
-  settingButton: {
-    padding: theme.spacing(0.75)
-  },
-  settingList: {
-    margin: theme.spacing(2, 0)
-  },
-  settingItem: {
-    paddingTop: theme.spacing(1),
-    paddingBottom: theme.spacing(1)
-  },
   noNotificationsCard: {
     padding: theme.spacing(2)
+  },
+  bottomBar: {
+    bottom: 0,
+    marginTop: 'auto'
+  },
+  pagination: {
+    justifyContent: 'center'
   }
 }))
