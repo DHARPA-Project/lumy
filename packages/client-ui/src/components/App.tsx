@@ -18,7 +18,7 @@ import PlaygroundPage from './pages/PlaygroundPage'
 import WorkflowProjectPage from './pages/WorkflowProjectPage'
 import DataRegistryPage from './pages/DataRegistryPage'
 import DataRegistryFormModal from './common/registry/DataRegistryFormModal'
-import WorkflowsPage from './pages/WorkflowsPage'
+import WorkflowSelectionPage from './pages/WorkflowSelectionPage'
 import CurrentWorkflowPage from './pages/CurrentWorkflowPage'
 
 const WorkflowUrlPrefix = '/workflows/network-analysis/directed'
@@ -38,7 +38,7 @@ export const App = (): JSX.Element => {
           <Router>
             <TopPageLayout>
               <Switch>
-                <Route path="/workflows" exact component={WorkflowsPage} />
+                <Route path="/workflows" exact component={WorkflowSelectionPage} />
                 <Route path="/workflows/current/:stepId?" exact component={CurrentWorkflowPage} />
 
                 {/* TODO: the route below contains a hardcoded workflow. This will be removed soon. */}
