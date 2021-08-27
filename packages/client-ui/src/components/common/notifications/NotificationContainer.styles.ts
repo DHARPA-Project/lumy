@@ -21,15 +21,5 @@ export default makeStyles((theme: Theme) => ({
   title: {
     flexGrow: 1,
     marginLeft: theme.spacing(1)
-  },
-  noNotificationsCard: {
-    padding: theme.spacing(2)
-  },
-  bottomBar: {
-    bottom: 0,
-    marginTop: 'auto'
-  },
-  pagination: {
-    justifyContent: 'center'
   }
 }))
