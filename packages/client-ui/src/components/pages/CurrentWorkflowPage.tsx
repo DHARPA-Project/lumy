@@ -5,8 +5,8 @@ import { useHistory } from 'react-router-dom'
 import { useCurrentWorkflow } from '@dharpa-vre/client-core'
 import { Container, Paper, Typography } from '@material-ui/core'
 
-import WorkflowContextProvider, { WorkflowContext } from '../../context/workflowContext'
 import useStyles from './CurrentWorkflowPage.styles'
+import { WorkflowContext, WorkflowProvider } from '../../state'
 
 import WorkflowContainer from '../common/WorkflowContainer'
 
@@ -53,9 +53,9 @@ const PageContent = (): JSX.Element => {
 
 const CurrentWorkflowPage = (): JSX.Element => {
   return (
-    <WorkflowContextProvider>
+    <WorkflowProvider>
       <PageContent />
-    </WorkflowContextProvider>
+    </WorkflowProvider>
   )
 }
 
