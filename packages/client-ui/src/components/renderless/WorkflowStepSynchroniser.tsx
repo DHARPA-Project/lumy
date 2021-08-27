@@ -1,7 +1,9 @@
 import React, { useContext, useEffect } from 'react'
 import { useParams } from 'react-router'
+
 import { LumyWorkflow, useCurrentWorkflow } from '@dharpa-vre/client-core'
-import { WorkflowContext } from '../../context/workflowContext'
+
+import { WorkflowContext } from '../../state'
 
 interface WorkflowStepSynchroniserProps {
   stepParameterName: string

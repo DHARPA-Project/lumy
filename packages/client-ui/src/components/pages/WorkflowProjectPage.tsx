@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom'
 
 import Button from '@material-ui/core/Button'
 
-import WorkflowContextProvider from '../../context/workflowContext'
+import { WorkflowProvider } from '../../state'
 
 import WorkflowContainer from '../common/WorkflowContainer'
 import { WorkflowStepSynchroniser } from '../renderless/WorkflowStepSynchroniser'
@@ -63,12 +63,14 @@ const WorkflowProjectPage = ({ pageUrlPrefix }: WorkflowProjectPageProps): JSX.E
 
   if (dataSource === 'repository') {
     return (
-      <WorkflowContextProvider>
+      <WorkflowProvider>
         <WorkflowStepSynchroniser
           stepParameterName={stepParameterName}
           onStepUpdated={handleWorkflowStepUpdated}
         />
+
         <WorkflowContainer />
+
         <WorkflowLoadingProgressDialog
           progressMessages={progressMessages}
           status={workflowLoadingStatus}
@@ -77,7 +79,7 @@ const WorkflowProjectPage = ({ pageUrlPrefix }: WorkflowProjectPageProps): JSX.E
           }}
           open={workflowBody == null || workflowLoadingStatus === LumyWorkflowLoadStatus.Loading}
         />
-      </WorkflowContextProvider>
+      </WorkflowProvider>
     )
   }
 

@@ -7,7 +7,7 @@ import CloudDownloadIcon from '@material-ui/icons/CloudDownload'
 
 import { LoadingIndicator } from '@dharpa-vre/common-ui-components'
 
-import { WorkflowContext } from '../../../context/workflowContext'
+import { WorkflowContext } from '../../../state'
 import useStyles from './CodeView.styles'
 
 const CodeView = (): JSX.Element => {

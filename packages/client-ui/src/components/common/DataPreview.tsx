@@ -11,7 +11,7 @@ import {
 } from '@dharpa-vre/client-core'
 import { DataGrid } from '@dharpa-vre/arrow-data-grid'
 
-import { WorkflowContext } from '../../context/workflowContext'
+import { WorkflowContext } from '../../state'
 
 import Typography from '@material-ui/core/Typography'
 import Card from '@material-ui/core/Card'

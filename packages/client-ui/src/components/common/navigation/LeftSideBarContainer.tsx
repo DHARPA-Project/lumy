@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 
 import useStyles from './LeftSideBarContainer.styles'
-import { PageLayoutContext } from '../../../context/pageLayoutContext'
+import { LayoutContext } from '../../../state'
 
 type LeftSideBarContainerProps = {
   children: React.ReactNode
@@ -10,7 +10,7 @@ type LeftSideBarContainerProps = {
 const LeftSideBarContainer = ({ children }: LeftSideBarContainerProps): JSX.Element => {
   const classes = useStyles()
 
-  const { isLeftSideBarExpanded } = useContext(PageLayoutContext)
+  const { isLeftSideBarExpanded } = useContext(LayoutContext)
 
   return (
     <div className={`${classes.sideBarContainer}${isLeftSideBarExpanded ? '' : ' collapsed'}`}>

@@ -2,13 +2,13 @@ import React, { createContext, useEffect, useRef, useState } from 'react'
 
 import { useCurrentWorkflow, WorkflowPageDetails } from '@dharpa-vre/client-core'
 
-import sampleJupyterNotebook from '../data/notebook.ipynb'
+import sampleJupyterNotebook from '../../data/notebook.ipynb'
 import { WorkflowType, WorkflowProviderProps, screenSplitDirectionType } from './workflowContext.types'
 import { screenSplitOptions } from './workflowContext.const'
 
 export const WorkflowContext = createContext<WorkflowType>(null)
 
-const WorkflowContextProvider = ({ children }: WorkflowProviderProps): JSX.Element => {
+export const WorkflowProvider = ({ children }: WorkflowProviderProps): JSX.Element => {
   const [currentWorkflow] = useCurrentWorkflow()
 
   const [isRightSideBarVisible, setIsRightSideBarVisible] = useState(false)
@@ -200,5 +200,3 @@ const WorkflowContextProvider = ({ children }: WorkflowProviderProps): JSX.Eleme
     </WorkflowContext.Provider>
   )
 }
-
-export default WorkflowContextProvider

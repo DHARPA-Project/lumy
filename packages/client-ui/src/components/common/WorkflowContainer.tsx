@@ -7,8 +7,7 @@ import SpeedDialAction from '@material-ui/lab/SpeedDialAction'
 
 import { LoadingIndicator } from '@dharpa-vre/common-ui-components'
 
-import { WorkflowContext } from '../../context/workflowContext'
-import { screenSplitDirectionType } from '../../context/workflowContext.types'
+import { WorkflowContext, screenSplitDirectionType } from '../../state'
 import { featureList } from '../../const/features'
 import useStyles from './WorkflowContainer.styles'
 

@@ -5,7 +5,7 @@ import Tooltip from '@material-ui/core/Tooltip'
 import IconButton from '@material-ui/core/IconButton'
 
 import useStyles from './RightSideBarContent.styles'
-import { WorkflowContext } from '../../../context/workflowContext'
+import { WorkflowContext } from '../../../state'
 import { featureList } from '../../../const/features'
 
 const RightSideBarContent = (): JSX.Element => {
