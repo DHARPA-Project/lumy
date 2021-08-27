@@ -1,32 +1,22 @@
 import React, { useContext, useState } from 'react'
 
-import Box from '@material-ui/core/Box'
-import Card from '@material-ui/core/Card'
-import AppBar from '@material-ui/core/AppBar'
-import Toolbar from '@material-ui/core/Toolbar'
 import Popover from '@material-ui/core/Popover'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
-import Typography from '@material-ui/core/Typography'
 import IconButton from '@material-ui/core/IconButton'
-import Avatar from '@material-ui/core/Avatar'
 
-import NotificationsIcon from '@material-ui/icons/Notifications'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
 import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline'
 
-import useStyles from './NotificationContainer.styles'
+import useStyles from './NotificationSettings.styles'
 import { NotificationContext } from '../../../state'
 
-import NotificationItem from './NotificationItem'
-import NotificationSettings from './NotificationSettings'
-
-const NotificationContainer = (): JSX.Element => {
+const NotificationSettings = (): JSX.Element => {
   const classes = useStyles()
 
-  const { notifications, deleteNotification, deleteAllNotifications } = useContext(NotificationContext)
+  const { deleteAllNotifications } = useContext(NotificationContext)
 
   const [popoverAnchorEl, setPopoverAnchorEl] = useState<HTMLElement | null>(null)
 
@@ -37,20 +27,17 @@ const NotificationContainer = (): JSX.Element => {
     deleteAllNotifications()
   }
   return (
-    <Box className={classes.notificationListContainer}>
-      <AppBar position="sticky" color="default" variant="elevation" elevation={0}>
-        <Toolbar classes={{ regular: classes.notificationToolbar }} variant="dense">
-          <Avatar className={classes.avatar}>
-            <NotificationsIcon />
-          </Avatar>
-
-          <Typography variant="h6" className={classes.title}>
-            Notifications
-          </Typography>
-
-          <NotificationSettings />
-        </Toolbar>
-      </AppBar>
+    <>
+      <IconButton
+        className={classes.settingButton}
+        onClick={event => setPopoverAnchorEl(event.currentTarget)}
+        color="inherit"
+        edge="end"
+        aria-label="notification-settings"
+        aria-haspopup="true"
+      >
+        <MoreVertIcon />
+      </IconButton>
 
       <Popover
         anchorEl={popoverAnchorEl}
@@ -81,26 +68,8 @@ const NotificationContainer = (): JSX.Element => {
           </ListItem>
         </List>
       </Popover>
-
-      {notifications?.length > 0 ? (
-        <List>
-          {notifications.map(notification => (
-            <NotificationItem
-              key={notification.id}
-              notification={notification}
-              onCloseClick={deleteNotification}
-            />
-          ))}
-        </List>
-      ) : (
-        <Card className={classes.noNotificationsCard}>
-          <Typography variant="subtitle1" component="h3" align="center">
-            You have no notifications to view
-          </Typography>
-        </Card>
-      )}
-    </Box>
+    </>
   )
 }
 
-export default NotificationContainer
+export default NotificationSettings
