@@ -2,11 +2,14 @@ import React, { useContext, useEffect, useRef } from 'react'
 
 import Slide from '@material-ui/core/Slide'
 import ListItem from '@material-ui/core/ListItem'
+import Typography from '@material-ui/core/Typography'
+import IconButton from '@material-ui/core/IconButton'
+import Alert from '@material-ui/lab/Alert'
+
+import CloseIcon from '@material-ui/icons/Close'
 
 import useStyles from './NotificationToast.styles'
 import { NotificationContext, INotification } from '../../../state'
-
-import NotificationAlert from './NotificationAlert'
 
 type NTProps = {
   notification: INotification
@@ -34,7 +37,23 @@ const NotificationToast = ({ notification, lifeSpan = 5000, slideDirection }: NT
   return (
     <Slide direction={slideDirection} in={notification.visible} mountOnEnter unmountOnExit>
       <ListItem className={classes.toastItem}>
-        <NotificationAlert notification={notification} onCloseClick={hideNotification} variant="filled" />
+        <Alert
+          variant="filled"
+          severity={notification.type}
+          classes={{ root: classes.alertRoot, icon: classes.alertIcon }}
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              onClick={() => hideNotification(notification.id)}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+          }
+        >
+          <Typography>{notification.message}</Typography>
+        </Alert>
       </ListItem>
     </Slide>
   )
