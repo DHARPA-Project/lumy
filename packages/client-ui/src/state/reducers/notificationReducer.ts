@@ -8,6 +8,9 @@ export type NotificationAction =
   | { type: 'deleteOne'; payload: string }
   | { type: 'deleteAll' }
 
+// only this number of the most recent notifications will be stored
+const maxNumberNotificationsAllowed = 75
+
 export const notificationReducer = (state: INotification[], action: NotificationAction): INotification[] => {
   switch (action.type) {
     case 'addOne': {
@@ -21,7 +24,7 @@ export const notificationReducer = (state: INotification[], action: Notification
           date: new Date().toString(),
           visible: true
         }
-      ]
+      ].slice(-maxNumberNotificationsAllowed)
     }
 
     case 'hideOne': {
