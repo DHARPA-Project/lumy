@@ -33,39 +33,7 @@ type NotificationContextType = {
   deleteAllNotifications: () => void
 }
 
-/**
- * TODO: remove test values
- */
-const initialNotifications: INotification[] = [
-  // {
-  //   id: '123',
-  //   message: 'test notification 1',
-  //   type: 'success' as NotificationCategory,
-  //   date: new Date().toString(),
-  //   visible: true
-  // },
-  // {
-  //   id: '234',
-  //   message: 'test notification 2',
-  //   type: 'info' as NotificationCategory,
-  //   date: new Date().toString(),
-  //   visible: true
-  // },
-  // {
-  //   id: '345',
-  //   message: 'test notification 3',
-  //   type: 'warning' as NotificationCategory,
-  //   date: new Date().toString(),
-  //   visible: true
-  // },
-  // {
-  //   id: '456',
-  //   message: 'test notification 4',
-  //   type: 'error' as NotificationCategory,
-  //   date: new Date().toString(),
-  //   visible: true
-  // }
-]
+const initialNotifications: INotification[] = []
 
 export const NotificationContext = createContext<NotificationContextType>(null)
 
@@ -108,11 +76,6 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
   const deleteNotification = (id: string): void => notificationDispatch({ type: 'deleteOne', payload: id })
 
   const deleteAllNotifications = (): void => notificationDispatch({ type: 'deleteAll' })
-
-  /**
-   * TODO: remove
-   */
-  // if (!window.createNotification) window.createNotification = createNotification
 
   return (
     <NotificationContext.Provider
