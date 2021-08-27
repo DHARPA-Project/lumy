@@ -153,6 +153,12 @@ export const WorkflowProvider = ({ children }: WorkflowProviderProps): JSX.Eleme
     })
   }
 
+  const setCurrentPageId = (id: WorkflowPageDetails['id']) => {
+    const pageIds = currentWorkflow?.ui?.pages?.map(page => page.id)
+    const pageIndex = pageIds?.indexOf(id)
+    if (pageIndex >= 0 && pageIndex != currentPageIndex) setCurrentPageIndexAndDirection([pageIndex, 0])
+  }
+
   return (
     <WorkflowContext.Provider
       value={{
@@ -166,6 +172,8 @@ export const WorkflowProvider = ({ children }: WorkflowProviderProps): JSX.Eleme
         workflowPages,
         currentPageIndex,
         currentPageDetails,
+        currentPageId: currentPageDetails?.id,
+        setCurrentPageId,
         direction,
         setCurrentPageIndexAndDirection,
         mainPaneWidth,

@@ -1,6 +1,8 @@
 import React from 'react'
 import { Switch, Route, HashRouter as Router, Redirect } from 'react-router-dom'
 
+import { useSystemInfo } from '@dharpa-vre/client-core'
+
 import { RootProvider } from '../state'
 
 import TopPageLayout from './common/TopPageLayout'
@@ -16,16 +18,30 @@ import WorkflowProjectPage from './pages/WorkflowProjectPage'
 import DataRegistryPage from './pages/DataRegistryPage'
 import DataRegistryFormModal from './common/registry/DataRegistryFormModal'
 import ToastContainer from './common/notifications/ToastContainer'
+import WorkflowSelectionPage from './pages/WorkflowSelectionPage'
+import CurrentWorkflowPage from './pages/CurrentWorkflowPage'
 
 const WorkflowUrlPrefix = '/workflows/network-analysis/directed'
 
 export const App = (): JSX.Element => {
+  const systemInfo = useSystemInfo()
+
+  React.useEffect(() => {
+    if (systemInfo == null) return
+    console.info(`💫💫💫 Lumy System Info: ${JSON.stringify(systemInfo)}`)
+  }, [systemInfo])
+
   return (
     <RootProvider>
       <Router>
         <TopPageLayout>
           <Switch>
+            <Route path="/workflows" exact component={WorkflowSelectionPage} />
+            <Route path="/workflows/current/:stepId?" exact component={CurrentWorkflowPage} />
+
+            {/* TODO: the route below contains a hardcoded workflow. This will be removed soon. */}
             <Route path="/workflows/network-analysis" exact component={NetworkAnalysisPage} />
+            {/* TODO: the route below contains a hardcoded workflow. This will be removed soon. */}
             <Route
               path={`${WorkflowUrlPrefix}/:stepId?`}
               exact

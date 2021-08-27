@@ -8,12 +8,19 @@
     "status": {
       "type": "string",
       "description": "Status of the process",
-      "enum": ["loading", "loaded"]
+      "enum": [
+        "loading",
+        "loaded",
+        "notLoaded"
+      ]
     },
     "type": {
       "type": "string",
       "description": "Message type",
-      "enum": ["info", "error"]
+      "enum": [
+        "info",
+        "error"
+      ]
     },
     "message": {
       "type": "string"

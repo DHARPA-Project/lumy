@@ -98,6 +98,12 @@ const getMuiThemeOverrides = (theme: Theme): unknown => ({
       minWidth: theme.spacing(4)
     }
   },
+  MuiListItemText: {
+    inset: {
+      // must be in sync with icon width above
+      paddingLeft: theme.spacing(4)
+    }
+  },
   MuiNativeSelect: {
     root: {
       borderWidth: '1px',
