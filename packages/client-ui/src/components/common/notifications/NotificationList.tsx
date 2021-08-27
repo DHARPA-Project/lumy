@@ -10,19 +10,21 @@ import useStyles from './NotificationList.styles'
 import { NotificationContext } from '../../../state'
 
 import NotificationItem from './NotificationItem'
+import { ChronologicalSortOrder } from './NotificationContainer'
 
 const defaultNumberItemsPerPage = 15
 
-const NotificationList = (): JSX.Element => {
+const NotificationList = ({ sortOrder }: { sortOrder: ChronologicalSortOrder }): JSX.Element => {
   const classes = useStyles()
-
-  const [pageNumber, setPageNumber] = useState(1)
 
   const { notifications, deleteNotification } = useContext(NotificationContext)
 
+  const [pageNumber, setPageNumber] = useState(1)
+
   const totalNumberNotifications = notifications?.length ? notifications?.length : 0
   const numberPages = Math.ceil(totalNumberNotifications / defaultNumberItemsPerPage)
-  const paginatedNotifications = notifications.slice(
+  const sortedNotifications = sortOrder === 'oldestFirst' ? notifications : [...notifications].reverse()
+  const paginatedNotifications = sortedNotifications.slice(
     defaultNumberItemsPerPage * (pageNumber - 1),
     defaultNumberItemsPerPage * pageNumber
   )
@@ -42,7 +44,7 @@ const NotificationList = (): JSX.Element => {
       ) : (
         <Card className={classes.noNotificationsCard}>
           <Typography variant="subtitle1" component="h3" align="center">
-            You have no notifications to view
+            You have no new notifications
           </Typography>
         </Card>
       )}

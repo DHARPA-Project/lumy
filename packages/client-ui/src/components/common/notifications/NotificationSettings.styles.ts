@@ -6,7 +6,8 @@ export default makeStyles((theme: Theme) => ({
     padding: theme.spacing(0.75)
   },
   settingList: {
-    margin: theme.spacing(2, 0)
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(2)
   },
   settingItem: {
     paddingTop: theme.spacing(1),

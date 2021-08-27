@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import Box from '@material-ui/core/Box'
 import AppBar from '@material-ui/core/AppBar'
@@ -13,8 +13,12 @@ import useStyles from './NotificationContainer.styles'
 import NotificationSettings from './NotificationSettings'
 import NotificationList from './NotificationList'
 
+export type ChronologicalSortOrder = 'latestFirst' | 'oldestFirst'
+
 const NotificationContainer = (): JSX.Element => {
   const classes = useStyles()
+
+  const [chronologicalSortOrder, setChronologicalSortOrder] = useState<ChronologicalSortOrder>('latestFirst')
 
   return (
     <Box className={classes.notificationListContainer}>
@@ -28,11 +32,11 @@ const NotificationContainer = (): JSX.Element => {
             Notifications
           </Typography>
 
-          <NotificationSettings />
+          <NotificationSettings sortOrder={chronologicalSortOrder} setSortOrder={setChronologicalSortOrder} />
         </Toolbar>
       </AppBar>
 
-      <NotificationList />
+      <NotificationList sortOrder={chronologicalSortOrder} />
     </Box>
   )
 }
