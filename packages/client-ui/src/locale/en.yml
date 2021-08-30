@@ -1,0 +1,15 @@
+page:
+  workflowSelection:
+    label: Available Workflows
+panel:
+  notifications:
+    label: Notifications
+    message:
+      noNewNotifications: You have no new notifications
+    settings:
+      label: Notification Settings
+      sortOrder:
+        latest: latest first
+        oldest: oldest first
+      dismissButton:
+        label: Dismiss all

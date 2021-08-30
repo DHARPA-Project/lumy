@@ -11,6 +11,7 @@ import { NotificationContext } from '../../../state'
 
 import NotificationItem from './NotificationItem'
 import { ChronologicalSortOrder } from './NotificationContainer'
+import { FormattedMessage } from 'react-intl'
 
 const defaultNumberItemsPerPage = 15
 
@@ -44,7 +45,7 @@ const NotificationList = ({ sortOrder }: { sortOrder: ChronologicalSortOrder }):
       ) : (
         <Card className={classes.noNotificationsCard}>
           <Typography variant="subtitle1" component="h3" align="center">
-            You have no new notifications
+            <FormattedMessage id="panel.notifications.message.noNewNotifications" />
           </Typography>
         </Card>
       )}

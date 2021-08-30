@@ -40,7 +40,7 @@ module.exports = {
         use: ['svg-url-loader']
       },
       {
-        test: /\.ipynb$/,
+        test: /\.(yml|yaml|ipynb)$/,
         loader: 'raw-loader'
       }
     ]

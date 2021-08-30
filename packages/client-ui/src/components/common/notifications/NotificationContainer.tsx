@@ -12,6 +12,7 @@ import useStyles from './NotificationContainer.styles'
 
 import NotificationSettings from './NotificationSettings'
 import NotificationList from './NotificationList'
+import { FormattedMessage } from 'react-intl'
 
 export type ChronologicalSortOrder = 'latestFirst' | 'oldestFirst'
 
@@ -29,7 +30,7 @@ const NotificationContainer = (): JSX.Element => {
           </Avatar>
 
           <Typography variant="h6" className={classes.title}>
-            Notifications
+            <FormattedMessage id="panel.notifications.label" />
           </Typography>
 
           <NotificationSettings sortOrder={chronologicalSortOrder} setSortOrder={setChronologicalSortOrder} />

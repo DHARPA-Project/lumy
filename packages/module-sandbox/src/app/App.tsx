@@ -3,7 +3,7 @@ import { useHistory, HashRouter as Router, Switch, Route, useRouteMatch } from '
 import { Grid } from '@material-ui/core'
 import { BackEndContextProvider } from '@dharpa-vre/client-core'
 import { DefaultModuleComponentPanel } from '@dharpa-vre/client-ui'
-import { ThemeContextProvider } from '@lumy/styles'
+import { ThemeContextProvider, useUserLanguageCode } from '@lumy/styles'
 import { ModuleSelector } from './ModuleSelector'
 import { ModuleView } from './ModuleView'
 import { SandboxContext } from '../backEndContext/sandbox'
@@ -18,6 +18,7 @@ const buildContext = (moduleId: string | undefined): SandboxContext => {
 }
 
 const SandboxApp = (): JSX.Element => {
+  const [language] = useUserLanguageCode()
   const classes = useStyles()
   const match = useRouteMatch<{ moduleId: string }>('/:moduleId')
   const currentModuleId = match?.params?.moduleId
@@ -31,7 +32,7 @@ const SandboxApp = (): JSX.Element => {
 
   return (
     <BackEndContextProvider value={context}>
-      <ThemeContextProvider>
+      <ThemeContextProvider locale={language}>
         <Switch>
           <Route path="/:moduleId?">
             <Grid container direction="column" className={classes.root}>
