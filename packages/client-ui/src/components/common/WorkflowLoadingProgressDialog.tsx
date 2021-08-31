@@ -17,6 +17,7 @@ import { LoadProgress, LumyWorkflowLoadStatus, WorkflowLoadProgressMessageType }
 import useTheme from './WorkflowLoadingProgressDialog.styles'
 import { Alert } from '@material-ui/lab'
 import { FormattedMessage } from '@lumy/i18n'
+import { getAppTopLevelElement } from '../../const/app'
 
 const AlwaysScrollToBottom = (): JSX.Element => {
   const elementRef = React.useRef(null)
@@ -34,7 +35,12 @@ const WorkflowLoadingProgressDialog = ({ progressMessages, status, open, onClose
   const classes = useTheme()
 
   return (
-    <Dialog open={open} classes={{ paper: classes.dialog }}>
+    <Dialog
+      open={open}
+      classes={{ paper: classes.dialog, root: classes.dialogRoot }}
+      BackdropProps={{ classes: { root: classes.backdropRoot } }}
+      container={getAppTopLevelElement()}
+    >
       <DialogTitle>
         <FormattedMessage id="modal.workflowLoading.title" />
       </DialogTitle>

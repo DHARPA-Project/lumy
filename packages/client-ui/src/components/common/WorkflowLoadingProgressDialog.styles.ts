@@ -20,5 +20,11 @@ export default makeStyles((theme: Theme) => ({
   dialogLogListGutters: {
     paddingLeft: 0,
     paddingRight: 0
+  },
+  dialogRoot: {
+    position: 'absolute !important' as 'absolute'
+  },
+  backdropRoot: {
+    position: 'absolute !important' as 'absolute'
   }
 }))

@@ -14,6 +14,13 @@ export default makeStyles((theme: Theme) => ({
   },
   drawerPaper: {
     width: `clamp(${theme.spacing(40)}px, 50vw, ${theme.spacing(100)}px)`,
-    border: 'none'
+    border: 'none',
+    position: 'absolute !important' as 'absolute'
+  },
+  drawerBackdropRoot: {
+    position: 'absolute !important' as 'absolute'
+  },
+  drawerRoot: {
+    position: 'absolute !important' as 'absolute'
   }
 }))
