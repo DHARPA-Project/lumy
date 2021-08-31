@@ -5,6 +5,7 @@ import { makeStyles } from '@material-ui/core/styles'
 import Drawer from '@material-ui/core/Drawer'
 
 import { WorkflowContext } from '../../state'
+import { getAppTopLevelElement } from '../../const/app'
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -28,6 +29,7 @@ const SideDrawer = ({ anchor, children }: SideDrawerProps): JSX.Element => {
 
   return (
     <Drawer
+      container={getAppTopLevelElement()}
       variant="temporary"
       anchor={anchor}
       open={isSideDrawerOpen}
