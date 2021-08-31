@@ -17,6 +17,7 @@ import WorkflowPreviewCarousel from '../sample/WorkflowPreviewCarousel'
 import DialogModal from '../common/DialogModal'
 import CreateProjectForm from '../common/CreateProjectForm'
 
+/** TODO: not used, consider removing */
 const NetworkAnalysisIntroPage: React.FC = () => {
   const classes = useStyles()
 

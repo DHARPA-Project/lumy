@@ -9,7 +9,9 @@ import Checkbox from '@material-ui/core/Checkbox'
 
 import VisibilityIcon from '@material-ui/icons/Visibility'
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined'
+import { FormattedMessage } from '@lumy/i18n'
 
+import { withI18n } from '../locale'
 import useStyles from './TableRow.styles'
 import { ColumnMap } from './InteractiveTable'
 
@@ -58,7 +60,7 @@ const InteractiveTableRow = ({
           size="small"
         >
           {contentPreview && (
-            <Tooltip arrow title="click to open content preview">
+            <Tooltip arrow title={<FormattedMessage id="interactiveTable.row.message.openPreview" />}>
               <IconButton
                 className={classes.button}
                 onClick={event => setPopoverAnchorEl(event.currentTarget)}
@@ -98,4 +100,4 @@ const InteractiveTableRow = ({
   )
 }
 
-export default InteractiveTableRow
+export default withI18n(InteractiveTableRow)

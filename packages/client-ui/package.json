@@ -42,6 +42,7 @@
     "typescript": "4"
   },
   "dependencies": {
+    "@lumy/i18n": "*",
     "@dharpa-vre/notes-components": "*",
     "@dharpa-vre/toy-vre": "*",
     "@fontsource/roboto": "^4.2.2",

@@ -11,6 +11,7 @@ import Summary from '../sample/Summary'
 
 import useStyles from './IntroPage.styles'
 
+/** TODO: not used. consider removing */
 const IntroPage: React.FC = () => {
   const classes = useStyles()
 

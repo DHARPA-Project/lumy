@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { useHistory } from 'react-router-dom'
 import { Utf8Vector } from 'apache-arrow'
 
@@ -14,50 +14,51 @@ import { InteractiveTable } from '@dharpa-vre/common-ui-components'
 
 import useStyles from './DataRegistryPage.styles'
 import DataRegistryItemContentPreview from '../common/registry/DataRegistryItemContentPreview'
+import { useIntl, IntlShape } from '@lumy/i18n'
 
 interface ITableItem {
   id: string
   [x: string]: string
 }
 
-const columnMapList = [
+const getColumnMapList = (intl: IntlShape, messageIdPrefix = 'page.dataRegistry.table.columns') => [
   {
-    label: 'name',
+    label: intl.formatMessage({ id: `${messageIdPrefix}.name.label` }),
     key: 'label',
     visible: true,
     sortable: true,
     numeric: false
   },
   {
-    label: 'type',
+    label: intl.formatMessage({ id: `${messageIdPrefix}.type.label` }),
     key: 'type',
     visible: true,
     sortable: true,
     numeric: false
   },
   {
-    label: 'tags',
+    label: intl.formatMessage({ id: `${messageIdPrefix}.tags.label` }),
     key: 'tags',
     visible: true,
     sortable: false,
     numeric: false
   },
   {
-    label: 'notes',
+    label: intl.formatMessage({ id: `${messageIdPrefix}.notes.label` }),
     key: 'notes',
     visible: true,
     sortable: false,
     numeric: false
   },
   {
-    label: 'column names',
+    label: intl.formatMessage({ id: `${messageIdPrefix}.columnNames.label` }),
     key: 'columnNames',
     visible: false,
     sortable: false,
     numeric: false
   },
   {
-    label: 'column types',
+    label: intl.formatMessage({ id: `${messageIdPrefix}.columnTypes.label` }),
     key: 'columnTypes',
     visible: false,
     sortable: false,
@@ -68,6 +69,8 @@ const columnMapList = [
 const DataRegistryPage: React.FC = () => {
   const history = useHistory()
   const classes = useStyles()
+  const intl = useIntl()
+  const columnMapList = useMemo(() => getColumnMapList(intl), [intl])
 
   const [isSnackBarVisible, setIsSnackBarVisible] = useState(false)
   const [snackbarMessage, setSnackbarMessage] = useState('')
@@ -117,7 +120,7 @@ const DataRegistryPage: React.FC = () => {
   return (
     <Container classes={{ root: classes.registryPageContainer }}>
       <InteractiveTable
-        title={'Data Registry'}
+        title={intl.formatMessage({ id: 'page.dataRegistry.table.title' })}
         itemList={repositoryItemList as ITableItem[]}
         columnMapList={columnMapList}
         isSearchEnabled={true}

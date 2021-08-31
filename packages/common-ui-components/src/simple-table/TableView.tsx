@@ -12,6 +12,9 @@ import TableRow from '@material-ui/core/TableRow'
 import TableCell from '@material-ui/core/TableCell'
 import TablePagination from '@material-ui/core/TablePagination'
 import Checkbox from '@material-ui/core/Checkbox'
+import { useIntl } from '@lumy/i18n'
+
+import { withI18n } from '../locale'
 
 import useStyles from './TableView.styles'
 
@@ -35,7 +38,7 @@ const defaultNumberRowsPerPage = 5
  * Just an example how to deal with Arrow Table.
  * https://observablehq.com/@theneuralbit/introduction-to-apache-arrow
  */
-export const TableView = <S,>({
+const TableViewComponent = <S,>({
   table,
   requiredFields,
   tableStats,
@@ -49,6 +52,7 @@ export const TableView = <S,>({
   caption
 }: TableProps<S>): JSX.Element => {
   const classes = useStyles()
+  const intl = useIntl()
 
   const [pageNumber, setPageNumber] = useState(0)
   const [numRowsPerPage, setNumRowsPerPage] = useState(filter?.pageSize ?? defaultNumberRowsPerPage)
@@ -135,7 +139,12 @@ export const TableView = <S,>({
           count={tableStats.rowsCount}
           page={pageNumber}
           rowsPerPage={numRowsPerPage}
-          rowsPerPageOptions={[5, 10, 25, { label: 'All', value: -1 }]}
+          rowsPerPageOptions={[
+            5,
+            10,
+            25,
+            { label: intl.formatMessage({ id: 'simpleTable.pagination.all' }), value: -1 }
+          ]}
           onChangePage={handlePageNumberChange}
           onChangeRowsPerPage={handleNumRowsPerPageChange}
         />
@@ -143,3 +152,5 @@ export const TableView = <S,>({
     </Paper>
   )
 }
+
+export const TableView = withI18n(TableViewComponent) as typeof TableViewComponent

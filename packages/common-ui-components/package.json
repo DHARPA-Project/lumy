@@ -34,6 +34,7 @@
     "typescript": "4"
   },
   "dependencies": {
-    "react-window": "^1.8.6"
+    "react-window": "^1.8.6",
+    "@lumy/i18n": "*"
   }
 }

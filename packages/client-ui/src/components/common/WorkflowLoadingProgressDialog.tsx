@@ -20,6 +20,7 @@ import {
 } from '@dharpa-vre/client-core'
 import useTheme from './WorkflowLoadingProgressDialog.styles'
 import { Alert } from '@material-ui/lab'
+import { FormattedMessage } from '@lumy/i18n'
 
 const AlwaysScrollToBottom = (): JSX.Element => {
   const elementRef = React.useRef(null)
@@ -38,7 +39,9 @@ const WorkflowLoadingProgressDialog = ({ progressMessages, status, open, onClose
 
   return (
     <Dialog open={open} classes={{ paper: classes.dialog }}>
-      <DialogTitle>Loading Workflow</DialogTitle>
+      <DialogTitle>
+        <FormattedMessage id="modal.workflowLoading.title" />
+      </DialogTitle>
       <DialogContent>
         <Grid container>
           <Grid item classes={{ root: classes.dialogLogPanel }}>
@@ -65,7 +68,9 @@ const WorkflowLoadingProgressDialog = ({ progressMessages, status, open, onClose
           </Grid>
           <Grid item classes={{ root: classes.dialogSectionFullWidth }}>
             {status == LumyWorkflowLoadStatus.NotLoaded ? (
-              <Alert severity="error">Could not load workflow. See errors above.</Alert>
+              <Alert severity="error">
+                <FormattedMessage id="modal.workflowLoading.messages.loadingError" />
+              </Alert>
             ) : (
               ''
             )}
@@ -75,7 +80,7 @@ const WorkflowLoadingProgressDialog = ({ progressMessages, status, open, onClose
       <DialogActions>
         {status == LumyWorkflowLoadStatus.NotLoaded ? (
           <Button onClick={onClose} variant="outlined">
-            Close
+            <FormattedMessage id="modal.workflowLoading.button.close" />
           </Button>
         ) : (
           ''

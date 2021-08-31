@@ -1,0 +1,12 @@
+markdownEditor:
+  tab:
+    edit: Edit
+    view: View
+noteItemsList:
+  noNotes: No notes available for this step
+noteViewer:
+  title:
+    clickToEdit: Click to edit title
+  button:
+    deleteNote: Delete this note
+    saveAndClose: Save and close

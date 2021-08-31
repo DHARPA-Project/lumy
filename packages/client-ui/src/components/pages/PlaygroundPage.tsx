@@ -3,6 +3,7 @@ import { Box, Grid } from '@material-ui/core'
 import { NoteItem, NoteItemsList, NoteViewerEditor } from '@dharpa-vre/notes-components'
 import { getLumyComponent } from '@dharpa-vre/client-core'
 
+/** TODO: not used, consider removing */
 const PlaygroundPage = (): JSX.Element => {
   const testNotes = [
     {

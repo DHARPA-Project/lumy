@@ -6,10 +6,11 @@ import IconButton from '@material-ui/core/IconButton'
 
 import useStyles from './RightSideBarContent.styles'
 import { WorkflowContext } from '../../../state'
-import { featureList } from '../../../const/features'
+import { useAppFeatures } from '../../../const/features'
 
 const RightSideBarContent = (): JSX.Element => {
   const classes = useStyles()
+  const featureList = useAppFeatures()
 
   const { isRightSideBarVisible, setFeatureTabIndex, setIsSideDrawerOpen } = useContext(WorkflowContext)
 

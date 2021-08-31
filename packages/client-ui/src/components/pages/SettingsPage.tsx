@@ -20,6 +20,7 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
+/** TODO: not used, consider removing */
 const SettingsPage = (): JSX.Element => {
   const { darkModeEnabled, toggleDarkMode } = useContext(ThemeContext)
 

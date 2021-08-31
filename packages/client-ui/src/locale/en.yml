@@ -1,0 +1,106 @@
+app:
+  name: Lumy
+  features:
+    notes:
+      label: Notes
+      tooltip: Check Notes
+    data:
+      label: Data
+      tooltip: View Data
+    code:
+      label: Code
+      tooltip: View Code
+    documentation:
+      label: Help
+      tooltip: See Documentation
+  routes:
+    pages:
+      label: pages
+    home:
+      label: home
+    dataRegistry:
+      label: data registry
+    networkAnalysis:
+      label: network analysis
+    projects:
+      label: projects
+page:
+  workflowSelection:
+    label: Available Workflows
+    message:
+      noWorkflows: No workflows found
+  currentWorkflow:
+    message:
+      noWorkflowSelected: "No workflow selected. Please select one from {link}"
+    label:
+      workflowList: the workflow list
+  dataRegistry:
+    table:
+      title: Data Registry
+      columns:
+        name:
+          label: name
+        type:
+          label: type
+        tags:
+          label: tags
+        notes:
+          label: notes
+        columnNames:
+          label: column names
+        columnTypes:
+          label: column types
+panel:
+  notifications:
+    label: Notifications
+    message:
+      noNewNotifications: You have no new notifications
+    settings:
+      label: Notification Settings
+      sortOrder:
+        latest: latest first
+        oldest: oldest first
+      dismissButton:
+        label: Dismiss all
+  codeview:
+    button:
+      download: Download
+  dataPreview:
+    message:
+      noDataForStep: No data available for this step
+  noteEditor:
+    button:
+      newNote: new note
+modal:
+  dataRegistry:
+    message:
+      itemAdded: Successfully added new item to data registry.
+      addItemFailed: "Saving the registry item has failed: {error}"
+      invalidMethodSelected: invalid method selected
+      filePathRequired: file path required
+      nameTooShort: must be at least 6 characters long
+    label:
+      edit: 'Edit data source "{dataSource}"'
+      add: Add New Data Source
+    button:
+      reset: Reset
+      saving: Saving...
+      save: Save
+    form:
+      field:
+        method: 
+          label: method
+        filePath:
+          label: file path
+        name:
+          label: name
+        tags:
+          label: tags
+        notes:
+          label: notes
+  workflowLoading:
+    title: Loading Workflow
+    messages:
+      loadingError: Could not load workflow. See errors above.
+    button:
+      close: Close

@@ -9,6 +9,7 @@ import { LoadingIndicator } from '@dharpa-vre/common-ui-components'
 
 import { WorkflowContext } from '../../../state'
 import useStyles from './CodeView.styles'
+import { FormattedMessage } from '@lumy/i18n'
 
 const CodeView = (): JSX.Element => {
   const classes = useStyles()
@@ -42,7 +43,7 @@ const CodeView = (): JSX.Element => {
           size="small"
           startIcon={<CloudDownloadIcon />}
         >
-          Download
+          <FormattedMessage id="panel.codeview.button.download" />
         </Button>
       </div>
 

@@ -20,6 +20,7 @@
     "build:lib": "tsc"
   },
   "dependencies": {
+    "@lumy/i18n": "*",
     "date-fns": "2",
     "easymde": "2",
     "micromark": "2",

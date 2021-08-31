@@ -18,6 +18,7 @@ type CreateProjectFormProps = {
   closeModal: () => void
 }
 
+/** TODO: Not used anywhere. Can it be removed? */
 const CreateProjectForm = ({ workflowCategory, closeModal }: CreateProjectFormProps): JSX.Element => {
   const classes = useStyles()
 

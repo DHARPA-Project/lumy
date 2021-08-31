@@ -5,6 +5,7 @@ import CssBaseline from '@material-ui/core/CssBaseline'
 import { MuiThemeProvider, Theme } from '@material-ui/core/styles'
 
 import { createCustomTheme } from '../theme'
+import { languageToMuiLocale } from './locale'
 
 export type ThemeContextType = {
   darkModeEnabled: boolean
@@ -13,6 +14,7 @@ export type ThemeContextType = {
 }
 
 type ThemeContextProviderProps = {
+  locale: Navigator['language']
   children?: React.ReactNode
 }
 
@@ -23,7 +25,7 @@ const getThemeFromLocalStorage = () => {
   return valueInLocalStorage ? JSON.parse(valueInLocalStorage) : false
 }
 
-const ThemeContextProvider = ({ children }: ThemeContextProviderProps): JSX.Element => {
+const ThemeContextProvider = ({ locale, children }: ThemeContextProviderProps): JSX.Element => {
   const [darkModeEnabled, setDarkModeEnabled] = useState<boolean>(getThemeFromLocalStorage)
 
   const toggleDarkMode = () => {
@@ -36,16 +38,20 @@ const ThemeContextProvider = ({ children }: ThemeContextProviderProps): JSX.Elem
   // Keep in mind that createCustomTheme() performs a shallow merge...
   // ... of default option and extended option objects; deeply nested properties...
   // ... of default theme may be lost if not copied over to extended option object
-  const globalTheme = createCustomTheme()
-  const sidebarTheme = createCustomTheme({
-    palette: {
-      type: 'light'
-      // background: {
-      //   paper: '#222A45',
-      //   default: '#1a2038'
-      // }
-    }
-  })
+  const globalTheme = createCustomTheme(undefined, undefined, languageToMuiLocale(locale))
+  const sidebarTheme = createCustomTheme(
+    {
+      palette: {
+        type: 'light'
+        // background: {
+        //   paper: '#222A45',
+        //   default: '#1a2038'
+        // }
+      }
+    },
+    undefined,
+    languageToMuiLocale(locale)
+  )
 
   return (
     <ThemeContext.Provider value={{ darkModeEnabled, toggleDarkMode, sidebarTheme }}>

@@ -28,6 +28,7 @@ type NodeDirectionType = 'directed' | 'undirected'
 // multi-mode options: bipartite / more than two
 // type NodeModeNumberType = 'bipartite' | 'more-than-two'
 
+/** TODO: will be replaced by dynamically constructed list of available workflows. consider removing */
 const NetworkAnalysisPage: React.FC = () => {
   const classes = useStyles()
   const history = useHistory()

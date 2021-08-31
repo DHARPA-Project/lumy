@@ -4,7 +4,7 @@ import AppBar from '@material-ui/core/AppBar'
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
 
-import { featureList } from '../../const/features'
+import { useAppFeatures } from '../../const/features'
 import { WorkflowContext } from '../../state'
 import useStyles from './FeatureTabs.styles'
 
@@ -12,6 +12,7 @@ import TabPanel from './TabPanel'
 
 const FeatureTabs = (): JSX.Element => {
   const classes = useStyles()
+  const featureList = useAppFeatures()
 
   const containerRef = useRef(null)
   const tabActionRef = useRef(null)

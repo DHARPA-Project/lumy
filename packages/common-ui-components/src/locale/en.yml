@@ -1,0 +1,26 @@
+interactiveTable:
+  header:
+    controls: controls
+  toolbar:
+    search:
+      label: search data sources
+      tooltipe: search items
+    delete:
+      tooltip: Delete
+    chooseColumns:
+      tooltip: choose visible columns
+    addNewItem:
+      tooltip: add new item
+  message:
+    itemsSelected: "{count} items selected"
+    chooseVisibleColumns: Choose visible columns
+  row:
+    message:
+      openPreview: click to open content preview
+simpleTable:
+  pagination:
+    all: All
+treeView:
+  label:
+    expandAll: expand all
+    collapseAll: collapse all

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router'
+import { FormattedMessage } from '@lumy/i18n'
 
 import {
   LumyWorkflowLoadStatus,
@@ -57,13 +58,15 @@ const WorkflowSelectionPage = (): JSX.Element => {
       <Grid item xs={12} sm={10} md={8} lg={6}>
         <Paper classes={{ root: classes.framePaper }}>
           <Typography variant="h5" classes={{ root: classes.pageLabel }}>
-            Available Workflows
+            <FormattedMessage id="page.workflowSelection.label" />
           </Typography>
 
           {isLoading ? (
             <LoadingIndicator />
           ) : workflows?.length === 0 ? (
-            <Typography>No workflows found</Typography>
+            <Typography>
+              <FormattedMessage id="page.workflowSelection.message.noWorkflows" />
+            </Typography>
           ) : (
             <List>
               {workflows.map(workflow => (

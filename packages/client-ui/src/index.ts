@@ -4,7 +4,7 @@ import DocumentationPortal from './components/common/documentation/Documentation
 import DefaultModuleComponentPanel from './components/common/DefaultModuleComponentPanel'
 import { WorkflowContext } from './state'
 
-import { featureIds, featureList } from './const/features'
+import { featureIds } from './const/features'
 
 import { setUpDynamicModulesSupport } from './utils/dynamicModules'
 
@@ -14,7 +14,6 @@ export {
   DocumentationPortal,
   WorkflowContext,
   featureIds,
-  featureList,
   setUpDynamicModulesSupport,
   DefaultModuleComponentPanel
 }

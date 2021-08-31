@@ -1,5 +1,6 @@
 import React, { useContext, useState } from 'react'
 
+import { FormattedMessage } from '@lumy/i18n'
 import Popover from '@material-ui/core/Popover'
 import List from '@material-ui/core/List'
 import ListSubheader from '@material-ui/core/ListSubheader'
@@ -59,7 +60,11 @@ const NotificationSettings = ({ sortOrder, setSortOrder }: NSProps): JSX.Element
           component="ul"
           aria-label="notification-setting-list"
           className={classes.settingList}
-          subheader={<ListSubheader component="div">Notification Settings</ListSubheader>}
+          subheader={
+            <ListSubheader component="div">
+              <FormattedMessage id="panel.notifications.settings.label" />
+            </ListSubheader>
+          }
         >
           <ListItem
             component="li"
@@ -75,8 +80,12 @@ const NotificationSettings = ({ sortOrder, setSortOrder }: NSProps): JSX.Element
               SelectProps={{ native: true }}
               variant="outlined"
             >
-              <option value={'latestFirst'}>latest first</option>
-              <option value={'oldestFirst'}>oldest first</option>
+              <FormattedMessage id="panel.notifications.settings.sortOrder.latest">
+                {msg => <option value={'latestFirst'}>{msg}</option>}
+              </FormattedMessage>
+              <FormattedMessage id="panel.notifications.settings.sortOrder.oldest">
+                {msg => <option value={'oldestFirst'}>{msg}</option>}
+              </FormattedMessage>
             </TextField>
           </ListItem>
 
@@ -90,7 +99,9 @@ const NotificationSettings = ({ sortOrder, setSortOrder }: NSProps): JSX.Element
             <ListItemIcon>
               <DeleteOutlineIcon />
             </ListItemIcon>
-            <ListItemText primary={'Dismiss all'} />
+            <ListItemText
+              primary={<FormattedMessage id="panel.notifications.settings.dismissButton.label" />}
+            />
           </ListItem>
         </List>
       </Popover>

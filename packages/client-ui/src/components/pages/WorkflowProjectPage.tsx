@@ -40,6 +40,7 @@ export interface WorkflowProjectPageProps {
   pageUrlPrefix: string
 }
 
+/** TODO: to be replaced by a dynamically constructed list of workflows */
 const WorkflowProjectPage = ({ pageUrlPrefix }: WorkflowProjectPageProps): JSX.Element => {
   const classes = useStyles()
   const { stepId } = useParams<RouterParams>()
