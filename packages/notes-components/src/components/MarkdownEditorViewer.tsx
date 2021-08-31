@@ -3,8 +3,11 @@ import { Grid, Tabs, Tab } from '@material-ui/core'
 import EditIcon from '@material-ui/icons/Edit'
 import ViewIcon from '@material-ui/icons/Visibility'
 import SimpleMde from 'react-simplemde-editor'
+import { FormattedMessage } from '@lumy/i18n'
+
 import { MarkdownRender } from './MarkdownRender'
 import useStyles from './MarkdownEditorViewer.styles'
+import { withI18n } from '../locale'
 
 // https://github.com/Ionaru/easy-markdown-editor#configuration
 const editorOptions: Parameters<typeof SimpleMde>[0]['options'] = {
@@ -29,7 +32,7 @@ const TabPanel = ({ value, index, children }: TabPanelProps): JSX.Element => {
   return <></>
 }
 
-export const MarkdownEditorViewer = ({ text, onChanged, defaultTab = 'view' }: Props): JSX.Element => {
+const MarkdownEditorViewerComponent = ({ text, onChanged, defaultTab = 'view' }: Props): JSX.Element => {
   const [tabId, setTabId] = React.useState(defaultTab == 'view' ? 1 : 0)
   const classes = useStyles()
 
@@ -46,12 +49,12 @@ export const MarkdownEditorViewer = ({ text, onChanged, defaultTab = 'view' }: P
           scrollButtons="off"
         >
           <Tab
-            label="Edit"
+            label={<FormattedMessage id="markdownEditor.tab.edit" />}
             icon={<EditIcon classes={{ root: classes.tabLabelIcon }} />}
             classes={{ root: classes.tabRoot, wrapper: classes.tabWrapper }}
           />
           <Tab
-            label="View"
+            label={<FormattedMessage id="markdownEditor.tab.view" />}
             icon={<ViewIcon classes={{ root: classes.tabLabelIcon }} />}
             classes={{ root: classes.tabRoot, wrapper: classes.tabWrapper }}
           />
@@ -68,3 +71,5 @@ export const MarkdownEditorViewer = ({ text, onChanged, defaultTab = 'view' }: P
     </Grid>
   )
 }
+
+export const MarkdownEditorViewer = withI18n(MarkdownEditorViewerComponent)
