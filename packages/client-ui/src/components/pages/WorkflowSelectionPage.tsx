@@ -64,7 +64,9 @@ const WorkflowSelectionPage = (): JSX.Element => {
           {isLoading ? (
             <LoadingIndicator />
           ) : workflows?.length === 0 ? (
-            <Typography>No workflows found</Typography>
+            <Typography>
+              <FormattedMessage id="page.workflowSelection.message.noWorkflows" />
+            </Typography>
           ) : (
             <List>
               {workflows.map(workflow => (

@@ -1,4 +1,5 @@
 import React from 'react'
+import { useIntl, IntlShape } from 'react-intl'
 
 // import InfoOutlineIcon from '@material-ui/icons/InfoOutlined'
 // import AccountTreeIcon from '@material-ui/icons/AccountTree'
@@ -15,31 +16,42 @@ export enum NavItemType {
   'group'
 }
 
-export const pageRoutes = [
+interface RouteItem {
+  type: NavItemType
+  label: string
+  link?: string
+  icon?: JSX.Element
+  nested?: boolean
+}
+
+const getRouteLabel = (intl: IntlShape, routeId: string, idPrefix: string): string =>
+  intl.formatMessage({ id: `${idPrefix}.${routeId}.label` })
+
+export const getPageRoutes = (intl: IntlShape, idPrefix = 'app.routes'): RouteItem[] => [
   // {
   //   type: NavItemType.divider
   // },
   {
     type: NavItemType.heading,
-    label: 'pages'
+    label: getRouteLabel(intl, 'pages', idPrefix)
   },
   {
     type: NavItemType.pageLink,
-    label: 'home',
+    label: getRouteLabel(intl, 'home', idPrefix),
     link: '/home',
     icon: <HomeIcon />,
     nested: false
   },
   {
     type: NavItemType.pageLink,
-    label: 'data registry',
+    label: getRouteLabel(intl, 'dataRegistry', idPrefix),
     link: '/dataregistry',
     icon: <StorageIcon />,
     nested: false
   },
   {
     type: NavItemType.pageLink,
-    label: 'network analysis',
+    label: getRouteLabel(intl, 'networkAnalysis', idPrefix),
     link: '/workflows/network-analysis',
     icon: <BubbleChartIcon />,
     nested: false
@@ -96,6 +108,11 @@ export const pageRoutes = [
   // },
   {
     type: NavItemType.heading,
-    label: 'projects'
+    label: getRouteLabel(intl, 'projects', idPrefix)
   }
 ]
+
+export const usePageRoutes = (): RouteItem[] => {
+  const intl = useIntl()
+  return getPageRoutes(intl)
+}

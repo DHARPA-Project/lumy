@@ -8,7 +8,7 @@ import SpeedDialAction from '@material-ui/lab/SpeedDialAction'
 import { LoadingIndicator } from '@dharpa-vre/common-ui-components'
 
 import { WorkflowContext, screenSplitDirectionType } from '../../state'
-import { featureList } from '../../const/features'
+import { useAppFeatures } from '../../const/features'
 import useStyles from './WorkflowContainer.styles'
 
 import FeatureTabs from './FeatureTabs'
@@ -51,6 +51,7 @@ const WorkflowContainer = (): JSX.Element => {
     closeAdditionalPane,
     openFeatureTab
   } = useContext(WorkflowContext) //prettier-ignore
+  const featureList = useAppFeatures()
 
   const [isSpeedDialOpen, setIsSpeedDialOpen] = useState(false)
 

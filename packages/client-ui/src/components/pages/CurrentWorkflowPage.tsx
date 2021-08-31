@@ -9,6 +9,7 @@ import useStyles from './CurrentWorkflowPage.styles'
 import { WorkflowContext, WorkflowProvider } from '../../state'
 
 import WorkflowContainer from '../common/WorkflowContainer'
+import { FormattedMessage } from 'react-intl'
 
 interface RouterParams {
   stepId?: string
@@ -44,7 +45,16 @@ const PageContent = (): JSX.Element => {
     <Container classes={{ root: classes.noWorkflowContainer }}>
       <Paper classes={{ root: classes.noWorkflowPanel }}>
         <Typography align="center">
-          No workflow selected. Please select one from <a href="#/workflows">the workflow list</a>.
+          <FormattedMessage
+            id="page.currentWorkflow.message.noWorkflowSelected"
+            values={{
+              link: (
+                <a href="#/workflows">
+                  <FormattedMessage id="page.currentWorkflow.label.workflowList" />
+                </a>
+              )
+            }}
+          />
         </Typography>
       </Paper>
     </Container>

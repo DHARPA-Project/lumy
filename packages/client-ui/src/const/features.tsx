@@ -1,4 +1,5 @@
 import React from 'react'
+import { useIntl, IntlShape } from 'react-intl'
 
 import CreateIcon from '@material-ui/icons/Create'
 import CodeIcon from '@material-ui/icons/Code'
@@ -24,33 +25,43 @@ export const featureIds = {
   documentation: 'documentation-container'
 }
 
-export const featureList: IFeature[] = [
+const getFeatureLabel = (intl: IntlShape, featureId: string, idPrefix: string): string =>
+  intl.formatMessage({ id: `${idPrefix}.${featureId}.label` })
+const getFeatureTooltip = (intl: IntlShape, featureId: string, idPrefix: string): string =>
+  intl.formatMessage({ id: `${idPrefix}.${featureId}.tooltip` })
+
+const getFeatureList = (intl: IntlShape, idPrefix = 'app.features'): IFeature[] => [
   {
     id: featureIds.note,
-    label: 'Notes',
-    tooltip: 'Check Notes',
+    label: getFeatureLabel(intl, 'notes', idPrefix),
+    tooltip: getFeatureTooltip(intl, 'notes', idPrefix),
     icon: <CreateIcon />,
     content: <NoteEditor />
   },
   {
     id: featureIds.data,
-    label: 'Data',
-    tooltip: 'View Data',
+    label: getFeatureLabel(intl, 'data', idPrefix),
+    tooltip: getFeatureTooltip(intl, 'data', idPrefix),
     icon: <TableChartIcon />,
     content: <DataPreview />
   },
   {
     id: featureIds.code,
-    label: 'Code',
-    tooltip: 'View Code',
+    label: getFeatureLabel(intl, 'code', idPrefix),
+    tooltip: getFeatureTooltip(intl, 'code', idPrefix),
     icon: <CodeIcon />,
     content: <CodeView />
   },
   {
     id: featureIds.documentation,
-    label: 'Help',
-    tooltip: 'See Documentation',
+    label: getFeatureLabel(intl, 'documentation', idPrefix),
+    tooltip: getFeatureTooltip(intl, 'documentation', idPrefix),
     icon: <LibraryBooksIcon />,
     content: null
   }
 ]
+
+export const useAppFeatures = (): IFeature[] => {
+  const intl = useIntl()
+  return getFeatureList(intl)
+}

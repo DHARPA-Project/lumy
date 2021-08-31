@@ -6,6 +6,7 @@ import DeleteIcon from '@material-ui/icons/Delete'
 
 import { ProjectContext } from '../../state'
 
+/** TODO: not used, consider removing */
 const ProjectPage = (): JSX.Element => {
   const match = useRouteMatch()
 

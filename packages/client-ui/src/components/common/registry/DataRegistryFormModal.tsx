@@ -24,6 +24,7 @@ import {
 import useStyles from './DataRegistryFormModal.styles'
 
 import DialogModal from '../DialogModal'
+import { FormattedMessage, useIntl } from 'react-intl'
 
 type PageParams = {
   id?: string
@@ -56,6 +57,7 @@ const DataRegistryFormModal = (): JSX.Element => {
   const classes = useStyles()
   const history = useHistory()
   const { pathname } = useLocation()
+  const intl = useIntl()
   const { id: registryItemID } = useParams<PageParams>()
 
   const [formValues, setFormValues] = useState<FormValues>(initialFormValues)
@@ -92,12 +94,15 @@ const DataRegistryFormModal = (): JSX.Element => {
       setFormValues(initialFormValues)
       setStatusMessage({
         severity: 'success',
-        text: 'Successfully added new item to data registry.'
+        text: intl.formatMessage({ id: 'modal.dataRegistry.message.itemAdded' })
       })
     } else if (itemCreationStatus === 'error') {
       setStatusMessage({
         severity: 'error',
-        text: 'Saving the registry item has failed! ' + (errorMessage ?? '')
+        text: intl.formatMessage(
+          { id: 'modal.dataRegistry.message.addItemFailed' },
+          { error: errorMessage ?? '' }
+        )
       })
     } else {
       setStatusMessage(null)
@@ -110,13 +115,17 @@ const DataRegistryFormModal = (): JSX.Element => {
     if (selectedRegistryItem == null && 'method' in values) {
       newErrors.method = methods.includes(values.method as ItemCreationMethod)
         ? ''
-        : 'invalid method selected'
+        : intl.formatMessage({ id: 'modal.dataRegistry.message.invalidMethodSelected' })
     }
     if (selectedRegistryItem == null && 'path' in values) {
-      newErrors.path = values.path.length > 0 ? '' : 'file path required'
+      newErrors.path =
+        values.path.length > 0
+          ? ''
+          : intl.formatMessage({ id: 'modal.dataRegistry.message.filePathRequired' })
     }
     if ('name' in values) {
-      newErrors.name = values.name.length > 5 ? '' : 'must be at least 6 characters long'
+      newErrors.name =
+        values.name.length > 5 ? '' : intl.formatMessage({ id: 'modal.dataRegistry.message.nameTooShort' })
     }
 
     return newErrors
@@ -162,8 +171,11 @@ const DataRegistryFormModal = (): JSX.Element => {
     <DialogModal
       title={
         selectedRegistryItem != null
-          ? `Edit data source "${registryItemID ? registryItemID : ''}"`
-          : 'Add New Data Source'
+          ? intl.formatMessage(
+              { id: 'modal.dataRegistry.label.edit' },
+              { dataSource: registryItemID ? registryItemID : '' }
+            )
+          : intl.formatMessage({ id: 'modal.dataRegistry.label.add' })
       }
       isModalOpen={true}
       onCloseModalClick={() => history.push('/dataregistry')}
@@ -174,7 +186,7 @@ const DataRegistryFormModal = (): JSX.Element => {
             <TextField
               select
               name="method"
-              label="method"
+              label={intl.formatMessage({ id: 'modal.dataRegistry.form.field.method.label' })}
               value={formValues.method}
               onChange={handleInputChange}
               SelectProps={{ native: true }}
@@ -191,7 +203,7 @@ const DataRegistryFormModal = (): JSX.Element => {
 
             <TextField
               name="path"
-              label="file path"
+              label={intl.formatMessage({ id: 'modal.dataRegistry.form.field.filePath.label' })}
               variant="outlined"
               required
               value={formValues.path}
@@ -204,7 +216,7 @@ const DataRegistryFormModal = (): JSX.Element => {
 
         <TextField
           name="name"
-          label="name"
+          label={intl.formatMessage({ id: 'modal.dataRegistry.form.field.name.label' })}
           variant="outlined"
           required
           value={formValues.name}
@@ -215,7 +227,7 @@ const DataRegistryFormModal = (): JSX.Element => {
 
         <TextField
           name="tags"
-          label="tags"
+          label={intl.formatMessage({ id: 'modal.dataRegistry.form.field.tags.label' })}
           variant="outlined"
           value={formValues.tags}
           onChange={handleInputChange}
@@ -226,7 +238,7 @@ const DataRegistryFormModal = (): JSX.Element => {
 
         <TextField
           name="notes"
-          label="notes"
+          label={intl.formatMessage({ id: 'modal.dataRegistry.form.field.notes.label' })}
           variant="outlined"
           multiline
           className={classes.noteArea}
@@ -250,7 +262,7 @@ const DataRegistryFormModal = (): JSX.Element => {
             size="small"
             onClick={resetForm}
           >
-            Reset
+            <FormattedMessage id="modal.dataRegistry.button.reset" />
           </Button>
 
           <Button
@@ -261,7 +273,13 @@ const DataRegistryFormModal = (): JSX.Element => {
             size="small"
             type="submit"
           >
-            {itemCreationStatus === 'creating' ? 'saving...' : 'Save'}
+            <FormattedMessage
+              id={
+                itemCreationStatus === 'creating'
+                  ? 'modal.dataRegistry.button.saving'
+                  : 'modal.dataRegistry.button.save'
+              }
+            />
           </Button>
         </div>
       </form>
