@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react'
 
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage } from '@lumy/i18n'
 import Popover from '@material-ui/core/Popover'
 import List from '@material-ui/core/List'
 import ListSubheader from '@material-ui/core/ListSubheader'

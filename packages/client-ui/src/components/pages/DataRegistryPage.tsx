@@ -14,7 +14,7 @@ import { InteractiveTable } from '@dharpa-vre/common-ui-components'
 
 import useStyles from './DataRegistryPage.styles'
 import DataRegistryItemContentPreview from '../common/registry/DataRegistryItemContentPreview'
-import { useIntl, IntlShape } from 'react-intl'
+import { useIntl, IntlShape } from '@lumy/i18n'
 
 interface ITableItem {
   id: string

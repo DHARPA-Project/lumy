@@ -9,7 +9,7 @@ import { LoadingIndicator } from '@dharpa-vre/common-ui-components'
 
 import { WorkflowContext } from '../../../state'
 import useStyles from './CodeView.styles'
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage } from '@lumy/i18n'
 
 const CodeView = (): JSX.Element => {
   const classes = useStyles()

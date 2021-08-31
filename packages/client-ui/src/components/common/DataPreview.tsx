@@ -18,7 +18,7 @@ import Card from '@material-ui/core/Card'
 import { CircularProgress, Grid } from '@material-ui/core'
 
 import useStyles from './DataPreview.styles'
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage } from '@lumy/i18n'
 
 interface DataPreviewContainerProps {
   pageId: string

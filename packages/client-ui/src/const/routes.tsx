@@ -1,5 +1,5 @@
 import React from 'react'
-import { useIntl, IntlShape } from 'react-intl'
+import { useIntl, IntlShape } from '@lumy/i18n'
 
 // import InfoOutlineIcon from '@material-ui/icons/InfoOutlined'
 // import AccountTreeIcon from '@material-ui/icons/AccountTree'

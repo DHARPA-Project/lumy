@@ -12,7 +12,7 @@ import useStyles from './NotificationContainer.styles'
 
 import NotificationSettings from './NotificationSettings'
 import NotificationList from './NotificationList'
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage } from '@lumy/i18n'
 
 export type ChronologicalSortOrder = 'latestFirst' | 'oldestFirst'
 

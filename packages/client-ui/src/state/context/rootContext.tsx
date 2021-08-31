@@ -1,7 +1,7 @@
 import React from 'react'
 
-import { IntlProvider } from 'react-intl'
-import { ThemeContextProvider as ThemeProvider, useUserLanguageCode } from '@lumy/styles'
+import { IntlProvider, useUserLanguageCode } from '@lumy/i18n'
+import { ThemeContextProvider as ThemeProvider } from '@lumy/styles'
 
 import { NotificationProvider } from './notificationContext'
 import { LayoutProvider } from './layoutContext'

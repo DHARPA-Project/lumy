@@ -15,7 +15,7 @@ import { usePageRoutes } from '../../../const/routes'
 import useStyles from './LeftSideBarContent.styles'
 
 import NavItem from './NavItem'
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage } from '@lumy/i18n'
 
 const LeftSideBarContent = (): JSX.Element => {
   const classes = useStyles()

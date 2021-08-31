@@ -20,7 +20,7 @@ import {
 } from '@dharpa-vre/client-core'
 import useTheme from './WorkflowLoadingProgressDialog.styles'
 import { Alert } from '@material-ui/lab'
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage } from '@lumy/i18n'
 
 const AlwaysScrollToBottom = (): JSX.Element => {
   const elementRef = React.useRef(null)

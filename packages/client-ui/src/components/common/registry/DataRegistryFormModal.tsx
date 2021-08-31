@@ -24,7 +24,7 @@ import {
 import useStyles from './DataRegistryFormModal.styles'
 
 import DialogModal from '../DialogModal'
-import { FormattedMessage, useIntl } from 'react-intl'
+import { FormattedMessage, useIntl } from '@lumy/i18n'
 
 type PageParams = {
   id?: string

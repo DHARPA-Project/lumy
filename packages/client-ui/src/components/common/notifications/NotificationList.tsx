@@ -11,7 +11,7 @@ import { NotificationContext } from '../../../state'
 
 import NotificationItem from './NotificationItem'
 import { ChronologicalSortOrder } from './NotificationContainer'
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage } from '@lumy/i18n'
 
 const defaultNumberItemsPerPage = 15
 

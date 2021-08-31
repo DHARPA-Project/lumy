@@ -9,7 +9,7 @@ import useStyles from './CurrentWorkflowPage.styles'
 import { WorkflowContext, WorkflowProvider } from '../../state'
 
 import WorkflowContainer from '../common/WorkflowContainer'
-import { FormattedMessage } from 'react-intl'
+import { FormattedMessage } from '@lumy/i18n'
 
 interface RouterParams {
   stepId?: string
