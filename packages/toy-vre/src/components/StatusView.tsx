@@ -1,5 +1,5 @@
 import React from 'react'
-import { State, useLastError, useProcessingState } from '@dharpa-vre/client-core'
+import { State, useLastError, useProcessingState } from '@lumy/client-core'
 import { Box, Grid, Typography } from '@material-ui/core'
 
 export const StatusView = (): JSX.Element => {

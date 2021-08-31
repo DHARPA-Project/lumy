@@ -1,4 +1,4 @@
-import { generateUniqueId } from '@dharpa-vre/client-core'
+import { generateUniqueId } from '@lumy/client-core'
 
 import { IBaseNotification, INotification } from '../context/notificationContext'
 

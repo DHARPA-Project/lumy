@@ -18,7 +18,7 @@ import {
   useLoadWorkflow,
   LumyWorkflowLoadStatus,
   useCurrentWorkflow
-} from '@dharpa-vre/client-core'
+} from '@lumy/client-core'
 
 interface RouterParams {
   stepId?: string

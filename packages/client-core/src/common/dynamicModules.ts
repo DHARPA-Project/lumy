@@ -1,5 +1,5 @@
 import React from 'react'
-import * as LumyClientCore from '@dharpa-vre/client-core'
+import * as LumyClientCore from '@lumy/client-core'
 import * as apacheArrow from 'apache-arrow'
 
 export class DynamicComponentsRegistry<T = unknown> {

@@ -1,10 +1,9 @@
 {
-  "name": "@dharpa-vre/datavis-components",
+  "name": "@lumy/datavis-components",
   "version": "0.1.0",
   "description": "Web components for data visualisation",
   "keywords": [
-    "dharpa",
-    "vre",
+    "lumy",
     "datavis"
   ],
   "homepage": "https://dharpa.org",

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Table as ArrowTable, Utf8Vector } from 'apache-arrow'
 
-import { TableStats, TabularDataFilter } from '@dharpa-vre/client-core'
+import { TableStats, TabularDataFilter } from '@lumy/client-core'
 
 import Paper from '@material-ui/core/Paper'
 import TableContainer from '@material-ui/core/TableContainer'

@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from 'react'
 import { useParams } from 'react-router'
 import { useHistory } from 'react-router-dom'
 
-import { useCurrentWorkflow } from '@dharpa-vre/client-core'
+import { useCurrentWorkflow } from '@lumy/client-core'
 import { Container, Paper, Typography } from '@material-ui/core'
 
 import useStyles from './CurrentWorkflowPage.styles'

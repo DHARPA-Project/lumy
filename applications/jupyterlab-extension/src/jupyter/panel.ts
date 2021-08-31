@@ -4,7 +4,7 @@ import { ITranslator, nullTranslator, TranslationBundle } from '@jupyterlab/tran
 import { LabIcon } from '@jupyterlab/ui-components'
 import { Message } from '@lumino/messaging'
 import { StackedPanel } from '@lumino/widgets'
-import { KernelView, KernelModuleContext } from '@dharpa-vre/jupyter-support'
+import { KernelView, KernelModuleContext } from '@lumy/jupyter-support'
 
 import './style.css'
 import AppIconSvg from './icon.svg'
@@ -39,7 +39,7 @@ export class WrapperPanel extends StackedPanel {
         }
         this._context = new KernelModuleContext(this._sessionContext, serviceManager)
         this._widget = new KernelView(this._context)
-        this._widget.addClass('dharpa-vre-flex')
+        this._widget.addClass('lumy-flex')
         this.addWidget(this._widget)
       })
       .catch(reason => {

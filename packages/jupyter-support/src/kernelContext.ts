@@ -4,7 +4,7 @@ import { JSONValue, UUID } from '@lumino/coreutils'
 import { Signal } from '@lumino/signaling'
 import { IDisposable } from '@lumino/disposable'
 import { ReadinessProbe } from './readinessProbe'
-import { IBackEndContext, MessageEnvelope, ModuleViewProvider, Target } from '@dharpa-vre/client-core'
+import { IBackEndContext, MessageEnvelope, ModuleViewProvider, Target } from '@lumy/client-core'
 import { DynamicModuleViewProviderWithLoader } from './dynamicModuleViewLoader'
 
 export class KernelModuleContext implements IBackEndContext, IDisposable {

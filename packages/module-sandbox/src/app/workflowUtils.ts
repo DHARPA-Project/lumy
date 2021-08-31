@@ -1,4 +1,4 @@
-import { LumyWorkflow } from '@dharpa-vre/client-core'
+import { LumyWorkflow } from '@lumy/client-core'
 
 export const buildPlaygroundWorkflow = (moduleId: string | undefined): LumyWorkflow => {
   return {

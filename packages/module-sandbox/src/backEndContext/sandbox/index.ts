@@ -31,7 +31,7 @@ import {
   ModuleProps,
   WorkflowLoadProgressMessageType,
   LumyWorkflowLoadStatus
-} from '@dharpa-vre/client-core'
+} from '@lumy/client-core'
 
 const MockWorkflowUri = 'https://example.com/networkAnalysis.yml'
 
@@ -141,7 +141,7 @@ const newMockDataRepositoryTable = (numItems = 50): DataRepositoryItemsTable => 
 }
 
 const getMockDataRepositoryTable = (): DataRepositoryItemsTable => {
-  const storeKey = '__dharpa_mock_data_repository'
+  const storeKey = '__lumy_mock_data_repository'
   const serializedTable = window.localStorage.getItem(storeKey)
   if (serializedTable == null) {
     const table = newMockDataRepositoryTable()
@@ -177,7 +177,7 @@ class IOValuesStore {
   private _storeKey: string
   private _values: MockValueStore<unknown>
 
-  constructor(workflowStructure: LumyWorkflow, storeKey = '__dharpa_mock_values') {
+  constructor(workflowStructure: LumyWorkflow, storeKey = '__lumy_mock_values') {
     this._store = window.localStorage
     this._storeKey = storeKey
 
@@ -330,7 +330,7 @@ class NotesStore {
 
   private _workflows: NotesStoreWorkflows
 
-  constructor(storeKey = '__dharpa_workflows_notes') {
+  constructor(storeKey = '__lumy_workflows_notes') {
     this._store = window.localStorage
     this._storeKey = storeKey
   }

@@ -1,6 +1,6 @@
 import React, { createContext, useEffect } from 'react'
 
-import { useLastError } from '@dharpa-vre/client-core'
+import { useLastError } from '@lumy/client-core'
 
 import { useStoredReducer } from '../../hooks/useStoredReducer'
 import { NotificationAction, notificationReducer } from '../reducers/notificationReducer'

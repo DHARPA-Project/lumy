@@ -1,5 +1,5 @@
 import React from 'react'
-import { ModuleProps } from '@dharpa-vre/client-core'
+import { ModuleProps } from '@lumy/client-core'
 
 const Default = ({ pageDetails }: ModuleProps): JSX.Element => {
   return (

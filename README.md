@@ -74,7 +74,7 @@ Jupyter Lab
 pip install jupyterlab>=3.0.0
 ```
 
-VRE middleware in development mode
+Lumy middleware in development mode
 
 ```
 pip install -U --extra-index-url https://pypi.fury.io/dharpa/ lumy-middleware

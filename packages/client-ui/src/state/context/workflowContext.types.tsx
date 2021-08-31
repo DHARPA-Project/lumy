@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction } from 'react'
 
-import { LumyWorkflow, WorkflowPageDetails } from '@dharpa-vre/client-core'
+import { LumyWorkflow, WorkflowPageDetails } from '@lumy/client-core'
 
 export type WorkflowType = {
   isRightSideBarVisible: boolean

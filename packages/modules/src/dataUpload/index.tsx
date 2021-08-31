@@ -6,7 +6,7 @@ import {
   useAddFilesToRepository,
   useStepInputValue,
   withMockProcessor
-} from '@dharpa-vre/client-core'
+} from '@lumy/client-core'
 import { Dropzone } from './Dropzone'
 
 // TODO: This is a special module in the sense that it uses

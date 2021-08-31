@@ -10,7 +10,7 @@ import TableBody from '@material-ui/core/TableBody'
 import TableRow from '@material-ui/core/TableRow'
 import TableCell from '@material-ui/core/TableCell'
 
-import { DataRepositoryItemStructure } from '@dharpa-vre/client-core'
+import { DataRepositoryItemStructure } from '@lumy/client-core'
 
 import useStyles from './TabularDataMappingForm.styles'
 

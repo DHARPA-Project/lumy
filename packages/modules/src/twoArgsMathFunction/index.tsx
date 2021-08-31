@@ -1,10 +1,5 @@
 import React from 'react'
-import {
-  MockProcessorResult,
-  ModuleProps,
-  useStepInputValue,
-  withMockProcessor
-} from '@dharpa-vre/client-core'
+import { MockProcessorResult, ModuleProps, useStepInputValue, withMockProcessor } from '@lumy/client-core'
 
 interface InputValues {
   operator?: string

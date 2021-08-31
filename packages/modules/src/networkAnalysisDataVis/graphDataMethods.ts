@@ -1,4 +1,4 @@
-import { EdgeMetadata, NodeMetadata } from '@dharpa-vre/datavis-components'
+import { EdgeMetadata, NodeMetadata } from '@lumy/datavis-components'
 import { OutputValues, ScalingMethod } from './structure'
 import { normalizeNumbers } from './utils'
 

@@ -1,6 +1,6 @@
 import React, { useState, createContext } from 'react'
 
-import { generateUniqueId } from '@dharpa-vre/client-core'
+import { generateUniqueId } from '@lumy/client-core'
 
 interface IWorkflowCategory {
   name: string

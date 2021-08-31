@@ -1,10 +1,10 @@
 import React, { createContext, useEffect, useRef, useState } from 'react'
 
-import { useStepOutputValue, WorkflowPageDetails } from '@dharpa-vre/client-core'
+import { useStepOutputValue, WorkflowPageDetails } from '@lumy/client-core'
 
 import { ScalingMethod, InputValues, OutputValues, GraphStats } from './structure'
 
-import { NetworkForce, NodeMouseEventDetails } from '@dharpa-vre/datavis-components'
+import { NetworkForce, NodeMouseEventDetails } from '@lumy/datavis-components'
 import {
   buildGraphEdges,
   buildGraphNodes,

@@ -5,7 +5,7 @@ import Button from '@material-ui/core/Button'
 
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload'
 
-import { LoadingIndicator } from '@dharpa-vre/common-ui-components'
+import { LoadingIndicator } from '@lumy/common-ui-components'
 
 import { WorkflowContext } from '../../../state'
 import useStyles from './CodeView.styles'

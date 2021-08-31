@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/schema",
-  "$id": "https://dharpa.org/schemas/vre/messages/activity/MsgProgress.json",
+  "$id": "https://dharpa.org/schemas/messages/activity/MsgProgress.json",
   "type": "object",
   "additionalProperties": false,
   "title": "MsgProgress",

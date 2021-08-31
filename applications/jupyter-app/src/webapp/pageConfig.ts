@@ -5,10 +5,10 @@ import { PageConfig } from '@jupyterlab/coreutils'
  * overridden by the electron app.
  */
 export function prepareConfigData(): void {
-  const { __vreJupyterParameters } = (window as unknown) as {
-    __vreJupyterParameters?: { [key: string]: string }
+  const { __lumyJupyterParameters } = (window as unknown) as {
+    __lumyJupyterParameters?: { [key: string]: string }
   }
-  Object.entries(__vreJupyterParameters ?? {}).forEach(([key, value]) => PageConfig.setOption(key, value))
+  Object.entries(__lumyJupyterParameters ?? {}).forEach(([key, value]) => PageConfig.setOption(key, value))
 }
 
 export function processTokenFromUrl(): void {

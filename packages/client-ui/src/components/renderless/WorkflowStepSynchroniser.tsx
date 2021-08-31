@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react'
 import { useParams } from 'react-router'
 
-import { LumyWorkflow, useCurrentWorkflow } from '@dharpa-vre/client-core'
+import { LumyWorkflow, useCurrentWorkflow } from '@lumy/client-core'
 
 import { WorkflowContext } from '../../state'
 

@@ -11,7 +11,7 @@ import {
   GridApiContext,
   useGridState
 } from '@material-ui/data-grid'
-import { DataFilterCondition, DataFilterConditionOperator } from '@dharpa-vre/client-core'
+import { DataFilterCondition, DataFilterConditionOperator } from '@lumy/client-core'
 import {
   asDataFilterItem,
   asDataFilterConditionOperator,

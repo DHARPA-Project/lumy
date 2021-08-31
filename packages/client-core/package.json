@@ -1,10 +1,9 @@
 {
-  "name": "@dharpa-vre/client-core",
+  "name": "@lumy/client-core",
   "version": "0.1.0",
-  "description": "DHARPA VRE client core",
+  "description": "Lumy client core",
   "keywords": [
-    "dharpa",
-    "vre",
+    "lumy",
     "core"
   ],
   "homepage": "https://dharpa.org",

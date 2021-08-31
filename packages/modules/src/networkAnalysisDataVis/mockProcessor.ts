@@ -1,5 +1,5 @@
 import { Table, Float32Vector, BoolVector, Utf8Vector, Int32Vector } from 'apache-arrow'
-import { MockProcessorResult } from '@dharpa-vre/client-core'
+import { MockProcessorResult } from '@lumy/client-core'
 import {
   EdgesStructure,
   CentralityMeasures,

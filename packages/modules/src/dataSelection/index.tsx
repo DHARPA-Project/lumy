@@ -21,7 +21,7 @@ import {
   DataRepositoryItemsTable,
   arrowUtils,
   MockProcessorResult
-} from '@dharpa-vre/client-core'
+} from '@lumy/client-core'
 
 import useStyles from './DataSelection.styles'
 

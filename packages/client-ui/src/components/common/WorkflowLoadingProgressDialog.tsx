@@ -13,11 +13,7 @@ import {
 } from '@material-ui/core'
 import ErrorIcon from '@material-ui/icons/Error'
 
-import {
-  LoadProgress,
-  LumyWorkflowLoadStatus,
-  WorkflowLoadProgressMessageType
-} from '@dharpa-vre/client-core'
+import { LoadProgress, LumyWorkflowLoadStatus, WorkflowLoadProgressMessageType } from '@lumy/client-core'
 import useTheme from './WorkflowLoadingProgressDialog.styles'
 import { Alert } from '@material-ui/lab'
 import { FormattedMessage } from '@lumy/i18n'

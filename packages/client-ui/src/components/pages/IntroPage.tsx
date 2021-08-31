@@ -18,7 +18,7 @@ const IntroPage: React.FC = () => {
   return (
     <div>
       <Typography component="h1" variant="h5" className={classes.headline}>
-        DHARPA Data Science Tool
+        Lumy app
       </Typography>
 
       <Container maxWidth="lg" className={classes.container}>

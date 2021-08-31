@@ -1,10 +1,8 @@
 {
-  "name": "@dharpa-vre/notes-components",
+  "name": "@lumy/notes-components",
   "version": "0.1.0",
   "description": "Componennts for dealing with notes.",
   "keywords": [
-    "dharpa",
-    "vre",
     "lumy",
     "notes",
     "react"
@@ -27,7 +25,7 @@
     "react-simplemde-editor": "5"
   },
   "peerDependencies": {
-    "@dharpa-vre/client-core": "*",
+    "@lumy/client-core": "*",
     "@material-ui/core": "4",
     "@material-ui/icons": "4",
     "react": "17"

@@ -19,7 +19,7 @@ import {
   ItemCreationMethod,
   useDataRepository,
   useDataRepositoryItemCreator
-} from '@dharpa-vre/client-core'
+} from '@lumy/client-core'
 
 import useStyles from './DataRegistryFormModal.styles'
 

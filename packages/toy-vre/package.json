@@ -1,10 +1,9 @@
 {
-  "name": "@dharpa-vre/toy-vre",
+  "name": "@lumy/toy-vre",
   "version": "0.1.0",
-  "description": "DHARPA toy VRE",
+  "description": "Lumy toy VRE",
   "keywords": [
-    "dharpa",
-    "vre",
+    "lumy",
     "toy"
   ],
   "homepage": "https://dharpa.org",
@@ -19,7 +18,7 @@
   },
   "peerDependencies": {
     "react": "17",
-    "@dharpa-vre/client-core": "*",
+    "@lumy/client-core": "*",
     "@material-ui/core": "4",
     "@material-ui/icons": "4"
   },

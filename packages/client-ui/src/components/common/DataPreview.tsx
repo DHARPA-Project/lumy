@@ -8,8 +8,8 @@ import {
   useStepOutputValue,
   DataPreviewLayoutMetadataItem,
   InputOrOutput
-} from '@dharpa-vre/client-core'
-import { DataGrid } from '@dharpa-vre/arrow-data-grid'
+} from '@lumy/client-core'
+import { DataGrid } from '@lumy/arrow-data-grid'
 
 import { WorkflowContext } from '../../state'
 

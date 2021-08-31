@@ -4,7 +4,7 @@ import Breadcrumbs from '@material-ui/core/Breadcrumbs'
 import Typography from '@material-ui/core/Typography'
 import Divider from '@material-ui/core/Divider'
 
-import { ModuleViewFactory, WorkflowPageDetails } from '@dharpa-vre/client-core'
+import { ModuleViewFactory, WorkflowPageDetails } from '@lumy/client-core'
 
 import useStyles from './WorkflowStep.styles'
 

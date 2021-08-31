@@ -100,7 +100,7 @@ function install_python_dependencies {
   pip install "jupyterlab-server>=2.5.2"
 }
 
-function install_or_update_vre_backend {
+function install_or_update_lumy_backend {
   if [ -z "$MIDDLEWARE_VERSION" ]; then
     middleware_package="lumy-middleware"
   else
@@ -118,4 +118,4 @@ source "${miniconda_app_dir}/etc/profile.d/conda.sh"
 create_default_env
 activate_default_env
 install_python_dependencies
-install_or_update_vre_backend
+install_or_update_lumy_backend

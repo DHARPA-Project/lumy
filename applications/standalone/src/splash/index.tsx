@@ -1,6 +1,6 @@
 import React from 'react'
 import { render } from 'react-dom'
-import { SplashScreen, SplashScreenContextProvider } from '@dharpa-vre/splash-screen'
+import { SplashScreen, SplashScreenContextProvider } from '@lumy/splash-screen'
 import { MockContext } from './mock'
 
 const SplashScreenApp = (): JSX.Element => {
