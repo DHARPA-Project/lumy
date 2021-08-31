@@ -1,5 +1,5 @@
 import React from 'react'
-import { ModuleViewFactory, LumyWorkflow, WorkflowPageDetails } from '@dharpa-vre/client-core'
+import { ModuleViewFactory, LumyWorkflow, WorkflowPageDetails } from '@lumy/client-core'
 import { Paper, Grid, Typography, Box, Collapse } from '@material-ui/core'
 
 export interface WorkflowPreviewProps {

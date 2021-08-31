@@ -1,5 +1,5 @@
 {
-  "name": "@dharpa-vre/common-ui-components",
+  "name": "@lumy/common-ui-components",
   "version": "0.1.0",
   "description": "Common UI components used in Lumy",
   "keywords": [
@@ -19,7 +19,7 @@
   },
   "peerDependencies": {
     "react": "17",
-    "@dharpa-vre/client-core": "*"
+    "@lumy/client-core": "*"
   },
   "devDependencies": {
     "@types/node": "14",

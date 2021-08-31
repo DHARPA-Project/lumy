@@ -9,10 +9,10 @@ import { WrapperPanel } from './panel'
 
 import AppIconSvg from './icon.svg'
 
-const AppId = 'dharpa-vre'
-const AppLabel = 'DHARPA VRE'
-const AppCaption = 'DHARPA VRE'
-const AppCategory = 'DHARPA'
+const AppId = 'lumy'
+const AppLabel = 'Lumy'
+const AppCaption = 'Lumy'
+const AppCategory = 'Lumy'
 
 /**
  * The command IDs used by the console plugin.

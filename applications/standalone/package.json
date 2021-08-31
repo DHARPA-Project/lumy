@@ -1,10 +1,9 @@
 {
-  "name": "@dharpa-vre/standalone-app",
+  "name": "@lumy/standalone-app",
   "version": "0.1.0",
-  "description": "DHARPA VRE standalone app",
+  "description": "Lumy standalone app",
   "keywords": [
-    "dharpa",
-    "vre",
+    "lumy",
     "app"
   ],
   "homepage": "https://dharpa.org",
@@ -17,10 +16,10 @@
     "eslint:check": "eslint src --ext .ts,.tsx,.js,.jsx"
   },
   "dependencies": {
-    "@dharpa-vre/client-core": "*",
-    "@dharpa-vre/client-ui": "*",
-    "@dharpa-vre/common-ui-components": "*",
-    "@dharpa-vre/splash-screen": "*",
+    "@lumy/client-core": "*",
+    "@lumy/client-ui": "*",
+    "@lumy/common-ui-components": "*",
+    "@lumy/splash-screen": "*",
     "@lumy/module-sandbox": "*",
     "@lumy/styles": "*",
     "@lumino/signaling": "1",

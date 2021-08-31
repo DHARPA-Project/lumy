@@ -9,8 +9,8 @@ import { TransitionProps } from '@material-ui/core/transitions'
 
 import Alert from '@material-ui/lab/Alert'
 
-import { useDataRepository } from '@dharpa-vre/client-core'
-import { InteractiveTable } from '@dharpa-vre/common-ui-components'
+import { useDataRepository } from '@lumy/client-core'
+import { InteractiveTable } from '@lumy/common-ui-components'
 
 import useStyles from './DataRegistryPage.styles'
 import DataRegistryItemContentPreview from '../common/registry/DataRegistryItemContentPreview'

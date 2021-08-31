@@ -1,6 +1,6 @@
 import React, { useContext, useRef } from 'react'
 
-import { NetworkForce } from '@dharpa-vre/datavis-components'
+import { NetworkForce } from '@lumy/datavis-components'
 
 import { NetworkGraphContext } from '../context'
 import { normalizedValue } from '../utils'

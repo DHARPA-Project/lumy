@@ -35,12 +35,12 @@ def _jupyter_server_extension_points():
     return [
         {
             'module': __name__,
-            'app': VREApp
+            'app': LumyApp
         }
     ]
 
 
-class VREHandler(
+class LumyHandler(
     ExtensionHandlerJinjaMixin,
     ExtensionHandlerMixin,
     JupyterHandler
@@ -68,13 +68,13 @@ class VREHandler(
         )
 
 
-class VREApp(LabServerApp):
+class LumyApp(LabServerApp):
     extension_url = '/'
     default_url = '/'
-    app_url = '/vre'
+    app_url = '/lumy'
     load_other_extensions = False
     name = name
-    app_name = 'VRE Jupyter App'
+    app_name = 'Lumy Jupyter App'
     static_dir = os.path.join(PROJECT_DIR, 'dist', 'webapp')
     templates_dir = os.path.join(HERE, 'templates')
     app_version = version
@@ -90,8 +90,8 @@ class VREApp(LabServerApp):
 
     def initialize_handlers(self):
         super().initialize_handlers()
-        self.handlers.append(('/', VREHandler))
+        self.handlers.append(('/', LumyHandler))
 
 
 if __name__ == '__main__':
-    VREApp.launch_instance()
+    LumyApp.launch_instance()

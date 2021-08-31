@@ -15,4 +15,4 @@ function getJupyterParameters(): { [key: string]: string } {
     }, {}) as { [key: string]: string }
 }
 
-contextBridge.exposeInMainWorld('__vreJupyterParameters', getJupyterParameters())
+contextBridge.exposeInMainWorld('__lumyJupyterParameters', getJupyterParameters())

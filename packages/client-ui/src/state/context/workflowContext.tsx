@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useRef, useState } from 'react'
 
-import { useCurrentWorkflow, WorkflowPageDetails } from '@dharpa-vre/client-core'
+import { useCurrentWorkflow, WorkflowPageDetails } from '@lumy/client-core'
 
 import sampleJupyterNotebook from '../../data/notebook.ipynb'
 import { WorkflowType, WorkflowProviderProps, screenSplitDirectionType } from './workflowContext.types'

@@ -1,10 +1,9 @@
 {
-  "name": "@dharpa-vre/tools",
+  "name": "@lumy/tools",
   "version": "0.1.0",
-  "description": "DHARPA VRE tools",
+  "description": "Lumy build tools",
   "keywords": [
-    "dharpa",
-    "vre",
+    "lumy",
     "tools"
   ],
   "homepage": "https://dharpa.org",

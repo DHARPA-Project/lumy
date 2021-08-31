@@ -180,7 +180,7 @@ function Start-InstallPythonDependencies {
   }
 }
 
-function Start-InstallOrUpdateVreBackend {
+function Start-InstallOrUpdateLumyBackend {
   if ([string]::IsNullOrEmpty($env:MIDDLEWARE_VERSION)) {
     $middleware_package = "lumy-middleware"
   }
@@ -204,6 +204,6 @@ Import-Module $miniconda_hooks
 Start-CreateDefaultEnv
 Start-ActivateDefaultEnv
 Start-InstallPythonDependencies
-Start-InstallOrUpdateVreBackend
+Start-InstallOrUpdateLumyBackend
 
 exit 0

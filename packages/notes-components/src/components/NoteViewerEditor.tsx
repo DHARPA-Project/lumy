@@ -1,5 +1,5 @@
 import React from 'react'
-import { Note } from '@dharpa-vre/client-core'
+import { Note } from '@lumy/client-core'
 import { Grid, TextField, IconButton, Button, Typography } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close'
 import DeleteIcon from '@material-ui/icons/Delete'

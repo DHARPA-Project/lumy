@@ -9,8 +9,8 @@ import {
   NoteItemsList,
   NoteItem,
   EditedNote as EditedNoteType
-} from '@dharpa-vre/notes-components'
-import { Note as NoteType, useStepNotes } from '@dharpa-vre/client-core'
+} from '@lumy/notes-components'
+import { Note as NoteType, useStepNotes } from '@lumy/client-core'
 
 import useStyles from './NoteEditor.styles'
 import { WorkflowContext } from '../../state'

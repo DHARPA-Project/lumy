@@ -5,7 +5,7 @@ import SpeedDial from '@material-ui/lab/SpeedDial'
 import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon'
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction'
 
-import { LoadingIndicator } from '@dharpa-vre/common-ui-components'
+import { LoadingIndicator } from '@lumy/common-ui-components'
 
 import { WorkflowContext, screenSplitDirectionType } from '../../state'
 import { useAppFeatures } from '../../const/features'

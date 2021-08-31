@@ -1,7 +1,7 @@
 import React from 'react'
 import { Switch, Route, HashRouter as Router, Redirect } from 'react-router-dom'
 
-import { useSystemInfo } from '@dharpa-vre/client-core'
+import { useSystemInfo } from '@lumy/client-core'
 
 import { RootProvider } from '../state'
 

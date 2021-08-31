@@ -2,7 +2,7 @@
 // import { PageConfig, URLExt } from '@jupyterlab/coreutils'
 // ;((window as unknown) as { __webpack_public_path__: string }).__webpack_public_path__ = URLExt.join(
 //   PageConfig.getBaseUrl(),
-//   'vre/'
+//   'lumy/'
 // )
 
 ///<reference types="webpack-env" />
@@ -10,13 +10,13 @@ import { prepareConfigData, processTokenFromUrl } from './pageConfig'
 import { SessionContext } from '@jupyterlab/apputils'
 import { SessionManager, KernelManager, KernelSpecManager, ServiceManager } from '@jupyterlab/services'
 import { Widget } from '@lumino/widgets'
-import { KernelView, KernelModuleContext } from '@dharpa-vre/jupyter-support'
+import { KernelView, KernelModuleContext } from '@lumy/jupyter-support'
 
 declare global {
   interface Window {
-    __vre_sessionContext?: SessionContext
-    __vre_widget?: KernelView
-    __vre_serviceManager?: ServiceManager.IManager
+    __lumy_sessionContext?: SessionContext
+    __lumy_widget?: KernelView
+    __lumy_serviceManager?: ServiceManager.IManager
   }
 }
 
@@ -30,9 +30,9 @@ async function main(): Promise<void> {
   const sessionContext = new SessionContext({
     sessionManager,
     specsManager,
-    name: 'VRE',
+    name: 'Lumy',
     // path is needed to reconnect to the same kernel after page reload.
-    path: 'dharpa_vre'
+    path: 'lumy'
   })
 
   // Use the default kernel.
@@ -43,9 +43,9 @@ async function main(): Promise<void> {
   const context = new KernelModuleContext(sessionContext, serviceManager)
   const widget = new KernelView(context)
   Widget.attach(widget, document.body)
-  window.__vre_sessionContext = sessionContext
-  window.__vre_widget = widget
-  window.__vre_serviceManager = serviceManager
+  window.__lumy_sessionContext = sessionContext
+  window.__lumy_widget = widget
+  window.__lumy_serviceManager = serviceManager
 
   // Start up the kernel.
   void sessionContext.initialize().then(() => {
@@ -57,13 +57,13 @@ window.addEventListener('load', main)
 
 // support webpack dev server hot reload
 if (module.hot) {
-  module.hot.accept('@dharpa-vre/jupyter-support', function () {
+  module.hot.accept('@lumy/jupyter-support', function () {
     console.log('reattaching app')
-    Widget.detach(window.__vre_widget)
+    Widget.detach(window.__lumy_widget)
 
-    const context = new KernelModuleContext(window.__vre_sessionContext, window.__vre_serviceManager)
+    const context = new KernelModuleContext(window.__lumy_sessionContext, window.__lumy_serviceManager)
     const widget = new KernelView(context)
     Widget.attach(widget, document.body)
-    window.__vre_widget = widget
+    window.__lumy_widget = widget
   })
 }

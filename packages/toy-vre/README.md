@@ -2,7 +2,7 @@
 
 **DEPRECATED**
 
-Playing around with core features of a VRE.
+Playing around with core features of Lumy.
 
 ## Development
 

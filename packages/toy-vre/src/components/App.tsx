@@ -1,5 +1,5 @@
 import React from 'react'
-import { useCurrentWorkflow } from '@dharpa-vre/client-core'
+import { useCurrentWorkflow } from '@lumy/client-core'
 import { Box, Grid, LinearProgress, Typography } from '@material-ui/core'
 import { StatusView } from './StatusView'
 import { WorkflowPreview } from './WorkflowPreview'

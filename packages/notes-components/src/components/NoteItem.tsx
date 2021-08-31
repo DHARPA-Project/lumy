@@ -1,5 +1,5 @@
 import React from 'react'
-import { Note } from '@dharpa-vre/client-core'
+import { Note } from '@lumy/client-core'
 import { Box, Typography, ListItem, ListItemText } from '@material-ui/core'
 import useStyles from './NoteItem.styles'
 import { asTimeAgo } from '../util/render'

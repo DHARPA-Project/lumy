@@ -19,9 +19,9 @@
     "start": "webpack serve -c webpack.config.js"
   },
   "dependencies": {
-    "@dharpa-vre/client-core": "*",
-    "@dharpa-vre/common-ui-components": "*",
-    "@dharpa-vre/datavis-components": "*",
+    "@lumy/client-core": "*",
+    "@lumy/common-ui-components": "*",
+    "@lumy/datavis-components": "*",
     "@lumy/module-core": "*",
     "@lumy/styles": "*",
     "@material-ui/core": "^4.11.3",

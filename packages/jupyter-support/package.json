@@ -1,10 +1,9 @@
 {
-  "name": "@dharpa-vre/jupyter-support",
+  "name": "@lumy/jupyter-support",
   "version": "0.1.0",
-  "description": "Shared jupyter support components for DHARPA VRE",
+  "description": "Shared jupyter support components for Lumy",
   "keywords": [
-    "dharpa",
-    "vre",
+    "lumy",
     "jupyter"
   ],
   "homepage": "https://dharpa.org",
@@ -18,8 +17,8 @@
     "build:lib": "tsc"
   },
   "dependencies": {
-    "@dharpa-vre/client-core": "*",
-    "@dharpa-vre/client-ui": "*",
+    "@lumy/client-core": "*",
+    "@lumy/client-ui": "*",
     "@lumy/styles": "*"
   },
   "peerDependencies": {

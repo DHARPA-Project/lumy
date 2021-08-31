@@ -8,8 +8,8 @@ import {
   useLoadWorkflow,
   useWorkflowList,
   WorkflowListItem
-} from '@dharpa-vre/client-core'
-import { LoadingIndicator } from '@dharpa-vre/common-ui-components'
+} from '@lumy/client-core'
+import { LoadingIndicator } from '@lumy/common-ui-components'
 
 import { Grid, List, ListItem, ListItemIcon, ListItemText, Paper, Typography } from '@material-ui/core'
 

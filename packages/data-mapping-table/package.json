@@ -1,10 +1,9 @@
 {
-  "name": "@dharpa-vre/data-mapping-table",
+  "name": "@lumy/data-mapping-table",
   "version": "0.1.0",
   "description": "Data mapping form for tabular data",
   "keywords": [
-    "dharpa",
-    "vre",
+    "lumy",
     "table",
     "tabular",
     "react"
@@ -19,8 +18,8 @@
   },
   "peerDependencies": {
     "react": "17",
-    "@dharpa-vre/client-core": "*",
-    "@dharpa-vre/common-ui-components": "*",
+    "@lumy/client-core": "*",
+    "@lumy/common-ui-components": "*",
     "@material-ui/core": "4",
     "@material-ui/icons": "4",
     "apache-arrow": "4"

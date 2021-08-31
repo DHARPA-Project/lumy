@@ -1,5 +1,5 @@
 import React from 'react'
-import { ModuleProps, useStepInputValue } from '@dharpa-vre/client-core'
+import { ModuleProps, useStepInputValue } from '@lumy/client-core'
 
 // interface InputValues {
 //   x?: number | number[]

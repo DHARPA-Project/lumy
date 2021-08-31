@@ -1,10 +1,9 @@
 {
-  "name": "@dharpa-vre/splash-screen",
+  "name": "@lumy/splash-screen",
   "version": "0.1.0",
   "description": "Splash screen for the installation process",
   "keywords": [
-    "dharpa",
-    "vre"
+    "lumy"
   ],
   "homepage": "https://dharpa.org",
   "main": "src/index.ts",

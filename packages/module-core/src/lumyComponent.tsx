@@ -1,5 +1,5 @@
 import React from 'react'
-import { registerLumyComponent } from '@dharpa-vre/client-core'
+import { registerLumyComponent } from '@lumy/client-core'
 import { createGenerateClassName, StylesProvider } from '@material-ui/styles'
 import { ThemeContextProvider, useUserLanguageCode } from '@lumy/styles'
 

@@ -1,6 +1,6 @@
 import path from 'path'
 import { WebContents } from 'electron'
-import { FinishMessage, StreamMessage } from '@dharpa-vre/splash-screen'
+import { FinishMessage, StreamMessage } from '@lumy/splash-screen'
 
 const StreamMessageChannel = 'streamMessage'
 const FinishMessageChannel = 'installationComplete'

@@ -1,4 +1,4 @@
-import { FinishMessage, ISplashScreenContext, StreamMessage } from '@dharpa-vre/splash-screen'
+import { FinishMessage, ISplashScreenContext, StreamMessage } from '@lumy/splash-screen'
 
 const StreamMessageChannel = 'streamMessage'
 const FinishMessageChannel = 'installationComplete'

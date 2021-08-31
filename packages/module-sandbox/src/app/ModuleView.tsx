@@ -1,6 +1,6 @@
 import React, { useContext, Suspense } from 'react'
 import { Box, Paper, Typography } from '@material-ui/core'
-import { BackEndContext, ModuleProps } from '@dharpa-vre/client-core'
+import { BackEndContext, ModuleProps } from '@lumy/client-core'
 import useStyles from './ModuleView.styles'
 
 export interface Props extends React.HTMLAttributes<HTMLElement> {

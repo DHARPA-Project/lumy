@@ -18,7 +18,7 @@ import {
   DataSortingDirection,
   DataFilterItem,
   DataFilterConditionOperator
-} from '@dharpa-vre/client-core'
+} from '@lumy/client-core'
 import { getFilterOperators } from '../filterOperators'
 import { getCellRenderer } from '../cellRenderers'
 import { getHeaderRenderer } from '../headerRenderer'

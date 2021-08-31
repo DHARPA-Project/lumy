@@ -8,8 +8,8 @@ import {
   PageComponentsCode,
   Target,
   WorkflowPageComponent
-} from '@dharpa-vre/client-core'
-import { DefaultModuleComponentPanel, setUpDynamicModulesSupport } from '@dharpa-vre/client-ui'
+} from '@lumy/client-core'
+import { DefaultModuleComponentPanel, setUpDynamicModulesSupport } from '@lumy/client-ui'
 import React from 'react'
 
 /**

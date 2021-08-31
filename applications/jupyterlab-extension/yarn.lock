@@ -1009,7 +1009,7 @@
     classnames "^2.2"
     tslib "~1.13.0"
 
-"@dharpa-vre/client-core@link:../../packages/client-core":
+"@lumy/client-core@link:../../packages/client-core":
   version "0.0.0"
   uid ""
 

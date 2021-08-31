@@ -3,8 +3,8 @@ import {
   ModuleProps,
   ModuleViewProvider,
   WorkflowPageComponent
-} from '@dharpa-vre/client-core'
-import { DefaultModuleComponentPanel, setUpDynamicModulesSupport } from '@dharpa-vre/client-ui'
+} from '@lumy/client-core'
+import { DefaultModuleComponentPanel, setUpDynamicModulesSupport } from '@lumy/client-ui'
 
 export class DynamicModuleViewProviderWithLoader implements ModuleViewProvider {
   private provider: DynamicModuleViewProvider

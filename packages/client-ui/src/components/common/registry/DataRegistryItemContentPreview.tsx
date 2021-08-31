@@ -1,7 +1,7 @@
 import React from 'react'
 
-import { useDataRepositoryItemValue } from '@dharpa-vre/client-core'
-import { LoadingIndicator, TableView } from '@dharpa-vre/common-ui-components'
+import { useDataRepositoryItemValue } from '@lumy/client-core'
+import { LoadingIndicator, TableView } from '@lumy/common-ui-components'
 
 import useStyles from './DataRegistryItemContentPreview.styles'
 

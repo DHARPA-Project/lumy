@@ -1,6 +1,6 @@
 import React from 'react'
 import { render } from 'react-dom'
-import { SplashScreen, SplashScreenContextProvider } from '@dharpa-vre/splash-screen'
+import { SplashScreen, SplashScreenContextProvider } from '@lumy/splash-screen'
 import { ElectronContext } from './context'
 
 const SplashScreenApp = (): JSX.Element => {

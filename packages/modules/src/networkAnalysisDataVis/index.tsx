@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { ModuleProps, withMockProcessor } from '@dharpa-vre/client-core'
+import { ModuleProps, withMockProcessor } from '@lumy/client-core'
 
 import { mockProcessor } from './mockProcessor'
 import NetworkGraphContextProvider from './context'
