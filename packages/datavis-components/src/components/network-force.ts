@@ -132,7 +132,7 @@ export class NetworkForce extends LitElement {
 
   @property({ type: Number }) labelNodeSizeThreshold = 5
   @property({ type: Boolean }) displayLabels = false
-  @property({ type: Boolean }) reapplySimulationOnUpdate = true
+  @property({ type: Boolean }) reapplySimulationOnUpdate = false
   // if set to false, problem with isolated nodes
 
   /** Nodes of the graph */

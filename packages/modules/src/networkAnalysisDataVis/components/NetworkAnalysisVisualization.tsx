@@ -30,7 +30,9 @@ const NetworkAnalysisVisualizationContainer = (): JSX.Element => {
 
   const graphContainerRef = useRef<HTMLDivElement>()
 
-  const graphBoxSize = useBoxSize(graphContainerRef)
+  // Not using resize observer because it makes the height creep growing or shrinking
+  // whenever the window is resized.
+  const graphBoxSize = useBoxSize(graphContainerRef, { useResizeObserver: false })
 
   return (
     <div className={classes.visualizationContainer}>
@@ -63,7 +65,7 @@ const NetworkAnalysisVisualizationContainer = (): JSX.Element => {
               nodeScalerParams.min,
               nodeScalerParams.max
             )}
-            reapplySimulationOnUpdate={undefined}
+            reapplySimulationOnUpdate={false}
             width={graphBoxSize?.width ?? 0}
             height={graphBoxSize?.height ?? 0}
             ref={graphRef}
