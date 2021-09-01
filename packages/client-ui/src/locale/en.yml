@@ -24,6 +24,8 @@ app:
       label: network analysis
     projects:
       label: projects
+    workflows:
+      label: workflows
 page:
   workflowSelection:
     label: Available Workflows

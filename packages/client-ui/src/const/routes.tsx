@@ -7,6 +7,7 @@ import { useIntl, IntlShape } from '@lumy/i18n'
 import HomeIcon from '@material-ui/icons/Home'
 import BubbleChartIcon from '@material-ui/icons/BubbleChart'
 import StorageIcon from '@material-ui/icons/Storage'
+import ListAltOutlinedIcon from '@material-ui/icons/ListAltOutlined'
 
 export enum NavItemType {
   'heading',
@@ -54,6 +55,13 @@ export const getPageRoutes = (intl: IntlShape, idPrefix = 'app.routes'): RouteIt
     label: getRouteLabel(intl, 'networkAnalysis', idPrefix),
     link: '/workflows/network-analysis',
     icon: <BubbleChartIcon />,
+    nested: false
+  },
+  {
+    type: NavItemType.pageLink,
+    label: getRouteLabel(intl, 'workflows', idPrefix),
+    link: '/workflows',
+    icon: <ListAltOutlinedIcon />,
     nested: false
   },
   // {
