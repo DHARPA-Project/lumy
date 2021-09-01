@@ -9,7 +9,7 @@ import { screenSplitOptions } from './workflowContext.const'
 export const WorkflowContext = createContext<WorkflowType>(null)
 
 export const WorkflowProvider = ({ children }: WorkflowProviderProps): JSX.Element => {
-  const [currentWorkflow] = useCurrentWorkflow()
+  const [currentWorkflow, , isWorkflowLoading] = useCurrentWorkflow()
 
   const [isRightSideBarVisible, setIsRightSideBarVisible] = useState(false)
   const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(false)
@@ -158,6 +158,9 @@ export const WorkflowProvider = ({ children }: WorkflowProviderProps): JSX.Eleme
     const pageIndex = pageIds?.indexOf(id)
     if (pageIndex >= 0 && pageIndex != currentPageIndex) setCurrentPageIndexAndDirection([pageIndex, 0])
   }
+
+  // the context is not in a correct state until the workflow is loaded.
+  if (isWorkflowLoading) return <></>
 
   return (
     <WorkflowContext.Provider
