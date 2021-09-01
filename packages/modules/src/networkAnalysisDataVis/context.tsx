@@ -52,16 +52,28 @@ const useGraphStats = (stepId: string): Partial<GraphStats> => {
   const [averageDegree] = useStepOutputValue<GraphStats['averageDegree']>(stepId, 'averageDegree')
   const [averageInDegree] = useStepOutputValue<GraphStats['averageInDegree']>(stepId, 'averageInDegree')
   const [averageOutDegree] = useStepOutputValue<GraphStats['averageOutDegree']>(stepId, 'averageOutDegree')
+  const stats = React.useMemo<Partial<GraphStats>>(
+    () => ({
+      nodesCount,
+      edgesCount,
+      density,
+      averageShortestPathLength,
+      averageDegree,
+      averageInDegree,
+      averageOutDegree
+    }),
+    [
+      nodesCount,
+      edgesCount,
+      density,
+      averageShortestPathLength,
+      averageDegree,
+      averageInDegree,
+      averageOutDegree
+    ]
+  )
 
-  return {
-    nodesCount,
-    edgesCount,
-    density,
-    averageShortestPathLength,
-    averageDegree,
-    averageInDegree,
-    averageOutDegree
-  }
+  return stats
 }
 
 const NetworkGraphContextProvider = ({
@@ -138,7 +150,7 @@ const NetworkGraphContextProvider = ({
 
   useEffect(() => {
     // TODO: handle updated direct connections of currently selected node.
-    console.log(`Direct connections of node ${selectedNodeId}: ${selectedNodeDirectConnections}`)
+    console.debug(`TODO: Direct connections of node ${selectedNodeId}: ${selectedNodeDirectConnections}`)
   }, [selectedNodeDirectConnections])
 
   /* Handle changes in nodes, edges, graph data and graph parameters:
@@ -185,7 +197,10 @@ const NetworkGraphContextProvider = ({
   }, [graphRef])
 
   /* local variables */
-  const nodeScalerParams = getNodeScalerParameters(nodes, nodeScalingMethod)
+  const nodeScalerParams = React.useMemo(() => getNodeScalerParameters(nodes, nodeScalingMethod), [
+    nodes,
+    nodeScalingMethod
+  ])
 
   return (
     <NetworkGraphContext.Provider

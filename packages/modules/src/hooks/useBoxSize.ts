@@ -1,13 +1,22 @@
-import { MutableRefObject, useEffect, useRef, useState } from 'react'
+import { MutableRefObject, useEffect, useState, useRef } from 'react'
 
-export const useBoxSize = <T extends HTMLElement>(elementRef: MutableRefObject<T>): DOMRect | undefined => {
+interface Options {
+  useResizeObserver?: boolean
+}
+
+export const useBoxSize = <T extends HTMLElement>(
+  elementRef: MutableRefObject<T>,
+  options?: Options
+): DOMRect | undefined => {
   const [boxSize, setBoxSize] = useState<DOMRect>()
 
   const observerRef = useRef(
-    new ResizeObserver(entries => {
-      // watch only the first element (only one will be provided)
-      setBoxSize(entries[0].contentRect)
-    })
+    options?.useResizeObserver
+      ? new ResizeObserver(entries => {
+          // watch only the first element (only one will be provided)
+          setBoxSize(entries[0].contentRect)
+        })
+      : undefined
   )
 
   const updateBoxSize = () => {
@@ -16,10 +25,12 @@ export const useBoxSize = <T extends HTMLElement>(elementRef: MutableRefObject<T
   }
 
   useEffect(() => {
-    if (elementRef.current && observerRef.current) observerRef.current.observe(elementRef.current)
+    if (elementRef.current && observerRef.current && options?.useResizeObserver)
+      observerRef.current.observe(elementRef.current)
 
     return () => {
-      if (elementRef.current && observerRef.current) observerRef.current.unobserve(elementRef.current)
+      if (elementRef.current && observerRef.current && options?.useResizeObserver)
+        observerRef.current.unobserve(elementRef.current)
     }
   }, [elementRef.current, observerRef.current])
 

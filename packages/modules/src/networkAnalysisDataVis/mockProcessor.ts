@@ -88,12 +88,14 @@ const generateNodesAndEdges = () => {
   return { nodes, edges }
 }
 
+const _generated = generateNodesAndEdges()
+
 export const mockProcessor = ({
   selectedNodeId,
   shortestPathSource,
   shortestPathTarget
 }: InputValues): MockProcessorResult<InputValues, OutputValues> => {
-  const generated = generateNodesAndEdges()
+  const generated = _generated
   const nodes = generated.nodes
   const edges = generated.edges
 

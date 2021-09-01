@@ -1,5 +1,9 @@
 import React from 'react'
-import { registerLumyComponent } from '@lumy/client-core'
+import {
+  registerLumyComponent,
+  getResolvedReactComponent,
+  ComponentWithMockProcessor
+} from '@lumy/client-core'
 import { createGenerateClassName, StylesProvider } from '@material-ui/styles'
 import { ThemeContextProvider, useUserLanguageCode } from '@lumy/styles'
 
@@ -23,6 +27,18 @@ export function lumyComponent(id: string) {
         </ThemeContextProvider>
       </StylesProvider>
     )
+
+    // hoist mock processor up to the wrapper
+    Object.defineProperty(enrichedComponent, 'mockProcessor', {
+      get: async function () {
+        const resolvedComponent = await getResolvedReactComponent<
+          ComponentWithMockProcessor<unknown, unknown>,
+          T
+        >(Component)
+
+        return resolvedComponent?.mockProcessor
+      }
+    })
 
     registerLumyComponent(id, enrichedComponent)
     return enrichedComponent

@@ -575,8 +575,8 @@ export class SandboxContext implements IBackEndContext {
 
   private async _tryExecutePageProcessor(pageId: string) {
     if (!this._firstExecutionFlag[pageId]) {
-      await this._processStepData(pageId)
       this._firstExecutionFlag[pageId] = true
+      await this._processStepData(pageId)
     }
   }
 
