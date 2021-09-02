@@ -80,13 +80,9 @@ const WorkflowLoadingProgressDialog = ({ progressMessages, status, open, onClose
         </Grid>
       </DialogContent>
       <DialogActions>
-        {status == LumyWorkflowLoadStatus.NotLoaded ? (
-          <Button onClick={onClose} variant="outlined">
-            <FormattedMessage id="modal.workflowLoading.button.close" />
-          </Button>
-        ) : (
-          ''
-        )}
+        <Button onClick={onClose} variant="outlined" disabled={status !== LumyWorkflowLoadStatus.NotLoaded}>
+          <FormattedMessage id="modal.workflowLoading.button.close" />
+        </Button>
       </DialogActions>
     </Dialog>
   )
