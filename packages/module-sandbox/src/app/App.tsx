@@ -9,6 +9,7 @@ import { ModuleView } from './ModuleView'
 import { SandboxContext } from '../backEndContext/sandbox'
 import { buildPlaygroundWorkflow } from './workflowUtils'
 import useStyles from './App.styles'
+import { AutoUiMainPanel } from '../autoui/Main'
 
 const buildContext = (moduleId: string | undefined): SandboxContext => {
   return new SandboxContext({
@@ -34,6 +35,11 @@ const SandboxApp = (): JSX.Element => {
     <BackEndContextProvider value={context}>
       <ThemeContextProvider locale={language}>
         <Switch>
+          <Route path="/autoui">
+            <Grid container direction="column" className={classes.root}>
+              <AutoUiMainPanel />
+            </Grid>
+          </Route>
           <Route path="/:moduleId?">
             <Grid container direction="column" className={classes.root}>
               <ModuleSelector
