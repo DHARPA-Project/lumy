@@ -7,8 +7,8 @@ import Tooltip from '@material-ui/core/Tooltip'
 import Popover from '@material-ui/core/Popover'
 import Checkbox from '@material-ui/core/Checkbox'
 
-import { useDataRepositoryItemValue, DataRepositoryItemStructure } from '@dharpa-vre/client-core'
-import { TableView, LoadingIndicator } from '@dharpa-vre/common-ui-components'
+import { useDataRepositoryItemValue, DataRepositoryItemStructure } from '@lumy/client-core'
+import { TableView, LoadingIndicator } from '@lumy/common-ui-components'
 
 import useStyles from './DataSourceRow.styles'
 

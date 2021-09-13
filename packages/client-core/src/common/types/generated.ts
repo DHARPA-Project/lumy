@@ -1008,7 +1008,8 @@ export interface MsgWorkflowLumyWorkflowLoadProgress {
  */
 export enum MsgWorkflowLumyWorkflowLoadProgressStatus {
   Loaded = 'loaded',
-  Loading = 'loading'
+  Loading = 'loading',
+  NotLoaded = 'notLoaded'
 }
 
 /**
@@ -1047,7 +1048,15 @@ export interface Code {
  * Workflow currently loaded into the app.
  */
 export interface MsgWorkflowUpdated {
+  metadata?: Metadata
   workflow?: LumyWorkflow
+}
+
+export interface Metadata {
+  /**
+   * URI of the file the workflow was loaded from.
+   */
+  uri?: string
 }
 
 /**

@@ -8,16 +8,17 @@ import {
   useStepOutputValue,
   DataPreviewLayoutMetadataItem,
   InputOrOutput
-} from '@dharpa-vre/client-core'
-import { DataGrid } from '@dharpa-vre/arrow-data-grid'
+} from '@lumy/client-core'
+import { DataGrid } from '@lumy/arrow-data-grid'
 
-import { WorkflowContext } from '../../context/workflowContext'
+import { WorkflowContext } from '../../state'
 
 import Typography from '@material-ui/core/Typography'
 import Card from '@material-ui/core/Card'
 import { CircularProgress, Grid } from '@material-ui/core'
 
 import useStyles from './DataPreview.styles'
+import { FormattedMessage } from '@lumy/i18n'
 
 interface DataPreviewContainerProps {
   pageId: string
@@ -73,7 +74,7 @@ const DataPreview = (): JSX.Element => {
     return (
       <Card className={classes.card}>
         <Typography variant="subtitle1" component="h3" align="center">
-          No data available for this step
+          <FormattedMessage id="panel.dataPreview.message.noDataForStep" />
         </Typography>
       </Card>
     )

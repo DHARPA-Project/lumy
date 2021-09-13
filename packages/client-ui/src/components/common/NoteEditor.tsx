@@ -9,11 +9,12 @@ import {
   NoteItemsList,
   NoteItem,
   EditedNote as EditedNoteType
-} from '@dharpa-vre/notes-components'
-import { Note as NoteType, useStepNotes } from '@dharpa-vre/client-core'
+} from '@lumy/notes-components'
+import { Note as NoteType, useStepNotes } from '@lumy/client-core'
 
 import useStyles from './NoteEditor.styles'
-import { WorkflowContext } from '../../context/workflowContext'
+import { WorkflowContext } from '../../state'
+import { FormattedMessage } from '@lumy/i18n'
 
 const NoteEditor = (): JSX.Element => {
   const classes = useStyles()
@@ -55,7 +56,7 @@ const NoteEditor = (): JSX.Element => {
             size="small"
             fullWidth
           >
-            new note
+            <FormattedMessage id="panel.noteEditor.button.newNote" />
           </Button>
         </>
       )}

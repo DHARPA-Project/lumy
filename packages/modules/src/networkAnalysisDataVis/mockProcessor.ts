@@ -1,5 +1,5 @@
 import { Table, Float32Vector, BoolVector, Utf8Vector, Int32Vector } from 'apache-arrow'
-import { MockProcessorResult } from '@dharpa-vre/client-core'
+import { MockProcessorResult } from '@lumy/client-core'
 import {
   EdgesStructure,
   CentralityMeasures,
@@ -88,12 +88,14 @@ const generateNodesAndEdges = () => {
   return { nodes, edges }
 }
 
+const _generated = generateNodesAndEdges()
+
 export const mockProcessor = ({
   selectedNodeId,
   shortestPathSource,
   shortestPathTarget
 }: InputValues): MockProcessorResult<InputValues, OutputValues> => {
-  const generated = generateNodesAndEdges()
+  const generated = _generated
   const nodes = generated.nodes
   const edges = generated.edges
 

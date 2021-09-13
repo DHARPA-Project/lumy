@@ -1,12 +1,14 @@
-# JupyterLab extension for DHARPA VRE
+# Lumy JupyterLab extension
 
 Created from [this starter project](https://github.com/DHARPA-Project/jupyterlab-extension-example).
+
+Code for packaging Lumy as a JupyterLab extension. See [this guide](https://jupyterlab.readthedocs.io/en/stable/extension/extension_tutorial.html#extension-tutorial) for more information about developing JupyterLab extensions.
 
 ## Running in development mode
 
 Make sure you have `JupyterLab 3.x` installed.
 
-Preferably run JupyterLab and commands below in a dedicated virtual environment. VSCode configuration for this project assumes that virtual environment is located in `.venv` directory in the root of this project. You can symlink your existing virtual environment there.
+Preferably run JupyterLab and commands below in a dedicated virtual environment. VSCode configuration for this project assumes that virtual environment is located in `.venv` directory in the root of this project. You can create `.venv` symlink to your existing virtual environment.
 
 In a terminal session start JupyterLab:
 
@@ -14,7 +16,7 @@ In a terminal session start JupyterLab:
 jupyter lab
 ```
 
-In another terminal session:
+In another terminal session (in this directory):
 
 ```shell
 # Install dependencies
@@ -25,8 +27,10 @@ yarn install
 yarn develop
 ```
 
-Then to watch files for changes and recompile run:
+Then build and watch files for changes and recompile run:
 
 ```shell
 yarn watch
 ```
+
+When the compilation is complete, reload the JupyterLab browser window. This will make JupyterLab reload Lumy extension code.

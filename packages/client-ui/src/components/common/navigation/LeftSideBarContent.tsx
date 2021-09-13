@@ -9,18 +9,20 @@ import Grow from '@material-ui/core/Grow'
 import ExploreIcon from '@material-ui/icons/Explore'
 
 // import { ProjectContext } from '../../../context/projectContext'
-import { PageLayoutContext } from '../../../context/pageLayoutContext'
+import { LayoutContext } from '../../../state'
 // import { pageRoutes, NavItemType } from '../../../const/routes'
-import { pageRoutes } from '../../../const/routes'
+import { usePageRoutes } from '../../../const/routes'
 import useStyles from './LeftSideBarContent.styles'
 
 import NavItem from './NavItem'
+import { FormattedMessage } from '@lumy/i18n'
 
 const LeftSideBarContent = (): JSX.Element => {
   const classes = useStyles()
+  const pageRoutes = usePageRoutes()
 
-  // const { isLeftSideBarExpanded, setIsLeftSideBarExpanded } = useContext(PageLayoutContext)
-  const { isLeftSideBarExpanded } = useContext(PageLayoutContext)
+  // const { isLeftSideBarExpanded, setIsLeftSideBarExpanded } = useContext(LayoutContext)
+  const { isLeftSideBarExpanded } = useContext(LayoutContext)
 
   // const { projectList } = useContext(ProjectContext)
 
@@ -46,7 +48,8 @@ const LeftSideBarContent = (): JSX.Element => {
           {...(!isLeftSideBarExpanded ? { timeout: 0 } : { timeout: 1000 })}
         >
           <Typography variant="h6" component="h2" color="initial" className={classes.logo}>
-            <ExploreIcon /> &nbsp;LUMY
+            <ExploreIcon /> &nbsp;
+            <FormattedMessage id="app.name" />
           </Typography>
         </Grow>
       </div>

@@ -30,6 +30,9 @@ import CloseIcon from '@material-ui/icons/Close'
 import ViewWeekIcon from '@material-ui/icons/ViewWeek'
 // import FilterListIcon from '@material-ui/icons/FilterList'
 
+import { FormattedMessage } from '@lumy/i18n'
+import { withI18n } from '../locale'
+
 import useStyles from './InteractiveTable.styles'
 
 import DataRegistryRow from './TableRow'
@@ -78,7 +81,7 @@ type InteractiveTableProps = {
   getItemContentPreview?: (id: string) => JSX.Element
 }
 
-export const InteractiveTable = ({
+const InteractiveTableComponent = ({
   title,
   itemList,
   columnMapList,
@@ -91,7 +94,6 @@ export const InteractiveTable = ({
   searchDebounceDuration = 200
 }: InteractiveTableProps): JSX.Element => {
   const classes = useStyles()
-
   const searchBarRef = useRef(null)
   const timeoutRef = useRef(null)
 
@@ -194,7 +196,10 @@ export const InteractiveTable = ({
         <div className={classes.left}>
           {numSelectedItems > 0 ? (
             <Typography className={classes.title} color="inherit" variant="subtitle1" component="div">
-              {numSelectedItems} items selected
+              <FormattedMessage
+                id="interactiveTable.message.itemsSelected"
+                values={{ count: numSelectedItems }}
+              />
             </Typography>
           ) : isSearchEnabled && isSearchBarVisible ? (
             <TextField
@@ -204,7 +209,7 @@ export const InteractiveTable = ({
               classes={{ root: classes.search }}
               inputRef={searchBarRef}
               variant="outlined"
-              label="search data sources"
+              label={<FormattedMessage id="interactiveTable.toolbar.search.label" />}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -234,20 +239,20 @@ export const InteractiveTable = ({
 
         <div className={classes.right}>
           {numSelectedItems > 0 ? (
-            <Tooltip title="Delete">
+            <Tooltip title={<FormattedMessage id="interactiveTable.toolbar.delete.tooltip" />}>
               <IconButton onClick={() => onDeleteSelectedItems(selectedItems)} aria-label="delete">
                 <DeleteIcon />
               </IconButton>
             </Tooltip>
           ) : (
             <>
-              <Tooltip title="search items">
+              <Tooltip title={<FormattedMessage id="interactiveTable.toolbar.search.tooltip" />}>
                 <IconButton onClick={() => toggleSearchBarVisibile()} aria-label="search items">
                   <Search />
                 </IconButton>
               </Tooltip>
 
-              <Tooltip title="choose visible columns">
+              <Tooltip title={<FormattedMessage id="interactiveTable.toolbar.chooseColumns.tooltip" />}>
                 <IconButton
                   onClick={event => setPopoverAnchorEl(event.currentTarget)}
                   aria-label="choose visible columns"
@@ -256,7 +261,7 @@ export const InteractiveTable = ({
                 </IconButton>
               </Tooltip>
 
-              <Tooltip title="add new item">
+              <Tooltip title={<FormattedMessage id="interactiveTable.toolbar.addNewItem.tooltip" />}>
                 <IconButton onClick={() => onAddItemClick()} aria-label="add new item">
                   <BackupIcon />
                 </IconButton>
@@ -289,7 +294,11 @@ export const InteractiveTable = ({
         <List
           component="ul"
           aria-labelledby="list-subheader"
-          subheader={<ListSubheader component="div">Choose visible columns</ListSubheader>}
+          subheader={
+            <ListSubheader component="div">
+              <FormattedMessage id="interactiveTable.message.chooseVisibleColumns" />
+            </ListSubheader>
+          }
           className={classes.columnList}
         >
           {tableColumns.map((column, index) => (
@@ -343,7 +352,7 @@ export const InteractiveTable = ({
 
               {(onEditItemClick || getItemContentPreview) && (
                 <TableCell align="center" className={classes.tableHeadCell}>
-                  controls
+                  <FormattedMessage id="interactiveTable.header.controls" />
                 </TableCell>
               )}
             </TableRow>
@@ -378,3 +387,7 @@ export const InteractiveTable = ({
     </Paper>
   )
 }
+
+const InteractiveTable = withI18n(InteractiveTableComponent)
+
+export { InteractiveTable }

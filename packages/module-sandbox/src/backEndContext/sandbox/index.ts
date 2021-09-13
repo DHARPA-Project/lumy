@@ -31,7 +31,9 @@ import {
   ModuleProps,
   WorkflowLoadProgressMessageType,
   LumyWorkflowLoadStatus
-} from '@dharpa-vre/client-core'
+} from '@lumy/client-core'
+
+const MockWorkflowUri = 'https://example.com/networkAnalysis.yml'
 
 function getRandomId(): string {
   const uint32 = window.crypto.getRandomValues(new Uint32Array(1))[0]
@@ -139,7 +141,7 @@ const newMockDataRepositoryTable = (numItems = 50): DataRepositoryItemsTable => 
 }
 
 const getMockDataRepositoryTable = (): DataRepositoryItemsTable => {
-  const storeKey = '__dharpa_mock_data_repository'
+  const storeKey = '__lumy_mock_data_repository'
   const serializedTable = window.localStorage.getItem(storeKey)
   if (serializedTable == null) {
     const table = newMockDataRepositoryTable()
@@ -175,7 +177,7 @@ class IOValuesStore {
   private _storeKey: string
   private _values: MockValueStore<unknown>
 
-  constructor(workflowStructure: LumyWorkflow, storeKey = '__dharpa_mock_values') {
+  constructor(workflowStructure: LumyWorkflow, storeKey = '__lumy_mock_values') {
     this._store = window.localStorage
     this._storeKey = storeKey
 
@@ -328,7 +330,7 @@ class NotesStore {
 
   private _workflows: NotesStoreWorkflows
 
-  constructor(storeKey = '__dharpa_workflows_notes') {
+  constructor(storeKey = '__lumy_workflows_notes') {
     this._store = window.localStorage
     this._storeKey = storeKey
   }
@@ -495,7 +497,10 @@ export class SandboxContext implements IBackEndContext {
       case Messages.Workflow.codec.GetCurrent.action:
         return adapter(Messages.Workflow.codec.GetCurrent.decode, async () => {
           const msg = Messages.Workflow.codec.Updated.encode({
-            workflow: this._currentWorkflow
+            workflow: this._currentWorkflow,
+            metadata: {
+              uri: MockWorkflowUri
+            }
           })
           this._signals[Target.Workflow].emit(msg)
         })(msg)
@@ -526,7 +531,12 @@ export class SandboxContext implements IBackEndContext {
             workflows: [
               {
                 name: 'Network Analysis',
-                uri: 'https://example.com/networkAnalysis.yml',
+                uri: MockWorkflowUri,
+                body: this._currentWorkflow
+              },
+              {
+                name: 'Network Analysis Clone',
+                uri: MockWorkflowUri.concat('-1'),
                 body: this._currentWorkflow
               }
             ]
@@ -536,6 +546,21 @@ export class SandboxContext implements IBackEndContext {
         return adapter(Messages.Workflow.codec.LoadLumyWorkflow.decode, async message => {
           if (typeof message.workflow === 'string')
             throw new Error('Cannot load workflow from a url in a sandbox context')
+
+          for (const i in [...Array(10).keys()]) {
+            await new Promise(res => setTimeout(res, 100))
+            this._signals[Target.Workflow].emit(
+              Messages.Workflow.codec.LumyWorkflowLoadProgress.encode({
+                message: [...Array(10).keys()].map(() => `Loading ${i}...`).join(' '),
+                type:
+                  Math.random() > 0.5
+                    ? WorkflowLoadProgressMessageType.Info
+                    : WorkflowLoadProgressMessageType.Error,
+                status: LumyWorkflowLoadStatus.Loading
+              })
+            )
+          }
+
           this._currentWorkflow = message.workflow
           return Messages.Workflow.codec.LumyWorkflowLoadProgress.encode({
             message: 'Done',
@@ -550,8 +575,8 @@ export class SandboxContext implements IBackEndContext {
 
   private async _tryExecutePageProcessor(pageId: string) {
     if (!this._firstExecutionFlag[pageId]) {
-      await this._processStepData(pageId)
       this._firstExecutionFlag[pageId] = true
+      await this._processStepData(pageId)
     }
   }
 
@@ -808,21 +833,32 @@ export class SandboxContext implements IBackEndContext {
   }
 
   async sendMessage<T, U = void>(target: Target, msg: MessageEnvelope<T>): Promise<U> {
-    const response = await (async () => {
-      switch (target) {
-        case Target.Activity:
-          return this._handleActivity(undefined, msg).then(x => (x as unknown) as U)
-        case Target.ModuleIO:
-          return this._handleModuleIO(undefined, msg).then(x => (x as unknown) as U)
-        case Target.Workflow:
-          return this._handleWorkflow(undefined, msg).then(x => (x as unknown) as U)
-        case Target.DataRepository:
-          return this._handleDataRepository(undefined, msg).then(x => (x as unknown) as U)
-        case Target.Notes:
-          return this._handleNotes(undefined, msg).then(x => (x as unknown) as U)
-      }
-    })()
-    if (response != null) this._signals[target].emit((response as unknown) as ME<unknown>)
+    try {
+      const response = await (async () => {
+        switch (target) {
+          case Target.Activity:
+            return this._handleActivity(undefined, msg).then(x => (x as unknown) as U)
+          case Target.ModuleIO:
+            return this._handleModuleIO(undefined, msg).then(x => (x as unknown) as U)
+          case Target.Workflow:
+            return this._handleWorkflow(undefined, msg).then(x => (x as unknown) as U)
+          case Target.DataRepository:
+            return this._handleDataRepository(undefined, msg).then(x => (x as unknown) as U)
+          case Target.Notes:
+            return this._handleNotes(undefined, msg).then(x => (x as unknown) as U)
+        }
+      })()
+      if (response != null) this._signals[target].emit((response as unknown) as ME<unknown>)
+    } catch (e) {
+      this._signals[Target.Activity].emit(
+        Messages.Activity.codec.Error.encode({
+          id: getRandomId(),
+          message: (e as Error).message,
+          extendedMessage: (e as Error).stack
+        })
+      )
+      throw e
+    }
     return
   }
 

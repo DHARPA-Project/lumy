@@ -10,7 +10,7 @@ import InputLabel from '@material-ui/core/InputLabel'
 
 import DoneIcon from '@material-ui/icons/Done'
 
-import { ProjectContext, workflowCategories } from '../../context/projectContext'
+import { ProjectContext, workflowCategories } from '../../state'
 import useStyles from './CreateProjectForm.styles'
 
 type CreateProjectFormProps = {
@@ -18,6 +18,7 @@ type CreateProjectFormProps = {
   closeModal: () => void
 }
 
+/** TODO: Not used anywhere. Can it be removed? */
 const CreateProjectForm = ({ workflowCategory, closeModal }: CreateProjectFormProps): JSX.Element => {
   const classes = useStyles()
 

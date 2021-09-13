@@ -6,7 +6,7 @@ import Fab from '@material-ui/core/Fab'
 import DoubleArrowIcon from '@material-ui/icons/DoubleArrow'
 
 import useStyles from './RightSideBarContainer.styles'
-import { WorkflowContext } from '../../../context/workflowContext'
+import { WorkflowContext } from '../../../state'
 
 type RightSideBarContainerProps = {
   children?: React.ReactNode

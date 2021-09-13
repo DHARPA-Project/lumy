@@ -1,12 +1,15 @@
 import React from 'react'
-import { Note } from '@dharpa-vre/client-core'
+import { Note } from '@lumy/client-core'
 import { Grid, TextField, IconButton, Button, Typography } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close'
 import DeleteIcon from '@material-ui/icons/Delete'
 import SaveIcon from '@material-ui/icons/Save'
+import { FormattedMessage, useIntl } from '@lumy/i18n'
+
 import { MarkdownEditorViewer } from './MarkdownEditorViewer'
 import useStyles from './NoteViewerEditor.styles'
 import { asTimeAgo } from '../util/render'
+import { withI18n } from '../locale'
 
 export type EditedNote = Omit<Note, 'createdAt' | 'id'> & { id?: Note['id'] }
 
@@ -29,7 +32,7 @@ export interface Props {
   showCloseButton?: boolean
 }
 
-export const NoteViewerEditor = ({
+const NoteViewerEditorComponent = ({
   note,
   onSave,
   onDelete,
@@ -39,6 +42,7 @@ export const NoteViewerEditor = ({
   const [title, setTitle] = React.useState(note?.title ?? '')
   const [content, setContent] = React.useState(note?.content ?? '')
   const classes = useStyles()
+  const intl = useIntl()
 
   React.useCallback(() => setTitle(title), [note?.title ?? ''])
 
@@ -53,7 +57,7 @@ export const NoteViewerEditor = ({
       <Grid item>
         <Grid container wrap="nowrap">
           <TextField
-            placeholder="Click to edit title"
+            placeholder={intl.formatMessage({ id: 'noteViewer.title.clickToEdit' })}
             className={classes.titleField}
             variant="standard"
             value={title}
@@ -88,7 +92,7 @@ export const NoteViewerEditor = ({
         <Grid container direction="column" wrap="nowrap" className={classes.noteActionButtonsContainer}>
           {note?.id != null ? (
             <Button variant="outlined" startIcon={<DeleteIcon />} onClick={() => onDelete?.(note?.id)}>
-              Delete this note
+              <FormattedMessage id="noteViewer.button.deleteNote" />
             </Button>
           ) : (
             ''
@@ -99,10 +103,12 @@ export const NoteViewerEditor = ({
             onClick={() => onSave?.(editedNote)}
             disabled={!isNoteValid(editedNote) || notesAreEqual(editedNote, note)}
           >
-            Save and close
+            <FormattedMessage id="noteViewer.button.saveAndClose" />
           </Button>
         </Grid>
       </Grid>
     </Grid>
   )
 }
+
+export const NoteViewerEditor = withI18n(NoteViewerEditorComponent)

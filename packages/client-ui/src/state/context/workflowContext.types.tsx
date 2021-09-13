@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction } from 'react'
 
-import { LumyWorkflow, WorkflowPageDetails } from '@dharpa-vre/client-core'
+import { LumyWorkflow, WorkflowPageDetails } from '@lumy/client-core'
 
 export type WorkflowType = {
   isRightSideBarVisible: boolean
@@ -13,6 +13,8 @@ export type WorkflowType = {
   workflowPages: WorkflowPageDetails[]
   currentPageIndex: number
   currentPageDetails?: WorkflowPageDetails
+  currentPageId?: WorkflowPageDetails['id']
+  setCurrentPageId: (id: WorkflowPageDetails['id']) => void
   direction: number
   setCurrentPageIndexAndDirection: Dispatch<SetStateAction<[number, number]>>
   mainPaneWidth: number

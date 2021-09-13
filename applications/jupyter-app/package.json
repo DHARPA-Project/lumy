@@ -1,7 +1,7 @@
 {
-  "name": "@dharpa-vre/jupyter-app",
+  "name": "@lumy/jupyter-app",
   "version": "0.1.2",
-  "description": "DHARPA VRE as a Jupyter app.",
+  "description": "Lumy as a Jupyter app.",
   "keywords": [
     "jupyter"
   ],
@@ -10,7 +10,7 @@
   "license": "AGPL-3.0-only",
   "author": "roman@kalyakin.com",
   "repository": {
-    "url": "https://github.com/DHARPA-Project/codename-vre.git"
+    "url": "https://github.com/DHARPA-Project/lumy.git"
   },
   "productName": "Lumy",
   "scripts": {
@@ -25,8 +25,8 @@
     "build-all": "yarn webapp:build && yarn electron:build"
   },
   "dependencies": {
-    "@dharpa-vre/jupyter-support": "*",
-    "@dharpa-vre/splash-screen": "*",
+    "@lumy/jupyter-support": "*",
+    "@lumy/splash-screen": "*",
     "@jupyterlab/services": "6",
     "@lumino/signaling": "1",
     "@lumino/widgets": "1",
@@ -73,7 +73,7 @@
   ],
   "lumy": {
     "middleware": {
-      "version": "0.3.9"
+      "version": "0.3.14"
     }
   }
 }

@@ -7,7 +7,7 @@ import {
   GridFooter,
   GridSortModelParams
 } from '@material-ui/data-grid'
-import { TableStats, TabularDataFilter, DataFilterCondition } from '@dharpa-vre/client-core'
+import { TableStats, TabularDataFilter, DataFilterCondition } from '@lumy/client-core'
 import { useStyles, useHeights } from './DataGrid.styles'
 import { LumyDataGridFilterPanel, MultiFilterIconEnabler } from './LumyDataGridFilterPanel'
 import {

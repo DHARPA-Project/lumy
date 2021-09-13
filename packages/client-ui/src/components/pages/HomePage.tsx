@@ -15,6 +15,7 @@ import UndirectedNetworkGraph from '../../assets/svgs/UndirectedNetworkGraph'
 import TopicModellingIcon from '../../assets/svgs/TopicModellingIcon'
 import GeolocationIcon from '../../assets/svgs/GeolocationIcon'
 
+/** TODO: to be replaced with dynamically constructed structure of available workflows. */
 const HomePage: React.FC = () => {
   const classes = useStyles()
   const history = useHistory()

@@ -1,14 +1,15 @@
 import React from 'react'
 
-import WorkflowContextProvider from '../../context/workflowContext'
+import { WorkflowProvider } from '../../state'
 
 import WorkflowContainer from '../common/WorkflowContainer'
 
+/** TODO: not used. consider removing */
 const LabPage = (): JSX.Element => {
   return (
-    <WorkflowContextProvider>
+    <WorkflowProvider>
       <WorkflowContainer />
-    </WorkflowContextProvider>
+    </WorkflowProvider>
   )
 }
 

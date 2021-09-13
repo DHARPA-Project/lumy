@@ -1,7 +1,7 @@
 {
-  "name": "@dharpa-vre/jupyterlab-extension",
+  "name": "@lumy/jupyterlab-extension",
   "version": "0.1.0",
-  "description": "Lumy extension.",
+  "description": "Lumy extension for JupyterLab.",
   "keywords": [
     "jupyter",
     "jupyterlab",
@@ -22,7 +22,7 @@
     "start": "webpack serve -c webpack.config.standalone.js"
   },
   "dependencies": {
-    "@dharpa-vre/jupyter-support": "*",
+    "@lumy/jupyter-support": "*",
     "@jupyterlab/application": "3",
     "@jupyterlab/launcher": "3",
     "@jupyterlab/mainmenu": "3",
@@ -67,7 +67,7 @@
   ],
   "jupyterlab": {
     "extension": true,
-    "outputDir": "dharpa_vre_jupyterlab_extension/labextension",
+    "outputDir": "lumy_jupyterlab_extension/labextension",
     "webpackConfig": "./webpack.config.labext.js"
   }
 }

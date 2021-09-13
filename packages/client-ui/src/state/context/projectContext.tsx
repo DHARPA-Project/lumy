@@ -1,6 +1,6 @@
 import React, { useState, createContext } from 'react'
 
-import { v4 as uuidv4 } from 'uuid'
+import { generateUniqueId } from '@lumy/client-core'
 
 interface IWorkflowCategory {
   name: string
@@ -28,6 +28,8 @@ export const workflowCategories: {
   }
 }
 
+const localStorageProjectKey = '__lumy-projects'
+
 export type ProjectType = {
   id: string
   type: string
@@ -43,7 +45,7 @@ export type ProjectContextType = {
   removeProject: (idProjectToDelete: string) => void
 }
 
-type ProjectContextProviderProps = {
+type ProjectProviderProps = {
   children?: React.ReactNode
 }
 
@@ -51,7 +53,7 @@ export const ProjectContext = createContext<ProjectContextType>(null)
 
 const sampleProjects = [
   {
-    id: uuidv4(),
+    id: generateUniqueId(),
     type: workflowCategories.networkAnalysis.name,
     date: new Date('2021.04.01').getTime(),
     name: 'Trump tweet network',
@@ -59,7 +61,7 @@ const sampleProjects = [
     currentStep: 5
   },
   {
-    id: uuidv4(),
+    id: generateUniqueId(),
     type: workflowCategories.geolocation.name,
     date: new Date('2021.04.01').getTime(),
     name: 'Trump tweet locations',
@@ -67,7 +69,7 @@ const sampleProjects = [
     currentStep: 3
   },
   {
-    id: uuidv4(),
+    id: generateUniqueId(),
     type: workflowCategories.topicModelling.name,
     date: new Date('2021.04.01').getTime(),
     name: 'Trump tweet topics hilarious',
@@ -77,15 +79,15 @@ const sampleProjects = [
 ]
 
 const getProjectsFromLocalStorage = () => {
-  const valueInLocalStorage = localStorage.getItem('dharpaProjects')
+  const valueInLocalStorage = localStorage.getItem(localStorageProjectKey)
   return valueInLocalStorage ? JSON.parse(valueInLocalStorage) : sampleProjects
 }
 
-const ProjectContextProvider = ({ children }: ProjectContextProviderProps): JSX.Element => {
+export const ProjectProvider = ({ children }: ProjectProviderProps): JSX.Element => {
   const [projectList, setProjectList] = useState<ProjectType[]>(getProjectsFromLocalStorage)
 
   const createProject = (name: string, type: string): string => {
-    const newProjectId = uuidv4()
+    const newProjectId = generateUniqueId()
 
     setProjectList(previousProjectList => {
       const newProjectList = [
@@ -99,7 +101,7 @@ const ProjectContextProvider = ({ children }: ProjectContextProviderProps): JSX.
           currentStep: 1
         }
       ]
-      localStorage.setItem('dharpaProjects', JSON.stringify(newProjectList))
+      localStorage.setItem(localStorageProjectKey, JSON.stringify(newProjectList))
       return newProjectList
     })
 
@@ -109,7 +111,7 @@ const ProjectContextProvider = ({ children }: ProjectContextProviderProps): JSX.
   const removeProject = (idProjectToDelete: string): void => {
     setProjectList(previousProjectList => {
       const newProjectList = previousProjectList.filter(project => project.id !== idProjectToDelete)
-      localStorage.setItem('dharpaProjects', JSON.stringify(newProjectList))
+      localStorage.setItem(localStorageProjectKey, JSON.stringify(newProjectList))
       return newProjectList
     })
   }
@@ -120,5 +122,3 @@ const ProjectContextProvider = ({ children }: ProjectContextProviderProps): JSX.
     </ProjectContext.Provider>
   )
 }
-
-export default ProjectContextProvider

@@ -1,8 +1,8 @@
 import React from 'react'
 import { ReactWidget } from '@jupyterlab/apputils'
 import { KernelModuleContext } from './kernelContext'
-import { BackEndContextProvider, useBackendIsReady } from '@dharpa-vre/client-core'
-import { App } from '@dharpa-vre/client-ui'
+import { BackEndContextProvider, useBackendIsReady } from '@lumy/client-core'
+import { App } from '@lumy/client-ui'
 
 const centeredStyle = {
   textAlign: 'center' as const,
@@ -13,7 +13,7 @@ const centeredStyle = {
 }
 
 /**
- * VRE entry point
+ * Lumy entry point
  */
 const BackEndAvailabilityScreen = () => {
   const backendIsReady = useBackendIsReady()

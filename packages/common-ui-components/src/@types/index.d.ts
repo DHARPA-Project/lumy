@@ -3,3 +3,8 @@
  */
 
 declare module 'react-window'
+
+declare module '*.yml' {
+  const src: string
+  export default src
+}

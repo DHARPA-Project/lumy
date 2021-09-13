@@ -10,6 +10,9 @@ import { BsArrowsExpand, BsArrowsCollapse } from 'react-icons/bs'
 
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
+import { FormattedMessage } from '@lumy/i18n'
+
+import { withI18n } from '../locale'
 
 import useStyles from './TreeView.styles'
 import { ITreeItem, ITreeViewProps } from './TreeView.types'
@@ -42,7 +45,7 @@ const renderTree = (treeNode: ITreeItem): JSX.Element => {
   )
 }
 
-export const TreeView = ({ treeStructure, selectedItem }: ITreeViewProps): JSX.Element => {
+const TreeViewComponent = ({ treeStructure, selectedItem }: ITreeViewProps): JSX.Element => {
   const classes = useStyles()
 
   const [expanded, setExpanded] = useState<string[]>([])
@@ -80,7 +83,7 @@ export const TreeView = ({ treeStructure, selectedItem }: ITreeViewProps): JSX.E
   return (
     <>
       <div className={classes.top}>
-        <Tooltip arrow title="expand all">
+        <Tooltip arrow title={<FormattedMessage id="treeView.label.expandAll" />}>
           <IconButton
             onClick={expandTree}
             className={classes.popoverButton}
@@ -92,7 +95,7 @@ export const TreeView = ({ treeStructure, selectedItem }: ITreeViewProps): JSX.E
           </IconButton>
         </Tooltip>
 
-        <Tooltip arrow title="collapse all">
+        <Tooltip arrow title={<FormattedMessage id="treeView.label.collapseAll" />}>
           <IconButton
             onClick={collapseTree}
             className={classes.popoverButton}
@@ -119,3 +122,5 @@ export const TreeView = ({ treeStructure, selectedItem }: ITreeViewProps): JSX.E
     </>
   )
 }
+
+export const TreeView = withI18n(TreeViewComponent)

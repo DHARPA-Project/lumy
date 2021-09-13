@@ -1,7 +1,11 @@
 import React from 'react'
-import { registerLumyComponent } from '@dharpa-vre/client-core'
+import {
+  registerLumyComponent,
+  getResolvedReactComponent,
+  ComponentWithMockProcessor
+} from '@lumy/client-core'
 import { createGenerateClassName, StylesProvider } from '@material-ui/styles'
-import { ThemeContextProvider } from '@lumy/styles'
+import { ThemeContextProvider, useUserLanguageCode } from '@lumy/styles'
 
 /**
  * Register Lumy component under a specified ID.
@@ -9,6 +13,7 @@ import { ThemeContextProvider } from '@lumy/styles'
  */
 export function lumyComponent(id: string) {
   return <T,>(Component: React.FC<T>): React.FC<T> => {
+    const [language] = useUserLanguageCode()
     const generateClassName = createGenerateClassName({
       productionPrefix: `${id}-`,
       disableGlobal: false,
@@ -17,11 +22,23 @@ export function lumyComponent(id: string) {
 
     const enrichedComponent = (props: T) => (
       <StylesProvider generateClassName={generateClassName}>
-        <ThemeContextProvider>
+        <ThemeContextProvider locale={language}>
           <Component {...props} />
         </ThemeContextProvider>
       </StylesProvider>
     )
+
+    // hoist mock processor up to the wrapper
+    Object.defineProperty(enrichedComponent, 'mockProcessor', {
+      get: async function () {
+        const resolvedComponent = await getResolvedReactComponent<
+          ComponentWithMockProcessor<unknown, unknown>,
+          T
+        >(Component)
+
+        return resolvedComponent?.mockProcessor
+      }
+    })
 
     registerLumyComponent(id, enrichedComponent)
     return enrichedComponent

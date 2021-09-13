@@ -2,8 +2,8 @@ import React from 'react'
 import { render } from 'react-dom'
 import YAML from 'js-yaml'
 
-import { BackEndContextProvider, LumyWorkflow, useBackendIsReady } from '@dharpa-vre/client-core'
-import { App, DefaultModuleComponentPanel } from '@dharpa-vre/client-ui'
+import { BackEndContextProvider, LumyWorkflow, useBackendIsReady } from '@lumy/client-core'
+import { App, DefaultModuleComponentPanel } from '@lumy/client-ui'
 
 import { SandboxContext } from '@lumy/module-sandbox'
 

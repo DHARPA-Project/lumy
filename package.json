@@ -1,10 +1,10 @@
 {
-  "name": "@dharpa-vre/vre",
+  "name": "@lumy/app",
   "version": "0.1.0",
-  "description": "DHARPA VRE monorepo",
+  "description": "Lumy app monorepo",
   "keywords": [
-    "dharpa",
-    "vre"
+    "lumy",
+    "app"
   ],
   "homepage": "https://dharpa.org",
   "license": "AGPL-3.0-only",
@@ -19,5 +19,8 @@
     "compile-and-lint": "yarn tsc:check && yarn eslint:check",
     "typescript:check": "yarn compile-and-lint",
     "verify": "yarn typescript:check"
+  },
+  "resolutions": {
+    "typescript": "4"
   }
 }

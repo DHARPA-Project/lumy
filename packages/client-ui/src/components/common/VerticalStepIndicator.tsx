@@ -41,6 +41,7 @@ const VerticalStepIndicator = ({
             const isActiveStep = index === currentPageIndex
             const isCompleted = index < currentPageIndex
 
+            /** TODO: No such notion as "step status" for workflow steps/pages. Consider removing. */
             return (
               <StepDetailTooltip
                 key={index}

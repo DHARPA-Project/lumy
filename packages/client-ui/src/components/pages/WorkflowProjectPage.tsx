@@ -3,13 +3,12 @@ import { useParams } from 'react-router'
 import { useHistory } from 'react-router-dom'
 
 import Button from '@material-ui/core/Button'
-import Grid from '@material-ui/core/Grid'
-import Typography from '@material-ui/core/Typography'
 
-import WorkflowContextProvider from '../../context/workflowContext'
+import { WorkflowProvider } from '../../state'
 
 import WorkflowContainer from '../common/WorkflowContainer'
 import { WorkflowStepSynchroniser } from '../renderless/WorkflowStepSynchroniser'
+import WorkflowLoadingProgressDialog from '../common/WorkflowLoadingProgressDialog'
 
 import useStyles from './WorkflowProjectPage.styles'
 import {
@@ -17,8 +16,9 @@ import {
   WorkflowListItem,
   LumyWorkflow,
   useLoadWorkflow,
-  LoadProgress
-} from '@dharpa-vre/client-core'
+  LumyWorkflowLoadStatus,
+  useCurrentWorkflow
+} from '@lumy/client-core'
 
 interface RouterParams {
   stepId?: string
@@ -33,22 +33,6 @@ const getWorkflow = (workflows: WorkflowListItem[], pageUrlPrefix: string): Lumy
     return workflows.find(w => w.name === 'Network Analysis')?.body
   }
 }
-
-const WorkflowLoadingProgress = ({ progressMessages }: { progressMessages: LoadProgress[] }): JSX.Element => {
-  return (
-    <Grid container direction="row">
-      <Grid item>
-        <Typography variant="h4">Loading workflow</Typography>
-      </Grid>
-      <Grid item>
-        {progressMessages.map((msg, idx) => {
-          return <Typography key={idx}>{msg.message}</Typography>
-        })}
-      </Grid>
-    </Grid>
-  )
-}
-
 export interface WorkflowProjectPageProps {
   /**
    * URL prefix of this page without the step ID suffix.
@@ -56,15 +40,19 @@ export interface WorkflowProjectPageProps {
   pageUrlPrefix: string
 }
 
+/** TODO: to be replaced by a dynamically constructed list of workflows */
 const WorkflowProjectPage = ({ pageUrlPrefix }: WorkflowProjectPageProps): JSX.Element => {
   const classes = useStyles()
   const { stepId } = useParams<RouterParams>()
   const history = useHistory()
   const [dataSource, setDataSource] = useState<'repository' | 'upload'>(null)
 
+  const [currentWorkflow, , isCurrentWorkflowLoading] = useCurrentWorkflow()
   const [workflowList] = useWorkflowList(true)
   const workflowBody = dataSource === 'repository' ? getWorkflow(workflowList, pageUrlPrefix) : undefined
-  const [progressMessages, isWorkflowLoading] = useLoadWorkflow(workflowBody)
+  const [progressMessages, workflowLoadingStatus] = useLoadWorkflow(
+    isCurrentWorkflowLoading || currentWorkflow != null ? undefined : workflowBody
+  )
 
   useEffect(() => {
     if (stepId != null && dataSource == null) setDataSource('repository')
@@ -75,17 +63,24 @@ const WorkflowProjectPage = ({ pageUrlPrefix }: WorkflowProjectPageProps): JSX.E
   }
 
   if (dataSource === 'repository') {
-    if (workflowBody == null || isWorkflowLoading)
-      return <WorkflowLoadingProgress progressMessages={progressMessages} />
-
     return (
-      <WorkflowContextProvider>
+      <WorkflowProvider>
         <WorkflowStepSynchroniser
           stepParameterName={stepParameterName}
           onStepUpdated={handleWorkflowStepUpdated}
         />
+
         <WorkflowContainer />
-      </WorkflowContextProvider>
+
+        <WorkflowLoadingProgressDialog
+          progressMessages={progressMessages}
+          status={workflowLoadingStatus}
+          onClose={() => {
+            console.info('Cannot close dialog because the page will be in an invalid state')
+          }}
+          open={workflowBody == null || workflowLoadingStatus === LumyWorkflowLoadStatus.Loading}
+        />
+      </WorkflowProvider>
     )
   }
 

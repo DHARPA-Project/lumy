@@ -1,6 +1,8 @@
 import React from 'react'
 import { Table } from 'apache-arrow'
 
+import Container from '@material-ui/core/Container'
+
 import {
   DataRepositoryItemsTable,
   DataRepositoryItemStructure,
@@ -8,8 +10,8 @@ import {
   ModuleProps,
   useStepInputValue,
   withMockProcessor
-} from '@dharpa-vre/client-core'
-import { IRequiredDataSetProp, TabularDataMappingForm } from '@dharpa-vre/data-mapping-table'
+} from '@lumy/client-core'
+import { IRequiredDataSetProp, TabularDataMappingForm } from '@lumy/data-mapping-table'
 
 import { MappingTableStructure, toObject, fromObject } from './mappingTable'
 
@@ -145,15 +147,17 @@ const NetworkAnalysisDataMapping = ({ pageDetails: { id: stepId } }: ModuleProps
   }
 
   return (
-    <TabularDataMappingForm
-      corpusPage={corpusPage}
-      requiredDataSets={networkAnalysisDataSets}
-      isDataSetMappedInDataSource={isDataSetMappedInDataSource}
-      getColumnMappedToField={getColumnMappedToField}
-      clearMappingsForDataSet={clearMappingsForDataSet}
-      setColumnMappedToField={setColumnMappedToField}
-      tableCaption={dataMappingTableCaption}
-    />
+    <Container maxWidth="lg">
+      <TabularDataMappingForm
+        corpusPage={corpusPage}
+        requiredDataSets={networkAnalysisDataSets}
+        isDataSetMappedInDataSource={isDataSetMappedInDataSource}
+        getColumnMappedToField={getColumnMappedToField}
+        clearMappingsForDataSet={clearMappingsForDataSet}
+        setColumnMappedToField={setColumnMappedToField}
+        tableCaption={dataMappingTableCaption}
+      />
+    </Container>
   )
 }
 

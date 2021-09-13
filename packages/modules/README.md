@@ -22,7 +22,6 @@ The sandbox app is started using the following command which monitors files for 
 yarn start
 ```
 
-
 # Releasing
 
 To release the module it has to be compiled into a single JavaScript file. Compilation is handled by `webpack`.
@@ -39,18 +38,18 @@ This function then needs to be assigned a `plugin ID` and registered in the `set
 ]
 ```
 
-See `lumy-middleware` documentation for more information on dynamic loading of plug ins. 
+See `lumy-middleware` documentation for more information on dynamic loading of plug-ins.
 
 ## Building process
 
 It's a two step process:
 
- * Prepare JavaScript bundle: `yarn build`
- * Build the Python package: `python setup.py sdist bdist_wheel`
+- Prepare JavaScript bundle: `yarn build`
+- Build the Python package: `python setup.py sdist bdist_wheel`
 
 ## Using in Lumy workflow without a Python package
 
 A module bundled prepared with `yarn build` can be referenced in a Lumy workflow using the following alternative methods:
 
- * as a file URL, e.g. `https://foo.com/plugin-file.js`
- * as a file on disk: `file://../foo/com/plugin-file.js`. This method should only be used during development.
+- as a file URL, e.g. `https://foo.com/plugin-file.js`
+- as a file on disk: `file://../foo/com/plugin-file.js`. This method should only be used during development.

@@ -5,11 +5,10 @@ import SpeedDial from '@material-ui/lab/SpeedDial'
 import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon'
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction'
 
-import { LoadingIndicator } from '@dharpa-vre/common-ui-components'
+import { LoadingIndicator } from '@lumy/common-ui-components'
 
-import { WorkflowContext } from '../../context/workflowContext'
-import { screenSplitDirectionType } from '../../context/workflowContext.types'
-import { featureList } from '../../const/features'
+import { WorkflowContext, screenSplitDirectionType } from '../../state'
+import { useAppFeatures } from '../../const/features'
 import useStyles from './WorkflowContainer.styles'
 
 import FeatureTabs from './FeatureTabs'
@@ -52,6 +51,7 @@ const WorkflowContainer = (): JSX.Element => {
     closeAdditionalPane,
     openFeatureTab
   } = useContext(WorkflowContext) //prettier-ignore
+  const featureList = useAppFeatures()
 
   const [isSpeedDialOpen, setIsSpeedDialOpen] = useState(false)
 

@@ -1,11 +1,10 @@
 import React, { createContext, useEffect, useRef, useState } from 'react'
 
-import { useStepOutputValue, WorkflowPageDetails } from '@dharpa-vre/client-core'
+import { useStepOutputValue, WorkflowPageDetails } from '@lumy/client-core'
 
 import { ScalingMethod, InputValues, OutputValues, GraphStats } from './structure'
 
-import { NetworkForce, NodeMouseEventDetails } from '@dharpa-vre/datavis-components'
-import { useBoxSize } from '../hooks/useBoxSize'
+import { NetworkForce, NodeMouseEventDetails } from '@lumy/datavis-components'
 import {
   buildGraphEdges,
   buildGraphNodes,
@@ -20,8 +19,6 @@ export type NetworkGraphContextType = {
   highlightedDocItem: string
   setHighlightedDocItem: React.Dispatch<React.SetStateAction<string>>
   colorCodeNodes: boolean
-  graphBoxSize: DOMRect
-  graphContainerRef: React.Ref<HTMLDivElement>
   graphRef: React.MutableRefObject<NetworkForce>
   graphStats: Partial<GraphStats>
   graphTooltipInfo: NodeMouseEventDetails
@@ -55,16 +52,28 @@ const useGraphStats = (stepId: string): Partial<GraphStats> => {
   const [averageDegree] = useStepOutputValue<GraphStats['averageDegree']>(stepId, 'averageDegree')
   const [averageInDegree] = useStepOutputValue<GraphStats['averageInDegree']>(stepId, 'averageInDegree')
   const [averageOutDegree] = useStepOutputValue<GraphStats['averageOutDegree']>(stepId, 'averageOutDegree')
+  const stats = React.useMemo<Partial<GraphStats>>(
+    () => ({
+      nodesCount,
+      edgesCount,
+      density,
+      averageShortestPathLength,
+      averageDegree,
+      averageInDegree,
+      averageOutDegree
+    }),
+    [
+      nodesCount,
+      edgesCount,
+      density,
+      averageShortestPathLength,
+      averageDegree,
+      averageInDegree,
+      averageOutDegree
+    ]
+  )
 
-  return {
-    nodesCount,
-    edgesCount,
-    density,
-    averageShortestPathLength,
-    averageDegree,
-    averageInDegree,
-    averageOutDegree
-  }
+  return stats
 }
 
 const NetworkGraphContextProvider = ({
@@ -87,7 +96,7 @@ const NetworkGraphContextProvider = ({
 
   // save setting list to local storage on every state update
   //
-  // **TODO**: Shouldn't this be abstracted as a Lumy core interface rather than
+  // TODO: Shouldn't this be abstracted as a Lumy core interface rather than
   // being called here? If not, the local storage key is not unique. It may
   // clash with a step of a similar name from another workflow.
   useEffect(() => {
@@ -129,8 +138,6 @@ const NetworkGraphContextProvider = ({
 
   /* Graph and its container reference - for getting container size */
   const graphRef = useRef<NetworkForce>(null)
-  const graphContainerRef = useRef()
-  const graphBoxSize = useBoxSize(graphContainerRef)
 
   /* local state variables, mostly for navigation */
 
@@ -143,7 +150,7 @@ const NetworkGraphContextProvider = ({
 
   useEffect(() => {
     // TODO: handle updated direct connections of currently selected node.
-    console.log(`Direct connections of node ${selectedNodeId}: ${selectedNodeDirectConnections}`)
+    console.debug(`TODO: Direct connections of node ${selectedNodeId}: ${selectedNodeDirectConnections}`)
   }, [selectedNodeDirectConnections])
 
   /* Handle changes in nodes, edges, graph data and graph parameters:
@@ -190,7 +197,10 @@ const NetworkGraphContextProvider = ({
   }, [graphRef])
 
   /* local variables */
-  const nodeScalerParams = getNodeScalerParameters(nodes, nodeScalingMethod)
+  const nodeScalerParams = React.useMemo(() => getNodeScalerParameters(nodes, nodeScalingMethod), [
+    nodes,
+    nodeScalingMethod
+  ])
 
   return (
     <NetworkGraphContext.Provider
@@ -200,8 +210,6 @@ const NetworkGraphContextProvider = ({
         highlightedDocItem,
         setHighlightedDocItem,
         colorCodeNodes,
-        graphBoxSize,
-        graphContainerRef,
         graphRef,
         graphStats,
         graphTooltipInfo,

@@ -4,6 +4,7 @@ import '@fontsource/roboto'
 
 import muiDefaultProps from './muiDefaultProps'
 import getMuiThemeOverrides from './muiThemeOverrides'
+import { locales, SupportedLocale } from './locale'
 
 export type { LumyTheme, LumyThemeOptions } from './theme'
 
@@ -40,38 +41,42 @@ const getCustomThemeProperties = (theme: Theme) => ({
 export const createCustomTheme = (
   additionalOptions?: ThemeOptions,
   darkModeEnabled?: boolean,
+  locale?: SupportedLocale,
   defaultMuiTheme: Theme = muiThemeBase
 ): Theme =>
-  createMuiTheme({
-    palette: {
-      type: darkModeEnabled ? ('dark' as PaletteType) : ('light' as PaletteType),
-      secondary: defaultMuiTheme.palette.primary
+  createMuiTheme(
+    {
+      palette: {
+        type: darkModeEnabled ? ('dark' as PaletteType) : ('light' as PaletteType),
+        secondary: defaultMuiTheme.palette.primary
+      },
+      typography: {
+        fontFamily: ['Roboto', 'Helvetica', 'Arial', 'sans-serif'].join(','),
+        body1: {
+          fontSize: '0.75rem',
+          lineHeight: 1.35
+        },
+        body2: {
+          fontSize: '0.75rem',
+          lineHeight: 1.35
+        },
+        subtitle1: {
+          fontSize: '0.875rem',
+          lineHeight: 1.5
+        },
+        h5: {
+          fontSize: '1.1rem',
+          lineHeight: 1.6
+        },
+        h6: {
+          fontSize: '1rem',
+          lineHeight: 1.5
+        }
+      },
+      props: muiDefaultProps,
+      overrides: getMuiThemeOverrides({ ...defaultMuiTheme, ...getCustomThemeProperties(defaultMuiTheme) }),
+      ...getCustomThemeProperties(defaultMuiTheme),
+      ...additionalOptions
     },
-    typography: {
-      fontFamily: ['Roboto', 'Helvetica', 'Arial', 'sans-serif'].join(','),
-      body1: {
-        fontSize: '0.75rem',
-        lineHeight: 1.35
-      },
-      body2: {
-        fontSize: '0.75rem',
-        lineHeight: 1.35
-      },
-      subtitle1: {
-        fontSize: '0.875rem',
-        lineHeight: 1.5
-      },
-      h5: {
-        fontSize: '1.1rem',
-        lineHeight: 1.6
-      },
-      h6: {
-        fontSize: '1rem',
-        lineHeight: 1.5
-      }
-    },
-    props: muiDefaultProps,
-    overrides: getMuiThemeOverrides({ ...defaultMuiTheme, ...getCustomThemeProperties(defaultMuiTheme) }),
-    ...getCustomThemeProperties(defaultMuiTheme),
-    ...additionalOptions
-  })
+    locales[locale]
+  )

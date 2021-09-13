@@ -1,9 +1,11 @@
-# VRE Client core
+# Lumy standalone app
 
-## Development
+Runs with a sandboxed backend in a browser using Webpack dev server. Used for development of the Lumy app.
 
-### Watch for changes and recompile
+For Workflow UI modules development see [packages/modules](../packages/modules).
+
+## Running
 
 ```shell
-yarn watch
+yarn start
 ```
