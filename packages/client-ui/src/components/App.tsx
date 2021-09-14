@@ -9,7 +9,6 @@ import TopPageLayout from './common/TopPageLayout'
 import HomePage from './pages/HomePage'
 import NetworkAnalysisPage from './pages/NetworkAnalysisPage'
 // import IntroPage from './pages/IntroPage'
-import ToyVrePage from './pages/ToyVrePage'
 // import NetworkAnalysisIntroPage from './pages/NetworkAnalysisIntroPage'
 // import ProjectPage from './pages/ProjectPage'
 import LabPage from './pages/LabPage'
@@ -53,7 +52,6 @@ export const App = (): JSX.Element => {
               {/* <Route path="/projects/:id" exact component={ProjectPage} /> */}
               <Route path="/dataregistry" component={DataRegistryPage} />
               <Route path="/playground" exact component={PlaygroundPage} />
-              <Route path="/toy" exact component={ToyVrePage} />
               <Route path="/lab" exact component={LabPage} />
               <Route path="/home" exact component={HomePage} />
               <Redirect to="/home" />
