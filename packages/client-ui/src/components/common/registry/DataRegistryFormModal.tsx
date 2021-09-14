@@ -30,7 +30,7 @@ type PageParams = {
   id?: string
 }
 
-const methods: ItemCreationMethod[] = ['lumydev.table_from_file', 'lumydev.table.local_file']
+const methods: ItemCreationMethod[] = ['lumy.table_from_file', 'lumy.table.local_file']
 
 type FormValues = {
   method: ItemCreationMethod
@@ -46,7 +46,7 @@ type StatusMessage = {
 }
 
 const initialFormValues: FormValues = {
-  method: 'lumydev.table_from_file',
+  method: 'lumy.table_from_file',
   path: '',
   name: '',
   tags: '',

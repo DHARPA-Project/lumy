@@ -3,13 +3,13 @@ import { BackEndContext, handlerAdapter, Target } from '../common/context'
 import { Messages, WorkflowExecutionStatus } from '../common/types'
 
 type ItemStatus = 'new' | 'creating' | 'created' | 'error'
-export type ItemCreationMethod = 'lumydev.table_from_file' | 'lumydev.table.local_file'
+export type ItemCreationMethod = 'lumy.table_from_file' | 'lumy.table.local_file'
 
 type InputBuilderFn = (filePath: string) => Record<string, unknown>
 
 const inputsBuilders: Record<ItemCreationMethod, InputBuilderFn> = {
-  'lumydev.table_from_file': (path: string) => ({ path }),
-  'lumydev.table.local_file': (path: string) => ({ path })
+  'lumy.table_from_file': (path: string) => ({ path }),
+  'lumy.table.local_file': (path: string) => ({ path })
 }
 
 type AddItemFn = (method: ItemCreationMethod, filePath: string, workflowId: string) => void
