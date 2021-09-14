@@ -3,7 +3,6 @@ import { useIntl, IntlShape } from '@lumy/i18n'
 
 // import InfoOutlineIcon from '@material-ui/icons/InfoOutlined'
 // import AccountTreeIcon from '@material-ui/icons/AccountTree'
-// import ToysIcon from '@material-ui/icons/Toys'
 import HomeIcon from '@material-ui/icons/Home'
 import BubbleChartIcon from '@material-ui/icons/BubbleChart'
 import StorageIcon from '@material-ui/icons/Storage'
@@ -69,13 +68,6 @@ export const getPageRoutes = (intl: IntlShape, idPrefix = 'app.routes'): RouteIt
   //   label: 'introduction',
   //   link: '/intro',
   //   icon: <InfoOutlineIcon />,
-  //   nested: false
-  // },
-  // {
-  //   type: NavItemType.pageLink,
-  //   label: 'toy VRE',
-  //   link: '/toy',
-  //   icon: <ToysIcon />,
   //   nested: false
   // },
   // {

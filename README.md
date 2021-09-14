@@ -15,8 +15,6 @@ All front end Typescript packages are in `packages` directory, except the `jupyt
 
 JSON schema files are in `schema/json`.
 
-<img width="1007" alt="Monorepo structure" src="https://user-images.githubusercontent.com/89853/111668423-05a09480-8816-11eb-92c4-6629dffe6ef9.png">
-
 ### Front end packages
 
 Configuration files for [eslint](https://eslint.org/), [prettier](https://prettier.io/) and base configuration file (`tsconfig.base.json`) for Typescript are here, in the top level directory.
