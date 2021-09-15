@@ -21,8 +21,6 @@ import WorkflowSelectionPage from './pages/WorkflowSelectionPage'
 import CurrentWorkflowPage from './pages/CurrentWorkflowPage'
 import { AppTopLevelDomElementId } from '../const/app'
 
-const WorkflowUrlPrefix = '/workflows/network-analysis/directed'
-
 export const App = (): JSX.Element => {
   const systemInfo = useSystemInfo()
 
@@ -41,12 +39,14 @@ export const App = (): JSX.Element => {
               <Route path="/workflows/current/:stepId?" exact component={CurrentWorkflowPage} />
 
               {/* TODO: the route below contains a hardcoded workflow. This will be removed soon. */}
-              <Route path="/workflows/network-analysis" exact component={NetworkAnalysisPage} />
+              <Route path="/workflow-categories/network-analysis" exact component={NetworkAnalysisPage} />
               {/* TODO: the route below contains a hardcoded workflow. This will be removed soon. */}
               <Route
-                path={`${WorkflowUrlPrefix}/:stepId?`}
+                path="/workflow-categories/network-analysis/directed/:stepId?"
                 exact
-                component={() => <WorkflowProjectPage pageUrlPrefix={WorkflowUrlPrefix} />}
+                component={() => (
+                  <WorkflowProjectPage pageUrlPrefix="/workflow-categories/network-analysis/directed" />
+                )}
               />
               {/* <Route path="/intro" exact component={IntroPage} /> */}
               {/* <Route path="/projects/:id" exact component={ProjectPage} /> */}

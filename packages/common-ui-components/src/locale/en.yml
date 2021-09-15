@@ -4,7 +4,7 @@ interactiveTable:
   toolbar:
     search:
       label: search data sources
-      tooltipe: search items
+      tooltip: search items
     delete:
       tooltip: Delete
     chooseColumns:
