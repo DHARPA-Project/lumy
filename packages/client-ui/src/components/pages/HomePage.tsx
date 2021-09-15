@@ -23,7 +23,7 @@ const HomePage: React.FC = () => {
   return (
     <div className={classes.pageContainer}>
       <Card className={classes.cardWrapper}>
-        <CardActionArea onClick={() => history.push('/workflows/network-analysis')}>
+        <CardActionArea onClick={() => history.push('/workflow-categories/network-analysis')}>
           <CardContent>
             <Typography gutterBottom variant="h6" component="h2" align="center">
               Network Analysis

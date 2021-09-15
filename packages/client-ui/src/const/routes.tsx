@@ -52,7 +52,7 @@ export const getPageRoutes = (intl: IntlShape, idPrefix = 'app.routes'): RouteIt
   {
     type: NavItemType.pageLink,
     label: getRouteLabel(intl, 'networkAnalysis', idPrefix),
-    link: '/workflows/network-analysis',
+    link: '/workflow-categories/network-analysis',
     icon: <BubbleChartIcon />,
     nested: false
   },

@@ -18,8 +18,9 @@ export default makeStyles(theme => ({
   imageContainer: {
     width: '100%',
     flexGrow: 1,
-    display: 'grid',
-    placeItems: 'center',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
     aspectRatio: '1/1'
   },
   backgroundImage: {
