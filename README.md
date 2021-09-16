@@ -1,6 +1,7 @@
 # Lumy
 
 - [Architecture overview](docs/architecture.md)
+- [Design decisions](docs/design_decisions.md)
 - [Repository Structure](#structure)
   - [Front end packages](#front-end-packages)
   - [VSCode support](#vscode-support)
