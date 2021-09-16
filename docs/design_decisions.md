@@ -2,11 +2,12 @@
 
 This document attempts to answer questions why particular technology or architectural approach was chosen in Lumy.
 
-When making these choices we were using a set of user stories collected by the DHARPA team during Q1 2021. As some user stories were contradicting, vague and inconclusive we tried to group and skim them to come up with a set of core requirements that were unlikely to change, leaving room for the other requirements that could evolve and change during the course of the project. The likelihood of change of requirements was also the key factor of making certain decisions: choosing technology and design patterns that would give us flexibility and allow us to avoid rewriting the software if requirements change.
+When making these choices we were using [a set of user stories](http://backstage.c2dh.uni.lux/pages/viewpage.action?pageId=351338523) collected by the DHARPA team during Q1 2021. As some user stories were less detailed than the others, we tried to group and skim them to come up with a set of core requirements that were unlikely to change, leaving room for the other requirements that could evolve and change during the course of the project. The likelihood of change of requirements was also the key factor of making certain decisions: choosing technology and design patterns that would give us flexibility and allow us to avoid rewriting the software if requirements change.
 
 Main areas of interest from the DHARPA project description have also been taken into account.
 
-It has also been decided that Lumy should use [Kiara](https://github.com/DHARPA-Project/kiara) as the processing engine. At DHARPA Kiara is treated as a standalone project with its own goals, therefore Lumy would need to adapt to Kiara design decisions, as Kiara developers would not necessarily accept feature requests from Lumy.
+It has also been decided that Lumy should use [Kiara](https://github.com/DHARPA-Project/kiara) as the processing engine. Kiara is a [standalone project](https://dharpa.org/kiara/latest/#description), an "orchestration engine that uses a modular approach to let users re-use tried and tested data orchestration pipelines, as well as create new ones from existing building blocks. It also helps you manage your research data, and augment it with automatically-, semi-automatically-, and manually- created metadata."
+Since Kiara is built to solve a certain set of problems, Lumy would need to adapt to Kiara design decisions, as Kiara developers would not necessarily accept feature requests from Lumy.
 
 ## Core requirements
 
