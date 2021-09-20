@@ -1,4 +1,5 @@
 export { LoadingIndicator } from './loader/LoadingIndicator'
+export { JupyterNotebookViewer } from './jupyter-viewer/JupyterNotebookViewer'
 export { InteractiveTable } from './interactive-table'
 export { TableView } from './simple-table/TableView'
 export { TreeView } from './tree/TreeView'

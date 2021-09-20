@@ -1,14 +1,13 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import JupyterViewer from 'react-jupyter-notebook'
 
 import Button from '@material-ui/core/Button'
 
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload'
 
-import { LoadingIndicator } from '@lumy/common-ui-components'
+import { JupyterNotebookViewer } from '@lumy/common-ui-components'
 
-import { WorkflowContext } from '../../../state'
 import useStyles from './CodeView.styles'
+import { WorkflowContext } from '../../../state'
 import { FormattedMessage } from '@lumy/i18n'
 
 const CodeView = (): JSX.Element => {
@@ -47,11 +46,7 @@ const CodeView = (): JSX.Element => {
         </Button>
       </div>
 
-      {workflowCode ? (
-        <JupyterViewer rawIpynb={workflowCode} mediaAlign="left" displaySource="auto" displayOutput="auto" />
-      ) : (
-        <LoadingIndicator />
-      )}
+      <JupyterNotebookViewer code={workflowCode} />
     </div>
   )
 }

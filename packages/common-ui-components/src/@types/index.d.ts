@@ -3,6 +3,12 @@
  */
 
 declare module 'react-window'
+declare module 'react-jupyter-notebook'
+
+declare module '*.ipynb' {
+  const src: string
+  export default src
+}
 
 declare module '*.yml' {
   const src: string
