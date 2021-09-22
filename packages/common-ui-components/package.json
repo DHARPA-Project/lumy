@@ -18,8 +18,8 @@
     "build:lib": "tsc"
   },
   "peerDependencies": {
-    "react": "17",
-    "@lumy/client-core": "*"
+    "@lumy/client-core": "*",
+    "react": "17"
   },
   "devDependencies": {
     "@types/node": "14",
@@ -34,7 +34,9 @@
     "typescript": "4"
   },
   "dependencies": {
-    "react-window": "^1.8.6",
-    "@lumy/i18n": "*"
+    "@lumy/i18n": "*",
+    "react-jupyter-notebook": "^0.3.2",
+    "react-syntax-highlighter": "^15.4.4",
+    "react-window": "^1.8.6"
   }
 }

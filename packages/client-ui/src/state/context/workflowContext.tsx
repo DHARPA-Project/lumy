@@ -3,6 +3,7 @@ import React, { createContext, useEffect, useRef, useState } from 'react'
 import { useCurrentWorkflow, WorkflowPageDetails } from '@lumy/client-core'
 
 import sampleJupyterNotebook from '../../data/notebook.ipynb'
+import { samplePythonCodeSnippet } from '../../data/sampleCodeSnippet.js'
 import { WorkflowType, WorkflowProviderProps, screenSplitDirectionType } from './workflowContext.types'
 import { screenSplitOptions } from './workflowContext.const'
 
@@ -186,6 +187,7 @@ export const WorkflowProvider = ({ children }: WorkflowProviderProps): JSX.Eleme
         isAdditionalPaneVisible,
         setIsAdditionalPaneVisible,
         workflowCode,
+        samplePythonCodeSnippet,
         stepContainerRef,
         mainPaneRef,
         additionalPaneRef,

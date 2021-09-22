@@ -3,6 +3,14 @@
  */
 
 declare module 'react-window'
+declare module 'react-jupyter-notebook'
+declare module 'react-syntax-highlighter'
+declare module 'react-syntax-highlighter/dist/esm/styles/hljs'
+
+declare module '*.ipynb' {
+  const src: string
+  export default src
+}
 
 declare module '*.yml' {
   const src: string
