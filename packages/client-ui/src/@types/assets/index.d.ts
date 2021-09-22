@@ -6,6 +6,13 @@ declare module '*.yml' {
   const src: string
   export default src
 }
+declare module '*.ipynb' {
+  const src: string
+  export default src
+}
+declare module '*sampleCodeSnippet.js' {
+  export const samplePythonCodeSnippet: string
+}
 
 declare module '*.svg' {
   import React = require('react')

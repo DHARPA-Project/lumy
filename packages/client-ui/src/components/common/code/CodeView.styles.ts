@@ -2,7 +2,7 @@ import { makeStyles, Theme } from '@material-ui/core/styles'
 
 export default makeStyles((theme: Theme) => ({
   codeViewContainer: {},
-  top: {
+  stickyTop: {
     position: 'sticky',
     top: 0,
     display: 'flex',

@@ -24,6 +24,7 @@ export type WorkflowType = {
   isAdditionalPaneVisible: boolean
   setIsAdditionalPaneVisible: Dispatch<SetStateAction<boolean>>
   workflowCode: Record<string, unknown>
+  samplePythonCodeSnippet: string
   stepContainerRef: React.MutableRefObject<HTMLDivElement>
   mainPaneRef: React.MutableRefObject<HTMLDivElement>
   additionalPaneRef: React.MutableRefObject<HTMLDivElement>
