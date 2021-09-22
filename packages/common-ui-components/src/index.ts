@@ -1,6 +1,7 @@
 export { LoadingIndicator } from './loader/LoadingIndicator'
 export { JupyterNotebookViewer } from './jupyter-viewer/JupyterNotebookViewer'
 export { SyntaxHighlighter } from './syntax-highlighter/SyntaxHighlighter'
+export { AccordionContainer, AccordionItem } from './accordion-custom'
 export { InteractiveTable } from './interactive-table'
 export { TableView } from './simple-table/TableView'
 export { TreeView } from './tree/TreeView'
