@@ -53,7 +53,6 @@ export default makeStyles(theme => ({
     },
     width: '100%',
     display: 'flex',
-    flex: '0 1 auto',
-    overflowY: 'scroll'
+    flex: '0 1 auto'
   }
 }))

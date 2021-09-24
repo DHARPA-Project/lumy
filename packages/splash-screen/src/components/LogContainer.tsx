@@ -11,7 +11,6 @@ export interface LogContainerProps {
 
 export const LogContainer = ({
   hideWhenEmpty = false,
-  className,
   ...props
 }: LogContainerProps &
   React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>): JSX.Element => {
@@ -32,7 +31,7 @@ export const LogContainer = ({
   }
 
   return (
-    <div className={clsx(classes.root, className)} {...props}>
+    <div className={classes.logContainer} {...props}>
       {stream.map((message, idx) => (
         <p key={idx} className={getStyleClass(message.type)}>
           {message.text}
