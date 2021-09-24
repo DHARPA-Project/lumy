@@ -13,7 +13,7 @@ export default makeStyles(theme => ({
     padding: theme.spacing(2)
   },
   container: {
-    maxWidth: theme.breakpoints.width('md'),
+    maxWidth: theme.breakpoints.values['md'],
     margin: '0 auto',
     alignSelf: 'flex-start'
   },
