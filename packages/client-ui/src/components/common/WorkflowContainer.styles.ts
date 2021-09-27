@@ -25,27 +25,37 @@ export default makeStyles<Theme>(theme => ({
       flexDirection: 'column'
     }
   },
-  toolAreaToggle: {
+  speedDialRoot: {
     position: 'absolute',
-    // TODO: Even though the "Mui" prefixed are unlikely
-    // to have an extra prefix in the Lumy app (as
-    // opposed to dynamic modules), it's still better to refactor
-    // this and use class rules
-    '&.MuiFab-root': {
+    '&$speedDialFab': {
       bottom: theme.spacing(2),
       right: theme.spacing(1)
     },
-    '& .MuiSpeedDialAction-fab': {
-      backgroundColor: theme.palette.action.hover
-    },
-    '&.MuiSpeedDial-directionUp, &.MuiSpeedDial-directionLeft': {
-      bottom: theme.spacing(2),
-      right: theme.spacing(1)
-    },
-    '&.MuiSpeedDial-directionDown, &.MuiSpeedDial-directionRight': {
-      top: theme.spacing(2),
-      left: theme.spacing(1)
+    '& $speedDialActions': {
+      marginBottom: 0,
+      paddingBottom: theme.spacing(1)
     }
+  },
+  speedDialFab: {},
+  speedDialActions: {},
+  speedDialDirectionUp: {
+    bottom: theme.spacing(2),
+    right: theme.spacing(1)
+  },
+  speedDialDirectionDown: {
+    top: theme.spacing(2),
+    left: theme.spacing(1)
+  },
+  speedDialDirectionLeft: {
+    bottom: theme.spacing(2),
+    right: theme.spacing(1)
+  },
+  speedDialDirectionRight: {
+    top: theme.spacing(2),
+    left: theme.spacing(1)
+  },
+  speedDialActionFab: {
+    backgroundColor: theme.palette.action.hover
   },
   mainPane: {
     width: '100%',

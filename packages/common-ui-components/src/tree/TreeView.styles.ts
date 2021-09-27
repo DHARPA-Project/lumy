@@ -13,8 +13,7 @@ export default makeStyles((theme: Theme) => ({
     flexGrow: 1
   },
   treeItemSelected: {
-    // TODO: avoid using class names
-    '&.MuiTreeItem-content .MuiTreeItem-label': {
+    '&$treeItemLabel': {
       backgroundColor: 'transparent',
       color: theme.palette.primary.main,
       fontWeight: theme.typography.fontWeightBold

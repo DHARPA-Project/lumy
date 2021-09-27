@@ -4,7 +4,9 @@ import '@fontsource/roboto-mono'
 const bgIntensity = 800
 
 export default makeStyles(theme => ({
-  root: {
+  logContainer: {
+    overflowY: 'scroll',
+    width: '100%',
     display: 'flex',
     flexDirection: 'column',
     backgroundColor: theme.palette.grey[bgIntensity],
@@ -13,6 +15,15 @@ export default makeStyles(theme => ({
     fontSize: theme.typography.fontSize * 0.8,
     '& p': {
       overflowWrap: 'anywhere'
+    },
+    '&::-webkit-scrollbar-thumb': {
+      backgroundColor: 'rgba(255, 255, 255, 0.5)',
+      '&:hover': {
+        backgroundColor: 'rgba(255, 255, 255, 0.7)'
+      },
+      '&:active': {
+        backgroundColor: 'rgba(255, 255, 255 ,0.9)'
+      }
     }
   },
   styleDefault: {

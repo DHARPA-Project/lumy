@@ -1,13 +1,9 @@
 import React from 'react'
-import clsx from 'clsx'
+
 import useStyles from './LogContainer.styles'
 import { StreamMessage, useStream } from '../context'
 
-const AlwaysScrollToBottom = (): JSX.Element => {
-  const elementRef = React.useRef(null)
-  React.useEffect(() => elementRef?.current?.scrollIntoView())
-  return <div ref={elementRef} />
-}
+import { AutoScroller } from '@lumy/common-ui-components'
 
 export interface LogContainerProps {
   hideWhenEmpty?: boolean
@@ -15,7 +11,6 @@ export interface LogContainerProps {
 
 export const LogContainer = ({
   hideWhenEmpty = false,
-  className,
   ...props
 }: LogContainerProps &
   React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>): JSX.Element => {
@@ -36,13 +31,14 @@ export const LogContainer = ({
   }
 
   return (
-    <div className={clsx(classes.root, className)} {...props}>
+    <div className={classes.logContainer} {...props}>
       {stream.map((message, idx) => (
         <p key={idx} className={getStyleClass(message.type)}>
           {message.text}
         </p>
       ))}
-      <AlwaysScrollToBottom />
+
+      <AutoScroller />
     </div>
   )
 }

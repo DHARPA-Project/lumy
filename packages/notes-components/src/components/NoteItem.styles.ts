@@ -25,8 +25,8 @@ export default makeStyles(theme => ({
     }
   },
   noteItemContainer: {
-    minHeight: theme.breakpoints.width('sm') / 9,
-    maxHeight: theme.breakpoints.width('sm') / 6,
+    minHeight: theme.breakpoints.values['sm'] / 9,
+    maxHeight: theme.breakpoints.values['sm'] / 6,
     overflowY: 'hidden',
     position: 'relative'
   },
