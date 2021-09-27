@@ -7,7 +7,7 @@
   - [Code generation](#code-generation)
   - [Code Health](#code-health-check)
 - [Running in dev mode](#running-in-development-mode)
-- [Workflow UI Modules](#workflow-ui-modules)
+- [Lumy Workflow and UI Modules](docs/modularity.md)
 
 ## Structure
 
@@ -118,7 +118,3 @@ yarn start
 ```
 
 The web app is available on [http://localhost:8080/](http://localhost:8080/).
-
-## Workflow UI Modules
-
-Modules panels components are in `packages/modules`. Generally one file per module, mapped to module by `id` in the `index.ts`.
