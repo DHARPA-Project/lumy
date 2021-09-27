@@ -105,50 +105,47 @@ const WorkflowContainer = (): JSX.Element => {
         </AnimatePresence>
       </div>
 
-      {isAdditionalPaneVisible ? (
-        <SpeedDial
-          ariaLabel="screen-split-options"
-          className={classes.toolAreaToggle}
-          icon={<SpeedDialIcon />}
-          onClose={(_, reason: string) => {
-            if (reason === 'toggle') closeAdditionalPane()
-            setIsSpeedDialOpen(false)
-          }}
-          onOpen={() => setIsSpeedDialOpen(true)}
-          open={isSpeedDialOpen}
-          direction="up"
-          FabProps={{ size: 'small' }}
-        >
-          {screenSplitOptions.map((option, index) => (
-            <SpeedDialAction
-              key={index}
-              icon={option.icon}
-              tooltipTitle={option.tooltipText}
-              onClick={() => setSplitDirection(option.direction as screenSplitDirectionType)}
-            />
-          ))}
-        </SpeedDial>
-      ) : (
-        <SpeedDial
-          ariaLabel="tools"
-          className={classes.toolAreaToggle}
-          icon={<SpeedDialIcon />}
-          onClose={() => setIsSpeedDialOpen(false)}
-          onOpen={() => setIsSpeedDialOpen(true)}
-          open={isSpeedDialOpen}
-          direction="up"
-          FabProps={{ size: 'small' }}
-        >
-          {featureList.map((feature, index) => (
-            <SpeedDialAction
-              key={feature.id}
-              icon={feature.icon}
-              tooltipTitle={feature.tooltip}
-              onClick={() => openFeatureTab(index)}
-            />
-          ))}
-        </SpeedDial>
-      )}
+      <SpeedDial
+        classes={{
+          root: classes.speedDialRoot,
+          fab: classes.speedDialFab,
+          actions: classes.speedDialActions,
+          directionUp: classes.speedDialDirectionUp,
+          directionDown: classes.speedDialDirectionDown,
+          directionLeft: classes.speedDialDirectionLeft,
+          directionRight: classes.speedDialDirectionRight
+        }}
+        onClose={(_, reason: string) => {
+          if (isAdditionalPaneVisible && reason === 'toggle') closeAdditionalPane()
+          setIsSpeedDialOpen(false)
+        }}
+        onOpen={() => setIsSpeedDialOpen(true)}
+        open={isSpeedDialOpen}
+        icon={<SpeedDialIcon />}
+        direction="up"
+        FabProps={{ size: 'small' }}
+        ariaLabel={isAdditionalPaneVisible ? 'screen-split-options' : 'tools'}
+      >
+        {isAdditionalPaneVisible
+          ? screenSplitOptions.map((option, index) => (
+              <SpeedDialAction
+                key={index}
+                icon={option.icon}
+                tooltipTitle={option.tooltipText}
+                onClick={() => setSplitDirection(option.direction as screenSplitDirectionType)}
+                classes={{ fab: classes.speedDialActionFab }}
+              />
+            ))
+          : featureList.map((feature, index) => (
+              <SpeedDialAction
+                key={feature.id}
+                icon={feature.icon}
+                tooltipTitle={feature.tooltip}
+                onClick={() => openFeatureTab(index)}
+                classes={{ fab: classes.speedDialActionFab }}
+              />
+            ))}
+      </SpeedDial>
     </>
   )
 }
