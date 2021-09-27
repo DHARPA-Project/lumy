@@ -237,6 +237,12 @@ Each input and output has an ID it is referenced by in the page UI component (`p
 
 In this example the UI page component sets data on `weights` input when the user modifies the weights via the text field. Using the mapping Lumy understand it needs to set the `w` input value on the `dot_product` step of the Kiara workflow.
 
+```typescript
+const [weights, , setWeights] = useStepInputValue<number[]>(stepId, 'weights', { fullValue: true })
+```
+
+> an optional `view` field can be specified here to hint which particular data type transformer should be used here.
+
 Page mapping has optional `layout` section that is reserved for hints for the application about rendering of the page. The `dataPreview` subsection instructs Lumy to render certain inputs and outputs in the Data Preview side panel:
 
 ```yaml
@@ -249,5 +255,7 @@ layout:
 ```
 
 In the example above the instructions tell Lumy to render `weights` and `data` vectors in the data preview side panel when the user is on the `biasAdjustmentAndResult` page.
+
+> an optional `view` field can be specified here to hint which particular data type transformer should be used here.
 
 ## Preparing and distributing Lumy UI modules
