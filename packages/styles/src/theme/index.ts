@@ -1,4 +1,4 @@
-import { createTheme, Theme } from '@material-ui/core/styles'
+import { createMuiTheme, Theme } from '@material-ui/core/styles'
 import { PaletteType, ThemeOptions } from '@material-ui/core'
 import '@fontsource/roboto'
 
@@ -9,7 +9,7 @@ import { locales, SupportedLocale } from './locale'
 export type { LumyTheme, LumyThemeOptions } from './theme'
 
 // the default/base Material UI theme object
-const muiThemeBase = createTheme()
+const muiThemeBase = createMuiTheme()
 
 /**
  * Generate new custom theme properties to extend the default MUI theme
@@ -44,7 +44,7 @@ export const createCustomTheme = (
   locale?: SupportedLocale,
   defaultMuiTheme: Theme = muiThemeBase
 ): Theme =>
-  createTheme(
+  createMuiTheme(
     {
       palette: {
         type: darkModeEnabled ? ('dark' as PaletteType) : ('light' as PaletteType),

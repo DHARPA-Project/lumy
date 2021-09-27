@@ -24,7 +24,7 @@ export const SplashScreen = ({ title, subtitle }: SplashScreenProps): JSX.Elemen
         item
         container
         direction="column"
-        justifyContent="center"
+        justify="center"
         alignItems="center"
         wrap="nowrap"
         xs={12}
@@ -60,7 +60,7 @@ export const SplashScreen = ({ title, subtitle }: SplashScreenProps): JSX.Elemen
         item
         container
         direction="column"
-        justifyContent="flex-start"
+        justify="flex-start"
         alignItems="center"
         wrap="nowrap"
         xs={12}
