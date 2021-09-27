@@ -258,4 +258,120 @@ In the example above the instructions tell Lumy to render `weights` and `data` v
 
 > an optional `view` field can be specified here to hint which particular data type transformer should be used here.
 
-## Preparing and distributing Lumy UI modules
+## Developing, preparing and distributing Lumy UI modules
+
+Lumy UI modules are used to render Lumy workflow pages which allow the user to see and edit data from inputs/outputs of a Kiara workflow that the Lumy workflow uses.
+
+UI modules are simple React components that use Lumy hooks to access data. The components are loaded into Lumy as JavaScript code. This means that they need to be bundled as a single JavaScript file and made publicly available for Kiara to be able to download and used them.
+
+The standard way of distributing Lumy UI modules are Python packages (see distribution section later).
+
+### Development
+
+Lumy UI modules are independent pieces of code and developers do not need to have Lumy or Kiara installed and running to write and test them. A simple mock data processing function can be used to mimic processing that normally happens in the back end part of Lumy (see [this example](https://github.com/DHARPA-Project/lumy/blob/master/packages/modules/src/networkAnalysisDataVis/index.tsx)).
+
+```typescript
+import { withMockProcessor } from '@lumy/client-core'
+
+// ...
+
+const mockProcessor = (inputValues: InputValues): MockProcessorResult<InputValues, OutputValues> => {
+  // do something with inputValues ...
+  return {
+    inputs: {
+      /* input values */
+    },
+    outputs: {
+      /* output values */
+    }
+  }
+}
+
+const MyPage = ({}: ModuleProps): JSX.Element => {
+  // ...
+  return <div>// ...</div>
+}
+
+export default withMockProcessor(MyPage, mockProcessor)
+```
+
+Modules are normally developed in the module sandbox app. The sandbox app is a simple React app which is compiled and served using the `webpack dev server`:
+
+```bash
+webpack serve -c webpack.config.js
+```
+
+A sample webpack config file can be found [here](https://github.com/DHARPA-Project/lumy/blob/master/packages/modules/webpack.config.js).
+
+The app is enabled by placing the following code into the top level `index.ts` file of the UI module project (see [this example](https://github.com/DHARPA-Project/lumy/blob/master/packages/modules/src/index.ts)):
+
+```typescript
+if (process.env.NODE_ENV !== 'production') {
+  require('@lumy/module-sandbox').sandbox()
+}
+```
+
+The environment variable condition ensures that the sandbox code is not bundled into the module file when it is built for use in Lumy.
+
+### Registering a UI component
+
+A React component that will be used in a workflow needs to be registered and assigned a package wide unique ID:
+
+```typescript
+import { lumyComponent } from '@lumy/module-core'
+import MyVerySpecialWorkflowPage from './pages/MyVerySpecialWorkflowPage'
+
+lumyComponent('myVerySpecialPage')(MyVerySpecialWorkflowPage)
+```
+
+### Bundling and releasing
+
+The UI module has to be compiled into a single JavaScript file that later will be loaded by Lumy. More than one UI module can be declared and bundled in one file (see [this example](https://github.com/DHARPA-Project/lumy/blob/master/packages/modules/src/index.ts)). Compilation is handled by `webpack`.
+
+The standard and recommended way of distributing the modules is by preparing them as a Python module which contains the module JavaScript code as a resource and a simple function that reads this resource file and returns it as a string (See [this example](https://github.com/DHARPA-Project/lumy/blob/master/packages/modules/pkg/lumy_modules/network_analysis/__init__.py)):
+
+```python
+import pkgutil
+
+def get_code() -> str:
+    return pkgutil.get_data(__name__, "resources/index.js").decode('utf-8')
+```
+
+> :warning: Non `.py` files are omitted by python `sdist` and `bdist_wheel` commands. To make sure `.js` files are included into the final package, add the following line to the `MANIFEST.in` file: `recursive-include pkg/* *.js`
+
+This function then needs to be assigned a `plugin ID` and registered in the `setup.py` (or `setup.cfg`) file, which will make it discoverable by Lumy when the package is installed into the Lumy Python environment. The following declaration is added to the `entry_points` list in the `setup.py` or the `setup.cfg` files:
+
+```python
+'lumy.modules': [
+    'plug_in_id = lumy_modules.my_plug_in:get_code'
+]
+```
+
+This method will be familiar for those who has experience writing and distributing custom Kiara modules.
+
+See `lumy-middleware` documentation for more information about how Lumy does dynamic loading of these plug-ins.
+
+#### Releasing
+
+It's a two step process:
+
+- Prepare JavaScript bundle: `NODE_ENV=production webpack build -c webpack.config.js`
+- Build the Python package: `python setup.py sdist bdist_wheel`
+- Publish the package to [pypi.org](https://pypi.org/) (see [this tutorial](https://packaging.python.org/tutorials/packaging-projects/))
+
+#### Using a module in Lumy workflow
+
+A module is referenced in a Lumy workflow like this:
+
+```yaml
+component:
+  id: myComponentId
+  url: lumymodule://plug_in_id
+```
+
+##### Alternative methods of loading a module
+
+A module can also be loaded
+
+- from a URL, e.g. `https://foo.com/plugin-file.js`. This method is not recommended because it requires the user to be connected to the Internet.
+- a file on disk: `file://../foo/com/plugin-file.js`. This method should only be used during development.
