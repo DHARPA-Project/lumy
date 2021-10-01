@@ -16,17 +16,34 @@ import useStyles from './DataRegistryPage.styles'
 import DataRegistryItemContentPreview from '../common/registry/DataRegistryItemContentPreview'
 import { useIntl, IntlShape } from '@lumy/i18n'
 
+type TableColumnFilterTypes = 'multi-string-include' | null
+
+type ColumnMap = {
+  label: string
+  key: string
+  visible?: boolean
+  sortable?: boolean
+  searchable?: boolean
+  filterType?: TableColumnFilterTypes
+  numeric?: boolean
+}
+
 interface ITableItem {
   id: string
   [x: string]: string
 }
 
-const getColumnMapList = (intl: IntlShape, messageIdPrefix = 'page.dataRegistry.table.columns') => [
+const getColumnMapList = (
+  intl: IntlShape,
+  messageIdPrefix = 'page.dataRegistry.table.columns'
+): ColumnMap[] => [
   {
     label: intl.formatMessage({ id: `${messageIdPrefix}.name.label` }),
     key: 'label',
     visible: true,
     sortable: true,
+    searchable: true,
+    filterType: null,
     numeric: false
   },
   {
@@ -34,6 +51,8 @@ const getColumnMapList = (intl: IntlShape, messageIdPrefix = 'page.dataRegistry.
     key: 'type',
     visible: true,
     sortable: true,
+    searchable: false,
+    filterType: 'multi-string-include' as TableColumnFilterTypes,
     numeric: false
   },
   {
@@ -41,6 +60,8 @@ const getColumnMapList = (intl: IntlShape, messageIdPrefix = 'page.dataRegistry.
     key: 'tags',
     visible: true,
     sortable: false,
+    searchable: false,
+    filterType: 'multi-string-include' as TableColumnFilterTypes,
     numeric: false
   },
   {
@@ -48,6 +69,8 @@ const getColumnMapList = (intl: IntlShape, messageIdPrefix = 'page.dataRegistry.
     key: 'notes',
     visible: true,
     sortable: false,
+    searchable: false,
+    filterType: null,
     numeric: false
   },
   {
@@ -55,6 +78,8 @@ const getColumnMapList = (intl: IntlShape, messageIdPrefix = 'page.dataRegistry.
     key: 'columnNames',
     visible: false,
     sortable: false,
+    searchable: false,
+    filterType: null,
     numeric: false
   },
   {
@@ -62,6 +87,8 @@ const getColumnMapList = (intl: IntlShape, messageIdPrefix = 'page.dataRegistry.
     key: 'columnTypes',
     visible: false,
     sortable: false,
+    searchable: false,
+    filterType: 'multi-string-include' as TableColumnFilterTypes,
     numeric: false
   }
 ]
@@ -84,7 +111,7 @@ const DataRegistryPage: React.FC = () => {
     return [...item].reduce(
       (acc, [key, value]) => ({
         ...acc,
-        [key]: value instanceof Utf8Vector ? [...(value ?? [])].join(', ') : value
+        [key]: value instanceof Utf8Vector ? [...(value ?? [])] : value
       }),
       {}
     )
@@ -103,7 +130,7 @@ const DataRegistryPage: React.FC = () => {
     /**
      * TODO: implement when the back-end can support this function
      */
-    console.info(`removing items with IDs:\n${idList.sort((a, b) => (a > b ? 1 : -1)).join(',\n')}`)
+    console.info(`must remove items with IDs:\n${idList.sort((a, b) => (a > b ? 1 : -1)).join(',\n')}`)
     setSnackbarMessage('item removal coming up soon')
     setIsSnackBarVisible(true)
   }
@@ -121,13 +148,13 @@ const DataRegistryPage: React.FC = () => {
     <Container classes={{ root: classes.registryPageContainer }}>
       <InteractiveTable
         title={intl.formatMessage({ id: 'page.dataRegistry.table.title' })}
-        itemList={repositoryItemList as ITableItem[]}
+        rowList={repositoryItemList as ITableItem[]}
         columnMapList={columnMapList}
         isSearchEnabled={true}
         onAddItemClick={handleAddItemClick}
         // onEditItemClick={handleEditItemClick}
         onDeleteSelectedItems={deleteRepositoryItems}
-        getItemContentPreview={id => <DataRegistryItemContentPreview id={id} />}
+        getItemContentPreview={(id: string) => <DataRegistryItemContentPreview id={id} />}
       />
 
       <Snackbar

@@ -9,6 +9,7 @@ import Autocomplete, { AutocompleteRenderGroupParams } from '@material-ui/lab/Au
 
 import useStyles from './VirtualizedSelect.styles'
 import ListBox from './VirtualizedListBox'
+import { FormattedMessage } from 'react-intl'
 
 const renderGroup = (params: AutocompleteRenderGroupParams) => [
   <ListSubheader key={params.key} component="div">
@@ -51,7 +52,7 @@ const VirtualizedSelectField = ({
       onOpen={handleOpen}
       onClose={handleClose}
       loading={isProcessing}
-      loadingText={'processing...'}
+      loadingText={<FormattedMessage id="virtualizedSelect.loadingText" />}
       options={options ?? []}
       groupBy={option => option[0].toUpperCase()}
       renderGroup={renderGroup}
@@ -63,7 +64,7 @@ const VirtualizedSelectField = ({
       size="small"
       handleHomeEndKeys={true}
       openOnFocus={true}
-      noOptionsText={'no options available...'}
+      noOptionsText={<FormattedMessage id="virtualizedSelect.noOptionsText" />}
       renderInput={params => (
         <TextField
           {...params}

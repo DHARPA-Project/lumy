@@ -11,12 +11,12 @@ import VisibilityIcon from '@material-ui/icons/Visibility'
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined'
 import { FormattedMessage } from '@lumy/i18n'
 
-import { withI18n } from '../locale'
+import { withI18n } from '../../locale'
 import useStyles from './TableRow.styles'
 import { ColumnMap } from './InteractiveTable'
 
 type InteractiveTableRowProps = {
-  item: Record<string, string>
+  item: Record<string, number | string | string[]>
   columns: ColumnMap[]
   isSelected: boolean
   onSelectionChange: () => void
@@ -42,15 +42,19 @@ const InteractiveTableRow = ({
         <Checkbox
           checked={isSelected}
           onChange={onSelectionChange}
-          inputProps={{ 'aria-labelledby': item.id }}
+          inputProps={{ 'aria-labelledby': item.id as string }}
         />
       </TableCell>
 
-      {columns.map((column, index) => (
-        <TableCell className={classes.borderless} align="center" key={column.key ?? index}>
-          {column?.key ? item[column?.key] : ''}
-        </TableCell>
-      ))}
+      {columns.map((column, index) => {
+        let cellContent = column?.key ? item[column?.key] : ''
+        if (Array.isArray(cellContent)) cellContent = cellContent.join(', ')
+        return (
+          <TableCell className={classes.borderless} align="center" key={column.key ?? index}>
+            {cellContent}
+          </TableCell>
+        )
+      })}
 
       {(contentPreview || onEditItemClick) && (
         <TableCell
@@ -60,7 +64,7 @@ const InteractiveTableRow = ({
           size="small"
         >
           {contentPreview && (
-            <Tooltip arrow title={<FormattedMessage id="interactiveTable.row.message.openPreview" />}>
+            <Tooltip arrow title={<FormattedMessage id="interactiveTable.row.controls.openPreview" />}>
               <IconButton
                 className={classes.button}
                 onClick={event => setPopoverAnchorEl(event.currentTarget)}
@@ -71,8 +75,13 @@ const InteractiveTableRow = ({
           )}
 
           {onEditItemClick && (
-            <Tooltip arrow title={`edit item ${item.id}`}>
-              <IconButton className={classes.button} onClick={() => onEditItemClick(item.id)}>
+            <Tooltip
+              arrow
+              title={
+                <FormattedMessage id="interactiveTable.row.controls.editItem" values={{ id: item.id }} />
+              }
+            >
+              <IconButton className={classes.button} onClick={() => onEditItemClick(item.id as string)}>
                 <EditOutlinedIcon fontSize="small" />
               </IconButton>
             </Tooltip>

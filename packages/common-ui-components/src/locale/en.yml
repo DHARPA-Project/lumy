@@ -6,21 +6,34 @@ interactiveTable:
       label: search data sources
       tooltip: search items
     delete:
-      tooltip: Delete
+      tooltip: delete
     chooseColumns:
       tooltip: choose visible columns
+    filterList:
+      tooltip: filter list
+      panel:
+        title: Filters
+        resetFilters: reset filters
+        noFilters: No filters available
+        explanation: You can select multiple filter values for each table column
     addNewItem:
       tooltip: add new item
   message:
     itemsSelected: "{count} items selected"
     chooseVisibleColumns: Choose visible columns
   row:
-    message:
+    controls:
       openPreview: click to open content preview
+      editItem: "edit item {id}"
+  pagination:
+    all: all
 simpleTable:
   pagination:
-    all: All
+    all: all
 treeView:
   label:
     expandAll: expand all
     collapseAll: collapse all
+virtualizedSelect:
+  loadingText: processing...
+  noOptionsText: no options available...

@@ -1,1 +1,1 @@
-export { InteractiveTable } from './InteractiveTable'
+export { InteractiveTable } from './components/InteractiveTable'
