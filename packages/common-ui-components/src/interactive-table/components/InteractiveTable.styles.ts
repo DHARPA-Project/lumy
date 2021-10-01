@@ -1,10 +1,10 @@
 import { lighten, makeStyles, Theme } from '@material-ui/core/styles'
 
 export default makeStyles((theme: Theme) => ({
-  dataRegistryPaper: {
+  interactiveTableContainer: {
     padding: theme.spacing(3)
   },
-  toolbar: {
+  tableToolbar: {
     paddingLeft: theme.spacing(2),
     paddingRight: theme.spacing(1),
     columnGap: theme.spacing(5)
@@ -31,13 +31,9 @@ export default makeStyles((theme: Theme) => ({
   title: {
     flex: '1 1 100%'
   },
-  columnList: {
-    width: 'auto',
-    minWidth: theme.spacing(10),
-    backgroundColor: theme.palette.background.paper
-  },
   tableContainer: {
-    maxHeight: `calc(100vh - ${theme.spacing(36)}px)`
+    // 15 rows x 4.5 spacings + header: 4.5 spacings + 2px for borders top & bottom
+    maxHeight: `${theme.spacing(4.5 * 15 + 4.5) + 2}px`
   },
   table: {
     '& thead th': {
@@ -53,7 +49,6 @@ export default makeStyles((theme: Theme) => ({
     borderTop: `1px solid ${theme.palette.divider}`
   },
   tableBody: {
-    maxHeight: `calc(100vh - ${theme.spacing(43)}px)`,
     overflow: 'auto'
   },
   pagination: {

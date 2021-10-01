@@ -17,60 +17,58 @@ import Toolbar from '@material-ui/core/Toolbar'
 import Tooltip from '@material-ui/core/Tooltip'
 import IconButton from '@material-ui/core/IconButton'
 import Popover from '@material-ui/core/Popover'
-import ListSubheader from '@material-ui/core/ListSubheader'
-import List from '@material-ui/core/List'
-import ListItem from '@material-ui/core/ListItem'
-import ListItemIcon from '@material-ui/core/ListItemIcon'
-import ListItemText from '@material-ui/core/ListItemText'
+import Badge from '@material-ui/core/Badge'
 
 import BackupIcon from '@material-ui/icons/Backup'
 import Search from '@material-ui/icons/Search'
 import DeleteIcon from '@material-ui/icons/Delete'
 import CloseIcon from '@material-ui/icons/Close'
 import ViewWeekIcon from '@material-ui/icons/ViewWeek'
-// import FilterListIcon from '@material-ui/icons/FilterList'
+import FilterListIcon from '@material-ui/icons/FilterList'
 
-import { FormattedMessage } from '@lumy/i18n'
-import { withI18n } from '../locale'
+import { FormattedMessage, useIntl } from '@lumy/i18n'
+import { withI18n } from '../../locale'
 
 import useStyles from './InteractiveTable.styles'
+import {
+  extractListUniqueValues,
+  // genMockStringList,
+  getFilteredObjectList,
+  getSearchedObjectList,
+  getSortedObjectList
+} from '../utils'
 
-import DataRegistryRow from './TableRow'
-
-type Order = 'asc' | 'desc'
-
-interface IObjectListSortParams {
-  objectList: Record<string, string>[]
-  propertyToSortBy: string
-  sortingOrder: Order
-  isNumeric: boolean
-}
-
-const sortObjectList = ({ objectList, propertyToSortBy, isNumeric, sortingOrder }: IObjectListSortParams) => {
-  const orderFactor = sortingOrder === 'asc' ? 1 : -1
-  return [...objectList].sort((a, b) => {
-    const first = isNumeric ? parseFloat(a[propertyToSortBy]) : a[propertyToSortBy].trim().toLowerCase()
-    const second = isNumeric ? parseFloat(b[propertyToSortBy]) : b[propertyToSortBy].trim().toLowerCase()
-    return first > second ? orderFactor : -orderFactor
-  })
-}
+import InteractiveTableRow from './TableRow'
+import ColumnSelection from './ColumnSelection'
+import TableFilters from './TableFilters'
 
 export interface ITableItem {
   id: string
-  [x: string]: string
+  [x: string]: number | string | string[]
 }
 
-export type ColumnMap = {
-  label: string
+export type TableColumnFilterTypes = 'multi-string-include' | null
+
+export interface ColumnMap {
   key: string
-  visible: boolean
-  sortable: boolean
-  numeric: boolean
+  label: string
+  visible?: boolean
+  sortable?: boolean
+  searchable?: boolean
+  numeric?: boolean
+  filterType?: TableColumnFilterTypes
+}
+
+export interface FilterableColumn extends ColumnMap {
+  filterOptions: string[]
+  filterValue: string | string[]
+  isOpen: boolean
+  isProcessing: boolean
 }
 
 type InteractiveTableProps = {
   title: string
-  itemList: ITableItem[]
+  rowList: ITableItem[]
   columnMapList: ColumnMap[]
   isSearchEnabled: boolean
   onDeleteSelectedItems: (idList: string[]) => void
@@ -83,7 +81,7 @@ type InteractiveTableProps = {
 
 const InteractiveTableComponent = ({
   title,
-  itemList,
+  rowList,
   columnMapList,
   isSearchEnabled,
   onDeleteSelectedItems,
@@ -94,8 +92,10 @@ const InteractiveTableComponent = ({
   searchDebounceDuration = 200
 }: InteractiveTableProps): JSX.Element => {
   const classes = useStyles()
+  const intl = useIntl()
+
   const searchBarRef = useRef(null)
-  const timeoutRef = useRef(null)
+  const searchTimeoutRef = useRef(null)
 
   const [popoverAnchorEl, setPopoverAnchorEl] = useState<HTMLElement | null>(null)
 
@@ -104,43 +104,66 @@ const InteractiveTableComponent = ({
   // trimmed and lowercased search query saved after (optional) debounce period
   const [isSearchBarVisible, setIsSearchBarVisible] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
-  const [tableColumns, setTableColumns] = useState<ColumnMap[]>(columnMapList)
+  // const [tableColumns, setTableColumns] = useState<ColumnMap[]>(columnMapList)
+  const [popoverContent, setPopoverContent] = useState<'columns' | 'filter'>(null)
   const [selectedItems, setSelectedItems] = useState<string[]>([])
-  const [sortingOrder, setSortingOrder] = useState<Order>('asc')
+  const [sortingOrder, setSortingOrder] = useState<'asc' | 'desc'>('asc')
   const [sortingColumn, setSortingColumn] = useState<string>(null)
   const [isNumericSort, setIsNumericSort] = useState(false)
   const [numRowsPerPage, setNumRowsPerPage] = useState(defaultNumberRowsPerPage)
   const [pageNumber, setPageNumber] = useState(0)
+  const [tableColumns, setTableColumns] = useState<FilterableColumn[]>(() =>
+    columnMapList.reduce(
+      (acc, column) => [
+        ...acc,
+        {
+          ...column,
+          filterOptions: null,
+          filterValue: [],
+          isOpen: false,
+          isProcessing: false
+        }
+      ],
+      []
+    )
+  )
 
-  const filteredList = searchQuery
-    ? (itemList ?? []).filter(item => (item.label ?? '').toLowerCase().includes(searchQuery))
-    : itemList
+  const filterableColumns = tableColumns.filter(column => column?.visible && column?.filterType != null)
+  const filterList = filterableColumns.reduce((acc, { key, filterType, filterValue }) => {
+    return key && filterType && filterValue?.length
+      ? acc.concat({ key, type: filterType, value: filterValue })
+      : acc
+  }, [])
+
+  const searchedRowList = getSearchedObjectList({ objectList: rowList, searchQuery })
+  const filteredRowList = getFilteredObjectList({ objectList: searchedRowList, filterList })
   const sortedList =
     sortingColumn && sortingOrder
-      ? sortObjectList({
-          objectList: filteredList,
+      ? getSortedObjectList({
+          objectList: filteredRowList,
           propertyToSortBy: sortingColumn,
           isNumeric: isNumericSort,
           sortingOrder
         })
-      : filteredList
-  const paginatedList = (sortedList ?? []).slice(
-    numRowsPerPage * pageNumber,
-    numRowsPerPage * (pageNumber + 1)
-  )
+      : filteredRowList
+  // numRowsPerPage == -1 stands for "all entries" in Material UI TablePagination
+  const paginatedRowList =
+    numRowsPerPage === -1
+      ? (sortedList ?? []).slice(numRowsPerPage * pageNumber)
+      : (sortedList ?? []).slice(numRowsPerPage * pageNumber, numRowsPerPage * (pageNumber + 1))
 
-  const visibleColumns = tableColumns.filter(column => column.visible)
+  const visibleColumns = tableColumns.filter(column => column?.visible)
   const numSelectedItems = selectedItems.length
-  const numFilteredItems = filteredList.length
+  const numFilteredItems = filteredRowList.length
 
   useEffect(() => {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current)
-    timeoutRef.current = setTimeout(() => {
+    if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current)
+    searchTimeoutRef.current = setTimeout(() => {
       setPageNumber(0)
       setSearchQuery(searchInputValue.trim().toLowerCase())
     }, searchDebounceDuration)
 
-    return () => clearTimeout(timeoutRef.current)
+    return () => clearTimeout(searchTimeoutRef.current)
   }, [searchInputValue])
 
   useEffect(() => {
@@ -151,6 +174,38 @@ const InteractiveTableComponent = ({
     }
   }, [isSearchBarVisible])
 
+  useEffect(() => {
+    const columnsMissingOptions = tableColumns.filter(
+      ({ filterOptions, isProcessing, isOpen }) => filterOptions == null && !isProcessing && isOpen
+    )
+    if (!columnsMissingOptions.length) return
+
+    columnsMissingOptions.forEach(columnMissingOptions => {
+      setTableColumns(prevColumns =>
+        prevColumns.map(column =>
+          column.key === columnMissingOptions.key ? { ...column, isProcessing: true } : column
+        )
+      )
+
+      new Promise(resolve => {
+        const uniqueValues = extractListUniqueValues(rowList, columnMissingOptions.key)
+        // const uniqueValues = genMockStringList(1e4, true) // generate huge number of mock values
+        // setTimeout(() => resolve(uniqueValues), 1e3) // simulate processing time
+        resolve(uniqueValues)
+      })
+        .then(filterOptions => {
+          setTableColumns(prevColumns =>
+            prevColumns.map(column =>
+              column.key === columnMissingOptions.key
+                ? { ...column, isProcessing: false, filterOptions: filterOptions as string[] }
+                : column
+            )
+          )
+        })
+        .catch(error => console.error(error))
+    })
+  }, [tableColumns])
+
   const toggleSearchBarVisibile = (value?: boolean) => {
     setIsSearchBarVisible(previousValue => (value ? value : !previousValue))
   }
@@ -158,13 +213,39 @@ const InteractiveTableComponent = ({
   const handleSortClick = (column: ColumnMap) => {
     setSortingOrder(sortingColumn === column.key && sortingOrder === 'asc' ? 'desc' : 'asc')
     setSortingColumn(column.key)
-    setIsNumericSort(column.numeric)
+    setIsNumericSort(!!column?.numeric)
   }
 
   const handleColumnToggle = (columnKey: string) => {
     setTableColumns(prevColumns =>
-      prevColumns.map(column => (column.key === columnKey ? { ...column, visible: !column.visible } : column))
+      prevColumns.map(column =>
+        column.key === columnKey ? { ...column, visible: !column?.visible } : column
+      )
     )
+  }
+
+  const handleOpenSelect = (columnKey: string): void => {
+    setTableColumns(prevColumns =>
+      prevColumns.map(column => (column.key === columnKey ? { ...column, isOpen: true } : column))
+    )
+  }
+
+  const handleCloseSelect = (columnKey: string): void => {
+    setTableColumns(prevColumns =>
+      prevColumns.map(column => (column.key === columnKey ? { ...column, isOpen: false } : column))
+    )
+  }
+
+  const setFilterValue = (columnKey: string) => (filterValue: string | string[]): void => {
+    setPageNumber(0)
+    setTableColumns(prevColumns =>
+      prevColumns.map(column => (column.key === columnKey ? { ...column, filterValue } : column))
+    )
+  }
+
+  const resetFilterValues = (): void => {
+    setPageNumber(0)
+    setTableColumns(prevColumns => prevColumns.map(column => ({ ...column, filterValue: [] })))
   }
 
   const handleSelectClick = (id: string) => {
@@ -177,7 +258,7 @@ const InteractiveTableComponent = ({
 
   const handleSelectAllClick = () => {
     setSelectedItems(prevSelected =>
-      prevSelected.length === numFilteredItems ? [] : filteredList.map(item => item.id)
+      prevSelected.length === numFilteredItems ? [] : filteredRowList.map(item => item.id as string)
     )
   }
 
@@ -191,8 +272,8 @@ const InteractiveTableComponent = ({
   }
 
   return (
-    <Paper classes={{ root: classes.dataRegistryPaper }}>
-      <Toolbar className={classes.toolbar + ` ${+numSelectedItems > 0 ? classes.highlight : ''}`}>
+    <Paper classes={{ root: classes.interactiveTableContainer }}>
+      <Toolbar className={classes.tableToolbar + ` ${+numSelectedItems > 0 ? classes.highlight : ''}`}>
         <div className={classes.left}>
           {numSelectedItems > 0 ? (
             <Typography className={classes.title} color="inherit" variant="subtitle1" component="div">
@@ -254,10 +335,32 @@ const InteractiveTableComponent = ({
 
               <Tooltip title={<FormattedMessage id="interactiveTable.toolbar.chooseColumns.tooltip" />}>
                 <IconButton
-                  onClick={event => setPopoverAnchorEl(event.currentTarget)}
+                  onClick={event => {
+                    setPopoverContent('columns')
+                    setPopoverAnchorEl(event.currentTarget)
+                  }}
                   aria-label="choose visible columns"
                 >
                   <ViewWeekIcon />
+                </IconButton>
+              </Tooltip>
+
+              <Tooltip title={<FormattedMessage id="interactiveTable.toolbar.filterList.tooltip" />}>
+                <IconButton
+                  onClick={event => {
+                    setPopoverContent('filter')
+                    setPopoverAnchorEl(event.currentTarget)
+                  }}
+                  aria-label="filter list"
+                >
+                  <Badge //prettier-ignore
+                    badgeContent={filterList.length}
+                    // variant="dot"
+                    variant="standard"
+                    color="secondary"
+                  >
+                    <FilterListIcon />
+                  </Badge>
                 </IconButton>
               </Tooltip>
 
@@ -266,12 +369,6 @@ const InteractiveTableComponent = ({
                   <BackupIcon />
                 </IconButton>
               </Tooltip>
-
-              {/* <Tooltip title="filter list">
-              <IconButton aria-label="filter list">
-                <FilterListIcon />
-              </IconButton>
-            </Tooltip> */}
             </>
           )}
         </div>
@@ -291,30 +388,17 @@ const InteractiveTableComponent = ({
           horizontal: 'right'
         }}
       >
-        <List
-          component="ul"
-          aria-labelledby="list-subheader"
-          subheader={
-            <ListSubheader component="div">
-              <FormattedMessage id="interactiveTable.message.chooseVisibleColumns" />
-            </ListSubheader>
-          }
-          className={classes.columnList}
-        >
-          {tableColumns.map((column, index) => (
-            <ListItem component="li" key={column.key ?? index}>
-              <ListItemIcon>
-                <Checkbox
-                  checked={column.visible}
-                  edge="start"
-                  tabIndex={-1}
-                  onClick={() => handleColumnToggle(column.key)}
-                />
-              </ListItemIcon>
-              <ListItemText primary={column.label} />
-            </ListItem>
-          ))}
-        </List>
+        {popoverContent === 'columns' ? (
+          <ColumnSelection columns={tableColumns} toggleColumn={handleColumnToggle} />
+        ) : popoverContent === 'filter' ? (
+          <TableFilters
+            columns={filterableColumns}
+            handleOpenSelect={handleOpenSelect}
+            handleCloseSelect={handleCloseSelect}
+            setFilterValue={setFilterValue}
+            resetFilterValues={resetFilterValues}
+          />
+        ) : null}
       </Popover>
 
       <TableContainer className={classes.tableContainer}>
@@ -336,9 +420,9 @@ const InteractiveTableComponent = ({
                   className={classes.tableHeadCell}
                   key={`column-heading-${column.key ?? index}`}
                 >
-                  {column.sortable ? (
+                  {column?.sortable ? (
                     <TableSortLabel
-                      active={column.sortable && sortingColumn && sortingColumn === column.key}
+                      active={column?.sortable && sortingColumn && sortingColumn === column.key}
                       direction={sortingColumn === column.key ? sortingOrder : 'asc'}
                       onClick={() => handleSortClick(column)}
                     >
@@ -359,15 +443,15 @@ const InteractiveTableComponent = ({
           </TableHead>
 
           <TableBody className={classes.tableBody}>
-            {paginatedList.map((item, index) => (
-              <DataRegistryRow
-                key={item.id ?? index}
+            {paginatedRowList.map((item, index) => (
+              <InteractiveTableRow
+                key={(item.id as string) ?? index}
                 item={item}
                 columns={visibleColumns}
-                isSelected={selectedItems.includes(item.id)}
-                onSelectionChange={() => handleSelectClick(item.id)}
+                isSelected={selectedItems.includes(item.id as string)}
+                onSelectionChange={() => handleSelectClick(item.id as string)}
                 onEditItemClick={onEditItemClick}
-                contentPreview={getItemContentPreview ? getItemContentPreview(item.id) : null}
+                contentPreview={getItemContentPreview ? getItemContentPreview(item.id as string) : null}
               />
             ))}
           </TableBody>
@@ -380,7 +464,12 @@ const InteractiveTableComponent = ({
         count={numFilteredItems ?? 0}
         page={pageNumber}
         rowsPerPage={numRowsPerPage}
-        rowsPerPageOptions={[5, 10, 25, { label: 'all', value: numFilteredItems }]}
+        rowsPerPageOptions={[
+          5,
+          10,
+          25,
+          { label: intl.formatMessage({ id: 'interactiveTable.pagination.all' }), value: -1 }
+        ]}
         onChangePage={handlePageNumberChange}
         onChangeRowsPerPage={handleNumRowsPerPageChange}
       />
