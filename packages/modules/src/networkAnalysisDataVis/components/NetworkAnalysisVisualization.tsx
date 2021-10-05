@@ -1,11 +1,11 @@
 import React, { useContext, useRef } from 'react'
 
 import { NetworkForce } from '@lumy/datavis-components'
+import { useElementSize } from '@lumy/client-ui'
 
 import { NetworkGraphContext } from '../context'
 import { normalizedValue } from '../utils'
 import useStyles from './NetworkAnalysisVisualization.styles'
-import { useBoxSize } from '../../hooks/useBoxSize'
 
 import { NodeTooltip } from './NodeTooltip'
 import { GraphStatsPanel } from './statistics/GraphStatsPanel'
@@ -30,9 +30,7 @@ const NetworkAnalysisVisualizationContainer = (): JSX.Element => {
 
   const graphContainerRef = useRef<HTMLDivElement>()
 
-  // Not using resize observer because it makes the height creep growing or shrinking
-  // whenever the window is resized.
-  const graphBoxSize = useBoxSize(graphContainerRef, { useResizeObserver: false })
+  const graphBoxSize = useElementSize(graphContainerRef)
 
   return (
     <div className={classes.visualizationContainer}>
