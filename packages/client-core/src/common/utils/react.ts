@@ -1,3 +1,5 @@
+import React from 'react'
+
 // https://github.com/facebook/react/blob/5aa0c5671fdddc46092d46420fff84a82df558ac/packages/react/src/ReactLazy.js#L45
 
 export type LazyResultPromise<R> = Promise<{ default: R }>
@@ -41,4 +43,13 @@ export const getResolvedReactComponent = async <T, P = unknown>(component: React
     return undefined
   }
   return (component as unknown) as T
+}
+
+/**
+ * Get only the valid children of a React component and ignore nullish/falsy ones
+ * @param children A React component's "children" prop
+ * @returns array of valid children
+ */
+export const getValidChildren = (children: React.ReactNode): React.ReactElement[] => {
+  return React.Children.toArray(children).filter(child => React.isValidElement(child)) as React.ReactElement[]
 }
