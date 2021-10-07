@@ -42,7 +42,7 @@ export type WorkflowProviderProps = {
   children?: React.ReactNode
 }
 
-export type screenSplitDirectionType = 'horizontal' | 'vertical'
+export type screenSplitDirectionType = 'row' | 'column'
 
 export type screenSplitOption = {
   name: screenSplitDirectionType

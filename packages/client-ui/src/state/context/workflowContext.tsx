@@ -31,7 +31,7 @@ export const WorkflowProvider = ({ children }: WorkflowProviderProps): JSX.Eleme
   const additionalPaneRef = useRef<HTMLDivElement>(null)
   const dividerPosition = useRef<{ x?: number; y?: number }>(null)
 
-  const [splitDirection, setSplitDirection] = useState<screenSplitDirectionType>('horizontal')
+  const [splitDirection, setSplitDirection] = useState<screenSplitDirectionType>('row')
 
   useEffect(() => {
     document.addEventListener('mouseup', onMouseUp)
@@ -46,10 +46,10 @@ export const WorkflowProvider = ({ children }: WorkflowProviderProps): JSX.Eleme
   useEffect(() => {
     if (!isAdditionalPaneVisible) return
 
-    if (splitDirection === 'horizontal') {
+    if (splitDirection === 'row') {
       setMainPaneWidth(getStepContainerWidth() / 2)
       setMainPaneHeight(null)
-    } else if (splitDirection === 'vertical') {
+    } else if (splitDirection === 'column') {
       setMainPaneWidth(null)
       setMainPaneHeight(getStepContainerHeight() / 2)
     }
@@ -93,7 +93,7 @@ export const WorkflowProvider = ({ children }: WorkflowProviderProps): JSX.Eleme
   const onMouseMove = (event: React.MouseEvent): void => {
     if (!dividerPosition.current) return
 
-    if (splitDirection === 'horizontal') {
+    if (splitDirection === 'row') {
       setMainPaneWidth(prevWidth => {
         const newWidth = prevWidth + event.clientX - dividerPosition.current.x
         const stepContainerWidth = getStepContainerWidth()
@@ -102,7 +102,7 @@ export const WorkflowProvider = ({ children }: WorkflowProviderProps): JSX.Eleme
           : prevWidth
       })
       dividerPosition.current = { x: event.clientX }
-    } else if (splitDirection === 'vertical') {
+    } else if (splitDirection === 'column') {
       setMainPaneHeight(prevHeight => {
         const newHeight = prevHeight + event.clientY - dividerPosition.current.y
         const stepContainerHeight = getStepContainerHeight()
@@ -123,7 +123,7 @@ export const WorkflowProvider = ({ children }: WorkflowProviderProps): JSX.Eleme
 
     if (isAdditionalPaneVisible) return
 
-    if (splitDirection === 'vertical') {
+    if (splitDirection === 'column') {
       setMainPaneHeight(getStepContainerHeight() / 2)
     } else {
       setMainPaneWidth(getStepContainerWidth() / 2)

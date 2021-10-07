@@ -7,16 +7,16 @@ import { screenSplitOption } from './workflowContext.types'
 
 export const screenSplitOptions: screenSplitOption[] = [
   {
-    name: 'horizontal',
+    name: 'row',
     icon: <HorizontalSplitIcon />,
     tooltipText: 'split: top / bottom',
-    direction: 'vertical'
+    direction: 'column'
   },
   {
-    name: 'vertical',
+    name: 'column',
     icon: <VerticalSplitIcon />,
     tooltipText: 'split: left / right',
-    direction: 'horizontal'
+    direction: 'row'
   }
 ]
 
