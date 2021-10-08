@@ -1,11 +1,13 @@
 import React, { useContext, useState } from 'react'
+
+import { useTheme } from '@material-ui/core/styles'
 import { motion, AnimatePresence } from 'framer-motion'
 
 import SpeedDial from '@material-ui/lab/SpeedDial'
 import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon'
 import SpeedDialAction from '@material-ui/lab/SpeedDialAction'
 
-import { LoadingIndicator } from '@lumy/common-ui-components'
+import { LoadingIndicator, ResizablePanes } from '@lumy/common-ui-components'
 
 import { WorkflowContext, screenSplitDirectionType } from '../../state'
 import { useAppFeatures } from '../../const/features'
@@ -40,22 +42,19 @@ const WorkflowContainer = (): JSX.Element => {
     direction,
     isAdditionalPaneVisible,
     stepContainerRef,
-    mainPaneRef,
-    additionalPaneRef,
     splitDirection,
     setSplitDirection,
     screenSplitOptions,
     proceedToNextStep,
     returnToPreviousStep,
-    onMouseDown,
     closeAdditionalPane,
     openFeatureTab
   } = useContext(WorkflowContext) //prettier-ignore
+  const theme = useTheme()
+  const classes = useStyles()
   const featureList = useAppFeatures()
 
   const [isSpeedDialOpen, setIsSpeedDialOpen] = useState(false)
-
-  const classes = useStyles()
 
   if (workflowPages?.length === 0) return <LoadingIndicator />
 
@@ -89,18 +88,21 @@ const WorkflowContainer = (): JSX.Element => {
               opacity: { duration: 0.5 }
             }}
           >
-            <section className={classes.mainPane} ref={mainPaneRef}>
-              <WorkflowStep pageDetails={currentPageDetails} workflowLabel={workflowMeta.label} />
-            </section>
-
-            <div className={classes.paneDivider + ` ${splitDirection}`} onMouseDown={onMouseDown} />
-
-            <section
-              className={classes.additionalPane + (isAdditionalPaneVisible ? '' : ' invisible')}
-              ref={additionalPaneRef}
+            <ResizablePanes
+              orientation={splitDirection}
+              style={{ height: '100vh' }}
+              minPaneSize={theme.spacing(40)}
+              dividerPalette={{
+                idle: theme.palette.grey[100],
+                hovered: theme.palette.grey[200],
+                valid: theme.palette.primary.light,
+                invalid: theme.palette.error.light
+              }}
             >
-              <FeatureTabs />
-            </section>
+              <WorkflowStep pageDetails={currentPageDetails} workflowLabel={workflowMeta.label} />
+
+              {isAdditionalPaneVisible && <FeatureTabs />}
+            </ResizablePanes>
           </motion.div>
         </AnimatePresence>
       </div>

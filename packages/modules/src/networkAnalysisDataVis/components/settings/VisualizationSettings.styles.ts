@@ -1,6 +1,10 @@
 import { makeStyles, Theme } from '@material-ui/core/styles'
 
 export default makeStyles((theme: Theme) => ({
+  settingContainer: {
+    height: 'auto',
+    overflow: 'initial'
+  },
   header: {
     padding: '0 16px',
     display: 'flex',
