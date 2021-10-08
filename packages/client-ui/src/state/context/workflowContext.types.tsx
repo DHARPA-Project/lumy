@@ -17,23 +17,16 @@ export type WorkflowType = {
   setCurrentPageId: (id: WorkflowPageDetails['id']) => void
   direction: number
   setCurrentPageIndexAndDirection: Dispatch<SetStateAction<[number, number]>>
-  mainPaneWidth: number
-  setMainPaneWidth: Dispatch<SetStateAction<number>>
-  mainPaneHeight: number
-  setMainPaneHeight: Dispatch<SetStateAction<number>>
   isAdditionalPaneVisible: boolean
   setIsAdditionalPaneVisible: Dispatch<SetStateAction<boolean>>
   workflowCode: Record<string, unknown>
   samplePythonCodeSnippet: string
   stepContainerRef: React.MutableRefObject<HTMLDivElement>
-  mainPaneRef: React.MutableRefObject<HTMLDivElement>
-  additionalPaneRef: React.MutableRefObject<HTMLDivElement>
   splitDirection: screenSplitDirectionType
   setSplitDirection: React.Dispatch<React.SetStateAction<screenSplitDirectionType>>
   screenSplitOptions: screenSplitOption[]
   proceedToNextStep: () => void
   returnToPreviousStep: () => void
-  onMouseDown: (event: React.MouseEvent) => void
   closeAdditionalPane: () => void
   openFeatureTab: (tabIndex: number) => void
 }
@@ -58,6 +51,4 @@ export interface IWorkflowLayout {
   currentPageIndex: number
   direction: number
   isAdditionalPaneVisible: boolean
-  mainPaneHeight: number
-  mainPaneWidth: number
 }
