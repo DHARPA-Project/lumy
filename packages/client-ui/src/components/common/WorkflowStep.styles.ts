@@ -25,6 +25,7 @@ export default makeStyles<Theme>(theme => ({
     marginBottom: theme.spacing(1)
   },
   mainContent: {
+    height: `calc(100% - ${theme.layout.pageHeaderHeight})`,
     flex: 1,
     display: 'flex',
     justifyContent: 'center',

@@ -32,7 +32,7 @@ const VisualizationSettings = (): JSX.Element => {
   }
 
   return (
-    <Card>
+    <Card className={classes.settingContainer}>
       <div className={classes.header}>
         <Typography variant="body1" component="h6" align="center">
           Graph Settings
