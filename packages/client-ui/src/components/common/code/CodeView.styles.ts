@@ -7,6 +7,7 @@ export default makeStyles((theme: Theme) => ({
     top: 0,
     display: 'flex',
     justifyContent: 'flex-end',
-    padding: theme.spacing(0, 1)
+    padding: theme.spacing(0, 1),
+    zIndex: 1
   }
 }))
