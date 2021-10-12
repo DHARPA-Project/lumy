@@ -18,6 +18,7 @@ export default makeStyles<Theme>(() => ({
     display: 'flex'
   },
   graphContainer: {
+    position: 'relative',
     flex: 1,
     overflow: 'hidden'
   }

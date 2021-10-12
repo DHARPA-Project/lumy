@@ -10,7 +10,7 @@ import Tooltip from '@material-ui/core/Tooltip'
 import AddCircleTwoToneIcon from '@material-ui/icons/AddCircleTwoTone'
 
 import useStyles from './VisualizationSettings.styles'
-import { NetworkGraphContext } from '../../context'
+import { SettingContext } from '../../context'
 
 import { NavigationPanel, NavigationPanelSection } from '../common/NavigationPanel'
 import SettingMenuPopover from './popover/SettingMenuPopover'
@@ -19,7 +19,7 @@ import { settingComponentInventory } from '../../settingList'
 const VisualizationSettings = (): JSX.Element => {
   const classes = useStyles()
 
-  const { settingList, setSettingList } = useContext(NetworkGraphContext)
+  const { settingList, setSettingList } = useContext(SettingContext)
 
   const [popoverAnchorEl, setPopoverAnchorEl] = useState<HTMLButtonElement | null>(null)
 

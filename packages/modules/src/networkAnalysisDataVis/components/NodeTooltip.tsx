@@ -1,25 +1,27 @@
-import React from 'react'
-import useStyles from './NodeTooltip.styles'
+import React, { useContext } from 'react'
 
-export interface NodeTooltipProps {
-  position: { left: number; top: number }
-  label?: string
-  scalingMethod?: string
-  scalingValue?: number
-  group?: string
-}
+import useStyles from './NodeTooltip.styles'
+import { TooltipContext } from '../context'
 
 /**
- * Tooltip for a node.
+ * Tooltip for a network analysis graph node.
  */
-export const NodeTooltip = ({
-  position,
-  label,
-  scalingMethod,
-  scalingValue,
-  group
-}: NodeTooltipProps): JSX.Element => {
+export const NodeTooltip = (): JSX.Element => {
   const classes = useStyles()
+
+  const { graphTooltipInfo, nodeScalingMethod } = useContext(TooltipContext)
+
+  const position = {
+    left: graphTooltipInfo?.mouseCoordinates.x,
+    top: graphTooltipInfo?.mouseCoordinates.y
+  }
+  const label = graphTooltipInfo?.nodeMetadata?.label
+  const scalingValue = graphTooltipInfo?.nodeMetadata?.scalerActualValue
+  const group = graphTooltipInfo?.nodeMetadata?.group
+
+  const requiredInfoMissing = !label || !scalingValue || !group || !position?.left || !position?.top
+
+  if (requiredInfoMissing) return null
 
   return (
     <div
@@ -30,13 +32,15 @@ export const NodeTooltip = ({
       }}
     >
       {label == null ? '' : <span style={{ display: 'block' }}>Label: {label}</span>}
-      {!isNaN(scalingValue) && scalingMethod != null ? (
+
+      {!isNaN(scalingValue) && nodeScalingMethod != null ? (
         <span
           style={{ display: 'block', textTransform: 'capitalize' }}
-        >{`${scalingMethod}: ${scalingValue.toFixed(2)}`}</span>
+        >{`${nodeScalingMethod}: ${scalingValue.toFixed(2)}`}</span>
       ) : (
         ''
       )}
+
       {group != null ? <span style={{ display: 'block' }}>Group: {group}</span> : ''}
     </div>
   )
