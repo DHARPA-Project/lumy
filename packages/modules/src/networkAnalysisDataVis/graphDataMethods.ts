@@ -8,7 +8,7 @@ function filterOutIsolatedNodes(nodes: NodeMetadata[], nodesTable: OutputValues[
 }
 
 /**
- * Build nodes list in the format 'network-force' graph understands.
+ * Build node list in a format 'network-force' graph understands.
  */
 export function buildGraphNodes(
   nodes: OutputValues['nodes'],
@@ -33,7 +33,7 @@ export function buildGraphNodes(
 }
 
 /**
- * Build edges list in the format 'network-force' graph understands.
+ * Build edge list in a format 'network-force' graph understands.
  */
 export function buildGraphEdges(edges: OutputValues['edges']): EdgeMetadata[] | undefined {
   if (edges == null) return undefined
@@ -57,7 +57,7 @@ export function getNodeScalerParameters(
   const groupValuesMin = Math.min(...groupValues)
   const groupValuesMax = Math.max(...groupValues)
 
-  // nodesScaler min and max temporary dummy values
+  // nodeScaler min and max temporary dummy values
   const min = isFinite(groupValuesMin) ? groupValuesMin : 0
   const max = isFinite(groupValuesMax) ? groupValuesMax : 1
   const step = (max - min) / 10

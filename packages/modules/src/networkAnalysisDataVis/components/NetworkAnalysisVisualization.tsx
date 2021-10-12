@@ -19,13 +19,10 @@ const NetworkAnalysisVisualizationContainer = (): JSX.Element => {
   const {
     colorCodeNodes,
     graphRef,
-    graphStats,
-    graphTooltipInfo,
     isDisplayIsolated,
     isDisplayLabels,
     labelNodeSizeThreshold,
-    nodeScalerParams,
-    nodeScalingMethod
+    nodeScalerParams
   } = useContext(NetworkGraphContext) // prettier-ignore
 
   const graphContainerRef = useRef<HTMLDivElement>()
@@ -35,25 +32,15 @@ const NetworkAnalysisVisualizationContainer = (): JSX.Element => {
   return (
     <div className={classes.visualizationContainer}>
       <div className={classes.left}>
-        <GraphStatsPanel graphStats={graphStats} />
+        <GraphStatsPanel />
 
         <VisualizationSettings />
       </div>
 
       <div className={classes.right}>
         <div ref={graphContainerRef} className={classes.graphContainer}>
-          {graphTooltipInfo != null && (
-            <NodeTooltip
-              position={{
-                left: graphTooltipInfo.mouseCoordinates.x,
-                top: graphTooltipInfo.mouseCoordinates.y
-              }}
-              label={graphTooltipInfo.nodeMetadata.label}
-              scalingMethod={nodeScalingMethod}
-              scalingValue={graphTooltipInfo.nodeMetadata.scalerActualValue}
-              group={graphTooltipInfo.nodeMetadata.group}
-            />
-          )}
+          <NodeTooltip />
+
           <network-force
             displayIsolatedNodes={isDisplayIsolated ? undefined : true}
             displayLabels={isDisplayLabels ? undefined : false}

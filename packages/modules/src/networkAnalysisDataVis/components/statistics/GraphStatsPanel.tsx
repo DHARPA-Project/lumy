@@ -1,6 +1,5 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 
-import { TableCell as MuiTableCell, TableCellProps } from '@material-ui/core'
 import Accordion from '@material-ui/core/Accordion'
 import AccordionSummary from '@material-ui/core/AccordionSummary'
 import AccordionDetails from '@material-ui/core/AccordionDetails'
@@ -8,12 +7,14 @@ import Typography from '@material-ui/core/Typography'
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
 import TableRow from '@material-ui/core/TableRow'
+import { TableCell as MuiTableCell, TableCellProps } from '@material-ui/core'
 import Divider from '@material-ui/core/Divider'
 
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 
-import { GraphStats } from '../../structure'
 import useStyles from './GraphStatsPanel.styles'
+import { GraphStats } from '../../structure'
+import { StatisticsContext } from '../../context'
 
 export interface GraphStatsPanelProps {
   graphStats: Partial<GraphStats>
@@ -24,8 +25,10 @@ const TableCell = ({ children }: TableCellProps): JSX.Element => {
   return <MuiTableCell classes={{ root: classes.tableCellRoot }}>{children}</MuiTableCell>
 }
 
-export const GraphStatsPanel = ({ graphStats }: GraphStatsPanelProps): JSX.Element => {
+export const GraphStatsPanel = (): JSX.Element => {
   const classes = useStyles()
+
+  const { graphStats } = useContext(StatisticsContext)
 
   const [expanded, setExpanded] = useState<boolean>(true)
 

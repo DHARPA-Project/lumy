@@ -9,7 +9,7 @@ import Checkbox from '@material-ui/core/Checkbox'
 
 import useStyles from './PopoverSettingItem.styles'
 import { SettingItem } from '../../../settingList'
-import { NetworkGraphContext } from '../../../context'
+import { SettingContext } from '../../../context'
 
 import TextPill from '../../common/TextPill'
 
@@ -21,7 +21,7 @@ export interface PopoverSettingItemProps {
 const PopoverSettingItem = ({ setting, setSettingList }: PopoverSettingItemProps): JSX.Element => {
   const classes = useStyles()
 
-  const { setHighlightedDocItem } = useContext(NetworkGraphContext)
+  const { setHighlightedDocItem } = useContext(SettingContext)
 
   const handleSettingSelection = () => {
     setSettingList(prevSettingList =>

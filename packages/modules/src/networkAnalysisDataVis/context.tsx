@@ -1,10 +1,9 @@
-import React, { createContext, useEffect, useRef, useState } from 'react'
+import React, { createContext, useEffect, useMemo, useRef, useState } from 'react'
 
 import { useStepOutputValue, WorkflowPageDetails } from '@lumy/client-core'
+import { NetworkForce, NodeMouseEventDetails } from '@lumy/datavis-components'
 
 import { ScalingMethod, InputValues, OutputValues, GraphStats } from './structure'
-
-import { NetworkForce, NodeMouseEventDetails } from '@lumy/datavis-components'
 import {
   buildGraphEdges,
   buildGraphNodes,
@@ -14,14 +13,8 @@ import {
 import initialSettingList, { SettingItem } from './settingList'
 
 export type NetworkGraphContextType = {
-  settingList: SettingItem[]
-  setSettingList: React.Dispatch<React.SetStateAction<SettingItem[]>>
-  highlightedDocItem: string
-  setHighlightedDocItem: React.Dispatch<React.SetStateAction<string>>
   colorCodeNodes: boolean
   graphRef: React.MutableRefObject<NetworkForce>
-  graphStats: Partial<GraphStats>
-  graphTooltipInfo: NodeMouseEventDetails
   isDisplayIsolated: boolean
   isDisplayLabels: boolean
   labelNodeSizeThreshold: number
@@ -34,12 +27,31 @@ export type NetworkGraphContextType = {
   setNodeScalingMethod: React.Dispatch<React.SetStateAction<ScalingMethod>>
 }
 
+type TooltipContextType = {
+  graphTooltipInfo: NodeMouseEventDetails
+  nodeScalingMethod: ScalingMethod
+}
+
+type StatisticsContextType = {
+  graphStats: Partial<GraphStats>
+}
+
+type SettingContextType = {
+  settingList: SettingItem[]
+  setSettingList: React.Dispatch<React.SetStateAction<SettingItem[]>>
+  highlightedDocItem: string
+  setHighlightedDocItem: React.Dispatch<React.SetStateAction<string>>
+}
+
 type NetworkGraphContextProviderProps = {
   pageDetails: WorkflowPageDetails
   children?: React.ReactNode
 }
 
 export const NetworkGraphContext = createContext<NetworkGraphContextType>(null)
+export const TooltipContext = createContext<TooltipContextType>(null)
+export const StatisticsContext = createContext<StatisticsContextType>(null)
+export const SettingContext = createContext<SettingContextType>(null)
 
 const useGraphStats = (stepId: string): Partial<GraphStats> => {
   const [nodesCount] = useStepOutputValue<GraphStats['nodesCount']>(stepId, 'nodesCount')
@@ -84,6 +96,7 @@ const NetworkGraphContextProvider = ({
 
   const [settingList, setSettingList] = useState<SettingItem[]>(() => {
     let list
+    // TODO: This may clash with a step of a similar name from another workflow.
     try {
       const localStorageData = window.localStorage.getItem(settingListLocalStorageKey)
       if (localStorageData != null) list = JSON.parse(localStorageData)
@@ -94,11 +107,8 @@ const NetworkGraphContextProvider = ({
   })
   const [highlightedDocItem, setHighlightedDocItem] = useState('')
 
+  // TODO: This may clash with a step of a similar name from another workflow.
   // save setting list to local storage on every state update
-  //
-  // TODO: Shouldn't this be abstracted as a Lumy core interface rather than
-  // being called here? If not, the local storage key is not unique. It may
-  // clash with a step of a similar name from another workflow.
   useEffect(() => {
     try {
       window.localStorage.setItem(settingListLocalStorageKey, JSON.stringify(settingList))
@@ -122,8 +132,7 @@ const NetworkGraphContextProvider = ({
   /* Get input values that we can control */
 
   // ID of the node we will get direct neighbours for
-  // TODO: replace react state variable with backend state variable when
-  // reapplying force on update is sorted out
+  // TODO: replace react state variable with backend state variable when reapplying force on update is sorted out
   // const [selectedNodeId, setSelectedNodeId] = useStepInputValue<InputValues['selectedNodeId']>(
   //   step.stepId,
   //   'selectedNodeId'
@@ -202,30 +211,70 @@ const NetworkGraphContextProvider = ({
     nodeScalingMethod
   ])
 
+  const statisticsContext = useMemo(
+    () => ({
+      graphStats
+    }),
+    [graphStats]
+  )
+
+  const settingContext = useMemo(
+    () => ({
+      settingList,
+      setSettingList,
+      highlightedDocItem,
+      setHighlightedDocItem
+    }),
+    [settingList, setSettingList, highlightedDocItem, setHighlightedDocItem]
+  )
+
+  const tooltipContext = useMemo(
+    () => ({
+      graphTooltipInfo,
+      nodeScalingMethod
+    }),
+    [graphTooltipInfo, nodeScalingMethod]
+  )
+
+  const networkGraphContext = useMemo(
+    () => ({
+      colorCodeNodes,
+      graphRef,
+      isDisplayIsolated,
+      isDisplayLabels,
+      labelNodeSizeThreshold,
+      nodeScalerParams,
+      nodeScalingMethod,
+      setColorCodeNodes,
+      setIsDisplayIsolated,
+      setIsDisplayLabels,
+      setLabelNodeSizeThreshold,
+      setNodeScalingMethod
+    }),
+    [
+      colorCodeNodes,
+      graphRef,
+      isDisplayIsolated,
+      isDisplayLabels,
+      labelNodeSizeThreshold,
+      nodeScalerParams,
+      nodeScalingMethod,
+      setColorCodeNodes,
+      setIsDisplayIsolated,
+      setIsDisplayLabels,
+      setLabelNodeSizeThreshold,
+      setNodeScalingMethod
+    ]
+  )
+
+  SettingContext
   return (
-    <NetworkGraphContext.Provider
-      value={{
-        settingList,
-        setSettingList,
-        highlightedDocItem,
-        setHighlightedDocItem,
-        colorCodeNodes,
-        graphRef,
-        graphStats,
-        graphTooltipInfo,
-        isDisplayIsolated,
-        isDisplayLabels,
-        labelNodeSizeThreshold,
-        nodeScalerParams,
-        nodeScalingMethod,
-        setColorCodeNodes,
-        setIsDisplayIsolated,
-        setIsDisplayLabels,
-        setLabelNodeSizeThreshold,
-        setNodeScalingMethod
-      }}
-    >
-      {children}
+    <NetworkGraphContext.Provider value={networkGraphContext}>
+      <StatisticsContext.Provider value={statisticsContext}>
+        <SettingContext.Provider value={settingContext}>
+          <TooltipContext.Provider value={tooltipContext}>{children}</TooltipContext.Provider>
+        </SettingContext.Provider>
+      </StatisticsContext.Provider>
     </NetworkGraphContext.Provider>
   )
 }
