@@ -1,21 +1,17 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext } from 'react'
 
 import { useTheme } from '@material-ui/core/styles'
 import { motion, AnimatePresence } from 'framer-motion'
 
-import SpeedDial from '@material-ui/lab/SpeedDial'
-import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon'
-import SpeedDialAction from '@material-ui/lab/SpeedDialAction'
-
 import { LoadingIndicator, ResizablePanes } from '@lumy/common-ui-components'
 
-import { WorkflowContext, screenSplitDirectionType } from '../../state'
-import { useAppFeatures } from '../../const/features'
+import { WorkflowContext } from '../../state'
 import useStyles from './WorkflowContainer.styles'
 
-import FeatureTabs from './FeatureTabs'
+import FeatureTabs from './features/FeatureTabs'
 import VerticalStepIndicator from './VerticalStepIndicator'
 import WorkflowStep from './WorkflowStep'
+import FeaturePaneMenu from './features/FeaturePaneMenu'
 
 const positionOffset = '100vh'
 const variants = {
@@ -43,18 +39,11 @@ const WorkflowContainer = (): JSX.Element => {
     isAdditionalPaneVisible,
     stepContainerRef,
     splitDirection,
-    setSplitDirection,
-    screenSplitOptions,
     proceedToNextStep,
-    returnToPreviousStep,
-    closeAdditionalPane,
-    openFeatureTab
-  } = useContext(WorkflowContext) //prettier-ignore
+    returnToPreviousStep
+  } = useContext(WorkflowContext)
   const theme = useTheme()
   const classes = useStyles()
-  const featureList = useAppFeatures()
-
-  const [isSpeedDialOpen, setIsSpeedDialOpen] = useState(false)
 
   if (workflowPages?.length === 0) return <LoadingIndicator />
 
@@ -107,47 +96,7 @@ const WorkflowContainer = (): JSX.Element => {
         </AnimatePresence>
       </div>
 
-      <SpeedDial
-        classes={{
-          root: classes.speedDialRoot,
-          fab: classes.speedDialFab,
-          actions: classes.speedDialActions,
-          directionUp: classes.speedDialDirectionUp,
-          directionDown: classes.speedDialDirectionDown,
-          directionLeft: classes.speedDialDirectionLeft,
-          directionRight: classes.speedDialDirectionRight
-        }}
-        onClose={(_, reason: string) => {
-          if (isAdditionalPaneVisible && reason === 'toggle') closeAdditionalPane()
-          setIsSpeedDialOpen(false)
-        }}
-        onOpen={() => setIsSpeedDialOpen(true)}
-        open={isSpeedDialOpen}
-        icon={<SpeedDialIcon />}
-        direction="up"
-        FabProps={{ size: 'small' }}
-        ariaLabel={isAdditionalPaneVisible ? 'screen-split-options' : 'tools'}
-      >
-        {isAdditionalPaneVisible
-          ? screenSplitOptions.map((option, index) => (
-              <SpeedDialAction
-                key={index}
-                icon={option.icon}
-                tooltipTitle={option.tooltipText}
-                onClick={() => setSplitDirection(option.direction as screenSplitDirectionType)}
-                classes={{ fab: classes.speedDialActionFab }}
-              />
-            ))
-          : featureList.map((feature, index) => (
-              <SpeedDialAction
-                key={feature.id}
-                icon={feature.icon}
-                tooltipTitle={feature.tooltip}
-                onClick={() => openFeatureTab(index)}
-                classes={{ fab: classes.speedDialActionFab }}
-              />
-            ))}
-      </SpeedDial>
+      <FeaturePaneMenu />
     </>
   )
 }
