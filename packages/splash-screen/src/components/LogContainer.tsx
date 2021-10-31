@@ -3,7 +3,11 @@ import React from 'react'
 import useStyles from './LogContainer.styles'
 import { StreamMessage, useStream } from '../context'
 
-import { AutoScroller } from '@lumy/common-ui-components'
+const AutoScroller = (): JSX.Element => {
+  const elementRef = React.useRef(null)
+  React.useEffect(() => elementRef?.current?.scrollIntoView())
+  return <div ref={elementRef} />
+}
 
 export interface LogContainerProps {
   hideWhenEmpty?: boolean
