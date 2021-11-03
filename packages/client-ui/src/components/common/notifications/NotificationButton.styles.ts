@@ -3,7 +3,7 @@ import { Theme } from '@lumy/styles'
 
 export default makeStyles((theme: Theme) => ({
   notificationButton: {
-    position: 'absolute',
+    position: 'fixed',
     top: theme.spacing(2),
     left: theme.spacing(0.5),
     zIndex: theme.zIndex.speedDial
