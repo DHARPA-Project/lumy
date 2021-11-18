@@ -36,7 +36,7 @@ const NotificationButton: React.FC = () => {
       </Fab>
 
       <Drawer
-        container={getAppTopLevelElement()}
+        // container={getAppTopLevelElement()}
         BackdropProps={{ classes: { root: classes.drawerBackdropRoot } }}
         variant="temporary"
         anchor="left"

@@ -27,7 +27,8 @@ export default makeStyles(theme => ({
   workflowTypes: {
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'stretch'
+    alignItems: 'stretch',
+    overflow: 'hidden'
   },
   buttons: {
     display: 'grid',
