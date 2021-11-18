@@ -38,6 +38,7 @@ const OptionCard = ({
             {subtitle}
           </Typography>
         </CardContent>
+
         <div className={classes.imageContainer}>
           {backgroundImage ? (
             <div className={classes.backgroundImage} style={{ backgroundImage: `url(${backgroundImage})` }} />
@@ -45,6 +46,7 @@ const OptionCard = ({
             image
           )}
         </div>
+
         <Divider className={classes.cardDivider} />
       </CardActionArea>
 

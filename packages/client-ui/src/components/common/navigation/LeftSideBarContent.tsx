@@ -1,12 +1,12 @@
 import React, { useContext } from 'react'
 
 import List from '@material-ui/core/List'
-import Typography from '@material-ui/core/Typography'
-import Grow from '@material-ui/core/Grow'
+// import Typography from '@material-ui/core/Typography'
+// import Grow from '@material-ui/core/Grow'
 // import Fab from '@material-ui/core/Fab'
 
 // import DoubleArrowIcon from '@material-ui/icons/DoubleArrow'
-import ExploreIcon from '@material-ui/icons/Explore'
+// import ExploreIcon from '@material-ui/icons/Explore'
 
 // import { ProjectContext } from '../../../context/projectContext'
 import { LayoutContext } from '../../../state'
@@ -15,7 +15,8 @@ import { usePageRoutes } from '../../../const/routes'
 import useStyles from './LeftSideBarContent.styles'
 
 import NavItem from './NavItem'
-import { FormattedMessage } from '@lumy/i18n'
+import NotificationButton from '../notifications/NotificationButton'
+// import { FormattedMessage } from '@lumy/i18n'
 
 const LeftSideBarContent = (): JSX.Element => {
   const classes = useStyles()
@@ -29,6 +30,8 @@ const LeftSideBarContent = (): JSX.Element => {
   return (
     <>
       <div className={classes.sideBarTop}>
+        <NotificationButton />
+
         {/* <Fab
           variant="extended"
           size="small"
@@ -42,7 +45,7 @@ const LeftSideBarContent = (): JSX.Element => {
           />
         </Fab> */}
 
-        <Grow
+        {/* <Grow
           in={isLeftSideBarExpanded}
           style={{ transformOrigin: '0 0 0' }}
           {...(!isLeftSideBarExpanded ? { timeout: 0 } : { timeout: 1000 })}
@@ -51,7 +54,7 @@ const LeftSideBarContent = (): JSX.Element => {
             <ExploreIcon /> &nbsp;
             <FormattedMessage id="app.name" />
           </Typography>
-        </Grow>
+        </Grow> */}
       </div>
 
       <nav className={classes.navList}>

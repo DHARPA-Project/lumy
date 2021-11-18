@@ -9,7 +9,6 @@ import NotificationsIcon from '@material-ui/icons/Notifications'
 import useStyles from './NotificationButton.styles'
 import { NotificationContext } from '../../../state'
 import NotificationContainer from './NotificationContainer'
-import { getAppTopLevelElement } from '../../../const/app'
 
 const NotificationButton: React.FC = () => {
   const classes = useStyles()
@@ -36,13 +35,11 @@ const NotificationButton: React.FC = () => {
       </Fab>
 
       <Drawer
-        container={getAppTopLevelElement()}
-        BackdropProps={{ classes: { root: classes.drawerBackdropRoot } }}
         variant="temporary"
         anchor="left"
         open={isNotificationContainerOpen}
         onClose={() => setIsNotificationContainerOpen(false)}
-        classes={{ paper: classes.drawerPaper, root: classes.drawerRoot }}
+        classes={{ paper: classes.drawerPaper }}
       >
         <NotificationContainer />
       </Drawer>

@@ -8,7 +8,6 @@ import { LayoutContext } from '../../state'
 
 import LeftSideBarContainer from './navigation/LeftSideBarContainer'
 import LeftSideBarContent from './navigation/LeftSideBarContent'
-import NotificationButton from './notifications/NotificationButton'
 
 type TopPageLayoutProps = {
   children: React.ReactNode
@@ -27,8 +26,6 @@ const TopPageLayout = ({ children }: TopPageLayoutProps): JSX.Element => {
           <LeftSideBarContent />
         </LeftSideBarContainer>
       </ThemeProvider>
-
-      <NotificationButton />
 
       <div className={classes.pageContent + (isLeftSideBarExpanded ? ' left-pinch' : '')}>{children}</div>
     </div>
