@@ -1,32 +1,47 @@
-import React, { createContext } from 'react'
+import React, { createContext, CSSProperties } from 'react'
 
 type AccordionContainerProps = {
   children: React.ReactNode
+  allowMultipleExpanded?: boolean
+  style?: CSSProperties
+  classNames?: string
 }
 
 type AccordionContextType = {
-  expanded: string | false
-  setExpanded: React.Dispatch<React.SetStateAction<string | false>>
-  handleChange: (
-    panel: string
-  ) => (event: React.ChangeEvent<Record<string, unknown>>, newExpanded: boolean) => void
+  expanded: string[]
+  addExpanded: (panelId: string) => void
+  removeExpanded: (panelId: string) => void
 }
 
 export const AccordionContext = createContext<AccordionContextType>(null)
 
-export const AccordionContainer = ({ children }: AccordionContainerProps): JSX.Element => {
-  const [expanded, setExpanded] = React.useState<string | false>(false)
+export const AccordionContainer = ({
+  children,
+  allowMultipleExpanded = false,
+  classNames = '',
+  style
+}: AccordionContainerProps): JSX.Element => {
+  const [expanded, setExpanded] = React.useState<string[]>([])
 
-  const handleChange = (panel: string) => (
-    event: React.ChangeEvent<Record<string, unknown>>,
-    newExpanded: boolean
-  ) => {
-    setExpanded(newExpanded ? panel : false)
+  const addExpanded = (idToggledPanel: string) => {
+    if (expanded.includes(idToggledPanel)) return
+
+    if (!allowMultipleExpanded) return setExpanded([idToggledPanel])
+
+    setExpanded(prevExpanded => [...prevExpanded, idToggledPanel])
+  }
+
+  const removeExpanded = (idToggledPanel: string) => {
+    if (!expanded.includes(idToggledPanel)) return
+
+    setExpanded(prevExpanded => prevExpanded.filter(idExpandedPanel => idExpandedPanel !== idToggledPanel))
   }
 
   return (
-    <AccordionContext.Provider value={{ expanded, setExpanded, handleChange }}>
-      <div className="accordion-container">{children}</div>
+    <AccordionContext.Provider value={{ expanded, addExpanded, removeExpanded }}>
+      <div className={classNames} style={style}>
+        {children}
+      </div>
     </AccordionContext.Provider>
   )
 }
