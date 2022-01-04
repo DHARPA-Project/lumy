@@ -9,7 +9,7 @@ type CustomSwitchProps = {
   handleChange: (event: ChangeEvent<HTMLInputElement>, checked: boolean) => void
 }
 
-const CustomSwitch = ({ checked, handleChange }: CustomSwitchProps): JSX.Element => {
+export const CustomSwitch = ({ checked, handleChange }: CustomSwitchProps): JSX.Element => {
   const classes = useStyles()
 
   return (
@@ -27,5 +27,3 @@ const CustomSwitch = ({ checked, handleChange }: CustomSwitchProps): JSX.Element
     />
   )
 }
-
-export default CustomSwitch
