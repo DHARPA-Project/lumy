@@ -5,7 +5,7 @@ export default makeStyles(theme => ({
     width: 28,
     height: 16,
     padding: 0,
-    display: 'flex',
+    display: 'inline-flex',
     pointerEvents: 'auto'
   },
   switchBase: {
