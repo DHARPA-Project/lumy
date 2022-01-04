@@ -13,19 +13,25 @@ import { AccordionContext } from './AccordionContainer'
 
 type AccordionItemProps = {
   label: React.ReactNode
-  content: React.ReactNode
+  content?: React.ReactNode
+  children?: React.ReactNode
   startExpanded?: boolean
 }
 
-export const AccordionItem = ({ label, content, startExpanded }: AccordionItemProps): JSX.Element => {
+export const AccordionItem = ({
+  label,
+  content,
+  startExpanded,
+  children
+}: AccordionItemProps): JSX.Element => {
   const classes = useStyles()
 
   const idRef = useRef(generateUniqueId())
 
-  const { expanded, setExpanded, handleChange } = useContext(AccordionContext)
+  const { expanded, addExpanded, removeExpanded } = useContext(AccordionContext)
 
   useEffect(() => {
-    if (startExpanded) setExpanded(idRef.current)
+    if (startExpanded) addExpanded(idRef.current)
   }, [])
 
   return (
@@ -34,8 +40,10 @@ export const AccordionItem = ({ label, content, startExpanded }: AccordionItemPr
         root: classes.accordionRoot,
         expanded: classes.accordionExpanded
       }}
-      expanded={expanded === idRef.current}
-      onChange={handleChange(idRef.current)}
+      expanded={expanded.includes(idRef.current)}
+      onChange={(event, shouldBeExpanded) =>
+        shouldBeExpanded ? addExpanded(idRef.current) : removeExpanded(idRef.current)
+      }
     >
       <MuiAccordionSummary
         expandIcon={<ArrowRightIcon />}
@@ -48,7 +56,10 @@ export const AccordionItem = ({ label, content, startExpanded }: AccordionItemPr
       >
         {label}
       </MuiAccordionSummary>
-      <MuiAccordionDetails classes={{ root: classes.accordionDetailRoot }}>{content}</MuiAccordionDetails>
+      <MuiAccordionDetails classes={{ root: classes.accordionDetailRoot }}>
+        {content}
+        {children}
+      </MuiAccordionDetails>
     </MuiAccordion>
   )
 }
