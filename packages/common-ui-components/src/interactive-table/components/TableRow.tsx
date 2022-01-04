@@ -95,12 +95,12 @@ const InteractiveTableRow = ({
         id={!!popoverAnchorEl ? 'data-table-content-preview-popover' : null}
         onClose={() => setPopoverAnchorEl(null)}
         anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'left'
+          vertical: 'center',
+          horizontal: 'center'
         }}
         transformOrigin={{
-          vertical: 'top',
-          horizontal: 'left'
+          vertical: 'center',
+          horizontal: 'right'
         }}
       >
         {contentPreview}
