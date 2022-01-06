@@ -20,7 +20,7 @@ const WorkflowStep = ({ pageDetails, workflowLabel }: WorkflowStepProps): JSX.El
     <div className={classes.mainWrapper}>
       <header className={classes.header}>
         <Typography className={classes.headline} variant="h6" component="h1" align="left">
-          {workflowLabel}
+          {pageDetails.meta?.label ?? workflowLabel}
         </Typography>
 
         <Breadcrumbs aria-label="breadcrumb" className={classes.breadcrumbs}>
