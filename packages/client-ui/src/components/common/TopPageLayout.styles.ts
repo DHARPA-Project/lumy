@@ -4,7 +4,7 @@ import { Theme } from '@lumy/styles'
 export default makeStyles<Theme>(theme => ({
   pageContainer: {
     minHeight: '100vh',
-    width: '100vw',
+    width: '100%',
     overflow: 'hidden'
   },
   pageContent: {

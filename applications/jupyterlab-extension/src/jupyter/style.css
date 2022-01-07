@@ -4,4 +4,5 @@
 
 .lumy-flex > * {
   min-height: auto !important;
+  width: 100%;
 }
